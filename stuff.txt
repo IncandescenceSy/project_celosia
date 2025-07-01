@@ -1,0 +1,10 @@
+https://github.com/libgdx/libgdx
+https://javadoc.io/doc/com.badlogicgames.gdx
+https://libgdx.com/wiki/start/project-generation
+https://libgdx.com/wiki/start/import-and-running
+https://libgdx.com/wiki/start/a-simple-game
+https://libgdx.com/wiki/tools/texture-packer
+https://libgdx.com/wiki/app/the-life-cycle
+https://libgdx.com/wiki/start/demos-and-tutorials
+https://libgdx.com/wiki/utils/collections#specialized-lists
+https://libgdx.com/wiki/deployment/deploying-your-application
