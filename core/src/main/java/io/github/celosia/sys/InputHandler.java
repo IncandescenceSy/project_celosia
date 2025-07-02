@@ -5,8 +5,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import io.github.celosia.sys.menu.LabelStyles;
 import io.github.celosia.sys.menu.MenuLib;
-import io.github.celosia.sys.menu.MenuLib.MenuType;
 import io.github.celosia.sys.menu.MenuLib.MenuOptType;
+import io.github.celosia.sys.menu.MenuLib.MenuType;
 import io.github.celosia.sys.menu.Menus;
 import io.github.celosia.sys.settings.Keybinds;
 
@@ -46,7 +46,7 @@ public class InputHandler {
                 MenuLib.handleOptColor(optLabels, index);
 
                 // Handle menu confirmation
-                if (Gdx.input.isKeyPressed(Keybinds.Keybind.CONFIRM.getKey())) {
+                if (Gdx.input.isKeyPressed(Keybinds.CONFIRM.getKey())) {
                     optSelected = MenuLib.MenuOptType.values()[MenuType.MAIN.getOpt(index).getType().ordinal()];
                     switch (optSelected) {
                         case START:
@@ -65,7 +65,7 @@ public class InputHandler {
                 }
                 break;
             case WIP:
-                if(Gdx.input.isKeyPressed(Keybinds.Keybind.BACK.getKey())) {
+                if(Gdx.input.isKeyPressed(Keybinds.BACK.getKey())) {
                     stage.getRoot().removeActor(wip);
                     return Menus.createMenuMain(menuType, stage, optLabels);
                 }

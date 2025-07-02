@@ -9,13 +9,13 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import io.github.celosia.sys.battle.*;
+import io.github.celosia.sys.World;
+import io.github.celosia.sys.battle.BattleController;
 import io.github.celosia.sys.menu.Fonts;
 import io.github.celosia.sys.menu.LabelStyles;
 import io.github.celosia.sys.menu.MenuLib;
 import io.github.celosia.sys.menu.MenuLib.MenuOptType;
 import io.github.celosia.sys.menu.MenuLib.MenuType;
-import io.github.celosia.sys.World;
 import io.github.celosia.sys.settings.Keybinds;
 
 import java.util.ArrayList;
@@ -82,7 +82,7 @@ public class Main extends ApplicationAdapter {
                 MenuLib.handleOptColor(optLabels, index);
 
                 // Handle menu confirmation
-                if (Gdx.input.isKeyPressed(Keybinds.Keybind.CONFIRM.getKey())) {
+                if (Gdx.input.isKeyPressed(Keybinds.CONFIRM.getKey())) {
                     optSelected = MenuOptType.values()[MenuType.MAIN.getOpt(index).getType().ordinal()];
                     switch (optSelected) {
                         case START:
@@ -104,7 +104,7 @@ public class Main extends ApplicationAdapter {
                 }
                 break;
             case WIP:
-                if(Gdx.input.isKeyPressed(Keybinds.Keybind.BACK.getKey())) {
+                if(Gdx.input.isKeyPressed(Keybinds.BACK.getKey())) {
                     stage.getRoot().removeActor(wip);
                     createMenuMain();
                 }

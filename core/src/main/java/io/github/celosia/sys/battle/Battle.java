@@ -17,6 +17,10 @@ public class Battle {
         this.opponentTeam = opponent;
     }
 
+    public void setTurn(int turn) {
+        this.turn = turn;
+    }
+
     public int getTurn() {
         return turn;
     }

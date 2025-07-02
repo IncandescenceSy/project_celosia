@@ -4,10 +4,6 @@ import io.github.celosia.sys.battle.Combatant;
 import io.github.celosia.sys.battle.Element;
 import io.github.celosia.sys.battle.SkillEffect;
 
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-
 public class Damage implements SkillEffect {
 
     private int pow;
@@ -22,9 +18,6 @@ public class Damage implements SkillEffect {
 
     @Override
     public void apply(Combatant self, Combatant target) {
-        Logger logger = Logger.getLogger("a"); // Fix base HP somehow being updated
-        logger.log(new LogRecord(Level.INFO, "HP: " + target.getStats().getHp() + "; Base HP: " + target.getCmbType().getStatsBase().getHp()));
-        target.getStats().setHp(target.getStats().getHp() - pow);
-        logger.log(new LogRecord(Level.INFO, "HP: " + target.getStats().getHp() + "; Base HP: " + target.getCmbType().getStatsBase().getHp()));
+        target.getStatsCur().setHp(target.getStatsCur().getHp() - ((pow * self.getStatsCur().getStr()) - (target.getStatsCur().getAmr())));
     }
 }

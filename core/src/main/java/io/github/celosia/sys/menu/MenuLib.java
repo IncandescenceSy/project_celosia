@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.Align;
-import io.github.celosia.sys.settings.Keybinds.Keybind;
+import io.github.celosia.sys.settings.Keybinds;
 
 import java.util.List;
 
@@ -26,9 +26,9 @@ public class MenuLib {
     // Check menu movement input (1-axis) and handle wrapping
     // todo: speed up when button has been held and support multi-axis menus and mouse/touchscreen
     public static int checkMovement1D(int index, MenuType menuType) {
-        if (Gdx.input.isKeyPressed(Keybind.UP.getKey()) || Gdx.input.isKeyPressed(Keybind.LEFT.getKey())) {
+        if (Gdx.input.isKeyPressed(Keybinds.UP.getKey()) || Gdx.input.isKeyPressed(Keybinds.LEFT.getKey())) {
             return --index < 0 ? menuType.getOptCount() - 1 : index--;
-        } else if (Gdx.input.isKeyPressed(Keybind.DOWN.getKey()) || Gdx.input.isKeyPressed(Keybind.RIGHT.getKey())) {
+        } else if (Gdx.input.isKeyPressed(Keybinds.DOWN.getKey()) || Gdx.input.isKeyPressed(Keybinds.RIGHT.getKey())) {
             return ++index >= menuType.getOptCount() ? 0 : index++;
         } else return index;
     }

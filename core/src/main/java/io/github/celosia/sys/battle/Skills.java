@@ -4,7 +4,7 @@ import io.github.celosia.sys.battle.skill_effects.Damage;
 
 // Skills (any action that is attributed to a Combatant and has impact on the battle)
 // todo lang
-public enum Skill {
+public enum Skills {
     ATTACK("Attack", 0, "", new Damage(55, Element.VIS)),
     FIREBALL("Fireball", 4, "", new Damage(60, Element.IGNIS));
 
@@ -14,7 +14,7 @@ public enum Skill {
     boolean isBloom;
     SkillEffect[] skillEffects;
 
-    Skill(String name, int cost, String desc, SkillEffect... skillEffects) {
+    Skills(String name, int cost, String desc, SkillEffect... skillEffects) {
         this.name = name;
         this.cost = cost;
         this.desc = desc;
@@ -22,7 +22,7 @@ public enum Skill {
         this.skillEffects = skillEffects;
     }
 
-    Skill(String name, int cost, String desc, boolean isBloom, SkillEffect... skillEffects) {
+    Skills(String name, int cost, String desc, boolean isBloom, SkillEffect... skillEffects) {
         this.name = name;
         this.cost = cost;
         this.desc = desc;

@@ -6,7 +6,8 @@ public class Combatant {
     int lvl; // Level
 
     // Current stats
-    Stats stats;
+    Stats statsDefault;
+    Stats statsCur;
 
     int mp; // Mana
     // todo skillset, buffs, accessory
@@ -14,7 +15,8 @@ public class Combatant {
     public Combatant(CombatantType cmbType, int lvl, Stats stats, int mp) {
         this.cmbType = cmbType;
         this.lvl = lvl;
-        this.stats = stats;
+        this.statsDefault = stats;
+        this.statsCur = stats;
         this.mp = mp;
     }
 
@@ -26,8 +28,12 @@ public class Combatant {
         return lvl;
     }
 
-    public Stats getStats() {
-        return stats;
+    public Stats getStatsDefault() {
+        return statsDefault;
+    }
+
+    public Stats getStatsCur() {
+        return statsCur;
     }
 
     public void setMp(int mp) {

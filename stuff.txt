@@ -8,3 +8,9 @@ https://libgdx.com/wiki/app/the-life-cycle
 https://libgdx.com/wiki/start/demos-and-tutorials
 https://libgdx.com/wiki/utils/collections#specialized-lists
 https://libgdx.com/wiki/deployment/deploying-your-application
+
+https://github.com/hdescottes/GdxGame/blob/master/core/src/main/java/com/gdx/game/GdxGame.java
+https://github.com/patrickhoey/BludBourne/blob/master/core/src/com/packtpub/libgdx/bludbourne/BludBourne.java
+https://github.com/rpgboss/rpgboss/blob/master/core/src/main/scala/rpgboss
+
+https://github.com/tommyettinger/textratypist#textratypist

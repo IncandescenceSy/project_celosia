@@ -2,9 +2,8 @@ package io.github.celosia.sys.settings;
 
 import com.badlogic.gdx.Input;
 
-public class Keybinds {
-    // Todo: alternate keys, remapping, controller support
-    public enum Keybind {
+// Todo: alternate keys, remapping, controller support
+public enum Keybinds {
         CONFIRM(Input.Keys.Z),
         BACK(Input.Keys.X),
         MENU(Input.Keys.C),
@@ -18,12 +17,11 @@ public class Keybinds {
 
         private final int key;
 
-        Keybind(int key) {
+        Keybinds(int key) {
             this.key = key;
         }
 
         public int getKey() {
             return key;
         }
-    }
 }
