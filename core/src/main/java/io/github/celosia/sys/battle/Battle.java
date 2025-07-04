@@ -1,5 +1,9 @@
 package io.github.celosia.sys.battle;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 // 2 Teams facing each other and a global field
 public class Battle {
 
@@ -31,5 +35,14 @@ public class Battle {
 
     public Team getOpponentTeam() {
         return opponentTeam;
+    }
+
+    public List<Combatant> getAllCombatants() {
+        Combatant[] cmbsPlayer = playerTeam.getCmbs();
+        Combatant[] cmbsOpponent = opponentTeam.getCmbs();
+        List<Combatant> cmbsAll = new ArrayList<Combatant>();
+        Collections.addAll(cmbsAll, cmbsPlayer);
+        Collections.addAll(cmbsAll, cmbsOpponent);
+        return cmbsAll;
     }
 }

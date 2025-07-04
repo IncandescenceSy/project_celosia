@@ -4,6 +4,9 @@ import io.github.celosia.sys.battle.Combatant;
 import io.github.celosia.sys.battle.Element;
 import io.github.celosia.sys.battle.SkillEffect;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Damage implements SkillEffect {
 
     private int pow;
@@ -16,8 +19,9 @@ public class Damage implements SkillEffect {
         this.element = element;
     }
 
+    // todo use str/mag/fth vs amr/res/na
     @Override
     public void apply(Combatant self, Combatant target) {
-        target.getStatsCur().setHp(target.getStatsCur().getHp() - ((pow * self.getStatsCur().getStr()) - (target.getStatsCur().getAmr())));
+        target.getStatsCur().setHp((int) (target.getStatsCur().getHp() - ((float) self.getStatsCur().getStr() / (float) target.getStatsCur().getAmr()) * (pow * 10) * 4));
     }
 }

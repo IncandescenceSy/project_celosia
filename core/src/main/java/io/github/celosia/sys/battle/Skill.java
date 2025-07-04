@@ -4,17 +4,22 @@ import io.github.celosia.sys.battle.skill_effects.Damage;
 
 // Skills (any action that is attributed to a Combatant and has impact on the battle)
 // todo lang
-public enum Skills {
+public enum Skill {
     ATTACK("Attack", 0, "", new Damage(55, Element.VIS)),
-    FIREBALL("Fireball", 4, "", new Damage(60, Element.IGNIS));
+    DEFEND("Defend", 0, "", new Damage(0, Element.VIS)),
+    FIREBALL("Fireball", 4, "", new Damage(60, Element.IGNIS)),
+    ICE_BEAM("Ice Beam", 6, "", new Damage(80, Element.GLACIES)),
+    THUNDERBOLT("Thunderbolt", 8, "", new Damage(100, Element.FULGUR)),
+    HEAL("Heal", 8, "", new Damage(-100, Element.VIS)),
+    ICE_AGE("Ice Age \uD83C\uDFF5", 60, "", true, new Damage(260, Element.GLACIES));
 
-    int cost;
-    String name;
-    String desc;
-    boolean isBloom;
-    SkillEffect[] skillEffects;
+    final int cost;
+    final String name;
+    final String desc;
+    final boolean isBloom;
+    final SkillEffect[] skillEffects;
 
-    Skills(String name, int cost, String desc, SkillEffect... skillEffects) {
+    Skill(String name, int cost, String desc, SkillEffect... skillEffects) {
         this.name = name;
         this.cost = cost;
         this.desc = desc;
@@ -22,7 +27,7 @@ public enum Skills {
         this.skillEffects = skillEffects;
     }
 
-    Skills(String name, int cost, String desc, boolean isBloom, SkillEffect... skillEffects) {
+    Skill(String name, int cost, String desc, boolean isBloom, SkillEffect... skillEffects) {
         this.name = name;
         this.cost = cost;
         this.desc = desc;

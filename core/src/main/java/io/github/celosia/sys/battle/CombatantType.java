@@ -5,7 +5,7 @@ public class CombatantType {
 
     String name;
 
-    // Base stats
+    // Base statsL
     Stats statsBase;
 
     // Affinities

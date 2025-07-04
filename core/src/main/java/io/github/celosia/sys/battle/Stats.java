@@ -1,6 +1,6 @@
 package io.github.celosia.sys.battle;
 
-// A set of stats
+// A set of statsL
 public class Stats {
 
     int hp;  // Health

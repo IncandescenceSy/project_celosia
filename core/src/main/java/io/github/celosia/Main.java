@@ -33,7 +33,7 @@ public class Main extends ApplicationAdapter {
     MenuOptType optSelected;
 
     // Menu option labels
-    List<Label> optLabels = new ArrayList<Label>();
+    List<Label> optLabels = new ArrayList<>();
 
     Label wip;
     Label debug;
@@ -74,7 +74,7 @@ public class Main extends ApplicationAdapter {
         switch(menuType) {
             case MAIN:
                 // Handle menu navigation
-                Number[] menuStats = MenuLib.handleMenu1D(index, MenuType.MAIN, cooldown);
+                Number[] menuStats = MenuLib.handleMenu1D(index, MenuType.MAIN.getOptCount(), cooldown);
                 index = (int) menuStats[0];
                 cooldown = (float) menuStats[1];
 
@@ -108,8 +108,13 @@ public class Main extends ApplicationAdapter {
                     stage.getRoot().removeActor(wip);
                     createMenuMain();
                 }
+                break;
             case BATTLE:
-                BattleController.input();
+            case TARGETING:
+            case SKILLS:
+                menuType = BattleController.input(menuType);
+                BattleController.updateStatDisplay();
+                break;
         }
     }
 
