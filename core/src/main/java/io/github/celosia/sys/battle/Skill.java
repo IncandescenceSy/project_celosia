@@ -1,34 +1,38 @@
 package io.github.celosia.sys.battle;
 
 import io.github.celosia.sys.battle.skill_effects.Damage;
+import io.github.celosia.sys.battle.skill_effects.GiveBuff;
 
 // Skills (any action that is attributed to a Combatant and has impact on the battle)
-// todo lang
+// todo lang, display element/type even for non-damaging skills
 public enum Skill {
-    ATTACK("Attack", 0, "", new Damage(55, Element.VIS)),
-    DEFEND("Defend", 0, "", new Damage(0, Element.VIS)),
-    FIREBALL("Fireball", 4, "", new Damage(60, Element.IGNIS)),
-    ICE_BEAM("Ice Beam", 6, "", new Damage(80, Element.GLACIES)),
-    THUNDERBOLT("Thunderbolt", 8, "", new Damage(100, Element.FULGUR)),
-    HEAL("Heal", 8, "", new Damage(-100, Element.VIS)),
-    ICE_AGE("Ice Age \uD83C\uDFF5", 60, "", true, new Damage(260, Element.GLACIES));
+    ATTACK("Attack", Targeting.OTHER_1R, 0, "", new Damage(SkillType.STR, Element.VIS, 55)),
+    DEFEND("Defend", Targeting.SELF, 0, "", new GiveBuff(Buff.DEFEND, 1)),
+    FIREBALL("Fireball", Targeting.OTHER_1R, 4, "", new Damage(SkillType.MAG, Element.IGNIS, 60)),
+    ICE_BEAM("Ice Beam", Targeting.OTHER_1R, 6, "", new Damage(SkillType.MAG, Element.GLACIES, 80)),
+    THUNDERBOLT("Thunderbolt", Targeting.OTHER_1R, 8, "", new Damage(SkillType.MAG, Element.FULGUR, 100)),
+    HEAL("Heal", Targeting.OTHER_2R, 8, "", new Damage(SkillType.FTH, Element.VIS, -100)),
+    ICE_AGE("Ice Age \uD83C\uDFF5", Targeting.OTHER_2R, 60, "", true, new Damage(SkillType.MAG, Element.GLACIES, 260));
 
+    final Targeting targeting;
     final int cost;
     final String name;
     final String desc;
     final boolean isBloom;
     final SkillEffect[] skillEffects;
 
-    Skill(String name, int cost, String desc, SkillEffect... skillEffects) {
+    Skill(String name, Targeting targeting, int cost, String desc, SkillEffect... skillEffects) {
         this.name = name;
+        this.targeting = targeting;
         this.cost = cost;
         this.desc = desc;
         this.isBloom = false;
         this.skillEffects = skillEffects;
     }
 
-    Skill(String name, int cost, String desc, boolean isBloom, SkillEffect... skillEffects) {
+    Skill(String name, Targeting targeting, int cost, String desc, boolean isBloom, SkillEffect... skillEffects) {
         this.name = name;
+        this.targeting = targeting;
         this.cost = cost;
         this.desc = desc;
         this.isBloom = isBloom;

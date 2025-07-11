@@ -2,28 +2,41 @@ package io.github.celosia;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.github.tommyettinger.textra.TextraLabel;
+import com.github.tommyettinger.textra.TypingConfig;
+import com.github.tommyettinger.textra.TypingLabel;
 import io.github.celosia.sys.World;
 import io.github.celosia.sys.battle.BattleController;
-import io.github.celosia.sys.menu.Fonts;
-import io.github.celosia.sys.menu.LabelStyles;
-import io.github.celosia.sys.menu.MenuLib;
+import io.github.celosia.sys.menu.*;
+import io.github.celosia.sys.menu.Fonts.FontType;
 import io.github.celosia.sys.menu.MenuLib.MenuOptType;
 import io.github.celosia.sys.menu.MenuLib.MenuType;
 import io.github.celosia.sys.settings.Keybinds;
+import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
+
+import static io.github.celosia.sys.menu.MenuLib.setTextIfChanged;
+import static io.github.celosia.sys.menu.TriLib.drawCoolRects;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
     SpriteBatch spriteBatch;
+    PolygonSpriteBatch polygonSpriteBatch;
+    ShapeDrawer drawer;
     Stage stage;
 
     // Current menu info
@@ -32,11 +45,15 @@ public class Main extends ApplicationAdapter {
     MenuType menuType = MenuType.NONE;
     MenuOptType optSelected;
 
-    // Menu option labels
-    List<Label> optLabels = new ArrayList<>();
+    // All cool rectangle elements with their interpolation progress
+    List<CoolRect> coolRects = new ArrayList<>();
 
-    Label wip;
-    Label debug;
+    // Menu option labels
+    List<TypingLabel> optLabels = new ArrayList<>();
+
+    TypingLabel wip;
+    TypingLabel wip2;
+    TextraLabel debug;
 
     // todo move
     Texture texBg;
@@ -44,6 +61,25 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
         spriteBatch = new SpriteBatch();
+        polygonSpriteBatch = new PolygonSpriteBatch();
+
+        // temp
+        // todo less magic numbers
+        coolRects.add(CoolRects.MENU_MAIN.ordinal(), new CoolRect(World.WIDTH - 700, 230 + 475 + 5, World.WIDTH - 175 - 92, 230 - 75 + 25, 1)); // Main menu bg
+        coolRects.add(CoolRects.POPUP_CENTERED.ordinal(), new CoolRect(World.WIDTH_2 - 440, World.HEIGHT_2 - 200, World.WIDTH_2 + 440, World.HEIGHT_2 + 200)); // Centered popup bg
+        coolRects.add(CoolRects.CURSOR_1.ordinal(), new CoolRect(1, Color.PURPLE, false)); // Menu cursor. X pos comes from 450 (y diff) / 6 (15-degree angle)
+        coolRects.add(CoolRects.CURSOR_2.ordinal(), new CoolRect(-1, Color.PURPLE, false)); // Disappearing menu cursor
+
+        // temp todo draw from atlas
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.WHITE);
+        pixmap.drawPixel(0, 0);
+        Texture texture = new Texture(pixmap); //remember to dispose of later
+        pixmap.dispose();
+        TextureRegion region = new TextureRegion(texture, 0, 0, 1, 1);
+
+        drawer = new ShapeDrawer(polygonSpriteBatch, region);
+
         stage = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));
 
         Fonts.createFonts();
@@ -52,12 +88,16 @@ public class Main extends ApplicationAdapter {
         // Background
         texBg = new Texture("bg.png");
 
+        // Internal config
+        TypingConfig.DEFAULT_SPEED_PER_CHAR = 0.01f;
+
         // Debug
-        debug = new Label("", LabelStyles.KORURI_20);
+        debug = new TextraLabel("", FontType.KORURI.getSize20());
         debug.setPosition(20, World.HEIGHT - 70);
         stage.addActor(debug);
 
         // Setup main menu
+        menuType = MenuType.MAIN;
         createMenuMain();
     }
 
@@ -79,17 +119,21 @@ public class Main extends ApplicationAdapter {
                 cooldown = (float) menuStats[1];
 
                 // Handle option color
-                MenuLib.handleOptColor(optLabels, index);
+                //MenuLib.handleOptColor(optLabels, index);
+                MenuLib.handleCursor(coolRects.get(CoolRects.CURSOR_1.ordinal()), coolRects.get(CoolRects.CURSOR_2.ordinal()), index, World.WIDTH - 700 + 75, World.WIDTH - 175 - 92 + 75 - 10, 230 + 475, 100 + 4);
 
                 // Handle menu confirmation
                 if (Gdx.input.isKeyPressed(Keybinds.CONFIRM.getKey())) {
                     optSelected = MenuOptType.values()[MenuType.MAIN.getOpt(index).getType().ordinal()];
                     switch (optSelected) {
                         case START:
+                            coolRects.get(CoolRects.MENU_MAIN.ordinal()).setDir(-1);
+                            coolRects.get(CoolRects.CURSOR_1.ordinal()).setDir(-1);
                             MenuLib.removeOpts(optLabels, stage);
                             // Start game
                             BattleController.create(stage);
                             menuType = MenuType.BATTLE;
+
                             break;
                         case QUIT:
                             // Quit game
@@ -97,7 +141,6 @@ public class Main extends ApplicationAdapter {
                         case MANUAL:
                         case OPTIONS:
                         case CREDITS:
-                            MenuLib.removeOpts(optLabels, stage);
                             createMenuWIP();
                             break;
                     }
@@ -106,7 +149,9 @@ public class Main extends ApplicationAdapter {
             case WIP:
                 if(Gdx.input.isKeyPressed(Keybinds.BACK.getKey())) {
                     stage.getRoot().removeActor(wip);
-                    createMenuMain();
+                    stage.getRoot().removeActor(wip2);
+                    coolRects.get(CoolRects.POPUP_CENTERED.ordinal()).setDir(-1);
+                    menuType = MenuType.MAIN;
                 }
                 break;
             case BATTLE:
@@ -126,25 +171,32 @@ public class Main extends ApplicationAdapter {
         spriteBatch.draw(texBg, 0, 0, World.WIDTH, World.HEIGHT);
         spriteBatch.end();
 
+        // Draw cool rectangles
+        drawCoolRects(polygonSpriteBatch, drawer, coolRects);
+
         stage.act();
         stage.draw();
     }
 
     private void createMenuMain() {
-        menuType = MenuType.MAIN;
-
         // Create options
-        optLabels = new ArrayList<Label>();
-        MenuLib.createOpts(menuType, optLabels, LabelStyles.KORURI_80, stage);
+        optLabels = new ArrayList<>();
+        MenuLib.createOpts(menuType, optLabels, FontType.KORURI.getSize80(), stage);
     }
 
     private void createMenuWIP() {
         menuType = MenuType.WIP;
 
         // todo lang
-        wip = new Label("This is a work in progress", LabelStyles.KORURI_80);
-        wip.setPosition(World.WIDTH_2, World.HEIGHT_2, Align.center);
+        wip = new TypingLabel("{SPEED=0.1}{FADE}{SHRINK}WIP", FontType.KORURI.getSize80());
+        wip.setPosition(World.WIDTH_2, World.HEIGHT_2 + 120, Align.center);
         stage.addActor(wip);
+
+        wip2 = new TypingLabel("{FADE}{SLIDE}This isn't finished yet!\n{WAVE=0.25;0.5;0.5}{GRADIENT=pink;violet}{SPIN}Girls are now praying, please wait warmly...", FontType.KORURI.getSize30());
+        wip2.setPosition(World.WIDTH_2 - 440, World.HEIGHT_2 + 20, Align.left);
+        stage.addActor(wip2);
+
+        coolRects.get(CoolRects.POPUP_CENTERED.ordinal()).setDir(1);
     }
 
     @Override
@@ -155,6 +207,8 @@ public class Main extends ApplicationAdapter {
     @Override
     public void dispose() {
         spriteBatch.dispose();
+        polygonSpriteBatch.dispose();
         stage.dispose();
+        texBg.dispose();
     }
 }

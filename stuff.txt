@@ -14,3 +14,35 @@ https://github.com/patrickhoey/BludBourne/blob/master/core/src/com/packtpub/libg
 https://github.com/rpgboss/rpgboss/blob/master/core/src/main/scala/rpgboss
 
 https://github.com/tommyettinger/textratypist#textratypist
+
+
+https://stackoverflow.com/questions/74789013/multi-colored-triangle-strip-with-jogl
+https://libgdx.com/wiki/graphics/opengl-utils/rendering-shapes
+
+https://libgdx.com/wiki/internationalization-and-localization
+
+
+
+pick something:
+    https://itch.io/game-assets/free/tag-controller/tag-icons
+    https://greatdocbrown.itch.io/gamepad-ui
+    https://juliocacko.itch.io/free-input-prompts
+
+
+
+Attribution considerations:
+
+    Not required:
+        Intellij IDEA
+        LibGDX
+        TextraTypist
+
+    Required:
+        https://github.com/tommyettinger/textratypist stuff (much of this can likely be removed if I dont use it)
+            the list of GameIcons.png contributors
+            OpenMoji
+            TweMoji
+            Noto Color Emoji
+
+    Haven't looked:
+        Other stuff

@@ -7,66 +7,63 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.github.tommyettinger.textra.Font;
 
 public class Fonts {
-    static BitmapFont koruri20;
-    static BitmapFont koruri40;
-    static BitmapFont koruri80;
-
-    static Font koruri20t;
+    static Font koruri20;
+    static Font koruri30;
+    static Font koruri40;
+    static Font koruri80;
 
     public static void createFonts() {
+        // Todo find a way to make fonts less pixely
         FreeTypeFontGenerator genKoruri = new FreeTypeFontGenerator(Gdx.files.internal("fnt/koruri.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 
-        parameter.color = Color.LIGHT_GRAY;
-        parameter.borderColor = Color.BLACK;
+        parameter.color = Color.WHITE;
 
         parameter.size = 20;
-        parameter.borderWidth = 2;
-        koruri20 = genKoruri.generateFont(parameter);
+        koruri20 = new Font(genKoruri.generateFont(parameter));
+
+        parameter.size = 30;
+        koruri30 = new Font(genKoruri.generateFont(parameter));
 
         parameter.size = 40;
-        parameter.borderWidth = 3;
-        koruri40 = genKoruri.generateFont(parameter);
+        koruri40 = new Font(genKoruri.generateFont(parameter));
 
         parameter.size = 80;
-        parameter.borderWidth = 6;
-        koruri80 = genKoruri.generateFont(parameter);
+        koruri80 = new Font(genKoruri.generateFont(parameter));
 
         genKoruri.dispose();
-
-        koruri20t = new Font(koruri20);
     }
 
     public enum FontType {
-         KORURI(koruri20, koruri40, koruri80, koruri20t);
+         KORURI(koruri20, koruri30, koruri40, koruri80);
 
          // todo other sizes and styles
-         private final BitmapFont size20;
-         private final BitmapFont size40;
-         private final BitmapFont size80;
-         private final Font size20t;
+         private final Font size20;
+         private final Font size30;
+         private final Font size40;
+         private final Font size80;
 
-         FontType(BitmapFont size20, BitmapFont size40, BitmapFont size80, Font size20t) {
+         FontType(Font size20, Font size30, Font size40, Font size80) {
              this.size20 = size20;
+             this.size30 = size30;
              this.size40 = size40;
              this.size80 = size80;
-             this.size20t = size20t;
          }
 
-        public BitmapFont getSize20() {
+        public Font getSize20() {
             return size20;
         }
 
-        public BitmapFont getSize40() {
+        public Font getSize30() {
+            return size30;
+        }
+
+        public Font getSize40() {
             return size40;
         }
 
-        public BitmapFont getSize80() {
+        public Font getSize80() {
             return size80;
-        }
-
-        public Font getSize20t() {
-           return size20t;
         }
     }
 }

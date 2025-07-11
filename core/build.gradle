@@ -7,6 +7,7 @@ dependencies {
   api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
   api "com.badlogicgames.gdx:gdx:$gdxVersion"
   implementation "com.github.tommyettinger:textratypist:2.0.3"
+  implementation "space.earlygrey:shapedrawer:$shapedrawerVersion"
 
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
