@@ -23,16 +23,16 @@ public class Damage implements SkillEffect {
         float def = -1f;
 
         if(type == SkillType.STR) {
-            off = self.getStatsCur().getStr();
-            def = target.getStatsCur().getAmr();
+            off = Math.max(1, self.getStatsCur().getStr());
+            def = Math.max(1, target.getStatsCur().getAmr());
         } else if(type == SkillType.MAG) {
-            off = self.getStatsCur().getStr();
-            def = target.getStatsCur().getAmr();
+            off = Math.max(1, self.getStatsCur().getStr());
+            def = Math.max(1, target.getStatsCur().getAmr());
         } else if(type == SkillType.FTH) {
-            off = self.getStatsCur().getFth();
-            def = off;
+            off = Math.max(1, self.getStatsCur().getFth());
+            def = Math.max(1, off);
         }
 
-        target.getStatsCur().setHp((int) (target.getStatsCur().getHp() - (off / def) * (pow * 10) * 4));
+        target.getStatsCur().setHp((int) (target.getStatsCur().getHp() - (off / def) * (pow * 10)));
     }
 }

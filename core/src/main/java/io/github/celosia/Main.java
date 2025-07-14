@@ -63,6 +63,8 @@ public class Main extends ApplicationAdapter {
         spriteBatch = new SpriteBatch();
         polygonSpriteBatch = new PolygonSpriteBatch();
 
+        stage = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));
+
         // temp
         // todo less magic numbers
         coolRects.add(CoolRects.MENU_MAIN.ordinal(), new CoolRect(World.WIDTH - 700, 230 + 475 + 5, World.WIDTH - 175 - 92, 230 - 75 + 25, 1)); // Main menu bg
@@ -79,8 +81,6 @@ public class Main extends ApplicationAdapter {
         TextureRegion region = new TextureRegion(texture, 0, 0, 1, 1);
 
         drawer = new ShapeDrawer(polygonSpriteBatch, region);
-
-        stage = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));
 
         Fonts.createFonts();
         LabelStyles.createStyles();

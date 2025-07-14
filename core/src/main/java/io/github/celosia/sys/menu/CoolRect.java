@@ -4,15 +4,15 @@ import com.badlogic.gdx.graphics.Color;
 
 public class CoolRect {
 
-    int l; // Left
-    int t; // Top
-    int r; // Right
-    int b; // Bottom
-    float prog; // Animation progress
-    int dir; // 1 = unfolding; -1 = collapsing
-    Color color; // Core color
-    boolean hasOutline; // Whether to draw an outline
-    float speed; // Speed multiplier. 1 = animation completes in 1s. Speed is doubled when closing
+    private int l; // Left
+    private int t; // Top
+    private int r; // Right
+    private int b; // Bottom
+    private float prog; // Animation progress
+    private int dir; // 1 = unfolding; -1 = collapsing
+    private Color color; // Core color
+    private boolean hasOutline; // Whether to draw an outline
+    private float speed; // Speed multiplier. 1 = animation completes in 1s. Speed is doubled when closing
 
     public CoolRect(int l, int t, int r, int b, int dir, Color color, boolean hasOutline, float prog, float speed) {
         this.l = l;

@@ -1,20 +1,26 @@
 package io.github.celosia.sys.battle;
 
-// Species and current statsL
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+// Species and current stats
 public class Combatant {
-    CombatantType cmbType;
-    int lvl; // Level
+    private CombatantType cmbType;
+    private int lvl; // Level
 
     // Current stats
-    Stats statsDefault;
-    Stats statsCur;
+    private Stats statsDefault;
+    private Stats statsCur;
 
     // Skills
-    Skill[] skills;
+    private Skill[] skills;
 
-    int mp; // Mana
-    int pos; // Position on the battlefield
-    // todo skillset, buffs, accessory
+    private int mp; // Mana
+    private int pos; // Position on the battlefield
+
+    private List<BuffInstance> buffInstances = new ArrayList<>();
 
     public Combatant(CombatantType cmbType, int lvl, Stats stats, Skill[] skills, int mp, int pos) {
         this.cmbType = cmbType;
@@ -60,5 +66,34 @@ public class Combatant {
 
     public int getPos() {
         return pos;
+    }
+
+    public void setBuffInstances(List<BuffInstance> buffInstances) {
+        this.buffInstances = buffInstances;
+    }
+
+    public List<BuffInstance> getBuffInstances() {
+        return buffInstances;
+    }
+
+    public void addBuffInstance(BuffInstance buffInstance) {
+        buffInstances.add(buffInstance);
+    }
+
+    public void decrementBuffTurns() {
+        for(int i = buffInstances.size() - 1; i >= 0; i--) {
+            BuffInstance buffInstance = buffInstances.get(i);
+            int turns = buffInstance.getTurns();
+            if(turns >= 2) {
+                buffInstance.setTurns(turns - 1);
+            } else {
+                for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
+                    for(int j = 1; j <= buffInstance.getStacks(); j++) { // Remove all stacks
+                        buffEffect.onRemove(this);
+                    }
+                }
+                buffInstances.remove(buffInstance);
+            }
+        }
     }
 }

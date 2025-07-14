@@ -1,6 +1,6 @@
 package io.github.celosia.sys.battle;
 
-// A set of statsL
+// A set of stats
 public class Stats {
 
     int hp;  // Health
@@ -75,6 +75,47 @@ public class Stats {
 
     public int getAgi() {
         return agi;
+    }
+
+    public void setStat(Stat stat, int set) {
+        switch(stat) {
+            case STR:
+                this.str = set;
+                break;
+            case MAG:
+                this.mag = set;
+                break;
+            case FTH:
+                this.fth = set;
+                break;
+            case AMR:
+                this.amr = set;
+                break;
+            case RES:
+                this.res = set;
+                break;
+            case AGI:
+                this.agi = set;
+                break;
+        }
+    }
+
+    public int getStat(Stat stat) {
+        switch(stat) {
+            case STR:
+                return str;
+            case MAG:
+                return mag;
+            case FTH:
+                return fth;
+            case AMR:
+                return amr;
+            case RES:
+                return res;
+            case AGI:
+                return agi;
+        }
+        return -1;
     }
 
     public Stats getRealStats(int lvl) {
