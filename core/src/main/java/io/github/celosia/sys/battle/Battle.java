@@ -7,10 +7,10 @@ import java.util.List;
 // 2 Teams facing each other and a global field
 public class Battle {
 
-    int turn;
+    private int turn;
 
-    Team playerTeam;
-    Team opponentTeam;
+    private final Team playerTeam;
+    private final Team opponentTeam;
 
     // todo field effects
 
@@ -40,9 +40,18 @@ public class Battle {
     public List<Combatant> getAllCombatants() {
         Combatant[] cmbsPlayer = playerTeam.getCmbs();
         Combatant[] cmbsOpponent = opponentTeam.getCmbs();
-        List<Combatant> cmbsAll = new ArrayList<Combatant>();
+        List<Combatant> cmbsAll = new ArrayList<>();
         Collections.addAll(cmbsAll, cmbsPlayer);
         Collections.addAll(cmbsAll, cmbsOpponent);
         return cmbsAll;
+    }
+
+    public List<BuffInstance> getAllBuffInstances() {
+        List<BuffInstance> buffInstances = new ArrayList<>();
+        List<Combatant> cmbsAll = getAllCombatants();
+        for(Combatant cmb : cmbsAll) {
+            Collections.addAll(buffInstances, cmb.getBuffInstances().toArray(new BuffInstance[0]));
+        }
+        return buffInstances;
     }
 }

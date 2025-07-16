@@ -3,13 +3,13 @@ package io.github.celosia.sys.battle;
 // A set of stats
 public class Stats {
 
-    int hp;  // Health
-    int str; // Strength
-    int mag; // Magic
-    int fth; // Faith
-    int amr; // Armor
-    int res; // Resistance
-    int agi; // Agility
+    private int hp;  // Health
+    private int str; // Strength
+    private int mag; // Magic
+    private int fth; // Faith
+    private int amr; // Armor
+    private int res; // Resistance
+    private int agi; // Agility
 
     public Stats(int hp, int str, int mag, int fth, int amr, int res, int agi) {
         this.hp = hp;

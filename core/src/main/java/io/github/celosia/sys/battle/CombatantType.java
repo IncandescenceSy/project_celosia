@@ -9,7 +9,6 @@ public class CombatantType {
     Stats statsBase;
 
     // Affinities
-    // todo clean up
     int affIgnis;
     int affGlacies;
     int affFulgur;
@@ -73,5 +72,9 @@ public class CombatantType {
 
     public int getAffMalum() {
         return affMalum;
+    }
+
+    public int[] getAffs() {
+        return new int[]{affIgnis, affGlacies, affFulgur, affVentus, affTerra, affLux, affMalum};
     }
 }

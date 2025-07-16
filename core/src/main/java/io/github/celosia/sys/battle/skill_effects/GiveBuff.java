@@ -6,9 +6,9 @@ import java.util.List;
 
 public class GiveBuff implements SkillEffect {
 
-    private Buff buff;
-    private int turns;
-    private int stacks;
+    private final Buff buff;
+    private final int turns;
+    private final int stacks;
 
     public GiveBuff(Buff buff, int turns, int stacks) {
         this.buff = buff;
@@ -25,7 +25,7 @@ public class GiveBuff implements SkillEffect {
     }
 
     @Override
-    public void apply(Combatant self, Combatant target) {
+    public boolean apply(Combatant self, Combatant target) {
         List<BuffInstance> buffInstances = target.getBuffInstances();
         boolean hasBuff = false;
         for(BuffInstance buffInstance : buffInstances) {
@@ -59,5 +59,7 @@ public class GiveBuff implements SkillEffect {
                 }
             }
         }
+
+        return true;
     }
 }

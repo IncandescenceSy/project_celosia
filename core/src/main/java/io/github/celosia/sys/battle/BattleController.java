@@ -29,8 +29,9 @@ public class BattleController {
     static List<SkillTargeting> moves = new ArrayList<SkillTargeting>();
 
     // temp
-    static Skill[] skills = new Skill[]{Skill.FIREBALL, Skill.HEAL, Skill.TARUKAJA, Skill.RAKUNDA};
-    static Skill[] skills2 = new Skill[]{Skill.FIREBALL, Skill.ICE_BEAM, Skill.THUNDERBOLT, Skill.RAKUNDA};
+    static Skill[] skills = new Skill[]{Skill.FIREBALL, Skill.HEAL, Skill.ATTACK_UP, Skill.ATTACK_DOWN};
+    static Skill[] skills2 = new Skill[]{Skill.FIREBALL, Skill.ICE_BEAM, Skill.THUNDERBOLT, Skill.DEFENSE_DOWN};
+    static Skill[] skills3 = new Skill[]{Skill.DEFENSE_UP, Skill.AGILITY_UP, Skill.AGILITY_DOWN, Skill.FAITH_DOWN};
 
     static int selectingMove = 0; // Who's currently selecting their move. 0-4 = player; 5-9 = opponent; 10 = moves are executing
     static int usingMove = 0; // Who's currently using their move
@@ -52,27 +53,30 @@ public class BattleController {
     static int index = 5;
     static float cooldown = 0f;
 
+    // Affinity MP mult
+    static final float[] affMp = {1.7f, 1.5f, 1.3f, 1.2f, 1.1f, 1f, 0.95f, 0.9f, 0.85f, 0.8f, 0.75f};
+
     // Debug
     static TypingLabel battleLog = new TypingLabel("", FontType.KORURI.getSize20());
 
     public static void create(Stage stage) {
         // Setup teams (temp)
         Stats johnyStats = new Stats(100, 100, 100, 100, 100, 100, 100);
-        CombatantType johny = new CombatantType("Johny", johnyStats, 0, 0, 0, 0 ,0, 0, 0);
+        CombatantType johny = new CombatantType("Johny", johnyStats, 5, 0, 0, 0 ,0, 0, 0);
         Stats jerryStats = new Stats(100, 100, 100, 100, 100, 100, 115);
-        CombatantType jerry = new CombatantType("Jerry", jerryStats, 0, 0, 0, 0 ,0, 0, 0);
-        CombatantType james = new CombatantType("James", jerryStats, 0, 0, 0, 0 ,0, 0, 0);
-        CombatantType jacob = new CombatantType("Jacob", johnyStats, 0, 0, 0, 0 ,0, 0, 0);
-        CombatantType julia = new CombatantType("Julia", johnyStats, 0, 0, 0, 0 ,0, 0, 0);
-        CombatantType jude = new CombatantType("Jude", jerryStats, 0, 0, 0, 0 ,0, 0, 0);
-        CombatantType josephine = new CombatantType("Josephine", jerryStats, 0, 0, 0, 0 ,0, 0, 0);
-        CombatantType julian = new CombatantType("Julian", johnyStats, 0, 0, 0, 0 ,0, 0, 0);
-        CombatantType jack = new CombatantType("Jack", johnyStats, 0, 0, 0, 0 ,0, 0, 0);
-        CombatantType jane = new CombatantType("Jane", jerryStats, 0, 0, 0, 0 ,0, 0, 0);
+        CombatantType jerry = new CombatantType("Jerry", jerryStats, 5, -4, 0, 0 ,0, 0, 0);
+        CombatantType james = new CombatantType("James", jerryStats, -4, 5, 0, 0 ,0, 0, 0);
+        CombatantType jacob = new CombatantType("Jacob", johnyStats, 0, 0, 5, -4 ,0, 0, 0);
+        CombatantType julia = new CombatantType("Julia", johnyStats, 0, 0, -4, 5 ,0, 0, 0);
+        CombatantType jude = new CombatantType("Jude", jerryStats, 0, 0, -3, -3 ,5, 0, 0);
+        CombatantType josephine = new CombatantType("Josephine", jerryStats, 0, 0, 0, 0 ,0, 5, -4);
+        CombatantType julian = new CombatantType("Julian", johnyStats, 0, 0, 0, 0 ,0, -4, 5);
+        CombatantType jack = new CombatantType("Jack", johnyStats, 3, -2, 0, 0 ,-3, 3, 0);
+        CombatantType jane = new CombatantType("Jane", jerryStats, -2, 3, -2, 3 ,0, 0, -1);
 
         Team player = new Team(new Combatant[]{new Combatant(johny, 95, johnyStats.getRealStats(95), skills, 20, 0),
             new Combatant(james, 94, jerryStats.getRealStats(94), skills2, 20, 1),
-            new Combatant(julia, 93, johnyStats.getRealStats(93), skills, 20, 2),
+            new Combatant(julia, 93, johnyStats.getRealStats(93), skills3, 20, 2),
             new Combatant(josephine, 92, jerryStats.getRealStats(92), skills2, 20, 3),
             new Combatant(jack, 91, johnyStats.getRealStats(91), skills, 20, 4)});
 
@@ -186,17 +190,25 @@ public class BattleController {
                         movesL.get(i).setColor(Color.WHITE);
                     }
 
-                    // Increase MP and Bloom
-                    // Decrement buff counters and remove timed-out buffs
                     for (Combatant cmb : battle.getAllCombatants()) {
+                        // Increase MP
                         cmb.setMp(cmb.getMp() + 10);
+
+                        // Apply buff turn end effects
+                        for(BuffInstance buffInstance : cmb.getBuffInstances()) {
+                            for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
+                                buffEffect.onTurnEnd(cmb);
+                            }
+                        }
+
+                        // Decrement buff turns and remove expired buffs
                         cmb.decrementBuffTurns();
+                        cmb.decrementStageTurns();
                     }
 
+                    // Increase bloom
                     battle.getPlayerTeam().setBloom(battle.getPlayerTeam().getBloom() + 5);
                     battle.getOpponentTeam().setBloom(battle.getOpponentTeam().getBloom() + 5);
-
-                    // todo end of turn effects + buff counters
 
                     // todo check if battle is over
 
@@ -205,8 +217,8 @@ public class BattleController {
 
                 // Sort moves by Agi
                 moves.sort((a, b) -> Integer.compare(
-                    b.getSelf().getStatsCur().getAgi(),
-                    a.getSelf().getStatsCur().getAgi()
+                    b.getSelf().getAgiWithStage(),
+                    a.getSelf().getAgiWithStage()
                 ));
 
                 // The next move plays out
@@ -216,15 +228,24 @@ public class BattleController {
                     // Execute move
                     if(move.getSkill().isBloom()) {
                         // todo
-                    } else {
-                        move.getSelf().setMp(move.getSelf().getMp() - move.getSkill().getCost());
+                    } else { // Use MP
+                        Element element = move.getSkill().getElement();
+                        move.getSelf().setMp(move.getSelf().getMp() - (int) (move.getSkill().getCost() * ((element == Element.VIS) ? 1 : affMp[move.getSelf().getCmbType().getAffs()[element.ordinal() - 1] + 5])));
                     }
 
+                    // Apply all SkillEffects
                     for (SkillEffect effect : move.getSkill().getSkillEffects()) {
-                        effect.apply(move.getSelf(), move.getTarget());
+                        if(!effect.apply(move.getSelf(), move.getTarget())) break; // Stop executing Skill if any SkillEffect fails
                     }
 
-                    // Move stat display for currently acting combatant
+                    // Apply on-skill use buffs
+                    for(BuffInstance buffInstance : move.getSelf().getBuffInstances()) {
+                        for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
+                            buffEffect.onUseSkill(move.getSelf(), move.getTarget());
+                        }
+                    }
+
+                    // Move stat display for currently acting combatant (temp)
                     for(int i = 0; i < 10; i++) {
                         statsL.get(i).setX(((move.getSelf().getPos()) == i) ? (i >= 5) ? World.WIDTH - 300 : 200 : (i >= 5) ? World.WIDTH - 250 : 150);
                         if(move.getSelf().getPos() == i) {
@@ -294,7 +315,7 @@ public class BattleController {
 
             // Move selected
             if(Gdx.input.isKeyJustPressed(Keybinds.CONFIRM.getKey())) {
-                selectedSkill = skills[index];
+                selectedSkill = battle.getPlayerTeam().getCmbs()[selectingMove].getSkills()[index];
                 setTextIfChanged(movesL.get(selectingMove), "Skill: " + selectedSkill.getName());
 
                 // Reset for next time
@@ -321,14 +342,22 @@ public class BattleController {
             Combatant cmb = (i >= 5) ? battle.getOpponentTeam().getCmbs()[i - 5] : battle.getPlayerTeam().getCmbs()[i]; // todo can use battle.getAllCmbs
             if (cmb != null) {
                 StringBuilder text = new StringBuilder(cmb.getCmbType().getName() + "\nHP: " + cmb.getStatsCur().getHp() + "/" + cmb.getStatsDefault().getHp() + "\nMP: " + cmb.getMp() +
-                    "/100\nStr: " + cmb.getStatsCur().getStr() + "/" + cmb.getStatsDefault().getStr() + "\nMag:" + cmb.getStatsCur().getMag() + "/" + cmb.getStatsDefault().getMag() +
-                    "\nAmr: " + cmb.getStatsCur().getAmr() + "/" + cmb.getStatsDefault().getAmr() + "\nRes: " + cmb.getStatsCur().getRes() + "/" + cmb.getStatsDefault().getRes());
+                    "/100\nStr: " + cmb.getStrWithStage() + "/" + cmb.getStatsDefault().getStr() + "\nMag:" + cmb.getMagWithStage() + "/" + cmb.getStatsDefault().getMag() +
+                    "\nAmr: " + cmb.getAmrWithStage() + "/" + cmb.getStatsDefault().getAmr() + "\nRes: " + cmb.getResWithStage() + "/" + cmb.getStatsDefault().getRes() +"\n");
 
+                // List stage changes
+                for(StageType stageType : StageType.values()) {
+                    int stage = cmb.getStage(stageType);
+                    if(stage != 0) {
+                        text.append(stageType.getName()).append((stage >= 1) ? "+" : "").append(stage).append("(").append(cmb.getStageTurns(stageType)).append(") ");
+                    }
+                }
+
+                // List buffs
                 List<BuffInstance> buffInstances = cmb.getBuffInstances();
                 if(!buffInstances.isEmpty()) {
-                    text.append("\nBuffs: ");
                     for (BuffInstance buffInstance : buffInstances) {
-                        text.append(buffInstance.getBuff().getName() + "x" + buffInstance.getStacks() + "(" + buffInstance.getTurns() + ")  ");
+                        text.append(buffInstance.getBuff().getName()).append("x").append(buffInstance.getStacks()).append("(").append(buffInstance.getTurns()).append(") ");
                     }
                 }
                 setTextIfChanged(statsL.get(i), text.toString());
@@ -340,8 +369,8 @@ public class BattleController {
         List<Combatant> cmbsAll = battle.getAllCombatants();
 
         cmbsAll.sort((a, b) -> Integer.compare(
-            b.getStatsCur().getAgi(),
-            a.getStatsCur().getAgi()
+            b.getAgiWithStage(),
+            a.getAgiWithStage()
         ));
 
         StringBuilder queueText = new StringBuilder().append("Queue: ");
