@@ -5,15 +5,15 @@ import io.github.celosia.sys.battle.buff_effects.ChangeMult;
 import io.github.celosia.sys.battle.buff_effects.ChangeStat;
 import io.github.celosia.sys.battle.buff_effects.Damage;
 
-// todo: stacking, ailments, explicitly define whether pos/neg
 public enum Buff {
     // Basic
     DEFEND("Defend", "todo", BuffType.BUFF, 1, new ChangeDefend(0.2f)),
-    PROTECT("Protect", "todo", BuffType.BUFF, 1, new ChangeMult(Mult.DEF, -0.9f)),
-    // Blossom
+
+    // Decreases multDef by way more than necessary so that (multDef < -500f) can be used as a check for Protect
+    PROTECT("Protect", "todo", BuffType.BUFF, 1, new ChangeMult(Mult.DEF, -1000f)),
 
     // Common ailments (elemental + poison)
-    // todo: affinity conveys immunity to these
+    // todo: affinity should convey immunity to these
     POISON("Poison", "todo", BuffType.DEBUFF, 9, new Damage(0.03f)),
     BURN("Burn", "todo", BuffType.DEBUFF, 9, new Damage(0.02f), new ChangeStat(Stat.STR, -0.05f)),
     FROSTBITE("Frostbite", "todo", BuffType.DEBUFF, 9, new Damage(0.02f), new ChangeStat(Stat.MAG, -0.05f)),

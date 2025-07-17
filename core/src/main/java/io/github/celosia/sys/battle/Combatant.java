@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.MathUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 // Species and current stats
 public class Combatant {
@@ -30,7 +32,7 @@ public class Combatant {
     private int stageAgi;
     private int stageAgiTurns;
 
-    // Multiplies damage when attacking/defending
+    // Multiplies damage dealt/taken
     private float multAtk;
     private float multDef;
 
@@ -363,6 +365,8 @@ public class Combatant {
 
     // Damage Combatant, taking into account Defend and Barrier. Returns false if HP was lowered
     public boolean damage(int dmg, boolean pierce) {
+        dmg *= Math.max(multDef, 0.1f);
+
         if(!pierce) { // Pierce skips Defend and Barrier
             if (defend > 0 && dmg > 0) { // There's Defend and dmg
                 if (defend > dmg) { // Only hit Defend
@@ -389,7 +393,7 @@ public class Combatant {
         // Lower HP
         this.getStatsCur().setHp(MathUtils.clamp(this.getStatsCur().getHp() - dmg, 0, this.getStatsDefault().getHp()));
 
-        return dmg > 0;
+        return multDef > -500f && dmg > 0; // Target isn't Protected and lost more than 0 HP
     }
 
     public boolean damage(int dmg) {

@@ -30,6 +30,6 @@ public class Damage implements BuffEffect {
 
     @Override
     public void onTurnEnd(Combatant self) {
-        self.damage((int) (self.getStatsDefault().getHp() * dmg * self.getMultDef()));
+        self.damage((int) (self.getStatsDefault().getHp() * dmg));
     }
 }

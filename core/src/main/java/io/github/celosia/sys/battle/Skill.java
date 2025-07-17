@@ -6,13 +6,14 @@ import io.github.celosia.sys.battle.skill_effects.Damage;
 import io.github.celosia.sys.battle.skill_effects.GiveBuff;
 
 // Skills (any action that is attributed to a Combatant and has impact on the battle)
-// todo lang, display element/type even for non-damaging skills, explicitly define which are "for allies" and which are "for opponents" for autotargeting
+// todo lang, functional targeting, display type even for non-damaging skills, explicitly define which are "for allies" and which are "for opponents" for autotargeting and AI
 public enum Skill {
     // Basic
-    NOTHING("Nothing", "", Element.VIS, Targeting.SELF, 0),
+    NOTHING("Do Nothing", "", Element.VIS, Targeting.SELF, 0),
     ATTACK("Attack", "", Element.VIS, Targeting.OTHER_1R, 0, new Damage(SkillType.STR, Element.VIS, 55)),
-    DEFEND("Defend", "", Element.VIS, Targeting.SELF, 0, 3, new GiveBuff(Buff.DEFEND), new ChangeMP(10)),
-    PROTECT("Protect", "", Element.VIS, Targeting.SELF, 4, 3, new GiveBuff(Buff.PROTECT)),
+    DEFEND("Defend", "", Element.VIS, Targeting.SELF, 0, 3, new GiveBuff(Buff.DEFEND), new ChangeMP(8)),
+    PROTECT("Protect", "", Element.VIS, Targeting.SELF, 4, 3, new GiveBuff(Buff.PROTECT)), // todo disallow using twice in a row
+    // todo Blossom
 
     // Stages
     ATTACK_UP("Attack Up", "", Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, new ChangeStage(StageType.ATK, 3, 5)),
@@ -34,16 +35,18 @@ public enum Skill {
     AGILITY_DOWN_GROUP("Group Agility Down", "", Element.VIS, Targeting.COLUMN_OF_3_1R, 12, new ChangeStage(StageType.AGI, -3, 3)),
 
     // Resists
+    // todo
 
     // Breaks
+    // todo
 
     // Heals
-    HEAL("Heal", "", Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, new Damage(SkillType.FTH, Element.VIS, -120, true)),
-    HEAL_GROUP("Group Heal", "", Element.VIS, Targeting.COLUMN_OF_3_1R, 12, new Damage(SkillType.FTH, Element.VIS, -100, true)),
+    HEAL("Heal", "", Element.VIS, Targeting.OTHER_1R_OR_SELF, 6, new Damage(SkillType.FTH, Element.VIS, -160, true)),
+    HEAL_GROUP("Group Heal", "", Element.VIS, Targeting.COLUMN_OF_3_1R, 18, new Damage(SkillType.FTH, Element.VIS, -140, true)),
 
     // Barriers
-    BARRIER("Barrier", "", Element.VIS, Targeting.OTHER_1R_OR_SELF, 5, new Damage(SkillType.FTH, Element.VIS, 100, 3)),
-    BARRIER_GROUP("Group Barrier", "", Element.VIS, Targeting.COLUMN_OF_3_1R, 15, new Damage(SkillType.FTH, Element.VIS, 85, 3)),
+    BARRIER("Barrier", "", Element.VIS, Targeting.OTHER_1R_OR_SELF, 8, new Damage(SkillType.FTH, Element.VIS, 140, 5)),
+    BARRIER_GROUP("Group Barrier", "", Element.VIS, Targeting.COLUMN_OF_3_1R, 24, new Damage(SkillType.FTH, Element.VIS, 120, 3)),
 
     // Common skills
     // Ignis

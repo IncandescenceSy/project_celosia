@@ -68,7 +68,8 @@ public class Damage implements SkillEffect {
 
         float ratio = atk / def;
 
-        int dmg = (int) ((type == SkillType.FTH) ? ((float) self.getFthWithStage() / 50) * pow : (ratio * (pow * 30) * 6 * affMultAtk * affMultDef) * Math.max(self.getMultAtk(), 0.1f) * Math.max(target.getMultDef(), 0.1f));
+        // todo does all the multiplication and shit apply as expected?
+        int dmg = (int) ((type == SkillType.FTH) ? ((float) self.getFthWithStage() / 50) * pow : (ratio * (pow * 30) * 6 * affMultAtk) * affMultDef * Math.max(self.getMultAtk(), 0.1f));
 
         //l.log(Level.INFO, self.getCmbType().getName() + " uses a skill on" + target.getCmbType().getName() + "; atk: " + atk + ", def: " + def + ", ratio: " + ratio + ", affMultAtk: " + affMultAtk + ", affMultDef: " + affMultDef + ", dmg: " + dmg + ", test: " + test + ", test2: " + test2);
 
