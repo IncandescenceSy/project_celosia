@@ -1,6 +1,5 @@
 package io.github.celosia.sys.battle.skill_effects;
 
-import com.badlogic.gdx.math.MathUtils;
 import io.github.celosia.sys.battle.Combatant;
 import io.github.celosia.sys.battle.Element;
 import io.github.celosia.sys.battle.SkillEffect;
@@ -48,9 +47,6 @@ public class Damage implements SkillEffect {
         float atk = -1f;
         float def = -1f;
 
-        float multAtk = self.getMultAtk();
-        float multDef = target.getMultDef();
-
         if(type == SkillType.STR) {
             atk = Math.max(1, self.getStrWithStage());
             def = Math.max(1, target.getAmrWithStage());
@@ -70,14 +66,14 @@ public class Damage implements SkillEffect {
             affMultDef = Math.max(affDef[target.getCmbType().getAffs()[element.ordinal() - 1] + 5], (pierce) ? 1f : 0f);
         }
 
-        float ratio = (atk * multAtk) / (def * multDef);
+        float ratio = atk / def;
 
-        int dmg = (int) ((type == SkillType.FTH) ? ((float) self.getFthWithStage() / 50) * pow : (ratio * (pow * 30) * 6 * affMultAtk * affMultDef));
+        int dmg = (int) ((type == SkillType.FTH) ? ((float) self.getFthWithStage() / 50) * pow : (ratio * (pow * 30) * 6 * affMultAtk * affMultDef) * Math.max(self.getMultAtk(), 0.1f) * Math.max(target.getMultDef(), 0.1f));
 
         //l.log(Level.INFO, self.getCmbType().getName() + " uses a skill on" + target.getCmbType().getName() + "; atk: " + atk + ", def: " + def + ", ratio: " + ratio + ", affMultAtk: " + affMultAtk + ", affMultDef: " + affMultDef + ", dmg: " + dmg + ", test: " + test + ", test2: " + test2);
 
         boolean success;
-        // todo pierce skills (ignore barrier, defend, and +aff)
+
         if(barrierTurns > 0) { // Add barrier (barrier + defend cannot exceed max HP)
             int maxHp = target.getStatsDefault().getHp();
             target.setBarrier((target.getBarrier() + target.getDefend() + dmg > maxHp) ? maxHp : target.getBarrier() + dmg);

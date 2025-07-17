@@ -1,6 +1,7 @@
 package io.github.celosia.sys.battle;
 
 import io.github.celosia.sys.battle.buff_effects.ChangeDefend;
+import io.github.celosia.sys.battle.buff_effects.ChangeMult;
 import io.github.celosia.sys.battle.buff_effects.ChangeStat;
 import io.github.celosia.sys.battle.buff_effects.Damage;
 
@@ -8,6 +9,8 @@ import io.github.celosia.sys.battle.buff_effects.Damage;
 public enum Buff {
     // Basic
     DEFEND("Defend", "todo", BuffType.BUFF, 1, new ChangeDefend(0.2f)),
+    PROTECT("Protect", "todo", BuffType.BUFF, 1, new ChangeMult(Mult.DEF, -0.9f)),
+    // Blossom
 
     // Common ailments (elemental + poison)
     // todo: affinity conveys immunity to these

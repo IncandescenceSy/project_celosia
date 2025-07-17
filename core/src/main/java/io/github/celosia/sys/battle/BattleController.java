@@ -30,7 +30,7 @@ public class BattleController {
 
     // temp
     static Skill[] skills = new Skill[]{Skill.FIREBALL, Skill.HEAL, Skill.ATTACK_UP, Skill.THUNDERBOLT};
-    static Skill[] skills2 = new Skill[]{Skill.FIREBALL, Skill.ICE_BEAM, Skill.BARRIER, Skill.DEFENSE_DOWN};
+    static Skill[] skills2 = new Skill[]{Skill.FIREBALL, Skill.ICE_BEAM, Skill.BARRIER, Skill.PROTECT};
     static Skill[] skills3 = new Skill[]{Skill.THUNDERBOLT, Skill.BARRIER, Skill.ZEPHYR_LANCE, Skill.JET_STREAM};
 
     static int selectingMove = 0; // Who's currently selecting their move. 0-4 = player; 5-9 = opponent; 10 = moves are executing
