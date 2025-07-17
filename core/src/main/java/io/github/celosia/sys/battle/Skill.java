@@ -32,9 +32,12 @@ public enum Skill {
     AGILITY_DOWN_GROUP("Group Agility Down", Element.VIS, Targeting.COLUMN_OF_3_1R, 12, "", new ChangeStage(StageType.AGI, -3, 3)),
 
     // Heals
-    HEAL("Heal", Element.VIS, Targeting.OTHER_2R, 8, "", new Damage(SkillType.FTH, Element.VIS, -100)),
+    HEAL("Heal", Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, "", new Damage(SkillType.FTH, Element.VIS, -120)),
+    HEAL_GROUP("Group Heal", Element.VIS, Targeting.COLUMN_OF_3_1R, 12, "", new Damage(SkillType.FTH, Element.VIS, -100)),
 
     // Barriers
+    BARRIER("Barrier", Element.VIS, Targeting.OTHER_1R_OR_SELF, 5, "", new Damage(SkillType.FTH, Element.VIS, 100, true)),
+    BARRIER_GROUP("Group Barrier", Element.VIS, Targeting.COLUMN_OF_3_1R, 15, "", new Damage(SkillType.FTH, Element.VIS, 85, true)),
 
     // Resists
 
@@ -52,7 +55,7 @@ public enum Skill {
 
     // Common bloom skills
     // Glacies
-    ICE_AGE("Ice Age \uD83C\uDFF5", Element.GLACIES, Targeting.OTHER_2R, 60, "", true, new Damage(SkillType.MAG, Element.GLACIES, 260), new GiveBuff(Buff.FROSTBITE, 3, 3));
+    ICE_AGE("Ice Age", Element.GLACIES, Targeting.OTHER_2R, 60, "", true, new Damage(SkillType.MAG, Element.GLACIES, 260), new GiveBuff(Buff.FROSTBITE, 3, 3));
 
     private final String name;
     private final Element element;

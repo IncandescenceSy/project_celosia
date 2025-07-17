@@ -119,6 +119,6 @@ public class Stats {
     }
 
     public Stats getRealStats(int lvl) {
-        return new Stats(hp * lvl, str * lvl, mag * lvl, fth * lvl, amr * lvl, res * lvl, agi * lvl);
+        return new Stats(hp * lvl * 10, str * lvl, mag * lvl, fth * lvl, amr * lvl, res * lvl, agi * lvl);
     }
 }

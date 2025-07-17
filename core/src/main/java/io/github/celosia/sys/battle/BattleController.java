@@ -26,12 +26,12 @@ public class BattleController {
     static float wait = 0f;
 
     // Actions being made this turn
-    static List<SkillTargeting> moves = new ArrayList<SkillTargeting>();
+    static List<SkillTargeting> moves = new ArrayList<>();
 
     // temp
     static Skill[] skills = new Skill[]{Skill.FIREBALL, Skill.HEAL, Skill.ATTACK_UP, Skill.ATTACK_DOWN};
-    static Skill[] skills2 = new Skill[]{Skill.FIREBALL, Skill.ICE_BEAM, Skill.THUNDERBOLT, Skill.DEFENSE_DOWN};
-    static Skill[] skills3 = new Skill[]{Skill.DEFENSE_UP, Skill.AGILITY_UP, Skill.AGILITY_DOWN, Skill.FAITH_DOWN};
+    static Skill[] skills2 = new Skill[]{Skill.FIREBALL, Skill.ICE_BEAM, Skill.BARRIER, Skill.DEFENSE_DOWN};
+    static Skill[] skills3 = new Skill[]{Skill.THUNDERBOLT, Skill.BARRIER, Skill.AGILITY_DOWN, Skill.FAITH_DOWN};
 
     static int selectingMove = 0; // Who's currently selecting their move. 0-4 = player; 5-9 = opponent; 10 = moves are executing
     static int usingMove = 0; // Who's currently using their move
@@ -341,7 +341,7 @@ public class BattleController {
         for (int i = 0; i < 10; i++) {
             Combatant cmb = (i >= 5) ? battle.getOpponentTeam().getCmbs()[i - 5] : battle.getPlayerTeam().getCmbs()[i]; // todo can use battle.getAllCmbs
             if (cmb != null) {
-                StringBuilder text = new StringBuilder(cmb.getCmbType().getName() + "\nHP: " + cmb.getStatsCur().getHp() + "/" + cmb.getStatsDefault().getHp() + "\nMP: " + cmb.getMp() +
+                StringBuilder text = new StringBuilder(cmb.getCmbType().getName() + "\nHP: " + cmb.getStatsCur().getHp() + "(" + cmb.getBarrier() + ")/" + cmb.getStatsDefault().getHp() + "\nMP: " + cmb.getMp() +
                     "/100\nStr: " + cmb.getStrWithStage() + "/" + cmb.getStatsDefault().getStr() + "\nMag:" + cmb.getMagWithStage() + "/" + cmb.getStatsDefault().getMag() +
                     "\nAmr: " + cmb.getAmrWithStage() + "/" + cmb.getStatsDefault().getAmr() + "\nRes: " + cmb.getResWithStage() + "/" + cmb.getStatsDefault().getRes() +"\n");
 

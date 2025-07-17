@@ -30,6 +30,13 @@ public class Combatant {
     private int stageAgi;
     private int stageAgiTurns;
 
+    // Atk/Def multipliers
+    private float multAtk;
+    private float multDef;
+
+    // Barrier
+    private int barrier;
+
     private List<BuffInstance> buffInstances = new ArrayList<>();
 
     public Combatant(CombatantType cmbType, int lvl, Stats stats, Skill[] skills, int mp, int pos) {
@@ -48,6 +55,9 @@ public class Combatant {
         this.stageFthTurns = 0;
         this.stageAgi = 0;
         this.stageAgiTurns = 0;
+        this.multAtk = 1;
+        this.multDef = 1;
+        this.barrier = 0;
     }
 
     public CombatantType getCmbType() {
@@ -205,49 +215,50 @@ public class Combatant {
     }
 
     public int getStrWithStage() {
-        return this.getStatsCur().getStr() + (int) (this.getStatsDefault().getStr() * ((float) this.getStageAtk() / 10));
+        return this.getStatsCur().getStr() + (int) (this.getStatsDefault().getStr() * (((float) this.stageAtk / 10) / ((this.stageAtk < 0) ? 2 : 1)));
     }
 
     public int getMagWithStage() {
-        return this.getStatsCur().getMag() + (int) (this.getStatsDefault().getMag() * ((float) this.getStageAtk() / 10));
+        return this.getStatsCur().getMag() + (int) (this.getStatsDefault().getMag() * (((float) this.stageAtk / 10) / ((this.stageAtk < 0) ? 2 : 1)));
     }
 
     public int getFthWithStage() {
-        return this.getStatsCur().getFth() + (int) (this.getStatsDefault().getFth() * ((float) this.getStageFth() / 10));
+        return this.getStatsCur().getFth() + (int) (this.getStatsDefault().getFth() * (((float) this.stageFth / 10) / ((this.stageFth < 0) ? 2 : 1)));
     }
 
     public int getAmrWithStage() {
-        return this.getStatsCur().getAmr() + (int) (this.getStatsDefault().getAmr() * ((float) this.getStageDef() / 10));
+        return this.getStatsCur().getAmr() + (int) (this.getStatsDefault().getAmr() * (((float) this.stageDef / 10) / ((this.stageDef < 0) ? 2 : 1)));
     }
 
     public int getResWithStage() {
-        return this.getStatsCur().getRes() + (int) (this.getStatsDefault().getRes() * ((float) this.getStageDef() / 10));
+        return this.getStatsCur().getRes() + (int) (this.getStatsDefault().getRes() * (((float) this.stageDef / 10) / ((this.stageDef < 0) ? 2 : 1)));
     }
 
     public int getAgiWithStage() {
-        return this.getStatsCur().getAgi() + (int) (this.getStatsDefault().getAgi() * ((float) this.getStageAgi() / 10));
+        return this.getStatsCur().getAgi() + (int) (this.getStatsDefault().getAgi() * (((float) this.stageAgi / 10) / ((this.stageAgi < 0) ? 2 : 1)));
     }
 
     public int getStatWithStage(Stat stat) {
         switch(stat) {
             case STR:
-                return this.getStatsCur().getStr() + (int) (this.getStatsDefault().getStr() * ((float) this.getStageAtk() / 10));
+                return this.getStatsCur().getStr() + (int) (this.getStatsDefault().getStr() * (((float) this.stageAtk / 10) / ((this.stageAtk < 0) ? 2 : 1)));
             case MAG:
-                return this.getStatsCur().getMag() + (int) (this.getStatsDefault().getMag() * ((float) this.getStageAtk() / 10));
+                return this.getStatsCur().getMag() + (int) (this.getStatsDefault().getMag() * (((float) this.stageAtk / 10) / ((this.stageAtk < 0) ? 2 : 1)));
             case FTH:
-                return this.getStatsCur().getFth() + (int) (this.getStatsDefault().getFth() * ((float) this.getStageFth() / 10));
+                return this.getStatsCur().getFth() + (int) (this.getStatsDefault().getFth() * (((float) this.stageFth / 10) / ((this.stageFth < 0) ? 2 : 1)));
             case AMR:
-                return this.getStatsCur().getAmr() + (int) (this.getStatsDefault().getAmr() * ((float) this.getStageDef() / 10));
+                return this.getStatsCur().getAmr() + (int) (this.getStatsDefault().getAmr() * (((float) this.stageDef / 10) / ((this.stageDef < 0) ? 2 : 1)));
             case RES:
-                return this.getStatsCur().getRes() + (int) (this.getStatsDefault().getRes() * ((float) this.getStageDef() / 10));
+                return this.getStatsCur().getRes() + (int) (this.getStatsDefault().getRes() * (((float) this.stageDef / 10) / ((this.stageDef < 0) ? 2 : 1)));
             case AGI:
-                return this.getStatsCur().getAgi() + (int) (this.getStatsDefault().getAgi() * ((float) this.getStageAgi() / 10));
+                return this.getStatsCur().getAgi() + (int) (this.getStatsDefault().getAgi() * (((float) this.stageAgi / 10) / ((this.stageAgi < 0) ? 2 : 1)));
         }
         return -1;
     }
 
     public void decrementStageTurns() {
-        if(--this.stageAtkTurns <= 0) { // Decrements turn counter and checks if it's at or below 0 (it's ok if it drops below 0 because it'll get set back up when stages are changed)
+        // Decrements turn counter and checks if it's at or below 0 (it's ok if it drops below 0 because it'll get set back up when stages are changed)
+        if(--this.stageAtkTurns <= 0) {
             this.stageAtk = 0; // Remove stages
         }
         if(--this.stageDefTurns <= 0) {
@@ -259,6 +270,30 @@ public class Combatant {
         if(--this.stageAgiTurns <= 0) {
             this.stageAgi = 0;
         }
+    }
+
+    public void setMultAtk(float multAtk) {
+        this.multAtk = multAtk;
+    }
+
+    public float getMultAtk() {
+        return multAtk;
+    }
+
+    public void setMultDef(float multDef) {
+        this.multDef = multDef;
+    }
+
+    public float getMultDef() {
+        return multDef;
+    }
+
+    public void setBarrier(int barrier) {
+        this.barrier = barrier;
+    }
+
+    public int getBarrier() {
+        return barrier;
     }
 
     public void setBuffInstances(List<BuffInstance> buffInstances) {
