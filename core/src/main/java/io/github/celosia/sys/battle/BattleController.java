@@ -29,9 +29,9 @@ public class BattleController {
     static List<SkillTargeting> moves = new ArrayList<>();
 
     // temp
-    static Skill[] skills = new Skill[]{Skill.FIREBALL, Skill.HEAL, Skill.ATTACK_UP, Skill.ATTACK_DOWN};
+    static Skill[] skills = new Skill[]{Skill.FIREBALL, Skill.HEAL, Skill.ATTACK_UP, Skill.THUNDERBOLT};
     static Skill[] skills2 = new Skill[]{Skill.FIREBALL, Skill.ICE_BEAM, Skill.BARRIER, Skill.DEFENSE_DOWN};
-    static Skill[] skills3 = new Skill[]{Skill.THUNDERBOLT, Skill.BARRIER, Skill.AGILITY_DOWN, Skill.FAITH_DOWN};
+    static Skill[] skills3 = new Skill[]{Skill.THUNDERBOLT, Skill.BARRIER, Skill.ZEPHYR_LANCE, Skill.JET_STREAM};
 
     static int selectingMove = 0; // Who's currently selecting their move. 0-4 = player; 5-9 = opponent; 10 = moves are executing
     static int usingMove = 0; // Who's currently using their move
@@ -62,9 +62,9 @@ public class BattleController {
     public static void create(Stage stage) {
         // Setup teams (temp)
         Stats johnyStats = new Stats(100, 100, 100, 100, 100, 100, 100);
-        CombatantType johny = new CombatantType("Johny", johnyStats, 5, 0, 0, 0 ,0, 0, 0);
+        CombatantType johny = new CombatantType("Johny", johnyStats, 4, -4, 0, 0 ,0, 0, 0);
         Stats jerryStats = new Stats(100, 100, 100, 100, 100, 100, 115);
-        CombatantType jerry = new CombatantType("Jerry", jerryStats, 5, -4, 0, 0 ,0, 0, 0);
+        CombatantType jerry = new CombatantType("Jerry", jerryStats, 5, -4, 0, 5 ,0, 0, 0);
         CombatantType james = new CombatantType("James", jerryStats, -4, 5, 0, 0 ,0, 0, 0);
         CombatantType jacob = new CombatantType("Jacob", johnyStats, 0, 0, 5, -4 ,0, 0, 0);
         CombatantType julia = new CombatantType("Julia", johnyStats, 0, 0, -4, 5 ,0, 0, 0);
@@ -169,7 +169,8 @@ public class BattleController {
                 } else selectingMove = 5; // Jump to opponent move selection
             } else if (selectingMove <= 9) { // opponent's turn
                 if ((selectingMove - 5) < battle.getOpponentTeam().getCmbs().length) { // if there are more opponents yet to act
-                    Skill selectedSkill = skills2[MathUtils.random(skills.length - 1)];
+                    //Skill selectedSkill = skills2[MathUtils.random(skills.length - 1)];
+                    Skill selectedSkill = Skill.NOTHING;
                     Combatant target = battle.getPlayerTeam().getCmbs()[MathUtils.random(battle.getPlayerTeam().getCmbs().length - 1)];
                     setTextIfChanged(movesL.get(selectingMove), selectedSkill.getName() + " -> " + target.getCmbType().getName());
                     moves.add(new SkillTargeting(selectedSkill, battle.getOpponentTeam().getCmbs()[selectingMove - 5], target)); // todo AI
@@ -201,9 +202,8 @@ public class BattleController {
                             }
                         }
 
-                        // Decrement buff turns and remove expired buffs
-                        cmb.decrementBuffTurns();
-                        cmb.decrementStageTurns();
+                        // Decrement stage/barrier/buff turns and remove expired stages/barriers/buffs
+                        cmb.decrementTurns();
                     }
 
                     // Increase bloom
@@ -216,6 +216,7 @@ public class BattleController {
                 }
 
                 // Sort moves by Agi
+                // todo priority
                 moves.sort((a, b) -> Integer.compare(
                     b.getSelf().getAgiWithStage(),
                     a.getSelf().getAgiWithStage()
@@ -341,9 +342,12 @@ public class BattleController {
         for (int i = 0; i < 10; i++) {
             Combatant cmb = (i >= 5) ? battle.getOpponentTeam().getCmbs()[i - 5] : battle.getPlayerTeam().getCmbs()[i]; // todo can use battle.getAllCmbs
             if (cmb != null) {
-                StringBuilder text = new StringBuilder(cmb.getCmbType().getName() + "\nHP: " + cmb.getStatsCur().getHp() + "(" + cmb.getBarrier() + ")/" + cmb.getStatsDefault().getHp() + "\nMP: " + cmb.getMp() +
-                    "/100\nStr: " + cmb.getStrWithStage() + "/" + cmb.getStatsDefault().getStr() + "\nMag:" + cmb.getMagWithStage() + "/" + cmb.getStatsDefault().getMag() +
-                    "\nAmr: " + cmb.getAmrWithStage() + "/" + cmb.getStatsDefault().getAmr() + "\nRes: " + cmb.getResWithStage() + "/" + cmb.getStatsDefault().getRes() +"\n");
+                int barrier = cmb.getBarrier() + cmb.getDefend();
+                String barrierStr = (barrier > 0) ? "[CYAN](" + barrier + ")[WHITE]" : "";
+                StringBuilder text = new StringBuilder(cmb.getCmbType().getName() + "\nHP: " + cmb.getStatsCur().getHp() + barrierStr + "/" + cmb.getStatsDefault().getHp() + "\nMP: " + cmb.getMp() + "/100\n" +
+                    //"/100\nStr: " + cmb.getStrWithStage() + "/" + cmb.getStatsDefault().getStr() + "\nMag:" + cmb.getMagWithStage() + "/" + cmb.getStatsDefault().getMag() +
+                    //"\nAmr: " + cmb.getAmrWithStage() + "/" + cmb.getStatsDefault().getAmr() + "\nRes: " + cmb.getResWithStage() + "/" + cmb.getStatsDefault().getRes() +
+                     "\n");
 
                 // List stage changes
                 for(StageType stageType : StageType.values()) {
@@ -353,11 +357,19 @@ public class BattleController {
                     }
                 }
 
+                // Barrier
+                barrier = cmb.getBarrier();
+                if(barrier > 0) {
+                    text.append("Barrier x" + barrier + "(" + cmb.getBarrierTurns() + ") ");
+                }
+
                 // List buffs
                 List<BuffInstance> buffInstances = cmb.getBuffInstances();
                 if(!buffInstances.isEmpty()) {
                     for (BuffInstance buffInstance : buffInstances) {
-                        text.append(buffInstance.getBuff().getName()).append("x").append(buffInstance.getStacks()).append("(").append(buffInstance.getTurns()).append(") ");
+                        if(buffInstance.getBuff() == Buff.DEFEND) {
+                            text.append(buffInstance.getBuff().getName()).append("x").append(cmb.getDefend()).append("(").append(buffInstance.getTurns()).append(") ");
+                        } else text.append(buffInstance.getBuff().getName()).append(" x").append(buffInstance.getStacks()).append("(").append(buffInstance.getTurns()).append(") ");
                     }
                 }
                 setTextIfChanged(statsL.get(i), text.toString());

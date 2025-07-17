@@ -36,6 +36,10 @@ public class Combatant {
 
     // Barrier
     private int barrier;
+    private int barrierTurns;
+
+    // Defend (essentially a 2nd Barrier with higher priority)
+    private int defend;
 
     private List<BuffInstance> buffInstances = new ArrayList<>();
 
@@ -58,6 +62,8 @@ public class Combatant {
         this.multAtk = 1;
         this.multDef = 1;
         this.barrier = 0;
+        this.barrierTurns = 0;
+        this.defend = 0;
     }
 
     public CombatantType getCmbType() {
@@ -256,22 +262,6 @@ public class Combatant {
         return -1;
     }
 
-    public void decrementStageTurns() {
-        // Decrements turn counter and checks if it's at or below 0 (it's ok if it drops below 0 because it'll get set back up when stages are changed)
-        if(--this.stageAtkTurns <= 0) {
-            this.stageAtk = 0; // Remove stages
-        }
-        if(--this.stageDefTurns <= 0) {
-            this.stageDef = 0;
-        }
-        if(--this.stageFthTurns <= 0) {
-            this.stageFth = 0;
-        }
-        if(--this.stageAgiTurns <= 0) {
-            this.stageAgi = 0;
-        }
-    }
-
     public void setMultAtk(float multAtk) {
         this.multAtk = multAtk;
     }
@@ -296,6 +286,22 @@ public class Combatant {
         return barrier;
     }
 
+    public void setBarrierTurns(int barrierTurns) {
+        this.barrierTurns = barrierTurns;
+    }
+
+    public int getBarrierTurns() {
+        return barrierTurns;
+    }
+
+    public void setDefend(int defend) {
+        this.defend = defend;
+    }
+
+    public int getDefend() {
+        return defend;
+    }
+
     public void setBuffInstances(List<BuffInstance> buffInstances) {
         this.buffInstances = buffInstances;
     }
@@ -308,7 +314,27 @@ public class Combatant {
         buffInstances.add(buffInstance);
     }
 
-    public void decrementBuffTurns() {
+    public void decrementTurns() {
+        // Stages
+        if(--this.stageAtkTurns <= 0) {
+            this.stageAtk = 0; // Remove stages
+        }
+        if(--this.stageDefTurns <= 0) {
+            this.stageDef = 0;
+        }
+        if(--this.stageFthTurns <= 0) {
+            this.stageFth = 0;
+        }
+        if(--this.stageAgiTurns <= 0) {
+            this.stageAgi = 0;
+        }
+
+        // Barrier
+        if(--this.barrierTurns <= 0) {
+            this.barrier = 0;
+        }
+
+        // Buffs
         for(int i = buffInstances.size() - 1; i >= 0; i--) {
             BuffInstance buffInstance = buffInstances.get(i);
             int turns = buffInstance.getTurns();
@@ -323,5 +349,40 @@ public class Combatant {
                 buffInstances.remove(buffInstance);
             }
         }
+    }
+
+    // Damage Combatant, taking into account Defend and Barrier. Returns false if HP was lowered
+    public boolean damage(int dmg, boolean pierce) {
+        if(!pierce) { // Pierce skips Defend and Barrier
+            if (this.defend > 0 && dmg > 0) { // There's Defend and dmg
+                if (this.defend > dmg) { // Only hit Defend
+                    this.defend -= dmg;
+                    return false;
+                } else { // Destroy Defend and proceed to Barrier
+                    dmg -= this.defend;
+                    this.defend = 0;
+                }
+            }
+
+            if (this.barrier > 0 && dmg > 0) { // There's Barrier and dmg
+                if (this.barrier > dmg) { // Only hit Barrier
+                    this.barrier -= dmg;
+                    return false;
+                } else { // Destroy Barrier and proceed to HP
+                    dmg -= this.barrier;
+                    this.barrier = 0;
+                    this.barrierTurns = 0;
+                }
+            }
+        }
+
+        // Lower HP
+        this.getStatsCur().setHp(MathUtils.clamp(this.getStatsCur().getHp() - dmg, 0, this.getStatsDefault().getHp()));
+
+        return dmg > 0;
+    }
+
+    public boolean damage(int dmg) {
+        return this.damage(dmg, false);
     }
 }

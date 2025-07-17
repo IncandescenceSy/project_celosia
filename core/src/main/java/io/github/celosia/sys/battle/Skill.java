@@ -9,6 +9,7 @@ import io.github.celosia.sys.battle.skill_effects.GiveBuff;
 // todo lang, display element/type even for non-damaging skills, explicitly define which are "for allies" and which are "for opponents" for autotargeting
 public enum Skill {
     // Basic
+    NOTHING("Nothing", Element.VIS, Targeting.SELF, 0, ""),
     ATTACK("Attack", Element.VIS, Targeting.OTHER_1R, 0, "", new Damage(SkillType.STR, Element.VIS, 55)),
     DEFEND("Defend", Element.VIS, Targeting.SELF, 0, "", new GiveBuff(Buff.DEFEND), new ChangeMP(10)),
 
@@ -36,8 +37,8 @@ public enum Skill {
     HEAL_GROUP("Group Heal", Element.VIS, Targeting.COLUMN_OF_3_1R, 12, "", new Damage(SkillType.FTH, Element.VIS, -100)),
 
     // Barriers
-    BARRIER("Barrier", Element.VIS, Targeting.OTHER_1R_OR_SELF, 5, "", new Damage(SkillType.FTH, Element.VIS, 100, true)),
-    BARRIER_GROUP("Group Barrier", Element.VIS, Targeting.COLUMN_OF_3_1R, 15, "", new Damage(SkillType.FTH, Element.VIS, 85, true)),
+    BARRIER("Barrier", Element.VIS, Targeting.OTHER_1R_OR_SELF, 5, "", new Damage(SkillType.FTH, Element.VIS, 100, 3)),
+    BARRIER_GROUP("Group Barrier", Element.VIS, Targeting.COLUMN_OF_3_1R, 15, "", new Damage(SkillType.FTH, Element.VIS, 85, 3)),
 
     // Resists
 
@@ -52,6 +53,10 @@ public enum Skill {
 
     // Fulgur
     THUNDERBOLT("Thunderbolt", Element.FULGUR, Targeting.OTHER_1R, 8, "", new Damage(SkillType.MAG, Element.FULGUR, 100), new GiveBuff(Buff.SHOCK, 3, 1)),
+
+    // Ventus
+    ZEPHYR_LANCE("Zephyr Lance", Element.VENTUS, Targeting.OTHER_1R, 20, "", new Damage(SkillType.STR, Element.VENTUS, 70, true)),
+    JET_STREAM("Jet Stream", Element.VENTUS, Targeting.OTHER_1R, 12, "", new Damage(SkillType.STR, Element.VENTUS, 55)), // todo prio
 
     // Common bloom skills
     // Glacies

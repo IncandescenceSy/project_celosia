@@ -1,12 +1,13 @@
 package io.github.celosia.sys.battle;
 
+import io.github.celosia.sys.battle.buff_effects.ChangeDefend;
 import io.github.celosia.sys.battle.buff_effects.ChangeStat;
 import io.github.celosia.sys.battle.buff_effects.Damage;
 
 // todo: stacking, ailments, explicitly define whether pos/neg
 public enum Buff {
     // Basic
-    DEFEND("Defend", "todo", BuffType.BUFF, 1, new ChangeStat(Stat.AMR, 0.35f), new ChangeStat(Stat.RES, 0.35f)),
+    DEFEND("Defend", "todo", BuffType.BUFF, 1, new ChangeDefend(0.2f)),
 
     // Common ailments (elemental + poison)
     // todo: affinity conveys immunity to these
@@ -38,6 +39,10 @@ public enum Buff {
 
     public String getDesc() {
         return desc;
+    }
+
+    public BuffType getBuffType() {
+        return buffType;
     }
 
     public int getMaxStacks() {
