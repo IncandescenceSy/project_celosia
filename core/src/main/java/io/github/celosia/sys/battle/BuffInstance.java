@@ -1,7 +1,7 @@
 package io.github.celosia.sys.battle;
 
 public class BuffInstance {
-    private Buff buff;
+    private final Buff buff;
     private int turns;
     private int stacks;
 

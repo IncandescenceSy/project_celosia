@@ -31,6 +31,10 @@ public class Lwjgl3Launcher {
         //// You can change these files; they are in lwjgl3/src/main/resources/ .
         //// They can also be loaded from the root of assets/ .
         configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
+
+        // Enable multisampling for better ShapeDrawer render quality. It doesn't seem like increasing samples beyond 1 improves quality
+        configuration.setBackBufferConfig(8, 8, 8, 8, 16, 0, 1);
+
         return configuration;
     }
 }

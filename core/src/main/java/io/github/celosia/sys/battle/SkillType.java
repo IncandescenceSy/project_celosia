@@ -1,12 +1,14 @@
 package io.github.celosia.sys.battle;
 
+import static io.github.celosia.sys.settings.Lang.lang;
+
 // Types that skills can have
-// todo: lang
+// todo add full names
 public enum SkillType {
-    STR("Str"),
-    MAG("Mag"),
-    FTH("Fth"),
-    STAT("Stat");
+    STR(lang.get("stat.str")),
+    MAG(lang.get("stat.mag")),
+    FTH(lang.get("stat.fth")),
+    STAT(lang.get("skill_type.stat"));
 
     private String name;
 

@@ -15,13 +15,13 @@ public class ChangeStage implements SkillEffect {
     }
 
     @Override
-    public boolean apply(Combatant self, Combatant target) {
+    public Result apply(Combatant self, Combatant target, Result resultPrev) {
         int stageOld = target.getStage(stageType);
         target.setStage(stageType, stageOld + change);
         if((stageOld >= 0 && change >= 0) || (stageOld <= 0 && change <= 0)) { // Refresh turns
             target.setStageTurns(stageType, Math.max(target.getStageTurns(stageType), turns));
         }
 
-        return true;
+        return Result.SUCCESS;
     }
 }

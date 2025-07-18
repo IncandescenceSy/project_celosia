@@ -37,6 +37,10 @@ public class Battle {
         return opponentTeam;
     }
 
+    public Team getTeam(int id) {
+        return (id == 0) ? playerTeam : opponentTeam;
+    }
+
     public List<Combatant> getAllCombatants() {
         Combatant[] cmbsPlayer = playerTeam.getCmbs();
         Combatant[] cmbsOpponent = opponentTeam.getCmbs();

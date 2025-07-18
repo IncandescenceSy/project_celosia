@@ -78,8 +78,7 @@ public class TriLib {
                 points.add(new Vector2(trx, try_));
                 drawer.path(points,
                     // Change line thickness near the start/end of the animation to make its appearance/disappearance smoother
-                    i.apply(0, 10, Math.min(1f, prog * 3.5f)),
-                    JoinType.POINTY, false);
+                    i.apply(0, 10, Math.min(1f, prog * 3.5f)), JoinType.POINTY, false);
             }
 
         }

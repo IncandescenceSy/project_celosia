@@ -10,8 +10,8 @@ import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.I18NBundle;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.github.tommyettinger.textra.TextraLabel;
 import com.github.tommyettinger.textra.TypingConfig;
@@ -23,13 +23,13 @@ import io.github.celosia.sys.menu.Fonts.FontType;
 import io.github.celosia.sys.menu.MenuLib.MenuOptType;
 import io.github.celosia.sys.menu.MenuLib.MenuType;
 import io.github.celosia.sys.settings.Keybinds;
+import io.github.celosia.sys.settings.Lang;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.Locale;
 
-import static io.github.celosia.sys.menu.MenuLib.setTextIfChanged;
 import static io.github.celosia.sys.menu.TriLib.drawCoolRects;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -42,7 +42,7 @@ public class Main extends ApplicationAdapter {
     // Current menu info
     int index = 0;
     float cooldown = 0f;
-    MenuType menuType = MenuType.NONE;
+    MenuType menuType;
     MenuOptType optSelected;
 
     // All cool rectangle elements with their interpolation progress
@@ -63,6 +63,7 @@ public class Main extends ApplicationAdapter {
         spriteBatch = new SpriteBatch();
         polygonSpriteBatch = new PolygonSpriteBatch();
 
+        // todo figure out how to support changing window size and resolution
         stage = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));
 
         // temp
@@ -90,6 +91,14 @@ public class Main extends ApplicationAdapter {
 
         // Internal config
         TypingConfig.DEFAULT_SPEED_PER_CHAR = 0.01f;
+
+        // Lang
+        // Default (US English)
+        Lang.createBundle();
+        //Lang.createBundle(new Locale("ja", "JP"));
+
+
+        menuType = MenuType.NONE;
 
         // Debug
         debug = new TextraLabel("", FontType.KORURI.getSize20());
@@ -187,7 +196,6 @@ public class Main extends ApplicationAdapter {
     private void createMenuWIP() {
         menuType = MenuType.WIP;
 
-        // todo lang
         wip = new TypingLabel("{SPEED=0.1}{FADE}{SHRINK}WIP", FontType.KORURI.getSize80());
         wip.setPosition(World.WIDTH_2, World.HEIGHT_2 + 120, Align.center);
         stage.addActor(wip);

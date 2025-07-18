@@ -4,12 +4,12 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Combatant;
 
 // Todo heavily limit %-based damage on bosses
-public class Damage implements BuffEffect {
+public class ChangeHP implements BuffEffect {
 
-    private float dmg; // Damage to do each turn in % of max HP
+    private float change; // Amount to change HP by. 1f = 100%
 
-    public Damage(float dmg) {
-        this.dmg = dmg;
+    public ChangeHP(float change) {
+        this.change = change;
     }
 
     @Override
@@ -30,6 +30,6 @@ public class Damage implements BuffEffect {
 
     @Override
     public void onTurnEnd(Combatant self) {
-        self.damage((int) (self.getStatsDefault().getHp() * dmg));
+        self.damage((int) (self.getStatsDefault().getHp() * change));
     }
 }

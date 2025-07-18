@@ -3,17 +3,14 @@ package io.github.celosia.sys.menu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.Align;
 import com.github.tommyettinger.textra.Font;
 import com.github.tommyettinger.textra.TypingLabel;
 import io.github.celosia.sys.settings.Keybinds;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import static io.github.celosia.sys.settings.Lang.lang;
 import static java.lang.Math.max;
 
 public class MenuLib {
@@ -51,15 +48,15 @@ public class MenuLib {
     // todo: speed up when button has been held and support multi-axis menus and mouse/touchscreen
     public static int checkMovementTargeting(int index) {
         if (Gdx.input.isKeyJustPressed(Keybinds.UP.getKey())) {
-            if(index < 5) { // On player side
-                return --index < 0 ? 4 : index;
-            } else return --index < 5 ? 9 : index;
+            if(index < 4) { // On player side
+                return --index < 0 ? 3 : index;
+            } else return --index < 4 ? 8 : index;
         } else if (Gdx.input.isKeyJustPressed(Keybinds.DOWN.getKey())) {
-            if(index < 5) { // On player side
-                return ++index >= 5 ? 0 : index;
-            } else return ++index >= 10 ? 5 : index;
+            if(index < 4) { // On player side
+                return ++index >= 4 ? 0 : index;
+            } else return ++index >= 8 ? 4 : index;
         } else if (Gdx.input.isKeyJustPressed(Keybinds.LEFT.getKey()) || Gdx.input.isKeyJustPressed(Keybinds.RIGHT.getKey())) {
-            return (index < 5) ? index + 5 : index - 5;
+            return (index < 4) ? index + 4 : index - 4;
         } else return index;
     }
 
@@ -130,11 +127,11 @@ public class MenuLib {
     public enum MenuType {
         NONE(),
         WIP(),
-        MAIN(new MenuOpt(MenuOptType.START, "{SPEED=0.1}{FADE}{SHRINK}Start", 1900 + 80, 230 + 400),
-            new MenuOpt(MenuOptType.MANUAL, "{SPEED=0.1}{FADE}{SHRINK}Manual", 1900 + 60, 230 + 300),
-            new MenuOpt(MenuOptType.OPTIONS, "{SPEED=0.1}{FADE}{SHRINK}Options", 1900 + 40, 230 + 200),
-            new MenuOpt(MenuOptType.CREDITS, "{SPEED=0.1}{FADE}{SHRINK}Credits", 1900 + 20, 230 + 100),
-            new MenuOpt(MenuOptType.QUIT, "{SPEED=0.1}{FADE}{SHRINK}Quit", 1900, 230)),
+        MAIN(new MenuOpt(MenuOptType.START, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.start"), 1900 + 80, 230 + 400),
+            new MenuOpt(MenuOptType.MANUAL, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.manual"), 1900 + 60, 230 + 300),
+            new MenuOpt(MenuOptType.OPTIONS, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.options"), 1900 + 40, 230 + 200),
+            new MenuOpt(MenuOptType.CREDITS, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.credits"), 1900 + 20, 230 + 100),
+            new MenuOpt(MenuOptType.QUIT, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.quit"), 1900, 230)),
         BATTLE(),
         TARGETING(),
         SKILLS();

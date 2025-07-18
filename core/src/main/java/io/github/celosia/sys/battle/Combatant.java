@@ -4,22 +4,20 @@ import com.badlogic.gdx.math.MathUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 // Species and current stats
 public class Combatant {
-    private CombatantType cmbType;
-    private int lvl; // Level
+    private final CombatantType cmbType;
+    private final int lvl; // Level
 
     // Current stats
-    private Stats statsDefault;
-    private Stats statsCur;
+    private final Stats statsDefault;
+    private final Stats statsCur;
 
     // Skills
-    private Skill[] skills;
+    private final Skill[] skills;
 
-    private int mp; // Mana
+    private int sp; // Skill Points
     private int pos; // Position on the battlefield
 
     // Stat stages
@@ -45,13 +43,13 @@ public class Combatant {
 
     private List<BuffInstance> buffInstances = new ArrayList<>();
 
-    public Combatant(CombatantType cmbType, int lvl, Stats stats, Skill[] skills, int mp, int pos) {
+    public Combatant(CombatantType cmbType, int lvl, Stats stats, Skill[] skills, int sp, int pos) {
         this.cmbType = cmbType;
         this.lvl = lvl;
         this.statsDefault = stats;
         this.statsCur = new Stats(stats.getHp(), stats.getStr(), stats.getMag(), stats.getFth(), stats.getAmr(), stats.getRes(), stats.getAgi());
         this.skills = skills;
-        this.mp = mp;
+        this.sp = sp;
         this.pos = pos;
         stageAtk = 0;
         stageAtkTurns = 0;
@@ -88,12 +86,12 @@ public class Combatant {
         return skills;
     }
 
-    public void setMp(int mp) {
-        this.mp = mp;
+    public void setSp(int sp) {
+        this.sp = sp;
     }
 
-    public int getMp() {
-        return mp;
+    public int getSp() {
+        return sp;
     }
 
     public void setPos(int pos) {
@@ -105,7 +103,7 @@ public class Combatant {
     }
 
     public void setStageAtk(int stageAtk) {
-        stageAtk = MathUtils.clamp(stageAtk, -9, 9);
+        this.stageAtk = MathUtils.clamp(stageAtk, -9, 9);
     }
 
     public int getStageAtk() {
@@ -113,7 +111,7 @@ public class Combatant {
     }
 
     public void setStageAtkTurns(int stageAtkTurns) {
-        stageAtkTurns = stageAtkTurns;
+        this.stageAtkTurns = stageAtkTurns;
     }
 
     public int getStageAtkTurns() {
@@ -121,7 +119,7 @@ public class Combatant {
     }
 
     public void setStageDef(int stageDef) {
-        stageDef = MathUtils.clamp(stageDef, -9, 9);
+        this.stageDef = MathUtils.clamp(stageDef, -9, 9);
     }
 
     public int getStageDef() {
@@ -129,7 +127,7 @@ public class Combatant {
     }
 
     public void setStageDefTurns(int stageDefTurns) {
-        stageDefTurns = stageDefTurns;
+        this.stageDefTurns = stageDefTurns;
     }
 
     public int getStageDefTurns() {
@@ -137,7 +135,7 @@ public class Combatant {
     }
 
     public void setStageFth(int stageFth) {
-        stageFth = MathUtils.clamp(stageFth, -9, 9);
+        this.stageFth = MathUtils.clamp(stageFth, -9, 9);
     }
 
     public int getStageFth() {
@@ -145,7 +143,7 @@ public class Combatant {
     }
 
     public void setStageFthTurns(int stageFthTurns) {
-        stageFthTurns = stageFthTurns;
+        this.stageFthTurns = stageFthTurns;
     }
 
     public int getStageFthTurns() {
@@ -153,7 +151,7 @@ public class Combatant {
     }
 
     public void setStageAgi(int stageAgi) {
-        stageAgi = MathUtils.clamp(stageAgi, -9, 9);
+        this.stageAgi = MathUtils.clamp(stageAgi, -9, 9);
     }
 
     public int getStageAgi() {
@@ -364,14 +362,14 @@ public class Combatant {
     }
 
     // Damage Combatant, taking into account Defend and Barrier. Returns false if HP was lowered
-    public boolean damage(int dmg, boolean pierce) {
+    public Result damage(int dmg, boolean pierce) {
         dmg *= Math.max(multDef, 0.1f);
 
         if(!pierce) { // Pierce skips Defend and Barrier
             if (defend > 0 && dmg > 0) { // There's Defend and dmg
                 if (defend > dmg) { // Only hit Defend
                     defend -= dmg;
-                    return false;
+                    return Result.HIT_BARRIER;
                 } else { // Destroy Defend and proceed to Barrier
                     dmg -= defend;
                     defend = 0;
@@ -381,7 +379,7 @@ public class Combatant {
             if (barrier > 0 && dmg > 0) { // There's Barrier and dmg
                 if (barrier > dmg) { // Only hit Barrier
                     barrier -= dmg;
-                    return false;
+                    return Result.HIT_BARRIER;
                 } else { // Destroy Barrier and proceed to HP
                     dmg -= barrier;
                     barrier = 0;
@@ -393,10 +391,14 @@ public class Combatant {
         // Lower HP
         this.getStatsCur().setHp(MathUtils.clamp(this.getStatsCur().getHp() - dmg, 0, this.getStatsDefault().getHp()));
 
-        return multDef > -500f && dmg > 0; // Target isn't Protected and lost more than 0 HP
+        if(multDef <= -500f) { // Protect
+            return Result.HIT_BARRIER;
+        } else if(dmg > 0) { // Did damage
+            return Result.SUCCESS;
+        } else return Result.FAIL; // Did no damage
     }
 
-    public boolean damage(int dmg) {
+    public Result damage(int dmg) {
         return this.damage(dmg, false);
     }
 }
