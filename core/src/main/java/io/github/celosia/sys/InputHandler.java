@@ -3,10 +3,22 @@ package io.github.celosia.sys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.controllers.Controllers;
+import io.github.celosia.sys.menu.InputLib;
 
-// Only exists so any input will let the game know whether a keyboard or controller is being used. Does nothing else
+// Handle detecting whether a keyboard or a controller is being used, and finding the currently in-use controller
 public class InputHandler extends InputAdapter implements ControllerListener {
+    // Currently in-use controller
+    private static Controller controller;
+
+    // Whether the last input came from a controller
     private static boolean lastUsedController = false;
+
+    // Get mappings of and set current controller
+    public static void checkController() {
+        controller = Controllers.getCurrent();
+        if(controller != null) InputLib.setupController(controller);
+    }
 
     // Keyboard input events
     @Override
@@ -49,6 +61,10 @@ public class InputHandler extends InputAdapter implements ControllerListener {
         // Ignore small stick movement
         if (Math.abs(value) > 0.2f) lastUsedController = true;
         return false;
+    }
+
+    public static Controller getController() {
+        return controller;
     }
 
     public static boolean isLastUsedController() {

@@ -2,7 +2,6 @@ package io.github.celosia.sys.battle;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -46,7 +45,7 @@ public class BattleController {
 
     // Display
     // Turn display
-    static TypingLabel turn = new TypingLabel("{SPEED=0.1}{FADE}{SLIDE}" + lang.get("turn") + "1", FontType.KORURI.getSize60());
+    static TypingLabel turn = new TypingLabel("{SPEED=0.1}{FADE}{SLIDE}" + lang.get("turn") + " 1", FontType.KORURI.getSize60());
 
     // Bloom displays for both teams
     static List<TypingLabel> bloomL = new ArrayList<>();
@@ -138,17 +137,18 @@ public class BattleController {
         //stage.addActor(battleLog);
     }
 
-    public static MenuType input(MenuType menuType, Controller controller) {
+    public static MenuType input(MenuType menuType) {
         if (wait > 0f) {
             wait -= Gdx.graphics.getDeltaTime();
         } else if (menuType == MenuType.BATTLE) { // Selecting moves
 
             if (selectingMove <= 3) { // Player's turn
+                // Todo instead of text, use a little picture taken from an atlas and abstract the check
                 setTextIfChanged(movesL.get(selectingMove), ((InputHandler.isLastUsedController()) ? Keybind.CONFIRM.getButton().getName() : Input.Keys.toString(Keybind.CONFIRM.getKey())) + ": " + lang.get("skill.attack") +
                     "\n" + ((InputHandler.isLastUsedController()) ? Keybind.BACK.getButton().getName() : Input.Keys.toString(Keybind.BACK.getKey())) + ": " + lang.get("skill.defend") +
                     "\n" + ((InputHandler.isLastUsedController()) ? Keybind.MENU.getButton().getName() : Input.Keys.toString(Keybind.MENU.getKey())) + ": " + lang.get("skills"));
                 if (selectingMove < battle.getPlayerTeam().getCmbs().length) { // if there are more allies yet to act
-                    if (InputLib.checkInput(controller, Keybind.CONFIRM)) {
+                    if (InputLib.checkInput(Keybind.CONFIRM)) {
                         selectedSkill = Skill.ATTACK;
                         setTextIfChanged(movesL.get(selectingMove), selectedSkill.getName());
 
@@ -156,7 +156,7 @@ public class BattleController {
                         index = 4;
 
                         return MenuType.TARGETING;
-                    } else if (InputLib.checkInput(controller, Keybind.BACK)) {
+                    } else if (InputLib.checkInput(Keybind.BACK)) {
                         selectedSkill = Skill.DEFEND;
                         setTextIfChanged(movesL.get(selectingMove), selectedSkill.getName());
 
@@ -164,7 +164,7 @@ public class BattleController {
                         index = 4;
 
                         return MenuType.TARGETING;
-                    } else if (InputLib.checkInput(controller, Keybind.MENU)) {
+                    } else if (InputLib.checkInput(Keybind.MENU)) {
                         setTextIfChanged(movesL.get(selectingMove), lang.get("skill"));
 
                         // Skill selection display
@@ -284,7 +284,7 @@ public class BattleController {
             }
         } else if (menuType == MenuType.TARGETING) { // Picking a target
 
-            if (InputLib.checkInput(controller, Keybind.BACK)) {
+            if (InputLib.checkInput(Keybind.BACK)) {
                 // Reset for next time
                 for(TypingLabel stat : statsL) stat.setColor(Color.WHITE);
 
@@ -292,13 +292,13 @@ public class BattleController {
             }
 
             // Handle menu navigation
-            index = MenuLib.checkMovementTargeting(index, controller);
+            index = MenuLib.checkMovementTargeting(index);
 
             // Handle option colors
             MenuLib.handleOptColor(statsL, index);
 
             // Add selection to move queue
-            if (InputLib.checkInput(controller, Keybind.CONFIRM)) {
+            if (InputLib.checkInput(Keybind.CONFIRM)) {
                 Combatant target = (index < 4) ? battle.getPlayerTeam().getCmbs()[index] : battle.getOpponentTeam().getCmbs()[index - 4];
                 moves.add(new SkillTargeting(selectedSkill, battle.getPlayerTeam().getCmbs()[selectingMove], target));
                 setTextIfChanged(movesL.get(selectingMove), movesL.get(selectingMove).getOriginalText() + " -> " + target.getCmbType().getName());
@@ -312,7 +312,7 @@ public class BattleController {
             } else return MenuType.TARGETING;
         } else if (menuType == MenuType.SKILLS) { // Picking a skill
 
-            if (InputLib.checkInput(controller, Keybind.BACK)) {
+            if (InputLib.checkInput(Keybind.BACK)) {
                 // Reset for next time
                 for(TypingLabel skill : skillsL) {
                     skill.setText("");
@@ -323,13 +323,13 @@ public class BattleController {
             }
 
             // Handle menu navigation
-            index = MenuLib.checkMovement1D(index, skillsL.size(), controller);
+            index = MenuLib.checkMovement1D(index, skillsL.size());
 
             // Handle option colors
             MenuLib.handleOptColor(skillsL, index);
 
             // Move selected
-            if (InputLib.checkInput(controller, Keybind.CONFIRM)) {
+            if (InputLib.checkInput(Keybind.CONFIRM)) {
                 selectedSkill = battle.getPlayerTeam().getCmbs()[selectingMove].getSkills()[index];
                 setTextIfChanged(movesL.get(selectingMove), lang.get("skill") + ": " + selectedSkill.getName());
 
@@ -368,7 +368,7 @@ public class BattleController {
             a.getAgiWithStage()
         ));
 
-        StringBuilder queueText = new StringBuilder().append(lang.get("queue") + ": ");
+        StringBuilder queueText = new StringBuilder().append(lang.get("queue")).append(": ");
 
         for(int i = 0; i < cmbsAll.size(); i++) {
             boolean active = (i + 1) == usingMove || cmbsAll.get(i).getPos() == selectingMove;

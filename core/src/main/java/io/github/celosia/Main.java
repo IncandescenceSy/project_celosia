@@ -3,7 +3,6 @@ package io.github.celosia;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -70,7 +69,7 @@ public class Main extends ApplicationAdapter {
         // todo figure out how to support changing window size and resolution
         stage = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));
 
-        // Only exists so any input will let the game know whether a keyboard or controller is being used. Does nothing else
+        // Handle detecting whether a keyboard or a controller is being used, and finding the currently in-use controller
         inputHandler = new InputHandler();
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(inputHandler);
@@ -135,20 +134,19 @@ public class Main extends ApplicationAdapter {
         if(Debug.showDebugInfo) debug.setText("fps: " + 1f / Gdx.graphics.getDeltaTime() + "\nactors on stage: " + stage.getActors().size + "\nindex = " + index + "\nmenuType = " + menuType);
 
         // Get mappings of current controller
-        Controller controller = Controllers.getCurrent();
-        if(controller != null) InputLib.setupController(controller);
+        InputHandler.checkController();
 
         switch(menuType) {
             case MAIN:
                 // Handle menu navigation
-                index = MenuLib.checkMovement1D(index, MenuType.MAIN.getOptCount(), controller);
+                index = MenuLib.checkMovement1D(index, MenuType.MAIN.getOptCount());
 
                 // Handle option color
                 //MenuLib.handleOptColor(optLabels, index);
                 MenuLib.handleCursor(coolRects.get(CoolRects.CURSOR_1.ordinal()), coolRects.get(CoolRects.CURSOR_2.ordinal()), index, World.WIDTH - 700 + 75, World.WIDTH - 175 - 92 + 75 - 10, 230 + 475, 100 + 4);
 
                 // Handle menu confirmation
-                if (InputLib.checkInput(controller, Keybind.CONFIRM)) {
+                if (InputLib.checkInput(Keybind.CONFIRM)) {
                     optSelected = MenuOptType.values()[MenuType.MAIN.getOpt(index).getType().ordinal()];
                     switch (optSelected) {
                         case START:
@@ -169,10 +167,15 @@ public class Main extends ApplicationAdapter {
                             createMenuWIP();
                             break;
                     }
+                } else if (InputLib.checkInput(Keybind.BACK)) {
+                    if(index == MenuType.MAIN.getOptCount() - 1) {
+                        // Quit game
+                        Gdx.app.exit();
+                    } else index = MenuType.MAIN.getOptCount() - 1;
                 }
                 break;
             case WIP:
-                if (InputLib.checkInput(controller, Keybind.CONFIRM, Keybind.BACK)) {
+                if (InputLib.checkInput(Keybind.CONFIRM, Keybind.BACK)) {
                     stage.getRoot().removeActor(wip);
                     stage.getRoot().removeActor(wip2);
                     coolRects.get(CoolRects.POPUP_CENTERED.ordinal()).setDir(-1);
@@ -182,7 +185,7 @@ public class Main extends ApplicationAdapter {
             case BATTLE:
             case TARGETING:
             case SKILLS:
-                menuType = BattleController.input(menuType, controller);
+                menuType = BattleController.input(menuType);
                 BattleController.updateStatDisplay();
                 break;
         }

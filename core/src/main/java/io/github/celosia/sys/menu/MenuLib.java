@@ -15,26 +15,26 @@ import static io.github.celosia.sys.settings.Lang.lang;
 public class MenuLib {
     // Check menu movement input (1-axis) and handle wrapping
     // todo support multi-axis menus + support mouse/touchscreen
-    public static int checkMovement1D(int index, int optCount, Controller controller) {
-        if (InputLib.checkInput(controller, true, Keybind.UP, Keybind.LEFT)) {
+    public static int checkMovement1D(int index, int optCount) {
+        if (InputLib.checkInput(true, Keybind.UP, Keybind.LEFT)) {
             return --index < 0 ? optCount - 1 : index;
-        } else if (InputLib.checkInput(controller, true, Keybind.DOWN, Keybind.RIGHT)) {
+        } else if (InputLib.checkInput(true, Keybind.DOWN, Keybind.RIGHT)) {
             return ++index >= optCount ? 0 : index;
         } else return index;
     }
 
     // Check menu movement input (targeting) and handle wrapping
     // todo: complex targeting (dread)
-    public static int checkMovementTargeting(int index, Controller controller) {
-        if (InputLib.checkInput(controller, true, Keybind.UP)) {
+    public static int checkMovementTargeting(int index) {
+        if (InputLib.checkInput(true, Keybind.UP)) {
             if (index < 4) { // On player side
                 return --index < 0 ? 3 : index;
             } else return --index < 4 ? 7 : index;
-        } else if (InputLib.checkInput(controller, true, Keybind.DOWN)) {
+        } else if (InputLib.checkInput(true, Keybind.DOWN)) {
             if (index < 4) { // On player side
                 return ++index >= 4 ? 0 : index;
             } else return ++index >= 8 ? 4 : index;
-        } else if (InputLib.checkInput(controller, true, Keybind.LEFT, Keybind.RIGHT)) {
+        } else if (InputLib.checkInput(true, Keybind.LEFT, Keybind.RIGHT)) {
             return (index < 4) ? index + 4 : index - 4;
         } else return index;
     }
