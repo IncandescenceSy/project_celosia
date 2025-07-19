@@ -14,6 +14,7 @@ public class Fonts {
     static Font koruri80;
 
     public static void createFonts() {
+        // todo pregen fonts for performance (try using libGDX itself to pregen them)
         FreeTypeFontGenerator genKoruri = new FreeTypeFontGenerator(Gdx.files.internal("fnt/koruri.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 

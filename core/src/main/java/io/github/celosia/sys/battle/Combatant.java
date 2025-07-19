@@ -279,12 +279,12 @@ public class Combatant {
     }
 
     public void setMult(Mult mult, float set) {
-        if(mult == Mult.ATK) multAtk = set;
+        if (mult == Mult.ATK) multAtk = set;
         else multDef = set;
     }
 
     public float getMult(Mult mult) {
-        if(mult == Mult.ATK) return multAtk;
+        if (mult == Mult.ATK) return multAtk;
         else return multDef;
     }
 
@@ -326,21 +326,21 @@ public class Combatant {
 
     public void decrementTurns() {
         // Stages
-        if(--stageAtkTurns <= 0) {
+        if (--stageAtkTurns <= 0) {
             stageAtk = 0; // Remove stages
         }
-        if(--stageDefTurns <= 0) {
+        if (--stageDefTurns <= 0) {
             stageDef = 0;
         }
-        if(--stageFthTurns <= 0) {
+        if (--stageFthTurns <= 0) {
             stageFth = 0;
         }
-        if(--stageAgiTurns <= 0) {
+        if (--stageAgiTurns <= 0) {
             stageAgi = 0;
         }
 
         // Barrier
-        if(--this.barrierTurns <= 0) {
+        if (--this.barrierTurns <= 0) {
             this.barrier = 0;
         }
 
@@ -348,7 +348,7 @@ public class Combatant {
         for(int i = buffInstances.size() - 1; i >= 0; i--) {
             BuffInstance buffInstance = buffInstances.get(i);
             int turns = buffInstance.getTurns();
-            if(turns >= 2) {
+            if (turns >= 2) {
                 buffInstance.setTurns(turns - 1);
             } else {
                 for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
@@ -365,7 +365,7 @@ public class Combatant {
     public Result damage(int dmg, boolean pierce) {
         dmg *= Math.max(multDef, 0.1f);
 
-        if(!pierce) { // Pierce skips Defend and Barrier
+        if (!pierce) { // Pierce skips Defend and Barrier
             if (defend > 0 && dmg > 0) { // There's Defend and dmg
                 if (defend > dmg) { // Only hit Defend
                     defend -= dmg;
@@ -391,9 +391,9 @@ public class Combatant {
         // Lower HP
         this.getStatsCur().setHp(MathUtils.clamp(this.getStatsCur().getHp() - dmg, 0, this.getStatsDefault().getHp()));
 
-        if(multDef <= -500f) { // Protect
+        if (multDef <= -500f) { // Protect
             return Result.HIT_BARRIER;
-        } else if(dmg > 0) { // Did damage
+        } else if (dmg > 0) { // Did damage
             return Result.SUCCESS;
         } else return Result.FAIL; // Did no damage
     }

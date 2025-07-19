@@ -2,6 +2,9 @@ package io.github.celosia;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -11,24 +14,25 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.I18NBundle;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.github.tommyettinger.textra.TextraLabel;
 import com.github.tommyettinger.textra.TypingConfig;
 import com.github.tommyettinger.textra.TypingLabel;
+import io.github.celosia.sys.Debug;
+import io.github.celosia.sys.InputHandler;
 import io.github.celosia.sys.World;
 import io.github.celosia.sys.battle.BattleController;
 import io.github.celosia.sys.menu.*;
 import io.github.celosia.sys.menu.Fonts.FontType;
 import io.github.celosia.sys.menu.MenuLib.MenuOptType;
 import io.github.celosia.sys.menu.MenuLib.MenuType;
-import io.github.celosia.sys.settings.Keybinds;
+import io.github.celosia.sys.settings.Keybind;
 import io.github.celosia.sys.settings.Lang;
+import io.github.celosia.sys.settings.Settings;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static io.github.celosia.sys.menu.TriLib.drawCoolRects;
 
@@ -38,10 +42,10 @@ public class Main extends ApplicationAdapter {
     PolygonSpriteBatch polygonSpriteBatch;
     ShapeDrawer drawer;
     Stage stage;
+    InputHandler inputHandler;
 
     // Current menu info
     int index = 0;
-    float cooldown = 0f;
     MenuType menuType;
     MenuOptType optSelected;
 
@@ -65,6 +69,13 @@ public class Main extends ApplicationAdapter {
 
         // todo figure out how to support changing window size and resolution
         stage = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));
+
+        // Only exists so any input will let the game know whether a keyboard or controller is being used. Does nothing else
+        inputHandler = new InputHandler();
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(inputHandler);
+        Gdx.input.setInputProcessor(multiplexer);
+        Controllers.addListener(inputHandler);
 
         // temp
         // todo less magic numbers
@@ -101,6 +112,9 @@ public class Main extends ApplicationAdapter {
         menuType = MenuType.NONE;
 
         // Debug
+        Debug.showDebugInfo = true;
+        Debug.swapFaceButtons = true;
+
         debug = new TextraLabel("", FontType.KORURI.getSize20());
         debug.setPosition(20, World.HEIGHT - 70);
         stage.addActor(debug);
@@ -118,21 +132,23 @@ public class Main extends ApplicationAdapter {
 
     private void input() {
         // debug
-        debug.setText("fps: " + 1f / Gdx.graphics.getDeltaTime() + "\nactors on stage: " + stage.getActors().size + "\nindex = " + index + "\nmenuType = " + menuType);
+        if(Debug.showDebugInfo) debug.setText("fps: " + 1f / Gdx.graphics.getDeltaTime() + "\nactors on stage: " + stage.getActors().size + "\nindex = " + index + "\nmenuType = " + menuType);
+
+        // Get mappings of current controller
+        Controller controller = Controllers.getCurrent();
+        if(controller != null) InputLib.setupController(controller);
 
         switch(menuType) {
             case MAIN:
                 // Handle menu navigation
-                Number[] menuStats = MenuLib.handleMenu1D(index, MenuType.MAIN.getOptCount(), cooldown);
-                index = (int) menuStats[0];
-                cooldown = (float) menuStats[1];
+                index = MenuLib.checkMovement1D(index, MenuType.MAIN.getOptCount(), controller);
 
                 // Handle option color
                 //MenuLib.handleOptColor(optLabels, index);
                 MenuLib.handleCursor(coolRects.get(CoolRects.CURSOR_1.ordinal()), coolRects.get(CoolRects.CURSOR_2.ordinal()), index, World.WIDTH - 700 + 75, World.WIDTH - 175 - 92 + 75 - 10, 230 + 475, 100 + 4);
 
                 // Handle menu confirmation
-                if (Gdx.input.isKeyPressed(Keybinds.CONFIRM.getKey())) {
+                if (InputLib.checkInput(controller, Keybind.CONFIRM)) {
                     optSelected = MenuOptType.values()[MenuType.MAIN.getOpt(index).getType().ordinal()];
                     switch (optSelected) {
                         case START:
@@ -156,7 +172,7 @@ public class Main extends ApplicationAdapter {
                 }
                 break;
             case WIP:
-                if(Gdx.input.isKeyPressed(Keybinds.BACK.getKey())) {
+                if (InputLib.checkInput(controller, Keybind.CONFIRM, Keybind.BACK)) {
                     stage.getRoot().removeActor(wip);
                     stage.getRoot().removeActor(wip2);
                     coolRects.get(CoolRects.POPUP_CENTERED.ordinal()).setDir(-1);
@@ -166,7 +182,7 @@ public class Main extends ApplicationAdapter {
             case BATTLE:
             case TARGETING:
             case SKILLS:
-                menuType = BattleController.input(menuType);
+                menuType = BattleController.input(menuType, controller);
                 BattleController.updateStatDisplay();
                 break;
         }
@@ -177,7 +193,7 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         spriteBatch.begin();
-        spriteBatch.draw(texBg, 0, 0, World.WIDTH, World.HEIGHT);
+        spriteBatch.draw(texBg, 0, 0, World.WIDTH * Settings.scale, World.HEIGHT * Settings.scale);
         spriteBatch.end();
 
         // Draw cool rectangles

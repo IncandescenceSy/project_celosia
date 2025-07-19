@@ -6,7 +6,7 @@ import io.github.celosia.sys.battle.Combatant;
 // Todo heavily limit %-based damage on bosses
 public class ChangeHP implements BuffEffect {
 
-    private float change; // Amount to change HP by. 1f = 100%
+    private final float change; // Amount to change HP by. 1f = 100%
 
     public ChangeHP(float change) {
         this.change = change;

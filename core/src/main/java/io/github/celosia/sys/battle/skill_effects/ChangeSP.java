@@ -1,6 +1,8 @@
 package io.github.celosia.sys.battle.skill_effects;
 
-import io.github.celosia.sys.battle.*;
+import io.github.celosia.sys.battle.Combatant;
+import io.github.celosia.sys.battle.Result;
+import io.github.celosia.sys.battle.SkillEffect;
 
 public class ChangeSP implements SkillEffect {
 

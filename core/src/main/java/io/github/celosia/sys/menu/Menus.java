@@ -1,16 +1,5 @@
 package io.github.celosia.sys.menu;
 
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.utils.Align;
-import com.github.tommyettinger.textra.TypingLabel;
-import io.github.celosia.sys.World;
-import io.github.celosia.sys.menu.MenuLib.MenuType;
-import io.github.celosia.sys.menu.Fonts.FontType;
-
-import java.util.ArrayList;
-import java.util.List;
-
 // todo
 public class Menus {
 

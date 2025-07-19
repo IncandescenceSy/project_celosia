@@ -3,6 +3,7 @@ package io.github.celosia.lwjgl3;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import io.github.celosia.Main;
+import io.github.celosia.sys.settings.Settings;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
@@ -27,13 +28,15 @@ public class Lwjgl3Launcher {
         //// If you remove the above line and set Vsync to false, you can get unlimited FPS, which can be
         //// useful for testing performance, but can also be very stressful to some hardware.
         //// You may also need to configure GPU drivers to fully disable Vsync; this can cause screen tearing.
-        configuration.setWindowedMode(2560, 1440);
+        configuration.setWindowedMode((int) (2560 * Settings.scale), (int) (1440 * Settings.scale));
         //// You can change these files; they are in lwjgl3/src/main/resources/ .
         //// They can also be loaded from the root of assets/ .
         configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
 
         // Enable multisampling for better ShapeDrawer render quality. It doesn't seem like increasing samples beyond 1 improves quality
         configuration.setBackBufferConfig(8, 8, 8, 8, 16, 0, 1);
+
+        // todo: disallow window resizing and provide a preset selection? resizing creates ugly black bars and flicker, and if i resize the window too much, it stops taking input for X amount of time
 
         return configuration;
     }

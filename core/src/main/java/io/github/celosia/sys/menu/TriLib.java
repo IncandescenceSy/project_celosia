@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import io.github.celosia.sys.settings.Settings;
 import space.earlygrey.shapedrawer.JoinType;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -29,31 +30,32 @@ public class TriLib {
 
             // Skip the rest if the width is to be near 0
             // todo better fix for the inexplicable tallness
-            if(prog <= 0.02f) continue;
+            if (prog <= 0.02f) continue;
 
             float height = rect.getT() - rect.getB();
 
             // Top left
-            float tlx = rect.getL() + (height / 6);
-            float tly = rect.getT();
+            float tlx = (rect.getL() + (height / 6)) * Settings.scale;
+            float tly = rect.getT() * Settings.scale;
 
             // Top right
-            float trx = i.apply(tlx, rect.getR() + (height / 6), prog);
-            float try_ = rect.getT();
+            float trx = i.apply(tlx, (rect.getR() + (height / 6)) * Settings.scale, prog);
+            float try_ = rect.getT() * Settings.scale;
 
             // Bottom left
-            float blx = rect.getL();
-            float bly = rect.getB();
+            float blx = rect.getL() * Settings.scale;
+            float bly = rect.getB() * Settings.scale;
 
             // Bottom right
-            float brx = i.apply(blx, rect.getR(), prog);
-            float bry = rect.getB();
+            float brx = i.apply(blx, rect.getR() * Settings.scale, prog);
+            float bry = rect.getB() * Settings.scale;
 
             // Center
             Color color = rect.getColor();
             drawer.setColor(color.r, color.g, color.b, 1);
 
             // Todo change to TriangleStrip Mesh to avoid duplicate vertices
+            // todo Seems to be using pixels and not virtual units?
             drawer.filledTriangle(
                 tlx, tly,
                 blx, bly,
@@ -67,8 +69,8 @@ public class TriLib {
             );
 
             // Outline
-            // todo smoother looking lines if possible
-            if(rect.isHasOutline()) {
+            // todo Seems to be using pixels and not virtual units?
+            if (rect.isHasOutline()) {
                 drawer.setColor(1, 1, 1, 1);
 
                 Array<Vector2> points = new Array<>(false, 4);
@@ -78,7 +80,7 @@ public class TriLib {
                 points.add(new Vector2(trx, try_));
                 drawer.path(points,
                     // Change line thickness near the start/end of the animation to make its appearance/disappearance smoother
-                    i.apply(0, 10, Math.min(1f, prog * 3.5f)), JoinType.POINTY, false);
+                    i.apply(0, 10 * Settings.scale, Math.min(1f, prog * 3.5f)), JoinType.POINTY, false);
             }
 
         }

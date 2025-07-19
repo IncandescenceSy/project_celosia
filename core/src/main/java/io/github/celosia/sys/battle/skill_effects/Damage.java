@@ -37,7 +37,7 @@ public class Damage implements SkillEffect {
     @Override
     public Result apply(Combatant self, Combatant target, Result resultPrev) {
         // Multi-hit attacks should continue unless they hit an immunity
-        if(resultPrev.ordinal() >= minResult.ordinal()) {
+        if (resultPrev.ordinal() >= minResult.ordinal()) {
             float atk = -1f;
             float def = -1f;
 

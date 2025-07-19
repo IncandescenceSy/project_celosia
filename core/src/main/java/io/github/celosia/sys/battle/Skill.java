@@ -82,9 +82,10 @@ public enum Skill {
     // Str
     // Mag
     // todo a way to build multihits that's less repetitive?
+    // Ref: Terraria
     DEMON_SCYTHE(lang.get("skill.demon_scythe"), lang.get("skill.demon_scythe.desc"), Element.MALUM, Targeting.OTHER_2R, 11, new Damage(SkillType.MAG, Element.MALUM, 35), new GiveBuff(Buff.CURSE, 2, 1),
         new Damage(SkillType.MAG, Element.MALUM, 35), new GiveBuff(Buff.CURSE, 2, 1),
-        new Damage(SkillType.MAG, Element.MALUM, 35), new GiveBuff(Buff.CURSE, 2, 1)), // ref: Terraria
+        new Damage(SkillType.MAG, Element.MALUM, 35), new GiveBuff(Buff.CURSE, 2, 1)),
 
     // Unique skills
 

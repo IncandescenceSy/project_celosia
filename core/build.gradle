@@ -9,7 +9,7 @@ dependencies {
   implementation "com.github.tommyettinger:textratypist:2.0.3"
   implementation "space.earlygrey:shapedrawer:$shapedrawerVersion"
 
-  if(enableGraalNative == 'true') {
+  if (enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
   }
 }

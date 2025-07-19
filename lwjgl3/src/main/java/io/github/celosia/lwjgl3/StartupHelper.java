@@ -84,7 +84,7 @@ public class StartupHelper {
 // We also temporarily change the "user.name" property to one without any chars that would be invalid.
 // We revert our changes immediately after loading LWJGL3 natives.
                 String programData = System.getenv("ProgramData");
-                if(programData == null) programData = "C:\\Temp\\"; // if ProgramData isn't set, try some fallback.
+                if (programData == null) programData = "C:\\Temp\\"; // if ProgramData isn't set, try some fallback.
                 String prevTmpDir = System.getProperty("java.io.tmpdir", programData);
                 String prevUser = System.getProperty("user.name", "libGDX_User");
                 System.setProperty("java.io.tmpdir", programData + "/libGDX-temp");
@@ -106,7 +106,7 @@ public class StartupHelper {
         long NSThread      = objc_getClass("NSThread");
         long currentThread = invokePPP(NSThread, sel_getUid("currentThread"), objc_msgSend);
         boolean isMainThread = invokePPZ(currentThread, sel_getUid("isMainThread"), objc_msgSend);
-        if(isMainThread) return false;
+        if (isMainThread) return false;
 
         long pid = LibC.getpid();
 
