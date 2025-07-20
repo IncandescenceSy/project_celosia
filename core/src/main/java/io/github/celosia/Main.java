@@ -142,7 +142,6 @@ public class Main extends ApplicationAdapter {
                 index = MenuLib.checkMovement1D(index, MenuType.MAIN.getOptCount());
 
                 // Handle option color
-                //MenuLib.handleOptColor(optLabels, index);
                 MenuLib.handleCursor(coolRects.get(CoolRects.CURSOR_1.ordinal()), coolRects.get(CoolRects.CURSOR_2.ordinal()), index, World.WIDTH - 700 + 75, World.WIDTH - 175 - 92 + 75 - 10, 230 + 475, 100 + 4);
 
                 // Handle menu confirmation
@@ -151,7 +150,7 @@ public class Main extends ApplicationAdapter {
                     switch (optSelected) {
                         case START:
                             coolRects.get(CoolRects.MENU_MAIN.ordinal()).setDir(-1);
-                            coolRects.get(CoolRects.CURSOR_1.ordinal()).setDir(-1);
+                            coolRects.get(CoolRects.CURSOR_1.ordinal()).setDir(-1).setSpeed(2f);
                             MenuLib.removeOpts(optLabels, stage);
                             // Start game
                             BattleController.create(stage);

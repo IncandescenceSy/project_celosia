@@ -15,7 +15,7 @@ import java.util.List;
 
 public class TriLib {
 
-    // Draws cool black rectangles with a 15-degree angle rising skew and a white outline
+    // Draws cool rectangles with a 15-degree angle rising skew and an optional outline
     public static void drawCoolRects(PolygonSpriteBatch batch, ShapeDrawer drawer, List<CoolRect> coolRects) {
         batch.begin();
 
@@ -55,7 +55,6 @@ public class TriLib {
             drawer.setColor(color.r, color.g, color.b, 1);
 
             // Todo change to TriangleStrip Mesh to avoid duplicate vertices
-            // todo Seems to be using pixels and not virtual units?
             drawer.filledTriangle(
                 tlx, tly,
                 blx, bly,
@@ -69,7 +68,6 @@ public class TriLib {
             );
 
             // Outline
-            // todo Seems to be using pixels and not virtual units?
             if (rect.isHasOutline()) {
                 drawer.setColor(1, 1, 1, 1);
 

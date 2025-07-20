@@ -57,11 +57,12 @@ public class Damage implements SkillEffect {
                 affMultDef = 1f;
             } else {
                 affMultAtk = affAtk[self.getCmbType().getAffs()[element.ordinal() - 1] + 5];
-                affMultDef = Math.max(affDef[target.getCmbType().getAffs()[element.ordinal() - 1] + 5], (pierce) ? 1f : 0f);
+                //affMultDef = Math.max(affDef[target.getCmbType().getAffs()[element.ordinal() - 1] + 5], (pierce) ? 1f : 0f);
+                affMultDef = affDef[target.getCmbType().getAffs()[element.ordinal() - 1] + 5];
             }
 
             // todo does all the multiplication and shit apply as expected?
-            int dmg = (int) (((atk / def) * (pow * 30) * 6 * affMultAtk) * affMultDef * Math.max(self.getMultAtk(), 0.1f));
+            int dmg = (int) (((atk / def) * (pow * 10) * 2 * affMultAtk) * affMultDef * Math.max(self.getMultAtk(), 0.1f));
 
             //l.log(Level.INFO, self.getCmbType().getName() + " uses a skill on" + target.getCmbType().getName() + "; atk: " + atk + ", def: " + def + ", ratio: " + ratio + ", affMultAtk: " + affMultAtk + ", affMultDef: " + affMultDef + ", dmg: " + dmg + ", test: " + test + ", test2: " + test2);
 

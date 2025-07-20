@@ -12,7 +12,7 @@ public class CoolRect {
     private int dir; // 1 = unfolding; -1 = collapsing
     private Color color; // Core color
     private boolean hasOutline; // Whether to draw an outline
-    private float speed; // Speed multiplier. 1 = animation completes in 1s. Speed is doubled when closing
+    private float speed; // Speed multiplier. 1f = animation completes in 1s. Speed is doubled when closing
 
     public CoolRect(int l, int t, int r, int b, int dir, Color color, boolean hasOutline, float prog, float speed) {
         this.l = l;
@@ -35,7 +35,7 @@ public class CoolRect {
     }
 
     public CoolRect(int dir, Color color, boolean hasOutline) {
-        this(0, 0, 0, 0, dir, color, false, 0f, 2f);
+        this(0, 0, 0, 0, dir, color, hasOutline, 0f, 2f);
     }
 
     public void setL(int l) {
@@ -70,8 +70,10 @@ public class CoolRect {
         return b;
     }
 
-    public void setDir(int dir) {
+    // Returns this so it can be chained for convenience
+    public CoolRect setDir(int dir) {
         this.dir = dir;
+        return this;
     }
 
     public int getDir() {

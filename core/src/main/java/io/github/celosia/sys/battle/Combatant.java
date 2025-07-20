@@ -324,6 +324,14 @@ public class Combatant {
         buffInstances.add(buffInstance);
     }
 
+    // Returns the requested BuffInstance if present
+    public BuffInstance findBuff(Buff buff) {
+        for(BuffInstance buffInstance : buffInstances) {
+            if(buffInstance.getBuff() == buff) return buffInstance;
+        }
+        return null;
+    }
+
     public void decrementTurns() {
         // Stages
         if (--stageAtkTurns <= 0) {
@@ -348,7 +356,7 @@ public class Combatant {
         for(int i = buffInstances.size() - 1; i >= 0; i--) {
             BuffInstance buffInstance = buffInstances.get(i);
             int turns = buffInstance.getTurns();
-            if (turns >= 2) {
+            if (turns >= 2 && turns < 1000) { // 1000+ turns = infinite
                 buffInstance.setTurns(turns - 1);
             } else {
                 for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
@@ -391,7 +399,7 @@ public class Combatant {
         // Lower HP
         this.getStatsCur().setHp(MathUtils.clamp(this.getStatsCur().getHp() - dmg, 0, this.getStatsDefault().getHp()));
 
-        if (multDef <= -500f) { // Protect
+        if (multDef <= -500f) { // Hit Protect
             return Result.HIT_BARRIER;
         } else if (dmg > 0) { // Did damage
             return Result.SUCCESS;

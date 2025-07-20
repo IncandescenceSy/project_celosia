@@ -7,6 +7,10 @@ import static io.github.celosia.sys.settings.Lang.lang;
 // Skills (any action that is attributed to a Combatant and has impact on the battle)
 // todo lang, functional targeting, display type even for non-damaging skills, explicitly define which are "for allies" and which are "for opponents" for autotargeting and AI
 public enum Skill {
+    // Temp testing skills
+    OVERHEAL("Overheal", "", Element.VIS, Targeting.OTHER_1R_OR_SELF, 15, new Heal(240, 0.5f)), // temp
+    INFERNAL_PROVENANCE("Infernal Provenance", "", Element.IGNIS, Targeting.OTHER_1R_OR_SELF, 15, new Damage(SkillType.MAG, Element.IGNIS, 100), new GiveBuff(Buff.EXTRA_ACTION, 2, true)), // temp
+
     // Basic skills
     NOTHING(lang.get("skill.nothing"), lang.get("skill.nothing.desc"), Element.VIS, Targeting.SELF, 0),
     ATTACK(lang.get("skill.attack"), lang.get("skill.attack.desc"), Element.VIS, Targeting.OTHER_1R, 0, new Damage(SkillType.STR, Element.VIS, 55)),
@@ -15,23 +19,23 @@ public enum Skill {
     BLOSSOM(lang.get("skill.blossom"), lang.get("skill.blossom.desc"), Element.VIS, Targeting.SELF, 30), // todo
 
     // Stage changers
-    ATTACK_UP(lang.get("skill.atk_up"), lang.get("skill.atk_up.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, new ChangeStage(StageType.ATK, 3, 5)),
-    DEFENSE_UP(lang.get("skill.def_up"), lang.get("skill.def_up.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, new ChangeStage(StageType.DEF, 3, 5)),
-    FAITH_UP(lang.get("skill.fth_up"), lang.get("skill.fth_up.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, new ChangeStage(StageType.FTH, 3, 5)),
-    AGILITY_UP(lang.get("skill.agi_up"), lang.get("skill.agi_up.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, new ChangeStage(StageType.AGI, 3, 5)),
-    ATTACK_DOWN(lang.get("skill.atk_down"), lang.get("skill.atk_down.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, new ChangeStage(StageType.ATK, -3, 5)),
-    DEFENSE_DOWN(lang.get("skill.def_down"), lang.get("skill.def_down.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, new ChangeStage(StageType.DEF, -3, 5)),
-    FAITH_DOWN(lang.get("skill.fth_down"), lang.get("skill.fth_down.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, new ChangeStage(StageType.FTH, -3, 5)),
-    AGILITY_DOWN(lang.get("skill.agi_down"), lang.get("skill.agi_down.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, new ChangeStage(StageType.AGI, -3, 5)),
+    ATTACK_UP(lang.get("skill.atk_up"), lang.get("skill.atk_up.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, new ChangeStage(StageType.ATK, 2, 5)),
+    DEFENSE_UP(lang.get("skill.def_up"), lang.get("skill.def_up.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, new ChangeStage(StageType.DEF, 2, 5)),
+    FAITH_UP(lang.get("skill.fth_up"), lang.get("skill.fth_up.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, new ChangeStage(StageType.FTH, 2, 5)),
+    AGILITY_UP(lang.get("skill.agi_up"), lang.get("skill.agi_up.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, new ChangeStage(StageType.AGI, 2, 5)),
+    ATTACK_DOWN(lang.get("skill.atk_down"), lang.get("skill.atk_down.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, new ChangeStage(StageType.ATK, -2, 5)),
+    DEFENSE_DOWN(lang.get("skill.def_down"), lang.get("skill.def_down.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, new ChangeStage(StageType.DEF, -2, 5)),
+    FAITH_DOWN(lang.get("skill.fth_down"), lang.get("skill.fth_down.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, new ChangeStage(StageType.FTH, -2, 5)),
+    AGILITY_DOWN(lang.get("skill.agi_down"), lang.get("skill.agi_down.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 4, new ChangeStage(StageType.AGI, -2, 5)),
 
-    ATTACK_UP_GROUP(lang.get("skill.atk_up_group"), lang.get("skill.atk_up_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 4, new ChangeStage(StageType.ATK, 3, 5)),
-    DEFENSE_UP_GROUP(lang.get("skill.def_up_group"), lang.get("skill.def_up_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 4, new ChangeStage(StageType.DEF, 3, 5)),
-    FAITH_UP_GROUP(lang.get("skill.fth_up_group"), lang.get("skill.fth_up_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 4, new ChangeStage(StageType.FTH, 3, 5)),
-    AGILITY_UP_GROUP(lang.get("skill.agi_up_group"), lang.get("skill.agi_up_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 4, new ChangeStage(StageType.AGI, 3, 5)),
-    ATTACK_DOWN_GROUP(lang.get("skill.atk_down_group"), lang.get("skill.atk_down_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 4, new ChangeStage(StageType.ATK, -3, 5)),
-    DEFENSE_DOWN_GROUP(lang.get("skill.def_down_group"), lang.get("skill.def_down_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 4, new ChangeStage(StageType.DEF, -3, 5)),
-    FAITH_DOWN_GROUP(lang.get("skill.fth_down_group"), lang.get("skill.fth_down_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 4, new ChangeStage(StageType.FTH, -3, 5)),
-    AGILITY_DOWN_GROUP(lang.get("skill.agi_down_group"), lang.get("skill.agi_down_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 4, new ChangeStage(StageType.AGI, -3, 5)),
+    ATTACK_UP_GROUP(lang.get("skill.atk_up_group"), lang.get("skill.atk_up_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 12, new ChangeStage(StageType.ATK, 2, 3)),
+    DEFENSE_UP_GROUP(lang.get("skill.def_up_group"), lang.get("skill.def_up_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 12, new ChangeStage(StageType.DEF, 2, 3)),
+    FAITH_UP_GROUP(lang.get("skill.fth_up_group"), lang.get("skill.fth_up_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 12, new ChangeStage(StageType.FTH, 2, 3)),
+    AGILITY_UP_GROUP(lang.get("skill.agi_up_group"), lang.get("skill.agi_up_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 12, new ChangeStage(StageType.AGI, 2, 3)),
+    ATTACK_DOWN_GROUP(lang.get("skill.atk_down_group"), lang.get("skill.atk_down_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 12, new ChangeStage(StageType.ATK, -2, 3)),
+    DEFENSE_DOWN_GROUP(lang.get("skill.def_down_group"), lang.get("skill.def_down_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 12, new ChangeStage(StageType.DEF, -2, 3)),
+    FAITH_DOWN_GROUP(lang.get("skill.fth_down_group"), lang.get("skill.fth_down_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 12, new ChangeStage(StageType.FTH, -2, 3)),
+    AGILITY_DOWN_GROUP(lang.get("skill.agi_down_group"), lang.get("skill.agi_down_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 12, new ChangeStage(StageType.AGI, -2, 3)),
 
     // Resists
     // todo
@@ -42,7 +46,6 @@ public enum Skill {
     // Heals
     HEAL(lang.get("skill.heal"), lang.get("skill.heal.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 6, new Heal(160)),
     HEAL_GROUP(lang.get("skill.heal_group"), lang.get("skill.heal_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 18, new Heal(140)),
-    OVERHEAL("Overheal", lang.get("skill.heal.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 15, new Heal(240, 0.5f)), // temp
 
     // Barriers
     BARRIER(lang.get("skill.barrier"), lang.get("skill.barrier.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 8, new Heal(140, 5)),
@@ -104,7 +107,7 @@ public enum Skill {
     // Ignis
 
     // Glacies
-    ICE_AGE(lang.get("skill.ice_age"), lang.get("skill.ice_age.desc"), Element.GLACIES, Targeting.OTHER_2R, 60, true, new Damage(SkillType.STR, Element.GLACIES, 260, true), new GiveBuff(Buff.FROSTBITE, 3, 3, Result.SUCCESS));
+    ICE_AGE(lang.get("skill.ice_age"), lang.get("skill.ice_age.desc"), Element.GLACIES, Targeting.OTHER_2R, 60, true, new Damage(SkillType.STR, Element.GLACIES, 260, true), new GiveBuff(Buff.FROSTBITE, 3, 3));
 
     // Fulgur
 
@@ -166,6 +169,10 @@ public enum Skill {
         return name;
     }
 
+    public String getDesc() {
+        return desc;
+    }
+
     public Element getElement() {
         return element;
     }
@@ -178,8 +185,8 @@ public enum Skill {
         return cost;
     }
 
-    public String getDesc() {
-        return desc;
+    public int getPrio() {
+        return prio;
     }
 
     public boolean isBloom() {

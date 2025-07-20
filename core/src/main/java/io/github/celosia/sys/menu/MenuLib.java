@@ -89,10 +89,9 @@ public class MenuLib {
         }
     }
 
-    // Removes Labels from a Stage and a List
+    // Removes Labels from a Stage
     public static void removeOpts(List<TypingLabel> labels, Stage stage) {
         for(TypingLabel label : labels) {
-            //labels.remove(label);
             stage.getRoot().removeActor(label);
         }
     }
@@ -102,7 +101,6 @@ public class MenuLib {
     }
 
     // The different menus in the game
-    // todo lang
     public enum MenuType {
         NONE(),
         WIP(),

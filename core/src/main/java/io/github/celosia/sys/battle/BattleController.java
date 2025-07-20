@@ -14,8 +14,10 @@ import io.github.celosia.sys.menu.InputLib;
 import io.github.celosia.sys.menu.MenuLib;
 import io.github.celosia.sys.menu.MenuLib.MenuType;
 import io.github.celosia.sys.settings.Keybind;
+import io.github.celosia.sys.settings.Settings;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static io.github.celosia.sys.menu.MenuLib.setTextIfChanged;
@@ -34,9 +36,14 @@ public class BattleController {
 
     // Actions being made this turn
     static List<SkillTargeting> moves = new ArrayList<>();
+    // Copy for queue
+    static List<SkillTargeting> moves2 = new ArrayList<>();
 
     static int selectingMove = 0; // Who's currently selecting their move. 0-3 = player; 4-8 = opponent; 100 = moves are executing
+    static int extraActions = 0; // How many extra actions have been used for the current combatant
     static int usingMove = 0; // Who's currently using their move
+    static int applyingEffect = 0; // Which SkillEffect of the current skill is currently being applied
+    static Result result; // SkillEffect result
 
     // Menu navigation
     static int index = 5;
@@ -63,7 +70,7 @@ public class BattleController {
     static List<TypingLabel> skillsL = new ArrayList<>();
 
     // temp
-    static Skill[] skills = new Skill[]{Skill.FIREBALL, Skill.HEAL, Skill.OVERHEAL, Skill.DEMON_SCYTHE};
+    static Skill[] skills = new Skill[]{Skill.FIREBALL, Skill.HEAL, Skill.INFERNAL_PROVENANCE, Skill.DEMON_SCYTHE};
     static Skill[] skills2 = new Skill[]{Skill.FIREBALL, Skill.ICE_BEAM, Skill.BARRIER, Skill.PROTECT};
     static Skill[] skills3 = new Skill[]{Skill.THUNDERBOLT, Skill.BARRIER, Skill.ZEPHYR_LANCE, Skill.JET_STREAM};
 
@@ -83,15 +90,15 @@ public class BattleController {
         CombatantType josephine = new CombatantType("Josephine", jerryStats, 0, 0, 0, 0 ,0, 5, -4);
         CombatantType julian = new CombatantType("Julian", johnyStats, 0, 0, 0, 0 ,0, -4, 5);
 
-        Team player = new Team(new Combatant[]{new Combatant(johny, 95, johnyStats.getRealStats(95), skills, 20, 0),
-            new Combatant(james, 94, jerryStats.getRealStats(94), skills2, 20, 1),
-            new Combatant(julia, 93, johnyStats.getRealStats(93), skills3, 20, 2),
-            new Combatant(josephine, 92, jerryStats.getRealStats(92), skills, 20, 3)});
+        Team player = new Team(new Combatant[]{new Combatant(johny, 20, johnyStats.getRealStats(20), skills, 20, 0),
+            new Combatant(james, 20, jerryStats.getRealStats(20), skills2, 20, 1),
+            new Combatant(julia, 20, johnyStats.getRealStats(20), skills3, 20, 2),
+            new Combatant(josephine, 20, jerryStats.getRealStats(20), skills, 20, 3)});
 
-        Team opponent = new Team(new Combatant[]{new Combatant(jerry, 100, jerryStats.getRealStats(100), skills2, 20, 5),
-            new Combatant(jacob, 99, johnyStats.getRealStats(99), skills2, 20, 6),
-            new Combatant(jude, 98, jerryStats.getRealStats(98), skills2, 20, 7),
-            new Combatant(julian, 97, johnyStats.getRealStats(97), skills2, 20, 8)});
+        Team opponent = new Team(new Combatant[]{new Combatant(jerry, 20, jerryStats.getRealStats(20), skills2, 20, 4),
+            new Combatant(jacob, 20, johnyStats.getRealStats(20), skills2, 20, 5),
+            new Combatant(jude, 20, jerryStats.getRealStats(20), skills2, 20, 6),
+            new Combatant(julian, 20, johnyStats.getRealStats(20), skills2, 20, 7)});
 
         battle = new Battle(player, opponent);
 
@@ -184,12 +191,11 @@ public class BattleController {
                     //Skill selectedSkill = skills2[MathUtils.random(skills.length - 1)];
                     Skill selectedSkill = Skill.NOTHING;
                     Combatant target = battle.getPlayerTeam().getCmbs()[MathUtils.random(battle.getPlayerTeam().getCmbs().length - 1)];
-                    setTextIfChanged(movesL.get(selectingMove), selectedSkill.getName() + " -> " + target.getCmbType().getName());
+                    setTextIfChanged(movesL.get(selectingMove), selectedSkill.getName() + " -> " + target.getCmbType().getName()); // todo support ExtraActions
                     moves.add(new SkillTargeting(selectedSkill, battle.getOpponentTeam().getCmbs()[selectingMove - 4], target)); // todo AI
                     selectingMove++;
                 } else selectingMove = 100; // Jump to move execution
             } else if (selectingMove == 100) { // Moves play out
-
                 // All moves have happened; end turn
                 if (moves.isEmpty()) {
                     selectingMove = 0;
@@ -222,65 +228,74 @@ public class BattleController {
                     }
 
                     // Increase bloom
-                    battle.getPlayerTeam().setBloom(battle.getPlayerTeam().getBloom() + 5);
-                    battle.getOpponentTeam().setBloom(battle.getOpponentTeam().getBloom() + 5);
+                    battle.getPlayerTeam().setBloom(battle.getPlayerTeam().getBloom() + 10);
+                    battle.getOpponentTeam().setBloom(battle.getOpponentTeam().getBloom() + 10);
 
                     // todo check if battle is over
 
                     return MenuType.BATTLE;
                 }
 
-                // Sort moves by Agi
-                // todo priority
-                moves.sort((a, b) -> Integer.compare(
-                    b.getSelf().getAgiWithStage(),
-                    a.getSelf().getAgiWithStage()
-                ));
+                // Sort moves by Prio and then by Agi
+                moves.sort(Comparator
+                    .comparingInt((SkillTargeting entry) -> entry.getSkill().getPrio())
+                    .thenComparingInt(entry -> entry.getSelf().getAgiWithStage()).reversed());
 
                 // The next move plays out
                 SkillTargeting move = moves.get(0);
 
                 if (isMoveValid(move)) {
+                    // Invalid newSp will cancel move
+                    int newSp = -1;
+
                     // Execute move
-                    if (move.getSkill().isBloom()) {
-                        // todo
-                    } else { // Use MP
+                    if(applyingEffect == 0) {
+                        // Set newSp
                         Element element = move.getSkill().getElement();
-                        move.getSelf().setSp(move.getSelf().getSp() - (int) (move.getSkill().getCost() * ((element == Element.VIS) ? 1 : affSp[move.getSelf().getCmbType().getAffs()[element.ordinal() - 1] + 5])));
-                    }
+                        newSp = move.getSelf().getSp() - (int) (move.getSkill().getCost() * ((element == Element.VIS) ? 1 : affSp[move.getSelf().getCmbType().getAffs()[element.ordinal() - 1] + 5]));
 
-                    // Apply all SkillEffects
-                    // todo apply over a period of time
-                    Result result = Result.SUCCESS;
-                    for (SkillEffect effect : move.getSkill().getSkillEffects()) {
-                        result = effect.apply(move.getSelf(), move.getTarget(), result);
-                        if (result == Result.FAIL) break; // Stop executing skill if any SkillEffect fails entirely
-                    }
+                        if(newSp >= 0) {
+                            if (move.getSkill().isBloom()) {
+                                // todo
+                            } else { // Use SP
+                                move.getSelf().setSp(newSp);
+                            }
 
-                    // Apply on-skill use buffs
-                    for(BuffInstance buffInstance : move.getSelf().getBuffInstances()) {
-                        for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
-                            buffEffect.onUseSkill(move.getSelf(), move.getTarget());
+                            // Apply on-skill use buffs
+                            for (BuffInstance buffInstance : move.getSelf().getBuffInstances()) {
+                                for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
+                                    buffEffect.onUseSkill(move.getSelf(), move.getTarget());
+                                }
+                            }
+
+                            // Color move for currently acting combatant (temp)
+                            for (int i = 0; i < 8; i++) {
+                                //statsL.get(i).setX(((move.getSelf().getPos()) == i) ? (i >= 4) ? World.WIDTH - 300 : 200 : (i >= 4) ? World.WIDTH - 250 : 150);
+                                if (move.getSelf().getPos() == i) {
+                                    movesL.get(i).setColor(Color.PINK);
+                                } else movesL.get(i).setColor(Color.WHITE);
+                            }
+
+                            result = Result.SUCCESS;
                         }
-                    }
+                    } else newSp = 0; // SP shouldn't change
 
-                    // Move stat display for currently acting combatant (temp)
-                    for(int i = 0; i < 8; i++) {
-                        //statsL.get(i).setX(((move.getSelf().getPos()) == i) ? (i >= 4) ? World.WIDTH - 300 : 200 : (i >= 4) ? World.WIDTH - 250 : 150);
-                        if (move.getSelf().getPos() == i) {
-                            movesL.get(i).setColor(Color.PINK);
+                    // Make sure newSp is valid
+                    if(newSp >= 0) {
+                        // Apply all SkillEffects over a period of time
+                        SkillEffect[] skillEffects = move.getSkill().getSkillEffects();
+
+                        if (applyingEffect < skillEffects.length && result != Result.FAIL) {
+                            result = skillEffects[applyingEffect].apply(move.getSelf(), move.getTarget(), result);
+                            applyingEffect++;
+                            wait += 0.25f * Settings.battleSpeed;
+                        } else {
+                            endMove();
                         }
-                    }
+                    } else endMove();
 
                     // todo delete killed combatants
-
-                    usingMove++;
-                }
-
-                // Wait 1s between moves
-                wait++;
-
-                moves.remove(0);
+                } else endMove();
             }
         } else if (menuType == MenuType.TARGETING) { // Picking a target
 
@@ -299,14 +314,22 @@ public class BattleController {
 
             // Add selection to move queue
             if (InputLib.checkInput(Keybind.CONFIRM)) {
+                Combatant self = battle.getPlayerTeam().getCmbs()[selectingMove];
                 Combatant target = (index < 4) ? battle.getPlayerTeam().getCmbs()[index] : battle.getOpponentTeam().getCmbs()[index - 4];
-                moves.add(new SkillTargeting(selectedSkill, battle.getPlayerTeam().getCmbs()[selectingMove], target));
+                moves.add(new SkillTargeting(selectedSkill, self, target));
                 setTextIfChanged(movesL.get(selectingMove), movesL.get(selectingMove).getOriginalText() + " -> " + target.getCmbType().getName());
-
-                selectingMove++;
 
                 // Reset for next time
                 for(TypingLabel stat : statsL) stat.setColor(Color.WHITE);
+
+                // Move on to next combatant to select a move for unless this one has extra actions
+                BuffInstance extraAction = self.findBuff(Buff.EXTRA_ACTION);
+                if(extraAction != null && extraActions < extraAction.getStacks()) {
+                    extraActions++;
+                } else {
+                    extraActions = 0;
+                    selectingMove++;
+                }
 
                 return MenuType.BATTLE;
             } else return MenuType.TARGETING;
@@ -360,28 +383,36 @@ public class BattleController {
         }
 
         // Queue
+        // todo fix it taking a fraction of a second to add the highlight during the start of move execution
         // Sort combatants by Agi
         List<Combatant> cmbsAll = battle.getAllCombatants();
-
         cmbsAll.sort((a, b) -> Integer.compare(
             b.getAgiWithStage(),
             a.getAgiWithStage()
         ));
 
+        // Copy and sort moves
+        // Only copy if it hasn't started emptying yet
+        if(selectingMove == 8) moves2 = new ArrayList<>(moves);
+        else if(selectingMove == 100) {
+            moves2.sort(Comparator
+                .comparingInt((SkillTargeting entry) -> entry.getSkill().getPrio())
+                .thenComparingInt(entry -> entry.getSelf().getAgiWithStage()).reversed());
+        } else moves2 = new ArrayList<>();
+
         StringBuilder queueText = new StringBuilder().append(lang.get("queue")).append(": ");
 
         for(int i = 0; i < cmbsAll.size(); i++) {
-            boolean active = (i + 1) == usingMove || cmbsAll.get(i).getPos() == selectingMove;
+            boolean active = cmbsAll.get(i).getPos() == selectingMove;
+            if(!active && usingMove > 0 && moves2.size() >= cmbsAll.size()) active = (moves2.get(usingMove - 1).getSelf() == cmbsAll.get(i));
             if (active) queueText.append("[PINK][[");
             queueText.append(cmbsAll.get(i).getCmbType().getName());
-            if (active) {
-                queueText.append("][WHITE]");
-            }
+            if (active) queueText.append("][WHITE]");
             if (i != cmbsAll.size() - 1) queueText.append(", ");
         }
 
         queue.setText(queueText.toString());
-        queue.setPosition(World.WIDTH_2, World.HEIGHT - 120, Align.center); // Mustt be set here so it aligns properly
+        queue.setPosition(World.WIDTH_2, World.HEIGHT - 120, Align.center); // Must be set here so it aligns properly
         queue.skipToTheEnd();
 
         // Update combatant stat display
@@ -406,9 +437,7 @@ public class BattleController {
 
                 // Barrier
                 barrier = cmb.getBarrier();
-                if (barrier > 0) {
-                    text.append(lang.get("barrier")).append(" x").append(barrier).append("(").append(cmb.getBarrierTurns()).append(") ");
-                }
+                if (barrier > 0) text.append(lang.get("barrier")).append("x").append(barrier).append("(").append(cmb.getBarrierTurns()).append(") ");
 
                 // List buffs
                 List<BuffInstance> buffInstances = cmb.getBuffInstances();
@@ -416,7 +445,11 @@ public class BattleController {
                     for (BuffInstance buffInstance : buffInstances) {
                         if (buffInstance.getBuff() == Buff.DEFEND) {
                             text.append(buffInstance.getBuff().getName()).append("x").append(cmb.getDefend()).append("(").append(buffInstance.getTurns()).append(") ");
-                        } else text.append(buffInstance.getBuff().getName()).append(" x").append(buffInstance.getStacks()).append("(").append(buffInstance.getTurns()).append(") ");
+                        } else {
+                            text.append(buffInstance.getBuff().getName());
+                            if(buffInstance.getBuff().getMaxStacks() > 1) text.append("x").append(buffInstance.getStacks());
+                            if(buffInstance.getTurns() < 1000) text.append("(").append(buffInstance.getTurns()).append(") "); // 1000+ turns = infinite
+                        }
                     }
                 }
                 setTextIfChanged(statsL.get(i), text.toString());
@@ -430,5 +463,12 @@ public class BattleController {
     // todo
     public static boolean isMoveValid(SkillTargeting move) {
         return true;
+    }
+
+    public static void endMove() {
+        usingMove++;
+        applyingEffect = 0;
+        moves.remove(0);
+        wait += 1 * Settings.battleSpeed;
     }
 }

@@ -21,7 +21,7 @@ public class InputLib {
             Button.A.setMapping(mapping.buttonB);
             Button.Y.setMapping(mapping.buttonX);
             Button.X.setMapping(mapping.buttonY);
-        } else{
+        } else {
             Button.B.setMapping(mapping.buttonB);
             Button.A.setMapping(mapping.buttonA);
             Button.Y.setMapping(mapping.buttonY);
