@@ -26,7 +26,7 @@ public enum Buff {
     CURSE(lang.get("buff.curse"), lang.get("buff.curse.desc"),  BuffType.DEBUFF, new ChangeHP(0.02f), new ChangeStat(Stat.FTH, -0.05f)), // todo
 
     // Other
-    EXTRA_ACTION(lang.get("buff.extra_action"), lang.get("buff.extra_action.desc"), BuffType.BUFF); // todo works but display is a little janky in a couple places
+    EXTRA_ACTION(lang.get("buff.extra_action"), lang.get("buff.extra_action.desc"), BuffType.BUFF);
 
     private final String name;
     private final String desc;

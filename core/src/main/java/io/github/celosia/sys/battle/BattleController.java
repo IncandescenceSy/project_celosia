@@ -70,13 +70,14 @@ public class BattleController {
     static List<TypingLabel> skillsL = new ArrayList<>();
 
     // temp
-    static Skill[] skills = new Skill[]{Skill.FIREBALL, Skill.HEAL, Skill.INFERNAL_PROVENANCE, Skill.DEMON_SCYTHE};
-    static Skill[] skills2 = new Skill[]{Skill.FIREBALL, Skill.ICE_BEAM, Skill.BARRIER, Skill.PROTECT};
-    static Skill[] skills3 = new Skill[]{Skill.THUNDERBOLT, Skill.BARRIER, Skill.ZEPHYR_LANCE, Skill.JET_STREAM};
+    static Skill[] skills = new Skill[]{Skill.FIREBALL, Skill.HEAL, Skill.INFERNAL_PROVENANCE, Skill.DEMON_SCYTHE, Skill.ICE_AGE};
+    static Skill[] skills2 = new Skill[]{Skill.FIREBALL, Skill.ICE_BEAM, Skill.BARRIER, Skill.PROTECT, Skill.ICE_AGE};
+    static Skill[] skills3 = new Skill[]{Skill.THUNDERBOLT, Skill.BARRIER, Skill.ZEPHYR_LANCE, Skill.JET_STREAM, Skill.ICE_AGE};
 
     // Debug
     //static TypingLabel battleLog = new TypingLabel("", FontType.KORURI.getSize30());
 
+    // battle mechanics todo: Targeting, Passives, Follow-Ups, Accessories
     public static void create(Stage stage) {
         // Setup teams (temp)
         Stats johnyStats = new Stats(100, 100, 100, 100, 100, 100, 100);
@@ -134,7 +135,8 @@ public class BattleController {
         }
 
         // Skill menu display
-        for(int i = 0; i < 4; i++) {
+        // todo support arbitrary size
+        for(int i = 0; i < 5; i++) {
             skillsL.add(new TypingLabel("", FontType.KORURI.getSize30()));
             stage.addActor(skillsL.get(i));
         }
@@ -175,9 +177,9 @@ public class BattleController {
                         setTextIfChanged(movesL.get(selectingMove), lang.get("skill"));
 
                         // Skill selection display
-                        for(int i = 0; i < 4; i++) {
+                        for(int i = 0; i < 5; i++) {
                             skillsL.get(i).setPosition(600, (World.HEIGHT - 400 - 200 * selectingMove) - ((i - 2) * 35));
-                            setTextIfChanged(skillsL.get(i), battle.getPlayerTeam().getCmbs()[selectingMove].getSkills()[i].getName());
+                            setTextIfChanged(skillsL.get(i), battle.getPlayerTeam().getCmbs()[selectingMove].getSkills()[i].getName()); // todo support ExtraActions
                         }
 
                         // Prepare menus
@@ -214,7 +216,7 @@ public class BattleController {
 
                     for (Combatant cmb : battle.getAllCombatants()) {
                         // Increase MP
-                        cmb.setSp(cmb.getSp() + 10);
+                        cmb.setSp(Math.min(cmb.getSp() + 10, 100));
 
                         // Apply buff turn end effects
                         for(BuffInstance buffInstance : cmb.getBuffInstances()) {
@@ -228,8 +230,8 @@ public class BattleController {
                     }
 
                     // Increase bloom
-                    battle.getPlayerTeam().setBloom(battle.getPlayerTeam().getBloom() + 10);
-                    battle.getOpponentTeam().setBloom(battle.getOpponentTeam().getBloom() + 10);
+                    battle.getPlayerTeam().setBloom(Math.min(battle.getPlayerTeam().getBloom() + 10, 100));
+                    battle.getOpponentTeam().setBloom(Math.min(battle.getOpponentTeam().getBloom() + 10, 100));
 
                     // todo check if battle is over
 
@@ -252,11 +254,12 @@ public class BattleController {
                     if(applyingEffect == 0) {
                         // Set newSp
                         Element element = move.getSkill().getElement();
-                        newSp = move.getSelf().getSp() - (int) (move.getSkill().getCost() * ((element == Element.VIS) ? 1 : affSp[move.getSelf().getCmbType().getAffs()[element.ordinal() - 1] + 5]));
+                        Team team = (move.getSelf().isPlayerTeam()) ? battle.getPlayerTeam() : battle.getOpponentTeam();
+                        newSp = (move.getSkill().isBloom()) ? team.getBloom() - move.getSkill().getCost() : move.getSelf().getSp() - (int) (move.getSkill().getCost() * ((element == Element.VIS) ? 1 : affSp[move.getSelf().getCmbType().getAffs()[element.ordinal() - 1] + 5]));
 
                         if(newSp >= 0) {
                             if (move.getSkill().isBloom()) {
-                                // todo
+                                team.setBloom(newSp);
                             } else { // Use SP
                                 move.getSelf().setSp(newSp);
                             }
@@ -317,7 +320,7 @@ public class BattleController {
                 Combatant self = battle.getPlayerTeam().getCmbs()[selectingMove];
                 Combatant target = (index < 4) ? battle.getPlayerTeam().getCmbs()[index] : battle.getOpponentTeam().getCmbs()[index - 4];
                 moves.add(new SkillTargeting(selectedSkill, self, target));
-                setTextIfChanged(movesL.get(selectingMove), movesL.get(selectingMove).getOriginalText() + " -> " + target.getCmbType().getName());
+                setTextIfChanged(movesL.get(selectingMove), movesL.get(selectingMove).getOriginalText() + " -> " + target.getCmbType().getName()); // todo support ExtraActions
 
                 // Reset for next time
                 for(TypingLabel stat : statsL) stat.setColor(Color.WHITE);
@@ -416,7 +419,7 @@ public class BattleController {
         queue.skipToTheEnd();
 
         // Update combatant stat display
-        // todo lang and disambiguation + system to display all status updates
+        // todo disambiguation + system to display all status updates
         for (int i = 0; i < 8; i++) {
             Combatant cmb = (i >= 4) ? battle.getOpponentTeam().getCmbs()[i - 4] : battle.getPlayerTeam().getCmbs()[i]; // todo can use battle.getAllCmbs
             if (cmb != null) {

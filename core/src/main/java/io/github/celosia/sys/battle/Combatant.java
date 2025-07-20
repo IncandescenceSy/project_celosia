@@ -102,6 +102,10 @@ public class Combatant {
         return pos;
     }
 
+    public boolean isPlayerTeam() {
+        return pos < 4;
+    }
+
     public void setStageAtk(int stageAtk) {
         this.stageAtk = MathUtils.clamp(stageAtk, -9, 9);
     }
