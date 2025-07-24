@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Align;
 import com.github.tommyettinger.textra.TextraLabel;
 import com.github.tommyettinger.textra.TypingLabel;
+import io.github.celosia.sys.Debug;
 import io.github.celosia.sys.InputHandler;
 import io.github.celosia.sys.World;
 import io.github.celosia.sys.menu.Fonts.FontType;
@@ -22,7 +23,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static io.github.celosia.sys.menu.MenuLib.setTextIfChanged;
 import static io.github.celosia.sys.settings.Lang.lang;
@@ -79,7 +79,7 @@ public class BattleController {
     static Skill[] skills3 = new Skill[]{Skill.THUNDERBOLT, Skill.ATTACK_UP, Skill.ZEPHYR_LANCE, Skill.JET_STREAM, Skill.ICE_AGE};
 
     // Battle log
-    // todo  have button to bring up full log, better positioning
+    // todo press L2(?) to bring up full log, better positioning
     static TextraLabel battleLog = new TextraLabel("", FontType.KORURI.getSize20());
     static String logText = "[CYAN]" + lang.get("turn") + " " + 1 + "[WHITE]\n" + lang.get("log.all_units_gain") + " " + 10 + " " + lang.get("sp") + "\n" + lang.get("log.both_teams_gain") + " " + 10 + " " + lang.get("bloom") + "\n";
     static int logScroll = 0;
@@ -162,6 +162,9 @@ public class BattleController {
             logSize -= 1000;
         }
 
+        // Debug
+        if(Debug.enableDebugHotkeys && Gdx.input.isKeyJustPressed(Input.Keys.Q)) Gdx.app.log("", logText);
+
         logScroll = MenuLib.checkLogScroll(logScroll, (int) logText.lines().count());
 
         if (wait > 0f) {
@@ -236,15 +239,23 @@ public class BattleController {
                         // Increase SP
                         cmb.setSp(Math.min(cmb.getSp() + 10, 100));
 
+                        StringBuilder turnEnd1 = null;
+                        StringBuilder turnEnd2 = new StringBuilder();
+
                         // Apply buff turn end effects
                         for(BuffInstance buffInstance : cmb.getBuffInstances()) {
+                            turnEnd1 = new StringBuilder();
+                            turnEnd1.append(cmb.getCmbType().getName()).append("'s ").append(buffInstance.getBuff().getName()).append(": ");
                             for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
                                 // todo fix this doesnt print to the log until the start of the next turn (unless the buff wears off) for some reason even though the effect happens immediately
                                 // eg, burn will decrease HP as it should, and the HP display updates, but the log message about the HP decreasing doesn't appear until you select your moves for the next turn even though the log should be updated every frame. why?
-                                builder.append(buffEffect.onTurnEnd(cmb));
+                                turnEnd2.append(buffEffect.onTurnEnd(cmb));
                                 logSize++;
                             }
                         }
+
+                        // Only have turn end message if both have messages
+                        if(turnEnd1 != null && !Objects.equals(turnEnd2.toString(), "")) builder.append(turnEnd1).append(turnEnd2);
 
                         // Decrement stage/barrier/buff turns and remove expired stages/barriers/buffs
                         // Don't increase logSize because most of the time this will be blank
@@ -339,7 +350,7 @@ public class BattleController {
                                 logSize++;
                             }
                             applyingEffect++;
-                            wait += 0.25f * Settings.battleSpeed;
+                            wait += 0.25f * Settings.battleSpeed; // todo add ability for SkillEffects to not take time
                         } else {
                             endMove();
                         }
@@ -479,8 +490,8 @@ public class BattleController {
             Combatant cmb = (i >= 4) ? battle.getOpponentTeam().getCmbs()[i - 4] : battle.getPlayerTeam().getCmbs()[i]; // todo can use battle.getAllCmbs
             if (cmb != null) {
                 int barrier = cmb.getBarrier() + cmb.getDefend();
-                String barrierStr = (barrier > 0) ? "[CYAN](" + barrier + ")[WHITE]" : "";
-                StringBuilder text = new StringBuilder(cmb.getCmbType().getName() + "\n" + lang.get("hp") + ": " + cmb.getStatsCur().getHp() + barrierStr + "/" + cmb.getStatsDefault().getHp() + "\n" + lang.get("sp") + ": " + cmb.getSp() + "/100" +
+                String barrierStr = (barrier > 0) ? "[CYAN](" + String.format("%,d", barrier) + ")[WHITE]" : "";
+                StringBuilder text = new StringBuilder(cmb.getCmbType().getName() + "\n" + lang.get("hp") + ": " + String.format("%,d", cmb.getStatsCur().getHp()) + barrierStr + "/" + String.format("%,d", cmb.getStatsDefault().getHp()) + "\n" + lang.get("sp") + ": " + cmb.getSp() + "/100" +
                     //"\nStr: " + cmb.getStrWithStage() + "/" + cmb.getStatsDefault().getStr() + "\nMag:" + cmb.getMagWithStage() + "/" + cmb.getStatsDefault().getMag() +
                     //"\nAmr: " + cmb.getAmrWithStage() + "/" + cmb.getStatsDefault().getAmr() + "\nRes: " + cmb.getResWithStage() + "/" + cmb.getStatsDefault().getRes() +
                      "\n");
@@ -495,14 +506,14 @@ public class BattleController {
 
                 // Barrier
                 barrier = cmb.getBarrier();
-                if (barrier > 0) text.append(lang.get("barrier")).append("x").append(barrier).append("(").append(cmb.getBarrierTurns()).append(") ");
+                if (barrier > 0) text.append(lang.get("barrier")).append("x").append(String.format("%,d", barrier)).append("(").append(cmb.getBarrierTurns()).append(") ");
 
                 // List buffs
                 List<BuffInstance> buffInstances = cmb.getBuffInstances();
                 if (!buffInstances.isEmpty()) {
                     for (BuffInstance buffInstance : buffInstances) {
                         if (buffInstance.getBuff() == Buff.DEFEND) {
-                            text.append(buffInstance.getBuff().getName()).append("x").append(cmb.getDefend()).append("(").append(buffInstance.getTurns()).append(") ");
+                            text.append(buffInstance.getBuff().getName()).append("x").append(String.format("%,d", cmb.getDefend())).append("(").append(buffInstance.getTurns()).append(") ");
                         } else {
                             text.append(buffInstance.getBuff().getName());
                             if(buffInstance.getBuff().getMaxStacks() > 1) text.append("x").append(buffInstance.getStacks());

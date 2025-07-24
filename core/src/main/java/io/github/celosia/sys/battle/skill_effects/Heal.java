@@ -44,7 +44,7 @@ public class Heal implements SkillEffect {
             String[] msg = new String[2];
             if(barrierNew > barrierCur) {
                 target.setBarrier(barrierNew);
-                msg[0] = target.getCmbType().getName() + "'s " + lang.get("barrier") + " " + (barrierCur + target.getDefend()) + " -> " + (barrierNew + target.getDefend()) + "/" + hpMax + " (+" + (barrierNew - barrierCur) + ")" + "\n";
+                msg[0] = target.getCmbType().getName() + "'s " + lang.get("barrier") + " " + String.format("%,d", (barrierCur + target.getDefend())) + " -> " + String.format("%,d", (barrierNew + target.getDefend())) + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", (barrierNew - barrierCur)) + ")" + "\n";
             } else msg[0] = ""; //target.getCmbType().getName() + "'s " + lang.get("barrier") + " " + lang.get("log.max"); // todo properly choose between 's and '
 
             if(barrierTurns > turnsCur) {
@@ -61,7 +61,7 @@ public class Heal implements SkillEffect {
 
             if(hpNew > hpCur) {
                 target.getStatsCur().setHp(hpNew);
-                return new Result(ResultType.SUCCESS, target.getCmbType().getName() + "'s " + lang.get("hp") + " " + hpCur + " -> " + hpNew + "/" + hpMax + " (+" + (hpNew - hpCur) + ")" + "\n");
+                return new Result(ResultType.SUCCESS, target.getCmbType().getName() + "'s " + lang.get("hp") + " " + String.format("%,d", hpCur) + " -> " + String.format("%,d", hpNew) + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", (hpNew - hpCur)) + ")" + "\n");
             } else return new Result(ResultType.SUCCESS, ""/*target.getCmbType().getName() + "'s " + lang.get("hp") + " " + lang.get("log.max")*/);
         }
     }

@@ -1,6 +1,5 @@
 package io.github.celosia.sys.menu;
 
-import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Align;
@@ -41,9 +40,9 @@ public class MenuLib {
 
     // Check for scrolling the battle log
     public static int checkLogScroll(int logScroll, int lines) {
-        if(InputLib.checkInput(true, Keybind.PAGE_L2)) {
+        if(InputLib.checkInput(true, Keybind.PAGE_L1)) {
             return Math.min(++logScroll, lines - 8);
-        } else if(InputLib.checkInput(true, Keybind.PAGE_R2)) {
+        } else if(InputLib.checkInput(true, Keybind.PAGE_R1)) {
             return Math.max(--logScroll, 0);
         } else return logScroll;
     }

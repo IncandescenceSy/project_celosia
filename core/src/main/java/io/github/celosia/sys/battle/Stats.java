@@ -8,7 +8,7 @@ public class Stats {
     private int mag; // Magic
     private int fth; // Faith
     private int amr; // Armor
-    private int res; // Resistance
+    private int res; // Resilience
     private int agi; // Agility
 
     public Stats(int hp, int str, int mag, int fth, int amr, int res, int agi) {

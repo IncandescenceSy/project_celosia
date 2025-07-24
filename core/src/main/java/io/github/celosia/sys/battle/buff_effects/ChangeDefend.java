@@ -20,14 +20,14 @@ public class ChangeDefend implements BuffEffect {
         int defendOld = self.getDefend();
         int defendNew = (self.getBarrier() + defendOld + (change * hpMax) > hpMax) ? hpMax - self.getBarrier() : (int) (change * hpMax);
         self.setDefend(defendNew);
-        return self.getCmbType().getName() + "'s " + lang.get("barrier") + " " + (self.getBarrier() + defendOld) + " -> " + (self.getBarrier() + defendNew) + "/" + hpMax + " (+" + ((self.getBarrier() + defendNew) - (self.getBarrier() + defendOld)) + ")";
+        return self.getCmbType().getName() + "'s " + lang.get("barrier") + " " + String.format("%,d", (self.getBarrier() + defendOld)) + " -> " + String.format("%,d", (self.getBarrier() + defendNew)) + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", ((self.getBarrier() + defendNew) - (self.getBarrier() + defendOld))) + ")";
     }
 
     @Override
     public String onRemove(Combatant self) {
         int defendOld = self.getDefend();
         self.setDefend(0);
-        return self.getCmbType().getName() + "'s " + lang.get("barrier") + " " + (self.getBarrier() + defendOld) + " -> " + (self.getBarrier() + 0) + "/" + self.getStatsDefault().getHp() + " (" + ((self.getBarrier() + 0) - (self.getBarrier() + defendOld)) + ")";
+        return self.getCmbType().getName() + "'s " + lang.get("barrier") + " " + String.format("%,d", (self.getBarrier() + defendOld)) + " -> " + String.format("%,d", (self.getBarrier() + 0)) + "/" + String.format("%,d", self.getStatsDefault().getHp()) + " (" + String.format("%,d", ((self.getBarrier() + 0) - (self.getBarrier() + defendOld))) + ")";
     }
 
     @Override

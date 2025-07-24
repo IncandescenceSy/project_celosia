@@ -4,8 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerMapping;
 import io.github.celosia.sys.Debug;
-import io.github.celosia.sys.settings.Keybind;
 import io.github.celosia.sys.InputHandler;
+import io.github.celosia.sys.settings.Keybind;
 
 public class InputLib {
     // How long each keybind has been held down for
@@ -42,6 +42,7 @@ public class InputLib {
     }
 
     // Checks for input between the keyboard and the currently in-use controller
+    // todo make L2/R2 work (they're treated as axes)
     public static boolean checkInput(boolean allowHold, Keybind... keybinds) {
         for(Keybind keybind : keybinds) if (isKeybindPressed(keybind, allowHold)) return true;
         return false;
@@ -75,7 +76,7 @@ public class InputLib {
         return Gdx.input.isKeyPressed(keybind.getKey()) || (InputHandler.getController() != null && (InputHandler.getController().getButton(keybind.getButton().getMapping()) || checkKeybind2Stick(keybind)));
     }
 
-    // todo: stick sensitivity setting? also dont make L2/R2 automatically map to R stick also make L2/R2 actually work (they're checked as axes)
+    // todo: stick sensitivity setting? also dont make L1/R1 automatically map to R stick
     public static boolean checkKeybind2Stick(Keybind keybind) {
         switch(keybind) {
             case LEFT:
@@ -86,9 +87,9 @@ public class InputLib {
                 return checkAxis(Button.LY.getMapping(), -0.5f);
             case DOWN:
                 return checkAxis(Button.LY.getMapping(), 0.5f);
-            case PAGE_L2:
+            case PAGE_L1:
                 return checkAxis(Button.RY.getMapping(), -0.5f);
-            case PAGE_R2:
+            case PAGE_R1:
                 return checkAxis(Button.RY.getMapping(), 0.5f);
             default:
                 return false;

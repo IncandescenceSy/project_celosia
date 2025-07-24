@@ -36,7 +36,8 @@ public class ChangeHP implements BuffEffect {
     @Override
     public String onTurnEnd(Combatant self) {
         Result result = self.damage((int) (self.getStatsDefault().getHp() * change));
-        // todo clean up + fix null + fix log message not writing when it should
-        return result.getMessages()[0];
+        String[] msgs = result.getMessages();
+        // todo account for barrier/defend
+        return ("HP" + ((msgs[0] != null) ? msgs[0].split("[.*HP]")[2] : "")) + ((msgs[1] != null) ? msgs[1].split("[.*HP]")[2] : "");
     }
 }

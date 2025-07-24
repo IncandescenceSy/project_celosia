@@ -48,38 +48,37 @@ public class GiveBuff implements SkillEffect {
             BuffInstance buffInstance = cmb.findBuff(buff);
 
             if(buffInstance != null) { // Already has buff
-                String[] msg = new String[3];
+                StringBuilder msg = new StringBuilder();
 
                 // Refresh turns
                 int turnsOld = buffInstance.getTurns();
                 if(turns > turnsOld) {
                     buffInstance.setTurns(turns);
-                    msg[0] = cmb.getCmbType().getName() + "'s " + buff.getName() + " " + lang.get("turns") + " " + turnsOld + " -> " + turns + "\n";
-                } else msg[0] = ""; //target.getCmbType().getName() + "'s " + buff.getName() + " " + lang.get("log.duration_unchanged");
+                    msg.append(cmb.getCmbType().getName()).append("'s ").append(buff.getName()).append(" ").append(lang.format("turn_s", turns)).append(" ").append(turnsOld).append(" -> ").append(turns);
+                } //else msg = ""; //target.getCmbType().getName() + "'s " + buff.getName() + " " + lang.get("log.duration_unchanged");
 
                 // Add stacks
                 int stacksOld = buffInstance.getStacks();
                 int stacksNew = Math.min(buffInstance.getBuff().getMaxStacks(), stacksOld + stacks);
                 if(stacksNew != stacksOld) {
                     buffInstance.setStacks(stacksNew);
-                    msg[1] = cmb.getCmbType().getName() + "'s " + buff.getName() + " " + lang.get("stacks") + " " + stacksOld + " -> " + stacksNew + "\n";
-                } else msg[1] = ""; //target.getCmbType().getName() + "'s " + buff.getName() + " " + lang.get("stacks") + " " + ((stacksOld == buff.getMaxStacks()) ? lang.get("log.max") : lang.get("log.min"));
+                    if(turns > turnsOld) msg.append(", ").append(lang.format("stack_s", stacksNew)).append(" ").append(stacksOld).append(" -> ").append(stacksNew).append("\n");
+                    else msg.append(cmb.getCmbType().getName()).append("'s ").append(buff.getName()).append(" ").append(lang.get("stacks")).append(" ").append(stacksOld).append(" -> ").append(stacksNew).append("\n");
+                } else if(turns > turnsOld) msg.append("\n");
 
                 // Apply once for each newly added stack
                 int stacksAdded = stacksNew - stacksOld;
                 for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
                     for (int i = 1; i <= stacksAdded; i++) {
-                        msg[2] = buffEffect.onGive(cmb);
+                        String onGive = buffEffect.onGive(cmb);
+                        if(!Objects.equals(onGive, "")) msg.append(onGive).append("\n");
                     }
                 }
 
-                msg[2] += "\n";
-
-                return new Result(ResultType.SUCCESS, msg);
+                return new Result(ResultType.SUCCESS, msg.toString());
             } else { // Doesn't have buff
-                // Todo turn(s) and stack(s)
                 String[] msg = new String[2];
-                msg[0] = cmb.getCmbType().getName() + " " + lang.get("log.gains") + " " + buff.getName() + " " + lang.get("log.with") + " " + stacks + " " + lang.get("stacks") + " " + lang.get("log.and") + " " + turns + " " + lang.get("turns") + "\n";
+                msg[0] = cmb.getCmbType().getName() + " " + lang.get("log.gains") + " " + buff.getName() + " " + lang.get("log.with") + " " + ((buff.getMaxStacks() > 1) ? (stacks + " " + lang.format("stack_s", stacks) + " " + lang.get("log.and")) + " " : "") + turns + " " + lang.format("turn_s", turns) + "\n";
                 msg[1] = "";
                 cmb.addBuffInstance(new BuffInstance(buff, turns, stacks));
                 buffInstance = buffInstances.get(buffInstances.size() - 1);

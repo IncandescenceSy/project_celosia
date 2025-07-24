@@ -2,6 +2,9 @@ package io.github.celosia.sys;
 
 // Debug
 public class Debug {
+    // Enables debug hotkeys
+    public static boolean enableDebugHotkeys = false;
+
     // Shows some extra info
     public static boolean showDebugInfo = false;
 

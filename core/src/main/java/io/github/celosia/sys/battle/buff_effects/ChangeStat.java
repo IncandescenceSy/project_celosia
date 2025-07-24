@@ -14,22 +14,21 @@ public class ChangeStat implements BuffEffect {
         this.change = change;
     }
 
-    // todo fix bad rounding
     @Override
     public String onGive(Combatant self) {
         int statOld = self.getStatsCur().getStat(stat);
-        int statNew = (int) (statOld + (change * self.getStatsDefault().getStat(stat)));
+        int statNew = (int) Math.floor(statOld + (change * self.getStatsDefault().getStat(stat)));
         self.getStatsCur().setStat(stat, statNew);
-        // todo condense lines when giving/removing multiple stacks at once and fix no + appearing when increasing stat
-        return self.getCmbType().getName() + "'s " + stat.getName() + " " + statOld + " -> " + statNew + "/" + self.getStatsDefault().getStat(stat) + ((change > 0f) ? " (+" : " (") + (statNew - statOld) + ")";
+        // todo condense lines when giving/removing multiple stacks at once
+        return self.getCmbType().getName() + "'s " + stat.getName() + " " + String.format("%,d", statOld) + " -> " + String.format("%,d", statNew) + "/" + String.format("%,d", self.getStatsDefault().getStat(stat)) + ((change >= 0f) ? " (+" : " (") + String.format("%,d", (statNew - statOld)) + ")";
     }
 
     @Override
     public String onRemove(Combatant self) {
         int statOld = self.getStatsCur().getStat(stat);
-        int statNew = (int) (statOld - (change * self.getStatsDefault().getStat(stat)));
+        int statNew = (int) Math.ceil(statOld - (change * self.getStatsDefault().getStat(stat)));
         self.getStatsCur().setStat(stat, statNew);
-        return self.getCmbType().getName() + "'s " + stat.getName() + " " + statOld + " -> " + statNew + "/" + self.getStatsDefault().getStat(stat) + ((change < 0f) ? " (+" : " (") + (statNew - statOld) + ")";
+        return self.getCmbType().getName() + "'s " + stat.getName() + " " + String.format("%,d", statOld) + " -> " + String.format("%,d", statNew) + "/" + String.format("%,d", self.getStatsDefault().getStat(stat)) + ((change <= 0f) ? " (+" : " (") + String.format("%,d", (statNew - statOld)) + ")";
     }
 
     @Override

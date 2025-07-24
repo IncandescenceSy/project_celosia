@@ -1,7 +1,5 @@
 package io.github.celosia.sys.battle;
 
-import com.badlogic.gdx.math.MathUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -367,12 +365,14 @@ public class Combatant {
             BuffInstance buffInstance = buffInstances.get(i);
             int turns = buffInstance.getTurns();
             if (turns >= 2 && turns < 1000) { // 1000+ turns = infinite
-                // Todo log message for buff counters ticking down?
                 buffInstance.setTurns(turns - 1);
             } else {
+                int maxStacks = buffInstance.getBuff().getMaxStacks();
                 msg.append(this.getCmbType().getName()).append(" ").append(lang.get("log.loses")).append(" ");
-                if(buffInstance.getBuff().getMaxStacks() > 1) msg.append(buffInstance.getStacks()).append(" ").append(lang.get("stacks")).append(" ");
-                msg.append(buffInstance.getBuff().getName()).append("\n");
+                if(maxStacks > 1) msg.append(buffInstance.getStacks()).append(" ");
+                msg.append(buffInstance.getBuff().getName());
+                if(maxStacks > 1) msg.append(lang.get("stacks"));
+                msg.append("\n");
 
                 // todo condense lines when giving/removing multiple stacks at once
                 for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
@@ -394,13 +394,13 @@ public class Combatant {
         int dmgFull = dmg;
         int defendOld = defend;
 
-        String msg = "";
+        String[] msg = new String[2];
 
         if (!pierce) { // Pierce skips Defend and Barrier
             if (defend > 0 && dmg > 0) { // There's Defend and dmg
                 if (defend > dmg) { // Only hit Defend
                     defend -= dmg;
-                    return new Result(ResultType.HIT_BARRIER, this.getCmbType().getName() + "'s " + lang.get("barrier") + " " + (defendOld + barrier) + " -> " + (defend + barrier) + "/" + this.getStatsDefault().getHp() + " (-" + dmgFull + ")" + "\n");
+                    return new Result(ResultType.HIT_BARRIER, this.getCmbType().getName() + "'s " + lang.get("barrier") + " " + String.format("%,d", (defendOld + barrier)) + " -> " + String.format("%,d", (defend + barrier)) + "/" + String.format("%,d", this.getStatsDefault().getHp()) + " (-" + String.format("%,d", dmgFull) + ")" + "\n");
                 } else { // Destroy Defend and proceed to Barrier
                     dmg -= defend;
                     defend = 0;
@@ -410,9 +410,9 @@ public class Combatant {
             if (barrier > 0 && dmg > 0) { // There's Barrier and dmg
                 if (barrier > dmg) { // Only hit Barrier
                     barrier -= dmg;
-                    return new Result(ResultType.HIT_BARRIER, this.getCmbType().getName() + "'s " + lang.get("barrier") + " " + (defendOld + barrier) + " -> " + barrier + "/" + this.getStatsDefault().getHp() + " (-" + dmgFull + ")" + "\n");
+                    return new Result(ResultType.HIT_BARRIER, this.getCmbType().getName() + "'s " + lang.get("barrier") + " " + String.format("%,d", (defendOld + barrier)) + " -> " + String.format("%,d", barrier) + "/" + String.format("%,d", this.getStatsDefault().getHp()) + " (-" + String.format("%,d", dmgFull) + ")" + "\n");
                 } else { // Destroy Barrier and proceed to HP
-                    msg += this.getCmbType().getName() + "'s " + lang.get("barrier") + " " + (defendOld + barrier) + " -> " + 0 + "/" + this.getStatsDefault().getHp() + " (-" + (defendOld + barrier) + ")" + "\n";
+                    msg[0] = this.getCmbType().getName() + "'s " + lang.get("barrier") + " " + String.format("%,d", (defendOld + barrier)) + " -> " + 0 + "/" + this.getStatsDefault().getHp() + " (-" + String.format("%,d", (defendOld + barrier)) + ")" + "\n";
                     dmg -= barrier;
                     barrier = 0;
                     barrierTurns = 0;
@@ -423,15 +423,14 @@ public class Combatant {
         // Lower HP
         int hpOld = this.getStatsCur().getHp();
         int hpNew = Math.clamp(hpOld - dmg, 0, this.getStatsDefault().getHp());
-        // todo fix displaying full dmg if hp goes to 0
-        msg += this.getCmbType().getName() + "'s " + lang.get("hp") + " " + hpOld + " -> " + hpNew + " (-" + dmg + ")" + "\n";
+        msg[1] = this.getCmbType().getName() + "'s " + lang.get("hp") + " " + String.format("%,d", hpOld) + " -> " + String.format("%,d", hpNew) + " (-" + String.format("%,d", dmg) + ")" + "\n";
         this.getStatsCur().setHp(hpNew);
 
         if (multDef <= -500f) { // Hit Protect
             return new Result(ResultType.HIT_BARRIER, msg);
         } else if (dmg > 0) { // Did damage
             return new Result(ResultType.SUCCESS, msg);
-        } else return new Result(ResultType.FAIL, lang.get("log.no_effect") + " " + lang.get("log.on") + " " + this.getCmbType().getName()); // Did no damage
+        } else return new Result(ResultType.FAIL, lang.get("log.no_effect") + " " + lang.get("log.on") + " " + this.getCmbType().getName() + "\n"); // Did no damage
     }
 
     public Result damage(int dmg) {

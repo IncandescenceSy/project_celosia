@@ -111,6 +111,7 @@ public class Main extends ApplicationAdapter {
         menuType = MenuType.NONE;
 
         // Debug
+        Debug.enableDebugHotkeys = true;
         Debug.showDebugInfo = true;
         Debug.swapFaceButtons = true;
 
