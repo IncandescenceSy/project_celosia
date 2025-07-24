@@ -1,8 +1,19 @@
 package io.github.celosia.sys.battle;
 
-// Result of the previous SkillEffect
-public enum Result {
-    FAIL,
-    HIT_BARRIER, // Only damaged Barrier or Protect
-    SUCCESS;
+public class Result {
+    private final ResultType resultType;
+    private final String[] messages;
+
+    public Result(ResultType resultType, String... messages) {
+        this.resultType = resultType;
+        this.messages = messages;
+    }
+
+    public ResultType getResultType() {
+        return resultType;
+    }
+
+    public String[] getMessages() {
+        return messages;
+    }
 }

@@ -3,35 +3,46 @@ package io.github.celosia.sys.battle.buff_effects;
 import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Combatant;
 
+import static io.github.celosia.sys.settings.Lang.lang;
+
 public class ChangeDefend implements BuffEffect {
 
-    private float change; // Defend to add in % of max HP
+    private final float change; // Defend to add in % of max HP
 
     public ChangeDefend(float change) {
         this.change = change;
     }
 
     @Override
-    public void onGive(Combatant self) {
-        int maxHp = self.getStatsDefault().getHp();
+    public String onGive(Combatant self) {
+        int hpMax = self.getStatsDefault().getHp();
         // Add defend (barrier + defend cannot exceed max HP)
-        self.setDefend((self.getBarrier() + self.getDefend() + (change * maxHp) > maxHp) ? maxHp - self.getBarrier() : (int) (change * maxHp));
+        int defendOld = self.getDefend();
+        int defendNew = (self.getBarrier() + defendOld + (change * hpMax) > hpMax) ? hpMax - self.getBarrier() : (int) (change * hpMax);
+        self.setDefend(defendNew);
+        return self.getCmbType().getName() + "'s " + lang.get("barrier") + " " + (self.getBarrier() + defendOld) + " -> " + (self.getBarrier() + defendNew) + "/" + hpMax + " (+" + ((self.getBarrier() + defendNew) - (self.getBarrier() + defendOld)) + ")";
     }
 
     @Override
-    public void onRemove(Combatant self) {
+    public String onRemove(Combatant self) {
+        int defendOld = self.getDefend();
         self.setDefend(0);
+        return self.getCmbType().getName() + "'s " + lang.get("barrier") + " " + (self.getBarrier() + defendOld) + " -> " + (self.getBarrier() + 0) + "/" + self.getStatsDefault().getHp() + " (" + ((self.getBarrier() + 0) - (self.getBarrier() + defendOld)) + ")";
     }
 
     @Override
-    public void onUseSkill(Combatant self, Combatant target) {
+    public String onUseSkill(Combatant self, Combatant target) {
+        return "";
+    }
+
+    // Todo implement
+    @Override
+    public String onTakeDamage(Combatant self) {
+        return "";
     }
 
     @Override
-    public void onTakeDamage(Combatant self) {
-    }
-
-    @Override
-    public void onTurnEnd(Combatant self) {
+    public String onTurnEnd(Combatant self) {
+        return "";
     }
 }

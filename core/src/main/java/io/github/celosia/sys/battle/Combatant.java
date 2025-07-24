@@ -4,6 +4,9 @@ import com.badlogic.gdx.math.MathUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static io.github.celosia.sys.settings.Lang.lang;
 
 // Species and current stats
 public class Combatant {
@@ -43,13 +46,13 @@ public class Combatant {
 
     private List<BuffInstance> buffInstances = new ArrayList<>();
 
-    public Combatant(CombatantType cmbType, int lvl, Stats stats, Skill[] skills, int sp, int pos) {
+    public Combatant(CombatantType cmbType, int lvl, Stats stats, Skill[] skills, int pos) {
         this.cmbType = cmbType;
         this.lvl = lvl;
         this.statsDefault = stats;
         this.statsCur = new Stats(stats.getHp(), stats.getStr(), stats.getMag(), stats.getFth(), stats.getAmr(), stats.getRes(), stats.getAgi());
         this.skills = skills;
-        this.sp = sp;
+        this.sp = 10;
         this.pos = pos;
         stageAtk = 0;
         stageAtkTurns = 0;
@@ -107,7 +110,7 @@ public class Combatant {
     }
 
     public void setStageAtk(int stageAtk) {
-        this.stageAtk = MathUtils.clamp(stageAtk, -9, 9);
+        this.stageAtk = stageAtk;
     }
 
     public int getStageAtk() {
@@ -123,7 +126,7 @@ public class Combatant {
     }
 
     public void setStageDef(int stageDef) {
-        this.stageDef = MathUtils.clamp(stageDef, -9, 9);
+        this.stageDef = stageDef;
     }
 
     public int getStageDef() {
@@ -139,7 +142,7 @@ public class Combatant {
     }
 
     public void setStageFth(int stageFth) {
-        this.stageFth = MathUtils.clamp(stageFth, -9, 9);
+        this.stageFth = stageFth;
     }
 
     public int getStageFth() {
@@ -155,7 +158,7 @@ public class Combatant {
     }
 
     public void setStageAgi(int stageAgi) {
-        this.stageAgi = MathUtils.clamp(stageAgi, -9, 9);
+        this.stageAgi = stageAgi;
     }
 
     public int getStageAgi() {
@@ -165,32 +168,27 @@ public class Combatant {
     public void setStage(StageType stageType, int stage) {
         switch (stageType) {
             case ATK:
-                stageAtk = MathUtils.clamp(stage, -9, 9);
+                stageAtk = stage;
                 break;
             case DEF:
-                stageDef = MathUtils.clamp(stage, -9, 9);
+                stageDef = stage;
                 break;
             case FTH:
-                stageFth = MathUtils.clamp(stage, -9, 9);
+                stageFth = stage;
                 break;
             case AGI:
-                stageAgi = MathUtils.clamp(stage, -9, 9);
+                stageAgi = stage;
                 break;
         }
     }
 
     public int getStage(StageType stageType) {
-        switch (stageType) {
-            case ATK:
-                return stageAtk;
-            case DEF:
-                return stageDef;
-            case FTH:
-                return stageFth;
-            case AGI:
-                return stageAgi;
-        }
-        return -10;
+        return switch (stageType) {
+            case ATK -> stageAtk;
+            case DEF -> stageDef;
+            case FTH -> stageFth;
+            case AGI -> stageAgi;
+        };
     }
 
     public void setStageTurns(StageType stageType, int turns) {
@@ -336,24 +334,32 @@ public class Combatant {
         return null;
     }
 
-    public void decrementTurns() {
+    public String decrementTurns() {
+        StringBuilder msg = new StringBuilder();
+
         // Stages
-        if (--stageAtkTurns <= 0) {
+        if (stageAtk != 0 && --stageAtkTurns <= 0) {
+            // todo stage(s)
+            msg.append(this.getCmbType().getName()).append(" ").append(lang.get("log.loses")).append(" ").append(stageAtk).append(lang.get("stages")).append(" ").append(StageType.ATK.getName()).append("\n");
             stageAtk = 0; // Remove stages
         }
-        if (--stageDefTurns <= 0) {
+        if (stageDef != 0 && --stageDefTurns <= 0) {
+            msg.append(this.getCmbType().getName()).append(" ").append(lang.get("log.loses")).append(" ").append(stageDef).append(lang.get("stages")).append(" ").append(StageType.DEF.getName()).append("\n");
             stageDef = 0;
         }
-        if (--stageFthTurns <= 0) {
+        if (stageFth != 0 && --stageFthTurns <= 0) {
+            msg.append(this.getCmbType().getName()).append(" ").append(lang.get("log.loses")).append(" ").append(stageFth).append(lang.get("stages")).append(" ").append(StageType.FTH.getName()).append("\n");
             stageFth = 0;
         }
-        if (--stageAgiTurns <= 0) {
+        if (stageAgi != 0 && --stageAgiTurns <= 0) {
+            msg.append(this.getCmbType().getName()).append(" ").append(lang.get("log.loses")).append(" ").append(stageAgi).append(lang.get("stages")).append(" ").append(StageType.AGI.getName()).append("\n");
             stageAgi = 0;
         }
 
         // Barrier
-        if (--this.barrierTurns <= 0) {
-            this.barrier = 0;
+        if (barrier != 0 && --barrierTurns <= 0) {
+            msg.append(this.getCmbType().getName()).append(" ").append(lang.get("log.loses")).append(" ").append(barrier).append(" ").append(lang.get("barrier")).append("\n");
+            barrier = 0;
         }
 
         // Buffs
@@ -361,27 +367,40 @@ public class Combatant {
             BuffInstance buffInstance = buffInstances.get(i);
             int turns = buffInstance.getTurns();
             if (turns >= 2 && turns < 1000) { // 1000+ turns = infinite
+                // Todo log message for buff counters ticking down?
                 buffInstance.setTurns(turns - 1);
             } else {
+                msg.append(this.getCmbType().getName()).append(" ").append(lang.get("log.loses")).append(" ");
+                if(buffInstance.getBuff().getMaxStacks() > 1) msg.append(buffInstance.getStacks()).append(" ").append(lang.get("stacks")).append(" ");
+                msg.append(buffInstance.getBuff().getName()).append("\n");
+
+                // todo condense lines when giving/removing multiple stacks at once
                 for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
                     for(int j = 1; j <= buffInstance.getStacks(); j++) { // Remove all stacks
-                        buffEffect.onRemove(this);
+                        String onRemove = buffEffect.onRemove(this);
+                        if(!Objects.equals(onRemove, "")) msg.append(onRemove).append("\n");
                     }
                 }
                 buffInstances.remove(buffInstance);
             }
         }
+
+        return msg.toString();
     }
 
     // Damage Combatant, taking into account Defend and Barrier. Returns false if HP was lowered
     public Result damage(int dmg, boolean pierce) {
         dmg *= Math.max(multDef, 0.1f);
+        int dmgFull = dmg;
+        int defendOld = defend;
+
+        String msg = "";
 
         if (!pierce) { // Pierce skips Defend and Barrier
             if (defend > 0 && dmg > 0) { // There's Defend and dmg
                 if (defend > dmg) { // Only hit Defend
                     defend -= dmg;
-                    return Result.HIT_BARRIER;
+                    return new Result(ResultType.HIT_BARRIER, this.getCmbType().getName() + "'s " + lang.get("barrier") + " " + (defendOld + barrier) + " -> " + (defend + barrier) + "/" + this.getStatsDefault().getHp() + " (-" + dmgFull + ")" + "\n");
                 } else { // Destroy Defend and proceed to Barrier
                     dmg -= defend;
                     defend = 0;
@@ -391,8 +410,9 @@ public class Combatant {
             if (barrier > 0 && dmg > 0) { // There's Barrier and dmg
                 if (barrier > dmg) { // Only hit Barrier
                     barrier -= dmg;
-                    return Result.HIT_BARRIER;
+                    return new Result(ResultType.HIT_BARRIER, this.getCmbType().getName() + "'s " + lang.get("barrier") + " " + (defendOld + barrier) + " -> " + barrier + "/" + this.getStatsDefault().getHp() + " (-" + dmgFull + ")" + "\n");
                 } else { // Destroy Barrier and proceed to HP
+                    msg += this.getCmbType().getName() + "'s " + lang.get("barrier") + " " + (defendOld + barrier) + " -> " + 0 + "/" + this.getStatsDefault().getHp() + " (-" + (defendOld + barrier) + ")" + "\n";
                     dmg -= barrier;
                     barrier = 0;
                     barrierTurns = 0;
@@ -401,13 +421,17 @@ public class Combatant {
         }
 
         // Lower HP
-        this.getStatsCur().setHp(MathUtils.clamp(this.getStatsCur().getHp() - dmg, 0, this.getStatsDefault().getHp()));
+        int hpOld = this.getStatsCur().getHp();
+        int hpNew = Math.clamp(hpOld - dmg, 0, this.getStatsDefault().getHp());
+        // todo fix displaying full dmg if hp goes to 0
+        msg += this.getCmbType().getName() + "'s " + lang.get("hp") + " " + hpOld + " -> " + hpNew + " (-" + dmg + ")" + "\n";
+        this.getStatsCur().setHp(hpNew);
 
         if (multDef <= -500f) { // Hit Protect
-            return Result.HIT_BARRIER;
+            return new Result(ResultType.HIT_BARRIER, msg);
         } else if (dmg > 0) { // Did damage
-            return Result.SUCCESS;
-        } else return Result.FAIL; // Did no damage
+            return new Result(ResultType.SUCCESS, msg);
+        } else return new Result(ResultType.FAIL, lang.get("log.no_effect") + " " + lang.get("log.on") + " " + this.getCmbType().getName()); // Did no damage
     }
 
     public Result damage(int dmg) {

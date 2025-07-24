@@ -184,8 +184,8 @@ public class Main extends ApplicationAdapter {
             case BATTLE:
             case TARGETING:
             case SKILLS:
-                menuType = BattleController.input(menuType);
                 BattleController.updateStatDisplay();
+                menuType = BattleController.input(menuType);
                 break;
         }
     }

@@ -39,6 +39,15 @@ public class MenuLib {
         } else return index;
     }
 
+    // Check for scrolling the battle log
+    public static int checkLogScroll(int logScroll, int lines) {
+        if(InputLib.checkInput(true, Keybind.PAGE_L2)) {
+            return Math.min(++logScroll, lines - 8);
+        } else if(InputLib.checkInput(true, Keybind.PAGE_R2)) {
+            return Math.max(--logScroll, 0);
+        } else return logScroll;
+    }
+
     // Change menu option colors to indicate selection
     public static void handleOptColor(List<TypingLabel> opts, int index) {
         for(int i = 0; i < opts.size(); i++) {

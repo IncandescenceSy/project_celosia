@@ -57,9 +57,9 @@ public class InputLib {
                 held[keybind.ordinal()] += Gdx.graphics.getDeltaTime();
                 return true;
             }
-        } else if (allowHold && held[keybind.ordinal()] >= 0.4f) { // Keybind has been held
+        } else if (allowHold && held[keybind.ordinal()] >= 0.3f) { // Keybind has been held
             if (checkKeybind(keybind)) { // Keybind is pressed now
-                held[keybind.ordinal()] = 0.25f; // Make it take a moment
+                held[keybind.ordinal()] = 0.2f; // Make it take a moment
                 return true;
             }
          } else if (checkKeybind(keybind)) { // Keybind has been held, but not for long enough
@@ -75,24 +75,28 @@ public class InputLib {
         return Gdx.input.isKeyPressed(keybind.getKey()) || (InputHandler.getController() != null && (InputHandler.getController().getButton(keybind.getButton().getMapping()) || checkKeybind2Stick(keybind)));
     }
 
-    // todo: stick sensitivity setting?
+    // todo: stick sensitivity setting? also dont make L2/R2 automatically map to R stick also make L2/R2 actually work (they're checked as axes)
     public static boolean checkKeybind2Stick(Keybind keybind) {
         switch(keybind) {
             case LEFT:
-                return checkAxis(Button.LX.getMapping(), Button.RX.getMapping(), -0.5f);
+                return checkAxis(Button.LX.getMapping(), -0.5f);
             case RIGHT:
-                return checkAxis(Button.LX.getMapping(), Button.RX.getMapping(), 0.5f);
+                return checkAxis(Button.LX.getMapping(), 0.5f);
             case UP:
-                return checkAxis(Button.LY.getMapping(), Button.RY.getMapping(), -0.5f);
+                return checkAxis(Button.LY.getMapping(), -0.5f);
             case DOWN:
-                return checkAxis(Button.LY.getMapping(), Button.RY.getMapping(), 0.5f);
+                return checkAxis(Button.LY.getMapping(), 0.5f);
+            case PAGE_L2:
+                return checkAxis(Button.RY.getMapping(), -0.5f);
+            case PAGE_R2:
+                return checkAxis(Button.RY.getMapping(), 0.5f);
             default:
                 return false;
         }
     }
 
-    // Checks both sticks to see if they're tilted further than a specified value
-    public static boolean checkAxis(int mapping, int mapping2, float dist) {
-        return InputHandler.getController() != null && (dist > 0f ? (InputHandler.getController().getAxis(mapping) > dist || InputHandler.getController().getAxis(mapping2) > dist) : (InputHandler.getController().getAxis(mapping) < dist || InputHandler.getController().getAxis(mapping2) < dist));
+    // Checks a stick axis to see if it's tilted further than a specified value
+    public static boolean checkAxis(int mapping, float dist) {
+        return InputHandler.getController() != null && (dist > 0f ? InputHandler.getController().getAxis(mapping) > dist : InputHandler.getController().getAxis(mapping) < dist);
     }
 }

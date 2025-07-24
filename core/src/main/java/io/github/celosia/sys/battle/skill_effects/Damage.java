@@ -8,13 +8,13 @@ public class Damage implements SkillEffect {
     private final int pow;
     private final Element element;
     private final boolean pierce;
-    private final Result minResult;
+    private final ResultType minResult;
 
     // Affinity multipliers
     private final float[] affAtk = {0.3f, 0.5f, 0.65f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.35f, 1.5f, 1.7f}; // Damage dealt
     private final float[] affDef = {3f, 2f, 1.7f, 1.4f, 1.2f, 1f, 0.9f, 0.8f, 0.65f, 0.5f, 0f}; // Damage taken
 
-    public Damage(SkillType type, Element element, int pow, boolean pierce, Result minResult) {
+    public Damage(SkillType type, Element element, int pow, boolean pierce, ResultType minResult) {
         this.type = type;
         this.element = element;
         this.pow = pow;
@@ -23,19 +23,19 @@ public class Damage implements SkillEffect {
     }
 
     public Damage(SkillType type, Element element, int pow, boolean pierce) {
-        this(type, element, pow, pierce, Result.HIT_BARRIER);
+        this(type, element, pow, pierce, ResultType.HIT_BARRIER);
     }
 
-    public Damage(SkillType type, Element element, int pow, Result minResult) {
+    public Damage(SkillType type, Element element, int pow, ResultType minResult) {
         this(type, element, pow, false, minResult);
     }
 
     public Damage(SkillType type, Element element, int pow) {
-        this(type, element, pow, false, Result.HIT_BARRIER);
+        this(type, element, pow, false, ResultType.HIT_BARRIER);
     }
 
     @Override
-    public Result apply(Combatant self, Combatant target, Result resultPrev) {
+    public Result apply(Combatant self, Combatant target, ResultType resultPrev) {
         // Multi-hit attacks should continue unless they hit an immunity
         if (resultPrev.ordinal() >= minResult.ordinal()) {
             float atk = -1f;
@@ -70,7 +70,7 @@ public class Damage implements SkillEffect {
             return target.damage(dmg, pierce);
         } else {
             // If the previous hit failed entirely, this one wouldn't have been reached. If this return statement is ever reached, it's under special circumstances, so let the attack continue just to be safe
-            return Result.SUCCESS;
+            return new Result(ResultType.SUCCESS, "");
         }
     }
 }

@@ -14,7 +14,7 @@ public enum Skill {
     // Basic skills
     NOTHING(lang.get("skill.nothing"), lang.get("skill.nothing.desc"), Element.VIS, Targeting.SELF, 0),
     ATTACK(lang.get("skill.attack"), lang.get("skill.attack.desc"), Element.VIS, Targeting.OTHER_1R, 0, new Damage(SkillType.STR, Element.VIS, 55)),
-    DEFEND(lang.get("skill.defend"), lang.get("skill.defend.desc"), Element.VIS, Targeting.SELF, 0, 3, new GiveBuff(Buff.DEFEND), new ChangeSP(8)),
+    DEFEND(lang.get("skill.defend"), lang.get("skill.defend.desc"), Element.VIS, Targeting.SELF, -8, 3, new GiveBuff(Buff.DEFEND)),
     PROTECT(lang.get("skill.protect"), lang.get("skill.protect.desc"), Element.VIS, Targeting.SELF, 4, 3, new GiveBuff(Buff.PROTECT)), // todo disallow using twice in a row
     BLOSSOM(lang.get("skill.blossom"), lang.get("skill.blossom.desc"), Element.VIS, Targeting.SELF, 30), // todo
 

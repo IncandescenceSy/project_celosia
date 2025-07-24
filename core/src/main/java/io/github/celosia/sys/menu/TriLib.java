@@ -25,7 +25,7 @@ public class TriLib {
 
         for(CoolRect rect : coolRects) {
             int dir = rect.getDir();
-            float prog = MathUtils.clamp(rect.getProg() + (delta * dir * rect.getSpeed() * (dir == -1 ? 2 : 1)), 0f, 1f);
+            float prog = Math.clamp(rect.getProg() + (delta * dir * rect.getSpeed() * (dir == -1 ? 2 : 1)), 0f, 1f);
             rect.setProg(prog);
 
             // Skip the rest if the width is to be near 0

@@ -2,6 +2,7 @@ package io.github.celosia.sys.battle.buff_effects;
 
 import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Combatant;
+import io.github.celosia.sys.battle.Result;
 
 // Todo heavily limit %-based damage on bosses
 public class ChangeHP implements BuffEffect {
@@ -13,23 +14,29 @@ public class ChangeHP implements BuffEffect {
     }
 
     @Override
-    public void onGive(Combatant self) {
+    public String onGive(Combatant self) {
+        return "";
     }
 
     @Override
-    public void onRemove(Combatant self) {
+    public String onRemove(Combatant self) {
+        return "";
     }
 
     @Override
-    public void onUseSkill(Combatant self, Combatant target) {
+    public String onUseSkill(Combatant self, Combatant target) {
+        return "";
     }
 
     @Override
-    public void onTakeDamage(Combatant self) {
+    public String onTakeDamage(Combatant self) {
+        return "";
     }
 
     @Override
-    public void onTurnEnd(Combatant self) {
-        self.damage((int) (self.getStatsDefault().getHp() * change));
+    public String onTurnEnd(Combatant self) {
+        Result result = self.damage((int) (self.getStatsDefault().getHp() * change));
+        // todo clean up + fix null + fix log message not writing when it should
+        return result.getMessages()[0];
     }
 }

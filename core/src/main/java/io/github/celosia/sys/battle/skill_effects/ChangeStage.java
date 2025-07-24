@@ -1,9 +1,8 @@
 package io.github.celosia.sys.battle.skill_effects;
 
-import io.github.celosia.sys.battle.Combatant;
-import io.github.celosia.sys.battle.Result;
-import io.github.celosia.sys.battle.SkillEffect;
-import io.github.celosia.sys.battle.StageType;
+import io.github.celosia.sys.battle.*;
+
+import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeStage implements SkillEffect {
 
@@ -18,13 +17,28 @@ public class ChangeStage implements SkillEffect {
     }
 
     @Override
-    public Result apply(Combatant self, Combatant target, Result resultPrev) {
+    public Result apply(Combatant self, Combatant target, ResultType resultPrev) {
         int stageOld = target.getStage(stageType);
-        target.setStage(stageType, stageOld + change);
-        if ((stageOld >= 0 && change >= 0) || (stageOld <= 0 && change <= 0)) { // Refresh turns
-            target.setStageTurns(stageType, Math.max(target.getStageTurns(stageType), turns));
-        }
+        int stageNew = Math.clamp(stageOld + change, -5, 5);
 
-        return Result.SUCCESS;
+        String[] msg = new String[2];
+        if(stageNew != stageOld) {
+            target.setStage(stageType, stageNew);
+            // todo is the (+/-X) at the end needed?
+            msg[0] = target.getCmbType().getName() + "'s " + stageType.getName() + " " + lang.get("stage") + " " + stageOld + " -> " + stageNew + ((change > 0) ? " (+" : " (") + (stageNew - stageOld) + ")" + "\n";
+        } else msg[0] = target.getCmbType().getName() + "'s " + stageType.getName() + " " + lang.get("stage") + " " + ((stageNew == 5) ? lang.get("log.max") : lang.get("log.min")) + "\n";
+
+        String durationUnchanged = target.getCmbType().getName() + "'s " + stageType.getName() + " " + lang.get("stage") + " " + lang.get("log.duration_unchanged");
+
+        if ((stageOld >= 0 && change >= 0) || (stageOld <= 0 && change <= 0)) { // Refresh turns
+            int turnsOld = target.getStageTurns(stageType);
+            if(turns > turnsOld) {
+                target.setStageTurns(stageType, turns);
+                // todo (+/-X) at the end?
+                msg[1] = target.getCmbType().getName() + "'s " + stageType.getName() + " " + lang.get("stage") + " " + lang.get("turns") + " " + turnsOld + " -> " + turns + "\n";
+            } else msg[1] = ""; //durationUnchanged;
+        } else msg[1] = ""; //durationUnchanged;
+
+        return new Result(ResultType.SUCCESS, msg);
     }
 }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Align;
+import com.github.tommyettinger.textra.TextraLabel;
 import com.github.tommyettinger.textra.TypingLabel;
 import io.github.celosia.sys.InputHandler;
 import io.github.celosia.sys.World;
@@ -19,6 +20,9 @@ import io.github.celosia.sys.settings.Settings;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.github.celosia.sys.menu.MenuLib.setTextIfChanged;
 import static io.github.celosia.sys.settings.Lang.lang;
@@ -43,7 +47,7 @@ public class BattleController {
     static int extraActions = 0; // How many extra actions have been used for the current combatant
     static int usingMove = 0; // Who's currently using their move
     static int applyingEffect = 0; // Which SkillEffect of the current skill is currently being applied
-    static Result result; // SkillEffect result
+    static ResultType resultType; // SkillEffect resultType
 
     // Menu navigation
     static int index = 5;
@@ -72,10 +76,14 @@ public class BattleController {
     // temp
     static Skill[] skills = new Skill[]{Skill.FIREBALL, Skill.HEAL, Skill.INFERNAL_PROVENANCE, Skill.DEMON_SCYTHE, Skill.ICE_AGE};
     static Skill[] skills2 = new Skill[]{Skill.FIREBALL, Skill.ICE_BEAM, Skill.BARRIER, Skill.PROTECT, Skill.ICE_AGE};
-    static Skill[] skills3 = new Skill[]{Skill.THUNDERBOLT, Skill.BARRIER, Skill.ZEPHYR_LANCE, Skill.JET_STREAM, Skill.ICE_AGE};
+    static Skill[] skills3 = new Skill[]{Skill.THUNDERBOLT, Skill.ATTACK_UP, Skill.ZEPHYR_LANCE, Skill.JET_STREAM, Skill.ICE_AGE};
 
-    // Debug
-    //static TypingLabel battleLog = new TypingLabel("", FontType.KORURI.getSize30());
+    // Battle log
+    // todo  have button to bring up full log, better positioning
+    static TextraLabel battleLog = new TextraLabel("", FontType.KORURI.getSize20());
+    static String logText = "[CYAN]" + lang.get("turn") + " " + 1 + "[WHITE]\n" + lang.get("log.all_units_gain") + " " + 10 + " " + lang.get("sp") + "\n" + lang.get("log.both_teams_gain") + " " + 10 + " " + lang.get("bloom") + "\n";
+    static int logScroll = 0;
+    static int logSize;
 
     // battle mechanics todo: Targeting, Passives, Follow-Ups, Accessories
     public static void create(Stage stage) {
@@ -91,15 +99,15 @@ public class BattleController {
         CombatantType josephine = new CombatantType("Josephine", jerryStats, 0, 0, 0, 0 ,0, 5, -4);
         CombatantType julian = new CombatantType("Julian", johnyStats, 0, 0, 0, 0 ,0, -4, 5);
 
-        Team player = new Team(new Combatant[]{new Combatant(johny, 20, johnyStats.getRealStats(20), skills, 20, 0),
-            new Combatant(james, 20, jerryStats.getRealStats(20), skills2, 20, 1),
-            new Combatant(julia, 20, johnyStats.getRealStats(20), skills3, 20, 2),
-            new Combatant(josephine, 20, jerryStats.getRealStats(20), skills, 20, 3)});
+        Team player = new Team(new Combatant[]{new Combatant(johny, 19, johnyStats.getRealStats(19), skills, 0),
+            new Combatant(james, 19, jerryStats.getRealStats(19), skills2, 1),
+            new Combatant(julia, 19, johnyStats.getRealStats(19), skills3, 2),
+            new Combatant(josephine, 19, jerryStats.getRealStats(19), skills, 3)});
 
-        Team opponent = new Team(new Combatant[]{new Combatant(jerry, 20, jerryStats.getRealStats(20), skills2, 20, 4),
-            new Combatant(jacob, 20, johnyStats.getRealStats(20), skills2, 20, 5),
-            new Combatant(jude, 20, jerryStats.getRealStats(20), skills2, 20, 6),
-            new Combatant(julian, 20, johnyStats.getRealStats(20), skills2, 20, 7)});
+        Team opponent = new Team(new Combatant[]{new Combatant(jerry, 19, jerryStats.getRealStats(19), skills2, 4),
+            new Combatant(jacob, 19, johnyStats.getRealStats(19), skills2, 5),
+            new Combatant(jude, 19, jerryStats.getRealStats(19), skills2, 6),
+            new Combatant(julian, 19, johnyStats.getRealStats(19), skills2, 7)});
 
         battle = new Battle(player, opponent);
 
@@ -109,7 +117,7 @@ public class BattleController {
 
         for(int i = 0; i < 2; i++) {
             // Bloom displays for both teams
-            TypingLabel bloom = new TypingLabel(lang.get("bloom") + ": 0/100", FontType.KORURI.getSize40());
+            TypingLabel bloom = new TypingLabel(lang.get("bloom") + ": 10/100", FontType.KORURI.getSize40());
             bloomL.add(bloom);
             bloom.setY(World.HEIGHT - 90);
             stage.addActor(bloom);
@@ -117,6 +125,9 @@ public class BattleController {
 
         // Queue (move order) display
         stage.addActor(queue);
+
+        battleLog.setPosition(World.WIDTH_2 - 200, World.HEIGHT - 270, Align.left);
+        stage.addActor(battleLog);
 
         for(int i = 0; i < 8; i++) {
             int y = (i >= 4) ? World.HEIGHT - 300 - 300 * (i - 4) : World.HEIGHT - 300 - 300 * i;
@@ -140,13 +151,19 @@ public class BattleController {
             skillsL.add(new TypingLabel("", FontType.KORURI.getSize30()));
             stage.addActor(skillsL.get(i));
         }
-
-        // Debug
-        //battleLog.setPosition(World.WIDTH_2, 200, Align.center);
-        //stage.addActor(battleLog);
     }
 
     public static MenuType input(MenuType menuType) {
+        // If logSize exceeds 6000, remove ~1000 lines (so this doesn't have to get called again soon)
+        // logSize will be less than the exact amount of lines (by ~20% or less if I had to guess), but it'll be close enough
+        // todo test if this actually works + figure out a good size limit
+        if(logSize > 6000) {
+            logText = logText.lines().skip(logSize - 5000).collect(Collectors.joining("\n"));
+            logSize -= 1000;
+        }
+
+        logScroll = MenuLib.checkLogScroll(logScroll, (int) logText.lines().count());
+
         if (wait > 0f) {
             wait -= Gdx.graphics.getDeltaTime();
         } else if (menuType == MenuType.BATTLE) { // Selecting moves
@@ -214,20 +231,32 @@ public class BattleController {
                         movesL.get(i).setColor(Color.WHITE);
                     }
 
+                    StringBuilder builder = new StringBuilder();
                     for (Combatant cmb : battle.getAllCombatants()) {
-                        // Increase MP
+                        // Increase SP
                         cmb.setSp(Math.min(cmb.getSp() + 10, 100));
 
                         // Apply buff turn end effects
                         for(BuffInstance buffInstance : cmb.getBuffInstances()) {
                             for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
-                                buffEffect.onTurnEnd(cmb);
+                                // todo fix this doesnt print to the log until the start of the next turn (unless the buff wears off) for some reason even though the effect happens immediately
+                                // eg, burn will decrease HP as it should, and the HP display updates, but the log message about the HP decreasing doesn't appear until you select your moves for the next turn even though the log should be updated every frame. why?
+                                builder.append(buffEffect.onTurnEnd(cmb));
+                                logSize++;
                             }
                         }
 
                         // Decrement stage/barrier/buff turns and remove expired stages/barriers/buffs
-                        cmb.decrementTurns();
+                        // Don't increase logSize because most of the time this will be blank
+                        builder.append(cmb.decrementTurns());
                     }
+
+                    // Log
+                    logScroll = 0;
+                    builder.append("[CYAN]").append(lang.get("turn")).append(" ").append(battle.getTurn() + 1).append("[WHITE]\n").append(lang.get("log.all_units_gain")).append(" ").append(10).append(" ").append(lang.get("sp")).append("\n").append(lang.get("log.both_teams_gain")).append(" ").append(10).append(" ").append(lang.get("bloom")).append("\n");
+                    logSize += 3;
+
+                    logText += builder;
 
                     // Increase bloom
                     battle.getPlayerTeam().setBloom(Math.min(battle.getPlayerTeam().getBloom() + 10, 100));
@@ -248,26 +277,36 @@ public class BattleController {
 
                 if (isMoveValid(move)) {
                     // Invalid newSp will cancel move
-                    int newSp = -1;
+                    int newSp;
 
                     // Execute move
                     if(applyingEffect == 0) {
+                        logScroll = 0;
+                        logSize++;
+
                         // Set newSp
                         Element element = move.getSkill().getElement();
-                        Team team = (move.getSelf().isPlayerTeam()) ? battle.getPlayerTeam() : battle.getOpponentTeam();
+                        boolean isPlayerTeam = move.getSelf().isPlayerTeam();
+                        Team team = (isPlayerTeam) ? battle.getPlayerTeam() : battle.getOpponentTeam();
                         newSp = (move.getSkill().isBloom()) ? team.getBloom() - move.getSkill().getCost() : move.getSelf().getSp() - (int) (move.getSkill().getCost() * ((element == Element.VIS) ? 1 : affSp[move.getSelf().getCmbType().getAffs()[element.ordinal() - 1] + 5]));
 
                         if(newSp >= 0) {
+                            logText += move.getSelf().getCmbType().getName() + " " + lang.get("log.uses") + " " + move.getSkill().getName() + " " + lang.get("log.on") + " " + move.getTarget().getCmbType().getName();
+
                             if (move.getSkill().isBloom()) {
+                                logText += " (" + ((isPlayerTeam) ? lang.get("log.team_player") : lang.get("log.team_opponent")) + " " + lang.get("bloom") + " " + team.getBloom() + " -> " + newSp + ")";
                                 team.setBloom(newSp);
-                            } else { // Use SP
+                            } else if (newSp != move.getSelf().getSp()) { // Use SP
+                                logText += " (" + lang.get("sp") + " " + move.getSelf().getSp() + " -> " + newSp + ")";
                                 move.getSelf().setSp(newSp);
                             }
 
-                            // Apply on-skill use buffs
+                            logText += "\n";
+
+                            // Apply on-skill use BuffEffects
                             for (BuffInstance buffInstance : move.getSelf().getBuffInstances()) {
                                 for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
-                                    buffEffect.onUseSkill(move.getSelf(), move.getTarget());
+                                    logText += buffEffect.onUseSkill(move.getSelf(), move.getTarget());
                                 }
                             }
 
@@ -279,7 +318,9 @@ public class BattleController {
                                 } else movesL.get(i).setColor(Color.WHITE);
                             }
 
-                            result = Result.SUCCESS;
+                            resultType = ResultType.SUCCESS;
+                        } else {
+                            logText += move.getSelf().getCmbType().getName() + " " + lang.get("log.tries_to_use") + " " + move.getSkill().getName() + ", " + lang.get("log.but_doesnt_have_enough") + " " + (move.getSkill().isBloom() ? lang.get("bloom") : lang.get("sp")) + "\n";
                         }
                     } else newSp = 0; // SP shouldn't change
 
@@ -288,8 +329,15 @@ public class BattleController {
                         // Apply all SkillEffects over a period of time
                         SkillEffect[] skillEffects = move.getSkill().getSkillEffects();
 
-                        if (applyingEffect < skillEffects.length && result != Result.FAIL) {
-                            result = skillEffects[applyingEffect].apply(move.getSelf(), move.getTarget(), result);
+                        if (applyingEffect < skillEffects.length && resultType != ResultType.FAIL) {
+                            Result result = skillEffects[applyingEffect].apply(move.getSelf(), move.getTarget(), resultType);
+                            resultType = result.getResultType();
+                            String[] msgs = result.getMessages();
+                            for(String msg : msgs) if(msg != null && !Objects.equals(msg, "")) {
+                                logScroll = 0; // Reset scroll
+                                logText += msg; // Add to log
+                                logSize++;
+                            }
                             applyingEffect++;
                             wait += 0.25f * Settings.battleSpeed;
                         } else {
@@ -379,7 +427,6 @@ public class BattleController {
         // Bloom displays
         for(int i = 0; i < 2; i++) {
             setTextIfChanged(bloomL.get(i), "{SPEED=0.1}{FADE}{SLIDE}" + lang.get("bloom") + ": " + battle.getTeam(i).getBloom() + "/100");
-
             if (i == 0) {
                 bloomL.get(i).setX(bloomL.get(i).getWidth() / 3, Align.left);
             } else bloomL.get(i).setX(World.WIDTH - bloomL.get(i).getWidth() / 3, Align.right);
@@ -418,6 +465,14 @@ public class BattleController {
         queue.setPosition(World.WIDTH_2, World.HEIGHT - 120, Align.center); // Must be set here so it aligns properly
         queue.skipToTheEnd();
 
+        // Log
+        // todo clean up
+        List<String> lines = logText.lines().toList(); // todo will this lag
+        int size = Math.toIntExact(lines.size());
+        if(size - logScroll >= 8) battleLog.setText(lines.get(size - logScroll - 8) + "\n" + lines.get(size - logScroll - 7) + "\n" + lines.get(size - logScroll - 6) + "\n" + lines.get(size - logScroll - 5) + "\n" + lines.get(size - logScroll - 4) + "\n" + lines.get(size - logScroll - 3) + "\n" + lines.get(size - logScroll - 2) + "\n" + lines.get(size - logScroll - 1));
+        else if(size >= 8) battleLog.setText(lines.get(0) + "\n" + lines.get(1) + "\n" + lines.get(2) + "\n" + lines.get(3) + "\n" + lines.get(4) + "\n" + lines.get(5) + "\n" + lines.get(6) + "\n" + lines.get(7));
+        else battleLog.setText(logText);
+
         // Update combatant stat display
         // todo disambiguation + system to display all status updates
         for (int i = 0; i < 8; i++) {
@@ -451,16 +506,13 @@ public class BattleController {
                         } else {
                             text.append(buffInstance.getBuff().getName());
                             if(buffInstance.getBuff().getMaxStacks() > 1) text.append("x").append(buffInstance.getStacks());
-                            if(buffInstance.getTurns() < 1000) text.append("(").append(buffInstance.getTurns()).append(") "); // 1000+ turns = infinite
+                            if(buffInstance.getTurns() < 1000) text.append("(").append(buffInstance.getTurns()).append(") "); // 1000+ turns = infinite; todo place infinity symbol in place of turn count
                         }
                     }
                 }
                 setTextIfChanged(statsL.get(i), text.toString());
             } else statsL.get(i).setText("");
         }
-
-        // Debug
-        //setTextIfChanged(battleLog, "index = " + index + "\nturn = " + battle.getTurn() + "\nmoves = " + moves + "\nselectingMove = " + selectingMove);
     }
 
     // todo

@@ -1,9 +1,11 @@
 package io.github.celosia.sys.battle.skill_effects;
 
-import com.badlogic.gdx.math.MathUtils;
 import io.github.celosia.sys.battle.Combatant;
 import io.github.celosia.sys.battle.Result;
+import io.github.celosia.sys.battle.ResultType;
 import io.github.celosia.sys.battle.SkillEffect;
+
+import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeSP implements SkillEffect {
 
@@ -14,8 +16,16 @@ public class ChangeSP implements SkillEffect {
     }
 
     @Override
-    public Result apply(Combatant self, Combatant target, Result resultPrev) {
-        target.setSp(MathUtils.clamp(target.getSp() + change, 0, 100));
-        return Result.SUCCESS;
+    public Result apply(Combatant self, Combatant target, ResultType resultPrev) {
+        int spOld = target.getSp();
+        int spNew = Math.clamp(spOld + change, 0, 100);
+        String msg;
+
+        if(spNew != spOld) {
+            target.setSp(spNew);
+            msg = target.getCmbType().getName() + "'s " + lang.get("sp") + " " + spOld + " -> " + spNew + "\n";
+        } else msg = target.getCmbType().getName() + "'s " + lang.get("sp") + " " + ((spOld == 100) ? lang.get("log.max") : lang.get("log.min")) + "\n";
+
+        return new Result(ResultType.SUCCESS, msg);
     }
 }
