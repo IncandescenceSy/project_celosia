@@ -50,7 +50,7 @@ public class Combatant {
         this.statsDefault = stats;
         this.statsCur = new Stats(stats.getHp(), stats.getStr(), stats.getMag(), stats.getFth(), stats.getAmr(), stats.getRes(), stats.getAgi());
         this.skills = skills;
-        this.sp = 10;
+        this.sp = 200;
         this.pos = pos;
         stageAtk = 0;
         stageAtkTurns = 0;
@@ -371,7 +371,7 @@ public class Combatant {
                 msg.append(this.getCmbType().getName()).append(" ").append(lang.get("log.loses")).append(" ");
                 if(maxStacks > 1) msg.append(buffInstance.getStacks()).append(" ");
                 msg.append(buffInstance.getBuff().getName());
-                if(maxStacks > 1) msg.append(lang.get("stacks"));
+                if(maxStacks > 1) msg.append(" ").append(lang.get("stacks"));
                 msg.append("\n");
 
                 // todo condense lines when giving/removing multiple stacks at once

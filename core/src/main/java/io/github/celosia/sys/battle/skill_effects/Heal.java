@@ -44,13 +44,17 @@ public class Heal implements SkillEffect {
             String[] msg = new String[2];
             if(barrierNew > barrierCur) {
                 target.setBarrier(barrierNew);
-                msg[0] = target.getCmbType().getName() + "'s " + lang.get("barrier") + " " + String.format("%,d", (barrierCur + target.getDefend())) + " -> " + String.format("%,d", (barrierNew + target.getDefend())) + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", (barrierNew - barrierCur)) + ")" + "\n";
+                msg[0] = target.getCmbType().getName() + "'s " + lang.get("barrier") + " " + String.format("%,d", (barrierCur + target.getDefend())) + " -> " + String.format("%,d", (barrierNew + target.getDefend())) + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", (barrierNew - barrierCur)) + ")";
             } else msg[0] = ""; //target.getCmbType().getName() + "'s " + lang.get("barrier") + " " + lang.get("log.max"); // todo properly choose between 's and '
 
             if(barrierTurns > turnsCur) {
                 target.setBarrierTurns(barrierTurns);
-                msg[1] = target.getCmbType().getName() + " " + lang.get("barrier") + " " + lang.get("turns") + " " + turnsCur + " -> " + barrierTurns + "\n";
-            } else msg[1] = ""; //target.getCmbType().getName() + "'s " + lang.get("barrier") + " " + lang.get("log.duration_unchanged");
+                if(barrierNew > barrierCur) msg[0] += ", " + lang.get("turns") + " " + turnsCur + " -> " + barrierTurns + "\n";
+                else msg[1] = target.getCmbType().getName() + " " + lang.get("barrier") + " " + lang.get("turns") + " " + turnsCur + " -> " + barrierTurns + "\n";
+            } else {
+                if(barrierNew > barrierCur) msg[0] += "\n";
+                msg[1] = ""; //target.getCmbType().getName() + "'s " + lang.get("barrier") + " " + lang.get("log.duration_unchanged");
+            }
 
             return new Result(ResultType.SUCCESS, msg);
         } else { // Heals

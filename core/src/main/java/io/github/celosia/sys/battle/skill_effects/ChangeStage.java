@@ -25,7 +25,7 @@ public class ChangeStage implements SkillEffect {
         if(stageNew != stageOld) {
             target.setStage(stageType, stageNew);
             // todo is the (+/-X) at the end needed?
-            msg[0] = target.getCmbType().getName() + "'s " + stageType.getName() + " " + lang.get("stage") + " " + stageOld + " -> " + stageNew /*+ ((change > 0) ? " (+" : " (") + (stageNew - stageOld) + ")"*/ + "\n";
+            msg[0] = target.getCmbType().getName() + "'s " + stageType.getName() + " " + lang.get("stage") + " " + stageOld + " -> " + stageNew; /*+ ((change > 0) ? " (+" : " (") + (stageNew - stageOld) + ")"*/
         } else msg[0] = ""; //target.getCmbType().getName() + "'s " + stageType.getName() + " " + lang.get("stage") + " " + ((stageNew == 5) ? lang.get("log.max") : lang.get("log.min")) + "\n";
 
         //String durationUnchanged = target.getCmbType().getName() + "'s " + stageType.getName() + " " + lang.get("stage") + " " + lang.get("log.duration_unchanged");
@@ -35,9 +35,16 @@ public class ChangeStage implements SkillEffect {
             if(turns > turnsOld) {
                 target.setStageTurns(stageType, turns);
                 // todo (+/-X) at the end?
-                msg[1] = target.getCmbType().getName() + "'s " + stageType.getName() + " " + lang.get("stage") + " " + lang.get("turns") + " " + turnsOld + " -> " + turns + "\n";
-            } else msg[1] = ""; //durationUnchanged;
-        } else msg[1] = ""; //durationUnchanged;
+                if(stageNew != stageOld) msg[0] += ", " + lang.get("turns") + " " + turnsOld + " -> " + turns + "\n";
+                else msg[1] = target.getCmbType().getName() + "'s " + stageType.getName() + " " + lang.get("stage") + " " + lang.get("turns") + " " + turnsOld + " -> " + turns + "\n";
+            } else {
+                if(stageNew != stageOld) msg[0] += "\n";
+                msg[1] = ""; //durationUnchanged;
+            }
+        } else {
+            if(stageNew != stageOld) msg[0] += "\n";
+            msg[1] = ""; //durationUnchanged;
+        }
 
         return new Result(ResultType.SUCCESS, msg);
     }

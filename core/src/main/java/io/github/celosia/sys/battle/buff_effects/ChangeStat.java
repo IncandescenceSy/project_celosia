@@ -6,8 +6,8 @@ import io.github.celosia.sys.battle.Stat;
 
 public class ChangeStat implements BuffEffect {
 
-    private Stat stat;
-    private float change; // Change in percentage. 1 = 100%
+    private final Stat stat;
+    private final float change; // Change in percentage. 1 = 100%
 
     public ChangeStat(Stat stat, float change) {
         this.stat = stat;

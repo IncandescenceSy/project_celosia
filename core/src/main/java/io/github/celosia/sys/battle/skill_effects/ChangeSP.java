@@ -18,13 +18,13 @@ public class ChangeSP implements SkillEffect {
     @Override
     public Result apply(Combatant self, Combatant target, ResultType resultPrev) {
         int spOld = target.getSp();
-        int spNew = Math.clamp(spOld + change, 0, 100);
+        int spNew = Math.clamp(spOld + change, 0, 1000);
         String msg;
 
         if(spNew != spOld) {
             target.setSp(spNew);
-            msg = target.getCmbType().getName() + "'s " + lang.get("sp") + " " + spOld + " -> " + spNew + "\n";
-        } else msg = target.getCmbType().getName() + "'s " + lang.get("sp") + " " + ((spOld == 100) ? lang.get("log.max") : lang.get("log.min")) + "\n";
+            msg = target.getCmbType().getName() + "'s " + lang.get("sp") + " " + String.format("%,d", spOld) + " -> " + String.format("%,d", spNew) + "\n";
+        } else msg = ""; //target.getCmbType().getName() + "'s " + lang.get("sp") + " " + ((spOld == 100) ? lang.get("log.max") : lang.get("log.min")) + "\n";
 
         return new Result(ResultType.SUCCESS, msg);
     }

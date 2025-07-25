@@ -74,9 +74,9 @@ public class BattleController {
     static List<TypingLabel> skillsL = new ArrayList<>();
 
     // temp
-    static Skill[] skills = new Skill[]{Skill.FIREBALL, Skill.HEAL, Skill.INFERNAL_PROVENANCE, Skill.DEMON_SCYTHE, Skill.ICE_AGE};
-    static Skill[] skills2 = new Skill[]{Skill.FIREBALL, Skill.ICE_BEAM, Skill.BARRIER, Skill.PROTECT, Skill.ICE_AGE};
-    static Skill[] skills3 = new Skill[]{Skill.THUNDERBOLT, Skill.ATTACK_UP, Skill.ZEPHYR_LANCE, Skill.JET_STREAM, Skill.ICE_AGE};
+    static Skill[] skills = new Skill[]{Skills.FIREBALL, Skills.HEAL, Skills.INFERNAL_PROVENANCE, Skills.DEMON_SCYTHE, Skills.ICE_AGE};
+    static Skill[] skills2 = new Skill[]{Skills.ATTACK_UP, Skills.ICE_BEAM, Skills.BARRIER, Skills.PROTECT, Skills.ICE_AGE};
+    static Skill[] skills3 = new Skill[]{Skills.THUNDERBOLT, Skills.ATTACK_UP, Skills.BARRIER, Skills.JET_STREAM, Skills.ICE_AGE};
 
     // Battle log
     // todo press L2(?) to bring up full log, better positioning
@@ -117,7 +117,7 @@ public class BattleController {
 
         for(int i = 0; i < 2; i++) {
             // Bloom displays for both teams
-            TypingLabel bloom = new TypingLabel(lang.get("bloom") + ": 10/100", FontType.KORURI.getSize40());
+            TypingLabel bloom = new TypingLabel(lang.get("bloom") + ": 100/1,000", FontType.KORURI.getSize40());
             bloomL.add(bloom);
             bloom.setY(World.HEIGHT - 90);
             stage.addActor(bloom);
@@ -178,7 +178,7 @@ public class BattleController {
                     "\n" + ((InputHandler.isLastUsedController()) ? Keybind.MENU.getButton().getName() : Input.Keys.toString(Keybind.MENU.getKey())) + ": " + lang.get("skills"));
                 if (selectingMove < battle.getPlayerTeam().getCmbs().length) { // if there are more allies yet to act
                     if (InputLib.checkInput(Keybind.CONFIRM)) {
-                        selectedSkill = Skill.ATTACK;
+                        selectedSkill = Skills.ATTACK;
                         setTextIfChanged(movesL.get(selectingMove), selectedSkill.getName());
 
                         // Prepare menus
@@ -186,7 +186,7 @@ public class BattleController {
 
                         return MenuType.TARGETING;
                     } else if (InputLib.checkInput(Keybind.BACK)) {
-                        selectedSkill = Skill.DEFEND;
+                        selectedSkill = Skills.DEFEND;
                         setTextIfChanged(movesL.get(selectingMove), selectedSkill.getName());
 
                         // Prepare menus
@@ -211,7 +211,7 @@ public class BattleController {
             } else if (selectingMove <= 8) { // opponent's turn
                 if ((selectingMove - 4) < battle.getOpponentTeam().getCmbs().length) { // if there are more opponents yet to act
                     //Skill selectedSkill = skills2[MathUtils.random(skills.length - 1)];
-                    Skill selectedSkill = Skill.NOTHING;
+                    Skill selectedSkill = Skills.NOTHING;
                     Combatant target = battle.getPlayerTeam().getCmbs()[MathUtils.random(battle.getPlayerTeam().getCmbs().length - 1)];
                     setTextIfChanged(movesL.get(selectingMove), selectedSkill.getName() + " -> " + target.getCmbType().getName()); // todo support ExtraActions
                     moves.add(new SkillTargeting(selectedSkill, battle.getOpponentTeam().getCmbs()[selectingMove - 4], target)); // todo AI
@@ -237,7 +237,7 @@ public class BattleController {
                     StringBuilder builder = new StringBuilder();
                     for (Combatant cmb : battle.getAllCombatants()) {
                         // Increase SP
-                        cmb.setSp(Math.min(cmb.getSp() + 10, 100));
+                        cmb.setSp(Math.min(cmb.getSp() + 100, 1000));
 
                         StringBuilder turnEnd1 = null;
                         StringBuilder turnEnd2 = new StringBuilder();
@@ -270,8 +270,8 @@ public class BattleController {
                     logText += builder;
 
                     // Increase bloom
-                    battle.getPlayerTeam().setBloom(Math.min(battle.getPlayerTeam().getBloom() + 10, 100));
-                    battle.getOpponentTeam().setBloom(Math.min(battle.getOpponentTeam().getBloom() + 10, 100));
+                    battle.getPlayerTeam().setBloom(Math.min(battle.getPlayerTeam().getBloom() + 100, 1000));
+                    battle.getOpponentTeam().setBloom(Math.min(battle.getOpponentTeam().getBloom() + 100, 1000));
 
                     // todo check if battle is over
 
@@ -299,16 +299,16 @@ public class BattleController {
                         Element element = move.getSkill().getElement();
                         boolean isPlayerTeam = move.getSelf().isPlayerTeam();
                         Team team = (isPlayerTeam) ? battle.getPlayerTeam() : battle.getOpponentTeam();
-                        newSp = (move.getSkill().isBloom()) ? team.getBloom() - move.getSkill().getCost() : move.getSelf().getSp() - (int) (move.getSkill().getCost() * ((element == Element.VIS) ? 1 : affSp[move.getSelf().getCmbType().getAffs()[element.ordinal() - 1] + 5]));
+                        newSp = ((move.getSkill().isBloom()) ? team.getBloom() : move.getSelf().getSp()) - (int) Math.ceil((move.getSkill().getCost() * ((element == Element.VIS) ? 1 : affSp[move.getSelf().getCmbType().getAffs()[element.ordinal() - 1] + 5])));
 
                         if(newSp >= 0) {
                             logText += move.getSelf().getCmbType().getName() + " " + lang.get("log.uses") + " " + move.getSkill().getName() + " " + lang.get("log.on") + " " + move.getTarget().getCmbType().getName();
 
                             if (move.getSkill().isBloom()) {
-                                logText += " (" + ((isPlayerTeam) ? lang.get("log.team_player") : lang.get("log.team_opponent")) + " " + lang.get("bloom") + " " + team.getBloom() + " -> " + newSp + ")";
+                                logText += " (" + ((isPlayerTeam) ? lang.get("log.team_player") : lang.get("log.team_opponent")) + " " + lang.get("bloom") + " " + String.format("%,d", team.getBloom()) + " -> " + String.format("%,d", newSp) + ")";
                                 team.setBloom(newSp);
                             } else if (newSp != move.getSelf().getSp()) { // Use SP
-                                logText += " (" + lang.get("sp") + " " + move.getSelf().getSp() + " -> " + newSp + ")";
+                                logText += " (" + lang.get("sp") + " " + String.format("%,d", move.getSelf().getSp()) + " -> " + String.format("%,d", newSp) + ")";
                                 move.getSelf().setSp(newSp);
                             }
 
@@ -385,7 +385,7 @@ public class BattleController {
                 for(TypingLabel stat : statsL) stat.setColor(Color.WHITE);
 
                 // Move on to next combatant to select a move for unless this one has extra actions
-                BuffInstance extraAction = self.findBuff(Buff.EXTRA_ACTION);
+                BuffInstance extraAction = self.findBuff(Buffs.EXTRA_ACTION);
                 if(extraAction != null && extraActions < extraAction.getStacks()) {
                     extraActions++;
                 } else {
@@ -437,10 +437,9 @@ public class BattleController {
     public static void updateStatDisplay() {
         // Bloom displays
         for(int i = 0; i < 2; i++) {
-            setTextIfChanged(bloomL.get(i), "{SPEED=0.1}{FADE}{SLIDE}" + lang.get("bloom") + ": " + battle.getTeam(i).getBloom() + "/100");
-            if (i == 0) {
-                bloomL.get(i).setX(bloomL.get(i).getWidth() / 3, Align.left);
-            } else bloomL.get(i).setX(World.WIDTH - bloomL.get(i).getWidth() / 3, Align.right);
+            setTextIfChanged(bloomL.get(i), "{SPEED=0.1}{FADE}{SLIDE}" + lang.get("bloom") + ": " + String.format("%,d", battle.getTeam(i).getBloom()) + "/" + String.format("%,d", 1000));
+            if (i == 0) bloomL.get(i).setX(bloomL.get(i).getWidth() / 3, Align.left);
+            else bloomL.get(i).setX(World.WIDTH - bloomL.get(i).getWidth() / 3, Align.right);
         }
 
         // Queue
@@ -480,8 +479,12 @@ public class BattleController {
         // todo clean up
         List<String> lines = logText.lines().toList(); // todo will this lag
         int size = Math.toIntExact(lines.size());
-        if(size - logScroll >= 8) battleLog.setText(lines.get(size - logScroll - 8) + "\n" + lines.get(size - logScroll - 7) + "\n" + lines.get(size - logScroll - 6) + "\n" + lines.get(size - logScroll - 5) + "\n" + lines.get(size - logScroll - 4) + "\n" + lines.get(size - logScroll - 3) + "\n" + lines.get(size - logScroll - 2) + "\n" + lines.get(size - logScroll - 1));
-        else if(size >= 8) battleLog.setText(lines.get(0) + "\n" + lines.get(1) + "\n" + lines.get(2) + "\n" + lines.get(3) + "\n" + lines.get(4) + "\n" + lines.get(5) + "\n" + lines.get(6) + "\n" + lines.get(7));
+        if(size >= 8) {
+            if (size - logScroll >= 8)
+                battleLog.setText(lines.get(size - logScroll - 8) + "\n" + lines.get(size - logScroll - 7) + "\n" + lines.get(size - logScroll - 6) + "\n" + lines.get(size - logScroll - 5) + "\n" + lines.get(size - logScroll - 4) + "\n" + lines.get(size - logScroll - 3) + "\n" + lines.get(size - logScroll - 2) + "\n" + lines.get(size - logScroll - 1));
+            else
+                battleLog.setText(lines.get(0) + "\n" + lines.get(1) + "\n" + lines.get(2) + "\n" + lines.get(3) + "\n" + lines.get(4) + "\n" + lines.get(5) + "\n" + lines.get(6) + "\n" + lines.get(7));
+        }
         else battleLog.setText(logText);
 
         // Update combatant stat display
@@ -491,7 +494,7 @@ public class BattleController {
             if (cmb != null) {
                 int barrier = cmb.getBarrier() + cmb.getDefend();
                 String barrierStr = (barrier > 0) ? "[CYAN](" + String.format("%,d", barrier) + ")[WHITE]" : "";
-                StringBuilder text = new StringBuilder(cmb.getCmbType().getName() + "\n" + lang.get("hp") + ": " + String.format("%,d", cmb.getStatsCur().getHp()) + barrierStr + "/" + String.format("%,d", cmb.getStatsDefault().getHp()) + "\n" + lang.get("sp") + ": " + cmb.getSp() + "/100" +
+                StringBuilder text = new StringBuilder(cmb.getCmbType().getName() + "\n" + lang.get("hp") + ": " + String.format("%,d", cmb.getStatsCur().getHp()) + barrierStr + "/" + String.format("%,d", cmb.getStatsDefault().getHp()) + "\n" + lang.get("sp") + ": " + String.format("%,d", cmb.getSp()) + "/" + String.format("%,d", 1000) +
                     //"\nStr: " + cmb.getStrWithStage() + "/" + cmb.getStatsDefault().getStr() + "\nMag:" + cmb.getMagWithStage() + "/" + cmb.getStatsDefault().getMag() +
                     //"\nAmr: " + cmb.getAmrWithStage() + "/" + cmb.getStatsDefault().getAmr() + "\nRes: " + cmb.getResWithStage() + "/" + cmb.getStatsDefault().getRes() +
                      "\n");
@@ -512,7 +515,7 @@ public class BattleController {
                 List<BuffInstance> buffInstances = cmb.getBuffInstances();
                 if (!buffInstances.isEmpty()) {
                     for (BuffInstance buffInstance : buffInstances) {
-                        if (buffInstance.getBuff() == Buff.DEFEND) {
+                        if (buffInstance.getBuff() == Buffs.DEFEND) {
                             text.append(buffInstance.getBuff().getName()).append("x").append(String.format("%,d", cmb.getDefend())).append("(").append(buffInstance.getTurns()).append(") ");
                         } else {
                             text.append(buffInstance.getBuff().getName());
