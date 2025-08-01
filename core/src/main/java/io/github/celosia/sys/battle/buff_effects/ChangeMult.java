@@ -6,28 +6,28 @@ import io.github.celosia.sys.battle.Mult;
 
 public class ChangeMult implements BuffEffect {
 
-    private Mult mult;
-    private float change; // Amount to add
+    private final Mult mult;
+    private final int change; // Amount to add
 
-    public ChangeMult(Mult mult, float change) {
+    public ChangeMult(Mult mult, int change) {
         this.mult = mult;
         this.change = change;
     }
 
     @Override
     public String onGive(Combatant self) {
-        float multOld = self.getMult(mult);
+        int multOld = self.getMult(mult);
         self.setMult(mult, multOld + change);
-        float changeDisplay = Math.round((Math.max(multOld + change, 0.1f) - Math.max(multOld, 0.1f)) * 100f) / 100f;
-        return self.getCmbType().getName() + "'s " + mult.getName() + " " + Math.max(multOld, 0.1f) + " -> " + Math.max(multOld + change, 0.1f) + ((change > 0) ? " (+" : " (") + changeDisplay + ")";
+        float changeDisplay = Math.max(multOld + change, 10) - Math.max(multOld, 10);
+        return self.getCmbType().getName() + "'s " + mult.getName() + " " + Math.max(multOld, 10) + "% -> " + Math.max(multOld + change, 10) + ((change > 0) ? "% (+" : "% (") + changeDisplay + "%)";
     }
 
     @Override
     public String onRemove(Combatant self) {
-        float multOld = self.getMult(mult);
+        int multOld = self.getMult(mult);
         self.setMult(mult, multOld - change);
-        float changeDisplay = Math.round((Math.max(multOld + change, 0.1f) - Math.max(multOld, 0.1f)) * 100f) / 100f;
-        return self.getCmbType().getName() + "'s " + mult.getName() + " " + Math.max(multOld, 0.1f) + " -> " + Math.max(multOld - change, 0.1f) + ((change < 0) ? " (+" : " (") + (changeDisplay * -1) + ")";
+        float changeDisplay = Math.max(multOld + change, 10) - Math.max(multOld, 10);
+        return self.getCmbType().getName() + "'s " + mult.getName() + " " + Math.max(multOld, 10) + "% -> " + (Math.max(multOld - change, 10)) + ((change < 0) ? "% (+" : "% (") + (changeDisplay * -1) + "%)";
     }
 
     @Override

@@ -52,19 +52,26 @@ public class Damage implements SkillEffect {
             float affMultAtk;
             float affMultDef;
 
+            int multWeakDmgDealt = 100;
+            int multWeakDmgTaken = 100;
+
             if (element == Element.VIS) {
                 affMultAtk = 1f;
                 affMultDef = 1f;
             } else {
                 affMultAtk = affAtk[self.getCmbType().getAffs()[element.ordinal() - 1] + 5];
                 //affMultDef = Math.max(affDef[target.getCmbType().getAffs()[element.ordinal() - 1] + 5], (pierce) ? 1f : 0f);
-                affMultDef = affDef[target.getCmbType().getAffs()[element.ordinal() - 1] + 5];
+                int affTarget = target.getCmbType().getAffs()[element.ordinal() - 1];
+                affMultDef = affDef[affTarget + 5];
+
+                if(affTarget < 0) {
+                    multWeakDmgDealt = self.getMultWeakDmgDealt();
+                    multWeakDmgTaken = target.getMultWeakDmgTaken();
+                }
             }
 
-            // todo does all the multiplication and shit apply as expected?
-            int dmg = (int) (((atk / def) * (pow * 10) * 2 * affMultAtk) * affMultDef * Math.max(self.getMultAtk(), 0.1f));
-
-            //l.log(Level.INFO, self.getCmbType().getName() + " uses a skill on" + target.getCmbType().getName() + "; atk: " + atk + ", def: " + def + ", ratio: " + ratio + ", affMultAtk: " + affMultAtk + ", affMultDef: " + affMultDef + ", dmg: " + dmg + ", test: " + test + ", test2: " + test2);
+            // todo multFollowUpDmg
+            int dmg = (int) (((atk / def) * (pow * 10) * 2 * affMultAtk) * affMultDef * (Math.max(self.getMultDmgDealt(), 10) / 100f) * (Math.max(multWeakDmgDealt, 10) / 100f) * (Math.max(multWeakDmgTaken, 10) / 100f));
 
             // Deal damage
             return target.damage(dmg, pierce);

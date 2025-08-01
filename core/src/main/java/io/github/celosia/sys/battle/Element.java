@@ -14,7 +14,7 @@ public enum Element {
     LUX(lang.get("element.lux")),
     MALUM(lang.get("element.malum"));
 
-    private String name;
+    private final String name;
 
     Element(String name) {
         this.name = name;

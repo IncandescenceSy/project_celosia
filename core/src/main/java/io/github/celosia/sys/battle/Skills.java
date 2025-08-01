@@ -45,12 +45,13 @@ public class Skills {
     // todo
 
     // Heals
-    static Skill HEAL = new Skill(lang.get("skill.heal"), lang.get("skill.heal.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 60, new Heal(160));
-    static Skill HEAL_GROUP = new Skill(lang.get("skill.heal_group"), lang.get("skill.heal_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 180, new Heal(140));
+    static Skill HEAL = new Skill(lang.get("skill.heal"), lang.get("skill.heal.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 80, new Heal(210));
+    static Skill AMBROSIA = new Skill(lang.get("skill.ambrosia"), lang.get("skill.ambrosia.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 125, new Heal(300));
+    static Skill HEAL_GROUP = new Skill(lang.get("skill.heal_group"), lang.get("skill.heal_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 260, new Heal(210));
 
     // Barriers
-    static Skill BARRIER = new Skill(lang.get("skill.barrier"), lang.get("skill.barrier.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 80, new Heal(140, 5));
-    static Skill BARRIER_GROUP = new Skill(lang.get("skill.barrier_group"), lang.get("skill.barrier_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 240, new Heal(120, 3));
+    static Skill BARRIER = new Skill(lang.get("skill.barrier"), lang.get("skill.barrier.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 140, new Heal(300, 5));
+    static Skill BARRIER_GROUP = new Skill(lang.get("skill.barrier_group"), lang.get("skill.barrier_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 450, new Heal(300, 3));
 
     // Attacks
     // Ignis
@@ -70,7 +71,7 @@ public class Skills {
 
     // Ventus
     // Str
-    static Skill ZEPHYR_LANCE = new Skill(lang.get("skill.zephyr_lance"), lang.get("skill.zephyr_lance.desc"), Element.VENTUS, Targeting.OTHER_1R, 200, new Damage(SkillType.STR, Element.VENTUS, 70, true));
+    //static Skill ZEPHYR_LANCE = new Skill(lang.get("skill.zephyr_lance"), lang.get("skill.zephyr_lance.desc"), Element.VENTUS, Targeting.OTHER_1R, 200, new Damage(SkillType.STR, Element.VENTUS, 70, true));
     static Skill JET_STREAM = new Skill(lang.get("skill.jet_stream"), lang.get("skill.jet_stream.desc"), Element.VENTUS, Targeting.OTHER_1R, 120, 1, new Damage(SkillType.STR, Element.VENTUS, 55));
     // Mag
 

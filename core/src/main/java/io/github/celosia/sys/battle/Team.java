@@ -13,7 +13,7 @@ public class Team {
 
     public Team(Combatant[] cmbs) {
         this.cmbs = cmbs;
-        bloom = 10;
+        bloom = 0;
     }
 
     public String getName() {

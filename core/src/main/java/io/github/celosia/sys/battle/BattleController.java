@@ -74,9 +74,9 @@ public class BattleController {
     static List<TypingLabel> skillsL = new ArrayList<>();
 
     // temp
-    static Skill[] skills = new Skill[]{Skills.FIREBALL, Skills.HEAL, Skills.INFERNAL_PROVENANCE, Skills.DEMON_SCYTHE, Skills.ICE_AGE};
+    static Skill[] skills = new Skill[]{Skills.FIREBALL, Skills.AMBROSIA, Skills.INFERNAL_PROVENANCE, Skills.DEMON_SCYTHE, Skills.ICE_AGE};
     static Skill[] skills2 = new Skill[]{Skills.ATTACK_UP, Skills.ICE_BEAM, Skills.BARRIER, Skills.PROTECT, Skills.ICE_AGE};
-    static Skill[] skills3 = new Skill[]{Skills.THUNDERBOLT, Skills.ATTACK_UP, Skills.BARRIER, Skills.JET_STREAM, Skills.ICE_AGE};
+    static Skill[] skills3 = new Skill[]{Skills.THUNDERBOLT, Skills.ATTACK_UP, Skills.BARRIER, Skills.AMBROSIA, Skills.ICE_AGE};
 
     // Battle log
     // todo press L2(?) to bring up full log, better positioning
@@ -243,14 +243,20 @@ public class BattleController {
                         StringBuilder turnEnd2 = new StringBuilder();
 
                         // Apply buff turn end effects
+                        // todo: bug: only displays 1 buff name at a time (eg damage from Burn and Frostbite will only list Burn and have no buff name preceding the Frostbite damage)
+                        // todo: bug: When rolling over from barrier to HP, doesn't print "HP", like so:
+                        // Barrier 300 -> 90/10,500 (-210)
+                        // Barrier 90 -> 0/10500 (-90)
+                        //  10,500 -> 10,380 (-120)
+                        // HP 10,380 -> 10,170 (-210)
                         for(BuffInstance buffInstance : cmb.getBuffInstances()) {
                             turnEnd1 = new StringBuilder();
                             turnEnd1.append(cmb.getCmbType().getName()).append("'s ").append(buffInstance.getBuff().getName()).append(": ");
                             for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
-                                // todo fix this doesnt print to the log until the start of the next turn (unless the buff wears off) for some reason even though the effect happens immediately
-                                // eg, burn will decrease HP as it should, and the HP display updates, but the log message about the HP decreasing doesn't appear until you select your moves for the next turn even though the log should be updated every frame. why?
-                                turnEnd2.append(buffEffect.onTurnEnd(cmb));
-                                logSize++;
+                                for(int i = 1; i <= buffInstance.getStacks(); i++) {
+                                    turnEnd2.append(buffEffect.onTurnEnd(cmb));
+                                    logSize++;
+                                }
                             }
                         }
 

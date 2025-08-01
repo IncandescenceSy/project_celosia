@@ -31,9 +31,24 @@ public class Combatant {
     private int stageAgi;
     private int stageAgiTurns;
 
-    // Multiplies damage dealt/taken
-    private float multAtk;
-    private float multDef;
+    // Multiplies damage dealt/taken. All mults are percentages
+    private int multDmgDealt;
+    private int multDmgTaken;
+
+    // For exclusively weakness damage
+    private int multWeakDmgDealt;
+    private int multWeakDmgTaken;
+
+    // For exclusively Follow-Up damage
+    private int multFollowUpDmgDealt;
+    private int multFollowUpDmgTaken;
+
+    // For exclusively DoT damage (negative ChangeHP)
+    private int multDoTDmgTaken;
+
+    // For healing and barrier
+    private int multHealingDealt;
+    private int multHealingTaken;
 
     // Barrier
     private int barrier;
@@ -60,8 +75,15 @@ public class Combatant {
         stageFthTurns = 0;
         stageAgi = 0;
         stageAgiTurns = 0;
-        this.multAtk = 1;
-        this.multDef = 1;
+        this.multDmgDealt = 100;
+        this.multDmgTaken = 100;
+        this.multWeakDmgDealt = 100;
+        this.multWeakDmgTaken = 100;
+        this.multFollowUpDmgDealt = 100;
+        this.multFollowUpDmgTaken = 100;
+        this.multDoTDmgTaken = 100;
+        this.multHealingDealt = 100;
+        this.multHealingTaken = 100;
         this.barrier = 0;
         this.barrierTurns = 0;
         this.defend = 0;
@@ -165,18 +187,10 @@ public class Combatant {
 
     public void setStage(StageType stageType, int stage) {
         switch (stageType) {
-            case ATK:
-                stageAtk = stage;
-                break;
-            case DEF:
-                stageDef = stage;
-                break;
-            case FTH:
-                stageFth = stage;
-                break;
-            case AGI:
-                stageAgi = stage;
-                break;
+            case ATK -> stageAtk = stage;
+            case DEF -> stageDef = stage;
+            case FTH -> stageFth = stage;
+            case AGI -> stageAgi = stage;
         }
     }
 
@@ -191,33 +205,20 @@ public class Combatant {
 
     public void setStageTurns(StageType stageType, int turns) {
         switch (stageType) {
-            case ATK:
-                stageAtkTurns = turns;
-                break;
-            case DEF:
-                stageDefTurns = turns;
-                break;
-            case FTH:
-                stageFthTurns = turns;
-                break;
-            case AGI:
-                stageAgiTurns = turns;
-                break;
+            case ATK -> stageAtkTurns = turns;
+            case DEF -> stageDefTurns = turns;
+            case FTH -> stageFthTurns = turns;
+            case AGI -> stageAgiTurns = turns;
         }
     }
 
     public int getStageTurns(StageType stageType) {
-        switch (stageType) {
-            case ATK:
-                return stageAtkTurns;
-            case DEF:
-                return stageDefTurns;
-            case FTH:
-                return stageFthTurns;
-            case AGI:
-                return stageAgiTurns;
-        }
-        return -1;
+        return switch (stageType) {
+            case ATK -> stageAtkTurns;
+            case DEF -> stageDefTurns;
+            case FTH -> stageFthTurns;
+            case AGI -> stageAgiTurns;
+        };
     }
 
     public int getStrWithStage() {
@@ -245,47 +246,114 @@ public class Combatant {
     }
 
     public int getStatWithStage(Stat stat) {
-        switch(stat) {
-            case STR:
-                return this.getStatsCur().getStr() + (int) (this.getStatsDefault().getStr() * (((float) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
-            case MAG:
-                return this.getStatsCur().getMag() + (int) (this.getStatsDefault().getMag() * (((float) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
-            case FTH:
-                return this.getStatsCur().getFth() + (int) (this.getStatsDefault().getFth() * (((float) stageFth / 10) / ((stageFth < 0) ? 2 : 1)));
-            case AMR:
-                return this.getStatsCur().getAmr() + (int) (this.getStatsDefault().getAmr() * (((float) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
-            case RES:
-                return this.getStatsCur().getRes() + (int) (this.getStatsDefault().getRes() * (((float) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
-            case AGI:
-                return this.getStatsCur().getAgi() + (int) (this.getStatsDefault().getAgi() * (((float) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1)));
+        return switch (stat) {
+            case STR -> this.getStatsCur().getStr() + (int) (this.getStatsDefault().getStr() * (((float) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
+            case MAG -> this.getStatsCur().getMag() + (int) (this.getStatsDefault().getMag() * (((float) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
+            case FTH -> this.getStatsCur().getFth() + (int) (this.getStatsDefault().getFth() * (((float) stageFth / 10) / ((stageFth < 0) ? 2 : 1)));
+            case AMR -> this.getStatsCur().getAmr() + (int) (this.getStatsDefault().getAmr() * (((float) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
+            case RES -> this.getStatsCur().getRes() + (int) (this.getStatsDefault().getRes() * (((float) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
+            case AGI -> this.getStatsCur().getAgi() + (int) (this.getStatsDefault().getAgi() * (((float) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1)));
+        };
+    }
+
+    public void setMultDmgDealt(int multDmgDealt) {
+        this.multDmgDealt = multDmgDealt;
+    }
+
+    public int getMultDmgDealt() {
+        return multDmgDealt;
+    }
+
+    public void setMultDmgTaken(int multDmgTaken) {
+        this.multDmgTaken = multDmgTaken;
+    }
+
+    public int getMultDmgTaken() {
+        return multDmgTaken;
+    }
+
+    public void setMultWeakDmgDealt(int multWeakDmgDealt) {
+        this.multWeakDmgDealt = multWeakDmgDealt;
+    }
+
+    public int getMultWeakDmgDealt() {
+        return multWeakDmgDealt;
+    }
+
+    public void setMultWeakDmgTaken(int multWeakDmgTaken) {
+        this.multWeakDmgTaken = multWeakDmgTaken;
+    }
+
+    public int getMultWeakDmgTaken() {
+        return multWeakDmgTaken;
+    }
+
+    public void setMultFollowUpDmgDealt(int multFollowUpDmgDealt) {
+        this.multFollowUpDmgDealt = multFollowUpDmgDealt;
+    }
+
+    public int getMultFollowUpDmgDealt() {
+        return multFollowUpDmgDealt;
+    }
+
+    public void setMultFollowUpDmgTaken(int multFollowUpDmgTaken) {
+        this.multFollowUpDmgTaken = multFollowUpDmgTaken;
+    }
+
+    public int getMultFollowUpDmgTaken() {
+        return multFollowUpDmgTaken;
+    }
+
+    public void setMultDoTDmgTaken(int multDoTDmgTaken) {
+        this.multDoTDmgTaken = multDoTDmgTaken;
+    }
+
+    public int getMultDoTDmgTaken() {
+        return multDoTDmgTaken;
+    }
+
+    public void setMultHealingDealt(int multHealingDealt) {
+        this.multHealingDealt = multHealingDealt;
+    }
+
+    public int getMultHealingDealt() {
+        return multHealingDealt;
+    }
+
+    public void setMultHealingTaken(int multHealingTaken) {
+        this.multHealingTaken = multHealingTaken;
+    }
+
+    public int getMultHealingTaken() {
+        return multHealingTaken;
+    }
+
+    public void setMult(Mult mult, int set) {
+        switch (mult) {
+            case DMG_DEALT -> multDmgDealt = set;
+            case DMG_TAKEN -> multDmgTaken = set;
+            case WEAK_DMG_DEALT -> multWeakDmgDealt = set;
+            case WEAK_DMG_TAKEN -> multWeakDmgTaken = set;
+            case FOLLOW_UP_DMG_DEALT -> multFollowUpDmgDealt = set;
+            case FOLLOW_UP_DMG_TAKEN -> multFollowUpDmgTaken = set;
+            case DOT_DMG_TAKEN -> multDoTDmgTaken = set;
+            case HEALING_DEALT -> multHealingDealt = set;
+            case HEALING_TAKEN -> multHealingTaken = set;
         }
-        return -1;
     }
 
-    public void setMultAtk(float multAtk) {
-        this.multAtk = multAtk;
-    }
-
-    public float getMultAtk() {
-        return multAtk;
-    }
-
-    public void setMultDef(float multDef) {
-        this.multDef = multDef;
-    }
-
-    public float getMultDef() {
-        return multDef;
-    }
-
-    public void setMult(Mult mult, float set) {
-        if (mult == Mult.ATK) multAtk = set;
-        else multDef = set;
-    }
-
-    public float getMult(Mult mult) {
-        if (mult == Mult.ATK) return multAtk;
-        else return multDef;
+    public int getMult(Mult mult) {
+        return switch (mult) {
+            case DMG_DEALT -> multDmgDealt;
+            case DMG_TAKEN -> multDmgTaken;
+            case WEAK_DMG_DEALT -> multWeakDmgDealt;
+            case WEAK_DMG_TAKEN -> multWeakDmgTaken;
+            case FOLLOW_UP_DMG_DEALT -> multFollowUpDmgDealt;
+            case FOLLOW_UP_DMG_TAKEN -> multFollowUpDmgTaken;
+            case DOT_DMG_TAKEN -> multDoTDmgTaken;
+            case HEALING_DEALT -> multHealingDealt;
+            case HEALING_TAKEN -> multHealingTaken;
+        };
     }
 
     public void setBarrier(int barrier) {
@@ -390,7 +458,7 @@ public class Combatant {
 
     // Damage Combatant, taking into account Defend and Barrier. Returns false if HP was lowered
     public Result damage(int dmg, boolean pierce) {
-        dmg *= Math.max(multDef, 0.1f);
+        dmg *= Math.max(multDmgTaken, 10) / 100f;
         int dmgFull = dmg;
         int defendOld = defend;
 
@@ -409,8 +477,9 @@ public class Combatant {
 
             if (barrier > 0 && dmg > 0) { // There's Barrier and dmg
                 if (barrier > dmg) { // Only hit Barrier
+                    int barrierOld = barrier;
                     barrier -= dmg;
-                    return new Result(ResultType.HIT_BARRIER, this.getCmbType().getName() + "'s " + lang.get("barrier") + " " + String.format("%,d", (defendOld + barrier)) + " -> " + String.format("%,d", barrier) + "/" + String.format("%,d", this.getStatsDefault().getHp()) + " (-" + String.format("%,d", dmgFull) + ")" + "\n");
+                    return new Result(ResultType.HIT_BARRIER, this.getCmbType().getName() + "'s " + lang.get("barrier") + " " + String.format("%,d", (defendOld + barrierOld)) + " -> " + String.format("%,d", barrier) + "/" + String.format("%,d", this.getStatsDefault().getHp()) + " (-" + String.format("%,d", dmgFull) + ")" + "\n");
                 } else { // Destroy Barrier and proceed to HP
                     msg[0] = this.getCmbType().getName() + "'s " + lang.get("barrier") + " " + String.format("%,d", (defendOld + barrier)) + " -> " + 0 + "/" + this.getStatsDefault().getHp() + " (-" + String.format("%,d", (defendOld + barrier)) + ")" + "\n";
                     dmg -= barrier;
@@ -426,7 +495,7 @@ public class Combatant {
         msg[1] = this.getCmbType().getName() + "'s " + lang.get("hp") + " " + String.format("%,d", hpOld) + " -> " + String.format("%,d", hpNew) + " (-" + String.format("%,d", dmg) + ")" + "\n";
         this.getStatsCur().setHp(hpNew);
 
-        if (multDef <= -500f) { // Hit Protect
+        if (multDmgTaken <= -50000) { // Hit Protect
             return new Result(ResultType.HIT_BARRIER, msg);
         } else if (dmg > 0) { // Did damage
             return new Result(ResultType.SUCCESS, msg);

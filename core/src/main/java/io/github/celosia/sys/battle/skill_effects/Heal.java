@@ -33,7 +33,8 @@ public class Heal implements SkillEffect {
 
     @Override
     public Result apply(Combatant self, Combatant target, ResultType resultPrev) {
-        int heal = (int) (((float) self.getFthWithStage() / 50) * pow);
+        // Heals by pow% of user's Fth
+        int heal = (int) (self.getFthWithStage() * (pow / 100f) * (Math.max(self.getMultHealingDealt(), 10) / 100f) * (Math.max(target.getMultHealingTaken(), 10) / 100f));
 
         if (barrierTurns > 0) { // Adds barrier (barrier + defend cannot exceed max HP)
             int hpMax = target.getStatsDefault().getHp();
