@@ -12,13 +12,13 @@ public class Skill {
     // todo: NYI
     // Skills happen in order of prio, and in order of user Agi within each prio
     // Prio brackets:
-    // -9: Always happens last
+    // -9: Always happens last (Slow Follow-Ups)
     // -1: Happens late
     // 0: Normal
     // +1: Happens early (most prio skills)
     // +2: Happens very early (certain special prio skills?)
     // +3: Happens before attacks (Defend, Protect, Ally Switch)
-    // +9: Always happens immediately (Follow Ups)
+    // +9: Always happens immediately (Follow-Ups)
     private final int prio;
 
     private final boolean isBloom;
