@@ -23,7 +23,7 @@ public class Damage implements SkillEffect {
     }
 
     public Damage(SkillType type, Element element, int pow, boolean pierce) {
-        this(type, element, pow, pierce, ResultType.HIT_BARRIER);
+        this(type, element, pow, pierce, ResultType.HIT_SHIELD);
     }
 
     public Damage(SkillType type, Element element, int pow, ResultType minResult) {
@@ -31,7 +31,7 @@ public class Damage implements SkillEffect {
     }
 
     public Damage(SkillType type, Element element, int pow) {
-        this(type, element, pow, false, ResultType.HIT_BARRIER);
+        this(type, element, pow, false, ResultType.HIT_SHIELD);
     }
 
     @Override
@@ -71,7 +71,8 @@ public class Damage implements SkillEffect {
             }
 
             // todo multFollowUpDmg
-            int dmg = (int) (((atk / def) * (pow * 10) * 2 * affMultAtk) * affMultDef * (Math.max(self.getMultDmgDealt(), 10) / 100f) * (Math.max(multWeakDmgDealt, 10) / 100f) * (Math.max(multWeakDmgTaken, 10) / 100f));
+            int dmg = (int) ((atk / def) * (pow * 10) * 2 * affMultAtk * affMultDef * (Math.max(self.getMultDmgDealt(), 10) / 100f) * (Math.max(target.getMultDmgTaken(), 10) / 100f) * (Math.max(multWeakDmgDealt, 10) / 100f) * (Math.max(multWeakDmgTaken, 10) / 100f) *
+                (Math.max(self.getMultElementDmgDealt(element), 10) / 100f) * (Math.max(target.getMultElementDmgTaken(element), 10) / 100f));
 
             // Deal damage
             return target.damage(dmg, pierce);

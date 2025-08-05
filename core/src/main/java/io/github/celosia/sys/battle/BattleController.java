@@ -75,8 +75,8 @@ public class BattleController {
 
     // temp
     static Skill[] skills = new Skill[]{Skills.FIREBALL, Skills.AMBROSIA, Skills.INFERNAL_PROVENANCE, Skills.DEMON_SCYTHE, Skills.ICE_AGE};
-    static Skill[] skills2 = new Skill[]{Skills.ATTACK_UP, Skills.ICE_BEAM, Skills.BARRIER, Skills.PROTECT, Skills.ICE_AGE};
-    static Skill[] skills3 = new Skill[]{Skills.THUNDERBOLT, Skills.ATTACK_UP, Skills.BARRIER, Skills.AMBROSIA, Skills.ICE_AGE};
+    static Skill[] skills2 = new Skill[]{Skills.ATTACK_UP, Skills.ICE_BEAM, Skills.SHIELD, Skills.PROTECT, Skills.ICE_AGE};
+    static Skill[] skills3 = new Skill[]{Skills.THUNDERBOLT, Skills.ATTACK_UP, Skills.SHIELD, Skills.AMBROSIA, Skills.ICE_AGE};
 
     // Battle log
     // todo press L2(?) to bring up full log, better positioning
@@ -237,16 +237,16 @@ public class BattleController {
                     StringBuilder builder = new StringBuilder();
                     for (Combatant cmb : battle.getAllCombatants()) {
                         // Increase SP
-                        cmb.setSp(Math.min(cmb.getSp() + 100, 1000));
+                        cmb.setSp(Math.min((int) (cmb.getSp() + (100 * (Math.max(cmb.getMultSpGain(), 10) / 100f))), 1000));
 
                         StringBuilder turnEnd1 = null;
                         StringBuilder turnEnd2 = new StringBuilder();
 
                         // Apply buff turn end effects
                         // todo: bug: only displays 1 buff name at a time (eg damage from Burn and Frostbite will only list Burn and have no buff name preceding the Frostbite damage)
-                        // todo: bug: When rolling over from barrier to HP, doesn't print "HP", like so:
-                        // Barrier 300 -> 90/10,500 (-210)
-                        // Barrier 90 -> 0/10500 (-90)
+                        // todo: bug: When rolling over from shield to HP, doesn't print "HP", like so:
+                        // Shield 300 -> 90/10,500 (-210)
+                        // Shield 90 -> 0/10500 (-90)
                         //  10,500 -> 10,380 (-120)
                         // HP 10,380 -> 10,170 (-210)
                         for(BuffInstance buffInstance : cmb.getBuffInstances()) {
@@ -263,14 +263,14 @@ public class BattleController {
                         // Only have turn end message if both have messages
                         if(turnEnd1 != null && !Objects.equals(turnEnd2.toString(), "")) builder.append(turnEnd1).append(turnEnd2);
 
-                        // Decrement stage/barrier/buff turns and remove expired stages/barriers/buffs
+                        // Decrement stage/shield/buff turns and remove expired stages/shields/buffs
                         // Don't increase logSize because most of the time this will be blank
                         builder.append(cmb.decrementTurns());
                     }
 
                     // Log
                     logScroll = 0;
-                    builder.append("[CYAN]").append(lang.get("turn")).append(" ").append(battle.getTurn() + 1).append("[WHITE]\n").append(lang.get("log.all_units_gain")).append(" ").append(10).append(" ").append(lang.get("sp")).append("\n").append(lang.get("log.both_teams_gain")).append(" ").append(10).append(" ").append(lang.get("bloom")).append("\n");
+                    builder.append("[CYAN]").append(lang.get("turn")).append(" ").append(battle.getTurn() + 1).append("[WHITE]\n").append(lang.get("log.all_units_gain")).append(" ").append(10).append(" ").append(lang.get("sp")).append(", ").append(lang.get("log.both_teams_gain")).append(" ").append(10).append(" ").append(lang.get("bloom")).append("\n");
                     logSize += 3;
 
                     logText += builder;
@@ -305,7 +305,9 @@ public class BattleController {
                         Element element = move.getSkill().getElement();
                         boolean isPlayerTeam = move.getSelf().isPlayerTeam();
                         Team team = (isPlayerTeam) ? battle.getPlayerTeam() : battle.getOpponentTeam();
-                        newSp = ((move.getSkill().isBloom()) ? team.getBloom() : move.getSelf().getSp()) - (int) Math.ceil((move.getSkill().getCost() * ((element == Element.VIS) ? 1 : affSp[move.getSelf().getCmbType().getAffs()[element.ordinal() - 1] + 5])));
+                        int cost = move.getSkill().getCost();
+                        if(cost < 0) cost *= (Math.max(move.getSelf().getMultSpGain(), 10) / 100f); // todo make sure this rounds okay
+                        newSp = ((move.getSkill().isBloom()) ? team.getBloom() : move.getSelf().getSp()) - (int) Math.ceil((cost * ((element == Element.VIS) ? 1 : affSp[move.getSelf().getCmbType().getAffs()[element.ordinal() - 1] + 5])));
 
                         if(newSp >= 0) {
                             logText += move.getSelf().getCmbType().getName() + " " + lang.get("log.uses") + " " + move.getSkill().getName() + " " + lang.get("log.on") + " " + move.getTarget().getCmbType().getName();
@@ -498,9 +500,9 @@ public class BattleController {
         for (int i = 0; i < 8; i++) {
             Combatant cmb = (i >= 4) ? battle.getOpponentTeam().getCmbs()[i - 4] : battle.getPlayerTeam().getCmbs()[i]; // todo can use battle.getAllCmbs
             if (cmb != null) {
-                int barrier = cmb.getBarrier() + cmb.getDefend();
-                String barrierStr = (barrier > 0) ? "[CYAN](" + String.format("%,d", barrier) + ")[WHITE]" : "";
-                StringBuilder text = new StringBuilder(cmb.getCmbType().getName() + "\n" + lang.get("hp") + ": " + String.format("%,d", cmb.getStatsCur().getHp()) + barrierStr + "/" + String.format("%,d", cmb.getStatsDefault().getHp()) + "\n" + lang.get("sp") + ": " + String.format("%,d", cmb.getSp()) + "/" + String.format("%,d", 1000) +
+                int shield = cmb.getShield() + cmb.getDefend();
+                String shieldStr = (shield > 0) ? "[CYAN]+" + String.format("%,d", shield) + "[WHITE]" : "";
+                StringBuilder text = new StringBuilder(cmb.getCmbType().getName() + "\n" + lang.get("hp") + ": " + String.format("%,d", cmb.getStatsCur().getHp()) + shieldStr + "/" + String.format("%,d", cmb.getStatsDefault().getHp()) + "\n" + lang.get("sp") + ": " + String.format("%,d", cmb.getSp()) + "/" + String.format("%,d", 1000) +
                     //"\nStr: " + cmb.getStrWithStage() + "/" + cmb.getStatsDefault().getStr() + "\nMag:" + cmb.getMagWithStage() + "/" + cmb.getStatsDefault().getMag() +
                     //"\nAmr: " + cmb.getAmrWithStage() + "/" + cmb.getStatsDefault().getAmr() + "\nRes: " + cmb.getResWithStage() + "/" + cmb.getStatsDefault().getRes() +
                      "\n");
@@ -513,9 +515,9 @@ public class BattleController {
                     }
                 }
 
-                // Barrier
-                barrier = cmb.getBarrier();
-                if (barrier > 0) text.append(lang.get("barrier")).append("x").append(String.format("%,d", barrier)).append("(").append(cmb.getBarrierTurns()).append(") ");
+                // Shield
+                shield = cmb.getShield();
+                if (shield > 0) text.append(lang.get("shield")).append("x").append(String.format("%,d", shield)).append("(").append(cmb.getShieldTurns()).append(") ");
 
                 // List buffs
                 List<BuffInstance> buffInstances = cmb.getBuffInstances();

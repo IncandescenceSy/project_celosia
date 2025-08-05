@@ -3,6 +3,6 @@ package io.github.celosia.sys.battle;
 // ResultType of the previous SkillEffect
 public enum ResultType {
     FAIL,
-    HIT_BARRIER, // Only damaged Barrier or Protect
+    HIT_SHIELD, // Only damaged Shield or Protect
     SUCCESS;
 }

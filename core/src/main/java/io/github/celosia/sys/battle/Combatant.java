@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static io.github.celosia.sys.battle.Element.IGNIS;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 // Species and current stats
@@ -35,6 +36,22 @@ public class Combatant {
     private int multDmgDealt;
     private int multDmgTaken;
 
+    // For each element
+    private int multIgnisDmgDealt;
+    private int multIgnisDmgTaken;
+    private int multGlaciesDmgDealt;
+    private int multGlaciesDmgTaken;
+    private int multFulgurDmgDealt;
+    private int multFulgurDmgTaken;
+    private int multVentusDmgDealt;
+    private int multVentusDmgTaken;
+    private int multTerraDmgDealt;
+    private int multTerraDmgTaken;
+    private int multLuxDmgDealt;
+    private int multLuxDmgTaken;
+    private int multMalumDmgDealt;
+    private int multMalumDmgTaken;
+
     // For exclusively weakness damage
     private int multWeakDmgDealt;
     private int multWeakDmgTaken;
@@ -46,15 +63,18 @@ public class Combatant {
     // For exclusively DoT damage (negative ChangeHP)
     private int multDoTDmgTaken;
 
-    // For healing and barrier
+    // For healing and shield
     private int multHealingDealt;
     private int multHealingTaken;
 
-    // Barrier
-    private int barrier;
-    private int barrierTurns;
+    // Multiplies all SP gain
+    private int multSpGain;
 
-    // Defend (essentially a 2nd Barrier with higher priority)
+    // Shield
+    private int shield;
+    private int shieldTurns;
+
+    // Defend (essentially a 2nd Shield with higher priority)
     private int defend;
 
     private List<BuffInstance> buffInstances = new ArrayList<>();
@@ -77,6 +97,20 @@ public class Combatant {
         stageAgiTurns = 0;
         this.multDmgDealt = 100;
         this.multDmgTaken = 100;
+        this.multIgnisDmgDealt = 100;
+        this.multIgnisDmgTaken = 100;
+        this.multGlaciesDmgDealt = 100;
+        this.multGlaciesDmgTaken = 100;
+        this.multFulgurDmgDealt = 100;
+        this.multFulgurDmgTaken = 100;
+        this.multVentusDmgDealt = 100;
+        this.multVentusDmgTaken = 100;
+        this.multTerraDmgDealt = 100;
+        this.multTerraDmgTaken = 100;
+        this.multLuxDmgDealt = 100;
+        this.multLuxDmgTaken = 100;
+        this.multMalumDmgDealt = 100;
+        this.multMalumDmgTaken = 100;
         this.multWeakDmgDealt = 100;
         this.multWeakDmgTaken = 100;
         this.multFollowUpDmgDealt = 100;
@@ -84,8 +118,9 @@ public class Combatant {
         this.multDoTDmgTaken = 100;
         this.multHealingDealt = 100;
         this.multHealingTaken = 100;
-        this.barrier = 0;
-        this.barrierTurns = 0;
+        this.multSpGain = 100;
+        this.shield = 0;
+        this.shieldTurns = 0;
         this.defend = 0;
     }
 
@@ -272,6 +307,118 @@ public class Combatant {
         return multDmgTaken;
     }
 
+    public void setMultIgnisDmgDealt(int multIgnisDmgDealt) {
+        this.multIgnisDmgDealt = multIgnisDmgDealt;
+    }
+
+    public int getMultIgnisDmgDealt() {
+        return multIgnisDmgDealt;
+    }
+
+    public void setMultIgnisDmgTaken(int multIgnisDmgTaken) {
+        this.multIgnisDmgTaken = multIgnisDmgTaken;
+    }
+
+    public int getMultIgnisDmgTaken() {
+        return multIgnisDmgTaken;
+    }
+
+    public void setMultGlaciesDmgDealt(int multGlaciesDmgDealt) {
+        this.multGlaciesDmgDealt = multGlaciesDmgDealt;
+    }
+
+    public int getMultGlaciesDmgDealt() {
+        return multGlaciesDmgDealt;
+    }
+
+    public void setMultGlaciesDmgTaken(int multGlaciesDmgTaken) {
+        this.multGlaciesDmgTaken = multGlaciesDmgTaken;
+    }
+
+    public int getMultGlaciesDmgTaken() {
+        return multGlaciesDmgTaken;
+    }
+
+    public void setMultFulgurDmgDealt(int multFulgurDmgDealt) {
+        this.multFulgurDmgDealt = multFulgurDmgDealt;
+    }
+
+    public int getMultFulgurDmgDealt() {
+        return multFulgurDmgDealt;
+    }
+
+    public void setMultFulgurDmgTaken(int multFulgurDmgTaken) {
+        this.multFulgurDmgTaken = multFulgurDmgTaken;
+    }
+
+    public int getMultFulgurDmgTaken() {
+        return multFulgurDmgTaken;
+    }
+
+    public void setMultVentusDmgDealt(int multVentusDmgDealt) {
+        this.multVentusDmgDealt = multVentusDmgDealt;
+    }
+
+    public int getMultVentusDmgDealt() {
+        return multVentusDmgDealt;
+    }
+
+    public void setMultVentusDmgTaken(int multVentusDmgTaken) {
+        this.multVentusDmgTaken = multVentusDmgTaken;
+    }
+
+    public int getMultVentusDmgTaken() {
+        return multVentusDmgTaken;
+    }
+
+    public void setMultTerraDmgDealt(int multTerraDmgDealt) {
+        this.multTerraDmgDealt = multTerraDmgDealt;
+    }
+
+    public int getMultTerraDmgDealt() {
+        return multTerraDmgDealt;
+    }
+
+    public void setMultTerraDmgTaken(int multTerraDmgTaken) {
+        this.multTerraDmgTaken = multTerraDmgTaken;
+    }
+
+    public int getMultTerraDmgTaken() {
+        return multTerraDmgTaken;
+    }
+
+    public void setMultLuxDmgDealt(int multLuxDmgDealt) {
+        this.multLuxDmgDealt = multLuxDmgDealt;
+    }
+
+    public int getMultLuxDmgDealt() {
+        return multLuxDmgDealt;
+    }
+
+    public void setMultLuxDmgTaken(int multLuxDmgTaken) {
+        this.multLuxDmgTaken = multLuxDmgTaken;
+    }
+
+    public int getMultLuxDmgTaken() {
+        return multLuxDmgTaken;
+    }
+
+    public void setMultMalumDmgDealt(int multMalumDmgDealt) {
+        this.multMalumDmgDealt = multMalumDmgDealt;
+    }
+
+    public int getMultMalumDmgDealt() {
+        return multMalumDmgDealt;
+    }
+
+    public void setMultMalumDmgTaken(int multMalumDmgTaken) {
+        this.multMalumDmgTaken = multMalumDmgTaken;
+    }
+
+    public int getMultMalumDmgTaken() {
+        return multMalumDmgTaken;
+    }
+
     public void setMultWeakDmgDealt(int multWeakDmgDealt) {
         this.multWeakDmgDealt = multWeakDmgDealt;
     }
@@ -328,10 +475,32 @@ public class Combatant {
         return multHealingTaken;
     }
 
+    public void setMultSpGain(int multSpGain) {
+        this.multSpGain = multSpGain;
+    }
+
+    public int getMultSpGain() {
+        return multSpGain;
+    }
+
     public void setMult(Mult mult, int set) {
         switch (mult) {
             case DMG_DEALT -> multDmgDealt = set;
             case DMG_TAKEN -> multDmgTaken = set;
+            case IGNIS_DMG_DEALT -> multIgnisDmgDealt = set;
+            case IGNIS_DMG_TAKEN -> multIgnisDmgTaken = set;
+            case GLACIES_DMG_DEALT -> multGlaciesDmgDealt = set;
+            case GLACIES_DMG_TAKEN -> multGlaciesDmgTaken = set;
+            case FULGUR_DMG_DEALT -> multFulgurDmgDealt = set;
+            case FULGUR_DMG_TAKEN -> multFulgurDmgTaken = set;
+            case VENTUS_DMG_DEALT -> multVentusDmgDealt = set;
+            case VENTUS_DMG_TAKEN -> multVentusDmgTaken = set;
+            case TERRA_DMG_DEALT -> multTerraDmgDealt = set;
+            case TERRA_DMG_TAKEN -> multTerraDmgTaken = set;
+            case LUX_DMG_DEALT -> multLuxDmgDealt = set;
+            case LUX_DMG_TAKEN -> multLuxDmgTaken = set;
+            case MALUM_DMG_DEALT -> multMalumDmgDealt = set;
+            case MALUM_DMG_TAKEN -> multMalumDmgTaken = set;
             case WEAK_DMG_DEALT -> multWeakDmgDealt = set;
             case WEAK_DMG_TAKEN -> multWeakDmgTaken = set;
             case FOLLOW_UP_DMG_DEALT -> multFollowUpDmgDealt = set;
@@ -339,6 +508,7 @@ public class Combatant {
             case DOT_DMG_TAKEN -> multDoTDmgTaken = set;
             case HEALING_DEALT -> multHealingDealt = set;
             case HEALING_TAKEN -> multHealingTaken = set;
+            case SP_GAIN -> multSpGain = set;
         }
     }
 
@@ -346,6 +516,20 @@ public class Combatant {
         return switch (mult) {
             case DMG_DEALT -> multDmgDealt;
             case DMG_TAKEN -> multDmgTaken;
+            case IGNIS_DMG_DEALT -> multIgnisDmgDealt;
+            case IGNIS_DMG_TAKEN -> multIgnisDmgTaken;
+            case GLACIES_DMG_DEALT -> multGlaciesDmgDealt;
+            case GLACIES_DMG_TAKEN -> multGlaciesDmgTaken;
+            case FULGUR_DMG_DEALT -> multFulgurDmgDealt;
+            case FULGUR_DMG_TAKEN -> multFulgurDmgTaken;
+            case VENTUS_DMG_DEALT -> multVentusDmgDealt;
+            case VENTUS_DMG_TAKEN -> multVentusDmgTaken;
+            case TERRA_DMG_DEALT -> multTerraDmgDealt;
+            case TERRA_DMG_TAKEN -> multTerraDmgTaken;
+            case LUX_DMG_DEALT -> multLuxDmgDealt;
+            case LUX_DMG_TAKEN -> multLuxDmgTaken;
+            case MALUM_DMG_DEALT -> multMalumDmgDealt;
+            case MALUM_DMG_TAKEN -> multMalumDmgTaken;
             case WEAK_DMG_DEALT -> multWeakDmgDealt;
             case WEAK_DMG_TAKEN -> multWeakDmgTaken;
             case FOLLOW_UP_DMG_DEALT -> multFollowUpDmgDealt;
@@ -353,23 +537,50 @@ public class Combatant {
             case DOT_DMG_TAKEN -> multDoTDmgTaken;
             case HEALING_DEALT -> multHealingDealt;
             case HEALING_TAKEN -> multHealingTaken;
+            case SP_GAIN -> multSpGain;
         };
     }
 
-    public void setBarrier(int barrier) {
-        this.barrier = barrier;
+    public int getMultElementDmgDealt(Element element) {
+        return switch (element) {
+            case IGNIS -> multIgnisDmgDealt;
+            case GLACIES -> multGlaciesDmgDealt;
+            case FULGUR -> multFulgurDmgDealt;
+            case VENTUS -> multVentusDmgDealt;
+            case TERRA -> multTerraDmgDealt;
+            case LUX -> multLuxDmgDealt;
+            case MALUM -> multMalumDmgDealt;
+            case VIS -> 1;
+        };
     }
 
-    public int getBarrier() {
-        return barrier;
+    public int getMultElementDmgTaken(Element element) {
+        return switch (element) {
+            case IGNIS -> multIgnisDmgTaken;
+            case GLACIES -> multGlaciesDmgTaken;
+            case FULGUR -> multFulgurDmgTaken;
+            case VENTUS -> multVentusDmgTaken;
+            case TERRA -> multTerraDmgTaken;
+            case LUX -> multLuxDmgTaken;
+            case MALUM -> multMalumDmgTaken;
+            case VIS -> 1;
+        };
     }
 
-    public void setBarrierTurns(int barrierTurns) {
-        this.barrierTurns = barrierTurns;
+    public void setShield(int shield) {
+        this.shield = shield;
     }
 
-    public int getBarrierTurns() {
-        return barrierTurns;
+    public int getShield() {
+        return shield;
+    }
+
+    public void setShieldTurns(int shieldTurns) {
+        this.shieldTurns = shieldTurns;
+    }
+
+    public int getShieldTurns() {
+        return shieldTurns;
     }
 
     public void setDefend(int defend) {
@@ -422,10 +633,10 @@ public class Combatant {
             stageAgi = 0;
         }
 
-        // Barrier
-        if (barrier != 0 && --barrierTurns <= 0) {
-            msg.append(this.getCmbType().getName()).append(" ").append(lang.get("log.loses")).append(" ").append(barrier).append(" ").append(lang.get("barrier")).append("\n");
-            barrier = 0;
+        // Shield
+        if (shield != 0 && --shieldTurns <= 0) {
+            msg.append(this.getCmbType().getName()).append(" ").append(lang.get("log.loses")).append(" ").append(shield).append(" ").append(lang.get("shield")).append("\n");
+            shield = 0;
         }
 
         // Buffs
@@ -456,35 +667,34 @@ public class Combatant {
         return msg.toString();
     }
 
-    // Damage Combatant, taking into account Defend and Barrier. Returns false if HP was lowered
+    // Damage Combatant, taking into account Defend and Shield. Returns false if HP was lowered
     public Result damage(int dmg, boolean pierce) {
-        dmg *= Math.max(multDmgTaken, 10) / 100f;
         int dmgFull = dmg;
         int defendOld = defend;
 
         String[] msg = new String[2];
 
-        if (!pierce) { // Pierce skips Defend and Barrier
+        if (!pierce) { // Pierce skips Defend and Shield
             if (defend > 0 && dmg > 0) { // There's Defend and dmg
                 if (defend > dmg) { // Only hit Defend
                     defend -= dmg;
-                    return new Result(ResultType.HIT_BARRIER, this.getCmbType().getName() + "'s " + lang.get("barrier") + " " + String.format("%,d", (defendOld + barrier)) + " -> " + String.format("%,d", (defend + barrier)) + "/" + String.format("%,d", this.getStatsDefault().getHp()) + " (-" + String.format("%,d", dmgFull) + ")" + "\n");
-                } else { // Destroy Defend and proceed to Barrier
+                    return new Result(ResultType.HIT_SHIELD, this.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (defendOld + shield)) + " -> " + String.format("%,d", (defend + shield)) + "/" + String.format("%,d", this.getStatsDefault().getHp()) + " (-" + String.format("%,d", dmgFull) + ")" + "\n");
+                } else { // Destroy Defend and proceed to Shield
                     dmg -= defend;
                     defend = 0;
                 }
             }
 
-            if (barrier > 0 && dmg > 0) { // There's Barrier and dmg
-                if (barrier > dmg) { // Only hit Barrier
-                    int barrierOld = barrier;
-                    barrier -= dmg;
-                    return new Result(ResultType.HIT_BARRIER, this.getCmbType().getName() + "'s " + lang.get("barrier") + " " + String.format("%,d", (defendOld + barrierOld)) + " -> " + String.format("%,d", barrier) + "/" + String.format("%,d", this.getStatsDefault().getHp()) + " (-" + String.format("%,d", dmgFull) + ")" + "\n");
-                } else { // Destroy Barrier and proceed to HP
-                    msg[0] = this.getCmbType().getName() + "'s " + lang.get("barrier") + " " + String.format("%,d", (defendOld + barrier)) + " -> " + 0 + "/" + this.getStatsDefault().getHp() + " (-" + String.format("%,d", (defendOld + barrier)) + ")" + "\n";
-                    dmg -= barrier;
-                    barrier = 0;
-                    barrierTurns = 0;
+            if (shield > 0 && dmg > 0) { // There's Shield and dmg
+                if (shield > dmg) { // Only hit Shield
+                    int shieldOld = shield;
+                    shield -= dmg;
+                    return new Result(ResultType.HIT_SHIELD, this.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (defendOld + shieldOld)) + " -> " + String.format("%,d", shield) + "/" + String.format("%,d", this.getStatsDefault().getHp()) + " (-" + String.format("%,d", dmgFull) + ")" + "\n");
+                } else { // Destroy Shield and proceed to HP
+                    msg[0] = this.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (defendOld + shield)) + " -> " + 0 + "/" + this.getStatsDefault().getHp() + " (-" + String.format("%,d", (defendOld + shield)) + ")" + "\n";
+                    dmg -= shield;
+                    shield = 0;
+                    shieldTurns = 0;
                 }
             }
         }
@@ -496,7 +706,7 @@ public class Combatant {
         this.getStatsCur().setHp(hpNew);
 
         if (multDmgTaken <= -50000) { // Hit Protect
-            return new Result(ResultType.HIT_BARRIER, msg);
+            return new Result(ResultType.HIT_SHIELD, msg);
         } else if (dmg > 0) { // Did damage
             return new Result(ResultType.SUCCESS, msg);
         } else return new Result(ResultType.FAIL, lang.get("log.no_effect") + " " + lang.get("log.on") + " " + this.getCmbType().getName() + "\n"); // Did no damage

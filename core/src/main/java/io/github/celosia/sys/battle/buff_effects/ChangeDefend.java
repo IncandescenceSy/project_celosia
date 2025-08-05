@@ -16,18 +16,18 @@ public class ChangeDefend implements BuffEffect {
     @Override
     public String onGive(Combatant self) {
         int hpMax = self.getStatsDefault().getHp();
-        // Add defend (barrier + defend cannot exceed max HP)
+        // Add defend (shield + defend cannot exceed max HP)
         int defendOld = self.getDefend();
-        int defendNew = (self.getBarrier() + defendOld + (change * hpMax) > hpMax) ? hpMax - self.getBarrier() : (int) (change * hpMax);
+        int defendNew = (self.getShield() + defendOld + (change * hpMax) > hpMax) ? hpMax - self.getShield() : (int) (change * hpMax);
         self.setDefend(defendNew);
-        return self.getCmbType().getName() + "'s " + lang.get("barrier") + " " + String.format("%,d", (self.getBarrier() + defendOld)) + " -> " + String.format("%,d", (self.getBarrier() + defendNew)) + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", ((self.getBarrier() + defendNew) - (self.getBarrier() + defendOld))) + ")";
+        return self.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (self.getShield() + defendOld)) + " -> " + String.format("%,d", (self.getShield() + defendNew)) + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", ((self.getShield() + defendNew) - (self.getShield() + defendOld))) + ")";
     }
 
     @Override
     public String onRemove(Combatant self) {
         int defendOld = self.getDefend();
         self.setDefend(0);
-        return self.getCmbType().getName() + "'s " + lang.get("barrier") + " " + String.format("%,d", (self.getBarrier() + defendOld)) + " -> " + String.format("%,d", (self.getBarrier() + 0)) + "/" + String.format("%,d", self.getStatsDefault().getHp()) + " (" + String.format("%,d", ((self.getBarrier() + 0) - (self.getBarrier() + defendOld))) + ")";
+        return self.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (self.getShield() + defendOld)) + " -> " + String.format("%,d", (self.getShield() + 0)) + "/" + String.format("%,d", self.getStatsDefault().getHp()) + " (" + String.format("%,d", ((self.getShield() + 0) - (self.getShield() + defendOld))) + ")";
     }
 
     @Override

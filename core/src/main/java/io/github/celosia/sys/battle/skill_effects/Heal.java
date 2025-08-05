@@ -11,16 +11,16 @@ public class Heal implements SkillEffect {
 
     private final int pow;
     private final float overHeal; // Amount to heal over max HP. 1f = 100%
-    private final int barrierTurns;
+    private final int shieldTurns;
 
-    public Heal(int pow, float overHeal, int barrierTurns) {
+    public Heal(int pow, float overHeal, int shieldTurns) {
         this.pow = pow;
         this.overHeal = overHeal;
-        this.barrierTurns = barrierTurns;
+        this.shieldTurns = shieldTurns;
     }
 
-    public Heal(int pow, int barrierTurns) {
-        this(pow, 0f, barrierTurns);
+    public Heal(int pow, int shieldTurns) {
+        this(pow, 0f, shieldTurns);
     }
 
     public Heal(int pow, float overHeal) {
@@ -36,25 +36,25 @@ public class Heal implements SkillEffect {
         // Heals by pow% of user's Fth
         int heal = (int) (self.getFthWithStage() * (pow / 100f) * (Math.max(self.getMultHealingDealt(), 10) / 100f) * (Math.max(target.getMultHealingTaken(), 10) / 100f));
 
-        if (barrierTurns > 0) { // Adds barrier (barrier + defend cannot exceed max HP)
+        if (shieldTurns > 0) { // Adds shield (shield + defend cannot exceed max HP)
             int hpMax = target.getStatsDefault().getHp();
-            int barrierCur = target.getBarrier();
-            int barrierNew = (barrierCur + target.getDefend() + heal > hpMax) ? hpMax - target.getDefend() : barrierCur + heal;
-            int turnsCur = target.getBarrierTurns();
+            int shieldCur = target.getShield();
+            int shieldNew = (shieldCur + target.getDefend() + heal > hpMax) ? hpMax - target.getDefend() : shieldCur + heal;
+            int turnsCur = target.getShieldTurns();
 
             String[] msg = new String[2];
-            if(barrierNew > barrierCur) {
-                target.setBarrier(barrierNew);
-                msg[0] = target.getCmbType().getName() + "'s " + lang.get("barrier") + " " + String.format("%,d", (barrierCur + target.getDefend())) + " -> " + String.format("%,d", (barrierNew + target.getDefend())) + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", (barrierNew - barrierCur)) + ")";
-            } else msg[0] = ""; //target.getCmbType().getName() + "'s " + lang.get("barrier") + " " + lang.get("log.max"); // todo properly choose between 's and '
+            if(shieldNew > shieldCur) {
+                target.setShield(shieldNew);
+                msg[0] = target.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (shieldCur + target.getDefend())) + " -> " + String.format("%,d", (shieldNew + target.getDefend())) + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", (shieldNew - shieldCur)) + ")";
+            } else msg[0] = ""; //target.getCmbType().getName() + "'s " + lang.get("shield") + " " + lang.get("log.max"); // todo properly choose between 's and '
 
-            if(barrierTurns > turnsCur) {
-                target.setBarrierTurns(barrierTurns);
-                if(barrierNew > barrierCur) msg[0] += ", " + lang.get("turns") + " " + turnsCur + " -> " + barrierTurns + "\n";
-                else msg[1] = target.getCmbType().getName() + " " + lang.get("barrier") + " " + lang.get("turns") + " " + turnsCur + " -> " + barrierTurns + "\n";
+            if(shieldTurns > turnsCur) {
+                target.setShieldTurns(shieldTurns);
+                if(shieldNew > shieldCur) msg[0] += ", " + lang.get("turns") + " " + turnsCur + " -> " + shieldTurns + "\n";
+                else msg[1] = target.getCmbType().getName() + " " + lang.get("shield") + " " + lang.get("turns") + " " + turnsCur + " -> " + shieldTurns + "\n";
             } else {
-                if(barrierNew > barrierCur) msg[0] += "\n";
-                msg[1] = ""; //target.getCmbType().getName() + "'s " + lang.get("barrier") + " " + lang.get("log.duration_unchanged");
+                if(shieldNew > shieldCur) msg[0] += "\n";
+                msg[1] = ""; //target.getCmbType().getName() + "'s " + lang.get("shield") + " " + lang.get("log.duration_unchanged");
             }
 
             return new Result(ResultType.SUCCESS, msg);

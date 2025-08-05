@@ -49,9 +49,9 @@ public class Skills {
     static Skill AMBROSIA = new Skill(lang.get("skill.ambrosia"), lang.get("skill.ambrosia.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 125, new Heal(300));
     static Skill HEAL_GROUP = new Skill(lang.get("skill.heal_group"), lang.get("skill.heal_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 260, new Heal(210));
 
-    // Barriers
-    static Skill BARRIER = new Skill(lang.get("skill.barrier"), lang.get("skill.barrier.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 140, new Heal(300, 5));
-    static Skill BARRIER_GROUP = new Skill(lang.get("skill.barrier_group"), lang.get("skill.barrier_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 450, new Heal(300, 3));
+    // Shields
+    static Skill SHIELD = new Skill(lang.get("skill.shield"), lang.get("skill.shield.desc"), Element.VIS, Targeting.OTHER_1R_OR_SELF, 140, new Heal(300, 5));
+    static Skill SHIELD_GROUP = new Skill(lang.get("skill.shield_group"), lang.get("skill.shield_group.desc"), Element.VIS, Targeting.COLUMN_OF_3_1R, 450, new Heal(300, 3));
 
     // Attacks
     // Ignis
@@ -103,7 +103,7 @@ public class Skills {
 
     // Heals
 
-    // Barriers
+    // Shields
 
     // Attacks
     // Ignis

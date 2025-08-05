@@ -36,14 +36,15 @@ public class ChangeHP implements BuffEffect {
     @Override
     public String onTurnEnd(Combatant self) {
         if(change < 0) { // Damage
-            String hp = (self.getBarrier() + self.getDefend() > 0) ? lang.get("barrier") : lang.get("hp");
-            Result result = self.damage((int) (self.getStatsDefault().getHp() * (change * (Math.max(self.getMultDoTDmgTaken(), 10) / 100f))));
+            String hp = (self.getShield() + self.getDefend() > 0) ? lang.get("shield") : lang.get("hp");
+            Result result = self.damage((int) ((self.getStatsDefault().getHp() * change) * (Math.max(self.getMultDmgTaken(), 10) / 100f) * (Math.max(self.getMultDoTDmgTaken(), 10) / 100f)));
 
             String[] msgs = result.getMessages();
             String[] str1 = new String[]{""};
             String[] str2 = new String[]{""};
-            if (msgs[0] != null) str1 = msgs[0].split("[.*HP|.*Barrier]");
-            if (msgs.length > 1 && msgs[1] != null) str2 = msgs[1].split("[.*HP|.*Barrier]");
+            // todo fix "Jacob's Burn: HPcob" (how does this even happen? I know this was working fine earlier too)
+            if (msgs[0] != null) str1 = msgs[0].split("[.*" + lang.get("hp") + "|.*" + lang.get("shield") + "]");
+            if (msgs.length > 1 && msgs[1] != null) str2 = msgs[1].split("[.*" + lang.get("hp") + "|.*" + lang.get("shield") + "]");
 
             return (hp + str1[str1.length - 1] + str2[str2.length - 1]);
         } else { // Healing

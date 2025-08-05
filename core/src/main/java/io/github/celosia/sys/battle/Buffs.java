@@ -17,7 +17,6 @@ public class Buffs {
 
     // Common ailments (poison + elemental)
     // todo: affinity should convey immunity to these
-    static Buff POISON = new Buff(lang.get("buff.poison"), lang.get("buff.poison.desc"), BuffType.DEBUFF, 5, new ChangeHP(-0.03f));
     static Buff BURN = new Buff(lang.get("buff.burn"), lang.get("buff.burn.desc"), BuffType.DEBUFF, 5, new ChangeHP(-0.02f), new ChangeStat(Stat.STR, -0.05f));
     static Buff FROSTBITE = new Buff(lang.get("buff.frostbite"), lang.get("buff.frostbite.desc"), BuffType.DEBUFF, 5, new ChangeHP(-0.02f), new ChangeStat(Stat.MAG, -0.05f));
     static Buff SHOCK = new Buff(lang.get("buff.shock"), lang.get("buff.shock.desc"), BuffType.DEBUFF, 5, new ChangeHP(-0.02f), new ChangeStat(Stat.AGI, -0.05f)); // todo
@@ -25,6 +24,7 @@ public class Buffs {
     static Buff TREMOR = new Buff(lang.get("buff.tremor"), lang.get("buff.tremor.desc"), BuffType.DEBUFF, 5, new ChangeHP(-0.02f), new ChangeStat(Stat.AMR, -0.05f)); // todo
     // todo dazzled
     static Buff CURSE = new Buff(lang.get("buff.curse"), lang.get("buff.curse.desc"),  BuffType.DEBUFF, 5, new ChangeHP(-0.02f), new ChangeStat(Stat.FTH, -0.05f)); // todo
+    static Buff POISON = new Buff(lang.get("buff.poison"), lang.get("buff.poison.desc"), BuffType.DEBUFF, 5, new ChangeHP(-0.03f));
 
     // Other
     // todo regen

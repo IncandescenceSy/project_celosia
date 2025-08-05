@@ -41,7 +41,7 @@ public class GiveBuff implements SkillEffect {
 
     @Override
     public Result apply(Combatant self, Combatant target, ResultType resultPrev) {
-        // Most attacks don't apply buffs if the previous hit was blocked by Barrier or immunity
+        // Most attacks don't apply buffs if the previous hit was blocked by Shield or immunity
         if (resultPrev.ordinal() >= minResult.ordinal()) {
             Combatant cmb = (giveToSelf) ? self : target;
             List<BuffInstance> buffInstances = cmb.getBuffInstances();
