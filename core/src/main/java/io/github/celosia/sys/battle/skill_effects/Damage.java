@@ -59,6 +59,8 @@ public class Damage implements SkillEffect {
                 affMultAtk = 1f;
                 affMultDef = 1f;
             } else {
+                // todo rework
+                // getAffs switch in Combatant to support changing affs mid battle and more complex affs (eg an Icefire element that returns ignis + glacies affs)
                 affMultAtk = affAtk[self.getCmbType().getAffs()[element.ordinal() - 1] + 5];
                 //affMultDef = Math.max(affDef[target.getCmbType().getAffs()[element.ordinal() - 1] + 5], (pierce) ? 1f : 0f);
                 int affTarget = target.getCmbType().getAffs()[element.ordinal() - 1];

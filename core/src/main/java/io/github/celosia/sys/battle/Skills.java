@@ -15,7 +15,7 @@ public class Skills {
     // Basic skills
     static Skill NOTHING = new Skill(lang.get("skill.nothing"), lang.get("skill.nothing.desc"), Element.VIS, Targeting.SELF, 0);
     static Skill ATTACK = new Skill(lang.get("skill.attack"), lang.get("skill.attack.desc"), Element.VIS, Targeting.OTHER_1R, 0, new Damage(SkillType.STR, Element.VIS, 55));
-    static Skill DEFEND = new Skill(lang.get("skill.defend"), lang.get("skill.defend.desc"), Element.VIS, Targeting.SELF, -80, 3, new GiveBuff(Buffs.DEFEND));
+    static Skill DEFEND = new Skill(lang.get("skill.defend"), lang.get("skill.defend.desc"), Element.VIS, Targeting.SELF, -70, 3, new GiveBuff(Buffs.DEFEND)); // todo ChangeSP
     static Skill PROTECT = new Skill(lang.get("skill.protect"), lang.get("skill.protect.desc"), Element.VIS, Targeting.SELF, 40, 3, new GiveBuff(Buffs.PROTECT)); // todo disallow using twice in a row
     static Skill BLOSSOM = new Skill(lang.get("skill.blossom"), lang.get("skill.blossom.desc"), Element.VIS, Targeting.SELF, 300); // todo
 
