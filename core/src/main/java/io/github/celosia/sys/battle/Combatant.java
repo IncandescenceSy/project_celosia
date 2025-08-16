@@ -32,6 +32,15 @@ public class Combatant {
     private int stageAgi;
     private int stageAgiTurns;
 
+    // Current affinities
+    private int affIgnis;
+    private int affGlacies;
+    private int affFulgur;
+    private int affVentus;
+    private int affTerra;
+    private int affLux;
+    private int affMalum;
+
     // Multiplies damage dealt/taken. All mults are percentages
     private int multDmgDealt;
     private int multDmgTaken;
@@ -77,15 +86,18 @@ public class Combatant {
     // Defend (essentially a 2nd Shield with higher priority)
     private int defend;
 
+    // Extra actions
+    private int extraActions;
+
     private List<BuffInstance> buffInstances = new ArrayList<>();
 
-    public Combatant(CombatantType cmbType, int lvl, Stats stats, Skill[] skills, int pos) {
+    public Combatant(CombatantType cmbType, int lvl, Skill[] skills, int pos) {
         this.cmbType = cmbType;
         this.lvl = lvl;
-        this.statsDefault = stats;
-        this.statsCur = new Stats(stats.getHp(), stats.getStr(), stats.getMag(), stats.getFth(), stats.getAmr(), stats.getRes(), stats.getAgi());
+        statsDefault = cmbType.getStatsBase().getRealStats(lvl);
+        statsCur = new Stats(statsDefault);
         this.skills = skills;
-        this.sp = 200;
+        sp = 200;
         this.pos = pos;
         stageAtk = 0;
         stageAtkTurns = 0;
@@ -95,33 +107,41 @@ public class Combatant {
         stageFthTurns = 0;
         stageAgi = 0;
         stageAgiTurns = 0;
-        this.multDmgDealt = 100;
-        this.multDmgTaken = 100;
-        this.multIgnisDmgDealt = 100;
-        this.multIgnisDmgTaken = 100;
-        this.multGlaciesDmgDealt = 100;
-        this.multGlaciesDmgTaken = 100;
-        this.multFulgurDmgDealt = 100;
-        this.multFulgurDmgTaken = 100;
-        this.multVentusDmgDealt = 100;
-        this.multVentusDmgTaken = 100;
-        this.multTerraDmgDealt = 100;
-        this.multTerraDmgTaken = 100;
-        this.multLuxDmgDealt = 100;
-        this.multLuxDmgTaken = 100;
-        this.multMalumDmgDealt = 100;
-        this.multMalumDmgTaken = 100;
-        this.multWeakDmgDealt = 100;
-        this.multWeakDmgTaken = 100;
-        this.multFollowUpDmgDealt = 100;
-        this.multFollowUpDmgTaken = 100;
-        this.multDoTDmgTaken = 100;
-        this.multHealingDealt = 100;
-        this.multHealingTaken = 100;
-        this.multSpGain = 100;
-        this.shield = 0;
-        this.shieldTurns = 0;
-        this.defend = 0;
+        affIgnis = cmbType.getAffIgnis();
+        affGlacies = cmbType.getAffGlacies();
+        affFulgur = cmbType.getAffFulgur();
+        affVentus = cmbType.getAffVentus();
+        affTerra = cmbType.getAffTerra();
+        affLux = cmbType.getAffLux();
+        affMalum = cmbType.getAffMalum();
+        multDmgDealt = 100;
+        multDmgTaken = 100;
+        multIgnisDmgDealt = 100;
+        multIgnisDmgTaken = 100;
+        multGlaciesDmgDealt = 100;
+        multGlaciesDmgTaken = 100;
+        multFulgurDmgDealt = 100;
+        multFulgurDmgTaken = 100;
+        multVentusDmgDealt = 100;
+        multVentusDmgTaken = 100;
+        multTerraDmgDealt = 100;
+        multTerraDmgTaken = 100;
+        multLuxDmgDealt = 100;
+        multLuxDmgTaken = 100;
+        multMalumDmgDealt = 100;
+        multMalumDmgTaken = 100;
+        multWeakDmgDealt = 100;
+        multWeakDmgTaken = 100;
+        multFollowUpDmgDealt = 100;
+        multFollowUpDmgTaken = 100;
+        multDoTDmgTaken = 100;
+        multHealingDealt = 100;
+        multHealingTaken = 100;
+        multSpGain = 100;
+        shield = 0;
+        shieldTurns = 0;
+        defend = 0;
+        extraActions = 0;
     }
 
     public CombatantType getCmbType() {
@@ -158,10 +178,6 @@ public class Combatant {
 
     public int getPos() {
         return pos;
-    }
-
-    public boolean isPlayerTeam() {
-        return pos < 4;
     }
 
     public void setStageAtk(int stageAtk) {
@@ -257,37 +273,123 @@ public class Combatant {
     }
 
     public int getStrWithStage() {
-        return this.getStatsCur().getStr() + (int) (this.getStatsDefault().getStr() * (((float) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
+        return this.getStatsCur().getStr() + (int) (this.getStatsDefault().getStr() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
     }
 
     public int getMagWithStage() {
-        return this.getStatsCur().getMag() + (int) (this.getStatsDefault().getMag() * (((float) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
+        return this.getStatsCur().getMag() + (int) (this.getStatsDefault().getMag() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
     }
 
     public int getFthWithStage() {
-        return this.getStatsCur().getFth() + (int) (this.getStatsDefault().getFth() * (((float) stageFth / 10) / ((stageFth < 0) ? 2 : 1)));
+        return this.getStatsCur().getFth() + (int) (this.getStatsDefault().getFth() * (((double) stageFth / 10) / ((stageFth < 0) ? 2 : 1)));
     }
 
     public int getAmrWithStage() {
-        return this.getStatsCur().getAmr() + (int) (this.getStatsDefault().getAmr() * (((float) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
+        return this.getStatsCur().getAmr() + (int) (this.getStatsDefault().getAmr() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
     }
 
     public int getResWithStage() {
-        return this.getStatsCur().getRes() + (int) (this.getStatsDefault().getRes() * (((float) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
+        return this.getStatsCur().getRes() + (int) (this.getStatsDefault().getRes() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
     }
 
     public int getAgiWithStage() {
-        return this.getStatsCur().getAgi() + (int) (this.getStatsDefault().getAgi() * (((float) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1)));
+        return this.getStatsCur().getAgi() + (int) (this.getStatsDefault().getAgi() * (((double) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1)));
     }
 
     public int getStatWithStage(Stat stat) {
         return switch (stat) {
-            case STR -> this.getStatsCur().getStr() + (int) (this.getStatsDefault().getStr() * (((float) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
-            case MAG -> this.getStatsCur().getMag() + (int) (this.getStatsDefault().getMag() * (((float) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
-            case FTH -> this.getStatsCur().getFth() + (int) (this.getStatsDefault().getFth() * (((float) stageFth / 10) / ((stageFth < 0) ? 2 : 1)));
-            case AMR -> this.getStatsCur().getAmr() + (int) (this.getStatsDefault().getAmr() * (((float) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
-            case RES -> this.getStatsCur().getRes() + (int) (this.getStatsDefault().getRes() * (((float) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
-            case AGI -> this.getStatsCur().getAgi() + (int) (this.getStatsDefault().getAgi() * (((float) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1)));
+            case STR -> this.getStatsCur().getStr() + (int) (this.getStatsDefault().getStr() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
+            case MAG -> this.getStatsCur().getMag() + (int) (this.getStatsDefault().getMag() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
+            case FTH -> this.getStatsCur().getFth() + (int) (this.getStatsDefault().getFth() * (((double) stageFth / 10) / ((stageFth < 0) ? 2 : 1)));
+            case AMR -> this.getStatsCur().getAmr() + (int) (this.getStatsDefault().getAmr() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
+            case RES -> this.getStatsCur().getRes() + (int) (this.getStatsDefault().getRes() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
+            case AGI -> this.getStatsCur().getAgi() + (int) (this.getStatsDefault().getAgi() * (((double) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1)));
+        };
+    }
+
+    public void setAffIgnis(int affIgnis) {
+        this.affIgnis = affIgnis;
+    }
+
+    public int getAffIgnis() {
+        return affIgnis;
+    }
+
+    public void setAffGlacies(int affGlacies) {
+        this.affGlacies = affGlacies;
+    }
+
+    public int getAffGlacies() {
+        return affGlacies;
+    }
+
+    public void setAffFulgur(int affFulgur) {
+        this.affFulgur = affFulgur;
+    }
+
+    public int getAffFulgur() {
+        return affFulgur;
+    }
+
+    public void setAffVentus(int affVentus) {
+        this.affVentus = affVentus;
+    }
+
+    public int getAffVentus() {
+        return affVentus;
+    }
+
+    public void setAffTerra(int affTerra) {
+        this.affTerra = affTerra;
+    }
+
+    public int getAffTerra() {
+        return affTerra;
+    }
+
+    public void setAffLux(int affLux) {
+        this.affLux = affLux;
+    }
+
+    public int getAffLux() {
+        return affLux;
+    }
+
+    public void setAffMalum(int affMalum) {
+        this.affMalum = affMalum;
+    }
+
+    public int getAffMalum() {
+        return affMalum;
+    }
+
+    public int[] getAffs() {
+        return new int[]{affIgnis, affGlacies, affFulgur, affVentus, affTerra, affLux, affMalum};
+    }
+
+    public void setAff(Element element, int aff) {
+        switch (element) {
+            case IGNIS -> affIgnis = aff;
+            case GLACIES -> affGlacies = aff;
+            case FULGUR -> affFulgur = aff;
+            case VENTUS -> affVentus = aff;
+            case TERRA -> affTerra = aff;
+            case LUX -> affLux = aff;
+            case MALUM -> affMalum = aff;
+        }
+    }
+
+    public int getAff(Element element) {
+        return switch (element) {
+            case VIS -> 0;
+            case IGNIS -> affIgnis;
+            case GLACIES -> affGlacies;
+            case FULGUR -> affFulgur;
+            case VENTUS -> affVentus;
+            case TERRA -> affTerra;
+            case LUX -> affLux;
+            case MALUM -> affMalum;
+            //case FULGUR_MALUM -> affFulgur + affMalum;
         };
     }
 
@@ -543,6 +645,7 @@ public class Combatant {
 
     public int getMultElementDmgDealt(Element element) {
         return switch (element) {
+            case VIS -> 1;
             case IGNIS -> multIgnisDmgDealt;
             case GLACIES -> multGlaciesDmgDealt;
             case FULGUR -> multFulgurDmgDealt;
@@ -550,12 +653,13 @@ public class Combatant {
             case TERRA -> multTerraDmgDealt;
             case LUX -> multLuxDmgDealt;
             case MALUM -> multMalumDmgDealt;
-            case VIS -> 1;
+            //case FULGUR_MALUM -> 100 + ((multFulgurDmgDealt - 100) + (multMalumDmgDealt - 100));
         };
     }
 
     public int getMultElementDmgTaken(Element element) {
         return switch (element) {
+            case VIS -> 1;
             case IGNIS -> multIgnisDmgTaken;
             case GLACIES -> multGlaciesDmgTaken;
             case FULGUR -> multFulgurDmgTaken;
@@ -563,7 +667,7 @@ public class Combatant {
             case TERRA -> multTerraDmgTaken;
             case LUX -> multLuxDmgTaken;
             case MALUM -> multMalumDmgTaken;
-            case VIS -> 1;
+            //case FULGUR_MALUM -> 100 + ((multFulgurDmgTaken - 100) + (multMalumDmgTaken - 100));
         };
     }
 
@@ -589,6 +693,14 @@ public class Combatant {
 
     public int getDefend() {
         return defend;
+    }
+
+    public void setExtraActions(int extraActions) {
+        this.extraActions = extraActions;
+    }
+
+    public int getExtraActions() {
+        return extraActions;
     }
 
     public void setBuffInstances(List<BuffInstance> buffInstances) {

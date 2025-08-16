@@ -9,7 +9,7 @@ import io.github.celosia.sys.settings.Keybind;
 
 public class InputLib {
     // How long each keybind has been held down for
-    private static final float[] held = {0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f};
+    private static final float[] held = new float[12];
 
     // Sets up button mappings based on the current controller's mapping
     // todo make sure nothing breaks if a controller is missing buttons
@@ -32,9 +32,13 @@ public class InputLib {
         Button.DU.setMapping(mapping.buttonDpadUp);
         Button.DD.setMapping(mapping.buttonDpadDown);
         Button.L1.setMapping(mapping.buttonL1);
-        Button.L2.setMapping(mapping.buttonL2);
         Button.R1.setMapping(mapping.buttonR1);
-        Button.R2.setMapping(mapping.buttonR2);
+        // todo don't assume mappings are always 4/5 (may require gdx-controllers bugfix)
+        // I'm told that on non-desktop platforms, the button mappings do work
+        //Button.L2.setMapping(mapping.buttonL2);
+        Button.L2.setMapping(4);
+        //Button.R2.setMapping(mapping.buttonR2);
+        Button.R2.setMapping(5);
         Button.LX.setMapping(mapping.axisLeftX);
         Button.LY.setMapping(mapping.axisLeftY);
         Button.RX.setMapping(mapping.axisRightX);
@@ -73,24 +77,28 @@ public class InputLib {
     }
 
     public static boolean checkKeybind(Keybind keybind) {
-        return Gdx.input.isKeyPressed(keybind.getKey()) || (InputHandler.getController() != null && (InputHandler.getController().getButton(keybind.getButton().getMapping()) || checkKeybind2Stick(keybind)));
+        return Gdx.input.isKeyPressed(keybind.getKey()) || (InputHandler.getController() != null && (InputHandler.getController().getButton(keybind.getButton().getMapping()) || checkKeybind2Axis(keybind)));
     }
 
     // todo: stick sensitivity setting? also dont make L1/R1 automatically map to R stick
-    public static boolean checkKeybind2Stick(Keybind keybind) {
+    public static boolean checkKeybind2Axis(Keybind keybind) {
         switch(keybind) {
             case LEFT:
-                return checkAxis(Button.LX.getMapping(), -0.5f);
+                return checkAxis(Button.LX.getMapping(), -0.4f);
             case RIGHT:
-                return checkAxis(Button.LX.getMapping(), 0.5f);
+                return checkAxis(Button.LX.getMapping(), 0.4f);
             case UP:
-                return checkAxis(Button.LY.getMapping(), -0.5f);
+                return checkAxis(Button.LY.getMapping(), -0.4f);
             case DOWN:
-                return checkAxis(Button.LY.getMapping(), 0.5f);
+                return checkAxis(Button.LY.getMapping(), 0.4f);
             case PAGE_L1:
-                return checkAxis(Button.RY.getMapping(), -0.5f);
+                return checkAxis(Button.RY.getMapping(), -0.4f);
             case PAGE_R1:
-                return checkAxis(Button.RY.getMapping(), 0.5f);
+                return checkAxis(Button.RY.getMapping(), 0.4f);
+            case PAGE_L2:
+                return checkAxis(Button.L2.getMapping(), 0.4f);
+            case PAGE_R2:
+                return checkAxis(Button.R2.getMapping(), 0.4f);
             default:
                 return false;
         }

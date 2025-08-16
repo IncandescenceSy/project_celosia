@@ -40,10 +40,12 @@ public class MenuLib {
 
     // Check for scrolling the battle log
     public static int checkLogScroll(int logScroll, int lines) {
-        if(InputLib.checkInput(true, Keybind.PAGE_L1)) {
+        if(InputLib.checkInput(true, Keybind.PAGE_L1)) { // Up
             return Math.min(++logScroll, lines - 8);
-        } else if(InputLib.checkInput(true, Keybind.PAGE_R1)) {
+        } else if(InputLib.checkInput(true, Keybind.PAGE_R1)) { // Down
             return Math.max(--logScroll, 0);
+        } else if(InputLib.checkInput(false, Keybind.PAGE_R2)) { // To bottom, if at bottom, to top
+            return (logScroll != lines - 8) ? lines - 8 : 0;
         } else return logScroll;
     }
 
@@ -109,6 +111,7 @@ public class MenuLib {
     }
 
     // The different menus in the game
+    // todo fix magic numbers
     public enum MenuType {
         NONE(),
         WIP(),
@@ -118,8 +121,7 @@ public class MenuLib {
             new MenuOpt(MenuOptType.CREDITS, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.credits"), 1900 + 20, 230 + 100),
             new MenuOpt(MenuOptType.QUIT, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.quit"), 1900, 230)),
         BATTLE(),
-        TARGETING(),
-        SKILLS();
+        TARGETING();
 
         private MenuOpt[] opts = new MenuOpt[]{new MenuOpt(MenuOptType.NONE, "", 0, 0)};
 

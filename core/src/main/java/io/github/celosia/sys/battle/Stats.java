@@ -21,6 +21,16 @@ public class Stats {
         this.agi = agi;
     }
 
+    public Stats(Stats stats) {
+        this.hp = stats.getHp();
+        this.str = stats.getStr();
+        this.mag = stats.getMag();
+        this.fth = stats.getFth();
+        this.amr = stats.getAmr();
+        this.res = stats.getRes();
+        this.agi = stats.getAgi();
+    }
+
     public void setHp(int hp) {
         this.hp = hp;
     }

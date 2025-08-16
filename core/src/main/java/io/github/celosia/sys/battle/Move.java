@@ -1,16 +1,16 @@
 package io.github.celosia.sys.battle;
 
 // A skill with self and target attached
-public class SkillTargeting {
+public class Move {
 
     Skill skill;
     Combatant self;
-    Combatant target;
+    int targetPos;
 
-    SkillTargeting(Skill skill, Combatant self, Combatant target) {
+    Move(Skill skill, Combatant self, int targetPos) {
         this.skill = skill;
         this.self = self;
-        this.target = target;
+        this.targetPos = targetPos;
     }
 
     public Skill getSkill() {
@@ -21,7 +21,7 @@ public class SkillTargeting {
         return self;
     }
 
-    public Combatant getTarget() {
-        return target;
+    public int getTargetPos() {
+        return targetPos;
     }
 }

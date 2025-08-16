@@ -114,6 +114,7 @@ public class Main extends ApplicationAdapter {
         Debug.enableDebugHotkeys = true;
         Debug.showDebugInfo = true;
         Debug.swapFaceButtons = true;
+        //Debug.selectOpponentMoves = true;
 
         debug = new TextraLabel("", FontType.KORURI.getSize20());
         debug.setPosition(20, World.HEIGHT - 70);
@@ -184,7 +185,6 @@ public class Main extends ApplicationAdapter {
                 break;
             case BATTLE:
             case TARGETING:
-            case SKILLS:
                 BattleController.updateStatDisplay();
                 menuType = BattleController.input(menuType);
                 break;

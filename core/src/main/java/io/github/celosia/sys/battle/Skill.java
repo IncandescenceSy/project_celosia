@@ -1,12 +1,12 @@
 package io.github.celosia.sys.battle;
 
 // Skills (any action that is attributed to a Combatant and has impact on the battle)
-// todo lang, functional targeting, display type even for non-damaging skills, explicitly define which are "for allies" and which are "for opponents" for autotargeting and AI
+// todo lang, functional range, display type even for non-damaging skills, explicitly define which are "for allies" and which are "for opponents" for autotargeting and AI
 public class Skill {
     private final String name;
     private final String desc;
     private final Element element;
-    private final Targeting targeting;
+    private final Range range;
     private final int cost;
 
     // todo: NYI
@@ -24,27 +24,27 @@ public class Skill {
     private final boolean isBloom;
     private final SkillEffect[] skillEffects;
 
-    Skill(String name, String desc, Element element, Targeting targeting, int cost, int prio, boolean isBloom, SkillEffect... skillEffects) {
+    Skill(String name, String desc, Element element, Range range, int cost, int prio, boolean isBloom, SkillEffect... skillEffects) {
         this.name = name;
         this.desc = desc;
         this.element = element;
-        this.targeting = targeting;
+        this.range = range;
         this.cost = cost;
         this.prio = prio;
         this.isBloom = isBloom;
         this.skillEffects = skillEffects;
     }
 
-    Skill(String name, String desc, Element element, Targeting targeting, int cost, int prio, SkillEffect... skillEffects) {
-        this(name, desc, element, targeting, cost, prio, false, skillEffects);
+    Skill(String name, String desc, Element element, Range range, int cost, int prio, SkillEffect... skillEffects) {
+        this(name, desc, element, range, cost, prio, false, skillEffects);
     }
 
-    Skill(String name, String desc, Element element, Targeting targeting, int cost, boolean isBloom, SkillEffect... skillEffects) {
-        this(name, desc, element, targeting, cost, 0, isBloom, skillEffects);
+    Skill(String name, String desc, Element element, Range range, int cost, boolean isBloom, SkillEffect... skillEffects) {
+        this(name, desc, element, range, cost, 0, isBloom, skillEffects);
     }
 
-    Skill(String name, String desc, Element element, Targeting targeting, int cost, SkillEffect... skillEffects) {
-        this(name, desc, element, targeting, cost, 0, false, skillEffects);
+    Skill(String name, String desc, Element element, Range range, int cost, SkillEffect... skillEffects) {
+        this(name, desc, element, range, cost, 0, false, skillEffects);
     }
 
     public String getName() {
@@ -59,8 +59,8 @@ public class Skill {
         return element;
     }
 
-    public Targeting getTargeting() {
-        return targeting;
+    public Range getRange() {
+        return range;
     }
 
     public int getCost() {

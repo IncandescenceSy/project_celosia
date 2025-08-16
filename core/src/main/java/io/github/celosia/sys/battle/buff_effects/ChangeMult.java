@@ -18,7 +18,7 @@ public class ChangeMult implements BuffEffect {
     public String onGive(Combatant self) {
         int multOld = self.getMult(mult);
         self.setMult(mult, multOld + change);
-        float changeDisplay = Math.max(multOld + change, 10) - Math.max(multOld, 10);
+        double changeDisplay = Math.max(multOld + change, 10) - Math.max(multOld, 10);
         return self.getCmbType().getName() + "'s " + mult.getName() + " " + Math.max(multOld, 10) + "% -> " + Math.max(multOld + change, 10) + ((change > 0) ? "% (+" : "% (") + changeDisplay + "%)";
     }
 
@@ -26,22 +26,7 @@ public class ChangeMult implements BuffEffect {
     public String onRemove(Combatant self) {
         int multOld = self.getMult(mult);
         self.setMult(mult, multOld - change);
-        float changeDisplay = Math.max(multOld + change, 10) - Math.max(multOld, 10);
+        double changeDisplay = Math.max(multOld + change, 10) - Math.max(multOld, 10);
         return self.getCmbType().getName() + "'s " + mult.getName() + " " + Math.max(multOld, 10) + "% -> " + (Math.max(multOld - change, 10)) + ((change < 0) ? "% (+" : "% (") + (changeDisplay * -1) + "%)";
-    }
-
-    @Override
-    public String onUseSkill(Combatant self, Combatant target) {
-        return "";
-    }
-
-    @Override
-    public String onTakeDamage(Combatant self) {
-        return "";
-    }
-
-    @Override
-    public String onTurnEnd(Combatant self) {
-        return "";
     }
 }

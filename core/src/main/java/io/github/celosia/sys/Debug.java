@@ -11,4 +11,8 @@ public class Debug {
     // A <-> B; X <-> Y
     // Emulates Nintendo controller
     public static boolean swapFaceButtons = false;
+
+    // Select opponent moves
+    // todo fix (doesnt work)
+    public static boolean selectOpponentMoves = false;
 }

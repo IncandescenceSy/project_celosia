@@ -5,17 +5,17 @@ public class CombatantType {
 
     String name;
 
-    // Base statsL
+    // Base stats
     Stats statsBase;
 
     // Affinities
-    int affIgnis;
-    int affGlacies;
-    int affFulgur;
-    int affVentus;
-    int affTerra;
-    int affLux;
-    int affMalum;
+    private final int affIgnis;
+    private final int affGlacies;
+    private final int affFulgur;
+    private final int affVentus;
+    private final int affTerra;
+    private final int affLux;
+    private final int affMalum;
 
     // Passives
     // todo
@@ -26,9 +26,7 @@ public class CombatantType {
     public CombatantType(String name, Stats stats,
                          int affIgnis, int affGlacies, int affFulgur, int affVentus, int affTerra, int affLux, int affMalum) {
         this.name = name;
-
         this.statsBase = stats;
-
         this.affIgnis = affIgnis;
         this.affGlacies = affGlacies;
         this.affFulgur = affFulgur;

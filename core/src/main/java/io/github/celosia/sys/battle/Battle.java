@@ -41,6 +41,10 @@ public class Battle {
         return (id == 0) ? playerTeam : opponentTeam;
     }
 
+    public Combatant getCmbAtPos(int pos) {
+        return (pos < 4) ? playerTeam.getCmbs()[pos] : opponentTeam.getCmbs()[pos - 4];
+    }
+
     public List<Combatant> getAllCombatants() {
         Combatant[] cmbsPlayer = playerTeam.getCmbs();
         Combatant[] cmbsOpponent = opponentTeam.getCmbs();

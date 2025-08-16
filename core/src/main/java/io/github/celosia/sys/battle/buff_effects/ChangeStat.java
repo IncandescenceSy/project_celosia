@@ -7,9 +7,9 @@ import io.github.celosia.sys.battle.Stat;
 public class ChangeStat implements BuffEffect {
 
     private final Stat stat;
-    private final float change; // Change in percentage. 1 = 100%
+    private final double change; // Change in percentage. 1 = 100%
 
-    public ChangeStat(Stat stat, float change) {
+    public ChangeStat(Stat stat, double change) {
         this.stat = stat;
         this.change = change;
     }
@@ -29,20 +29,5 @@ public class ChangeStat implements BuffEffect {
         int statNew = (int) Math.ceil(statOld - (change * self.getStatsDefault().getStat(stat)));
         self.getStatsCur().setStat(stat, statNew);
         return self.getCmbType().getName() + "'s " + stat.getName() + " " + String.format("%,d", statOld) + " -> " + String.format("%,d", statNew) + "/" + String.format("%,d", self.getStatsDefault().getStat(stat)) + ((change <= 0f) ? " (+" : " (") + String.format("%,d", (statNew - statOld)) + ")";
-    }
-
-    @Override
-    public String onUseSkill(Combatant self, Combatant target) {
-        return "";
-    }
-
-    @Override
-    public String onTakeDamage(Combatant self) {
-        return "";
-    }
-
-    @Override
-    public String onTurnEnd(Combatant self) {
-        return "";
     }
 }

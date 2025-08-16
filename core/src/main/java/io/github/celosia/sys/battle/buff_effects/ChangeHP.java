@@ -7,37 +7,17 @@ import static io.github.celosia.sys.settings.Lang.lang;
 // Todo heavily limit %-based damage on bosses
 public class ChangeHP implements BuffEffect {
 
-    private final float change; // Amount to change HP by. 1f = +100%
+    private final double change; // Amount to change HP by. 1 = +100%
 
-    public ChangeHP(float change) {
+    public ChangeHP(double change) {
         this.change = change;
-    }
-
-    @Override
-    public String onGive(Combatant self) {
-        return "";
-    }
-
-    @Override
-    public String onRemove(Combatant self) {
-        return "";
-    }
-
-    @Override
-    public String onUseSkill(Combatant self, Combatant target) {
-        return "";
-    }
-
-    @Override
-    public String onTakeDamage(Combatant self) {
-        return "";
     }
 
     @Override
     public String onTurnEnd(Combatant self) {
         if(change < 0) { // Damage
             String hp = (self.getShield() + self.getDefend() > 0) ? lang.get("shield") : lang.get("hp");
-            Result result = self.damage((int) ((self.getStatsDefault().getHp() * change) * (Math.max(self.getMultDmgTaken(), 10) / 100f) * (Math.max(self.getMultDoTDmgTaken(), 10) / 100f)));
+            Result result = self.damage((int) ((self.getStatsDefault().getHp() * change) * (Math.max(self.getMultDmgTaken(), 10) / 100d) * (Math.max(self.getMultDoTDmgTaken(), 10) / 100d)));
 
             String[] msgs = result.getMessages();
             String[] str1 = new String[]{""};
@@ -50,7 +30,7 @@ public class ChangeHP implements BuffEffect {
         } else { // Healing
             int hpOld = self.getStatsCur().getHp();
             int hpMax = self.getStatsDefault().getHp();
-            int hpNew = (int) Math.max(hpOld, Math.min(hpOld + ((hpMax * change) * (Math.max(self.getMultHealingTaken(), 10) / 100f)), hpMax));
+            int hpNew = (int) Math.max(hpOld, Math.min(hpOld + ((hpMax * change) * (Math.max(self.getMultHealingTaken(), 10) / 100d)), hpMax));
             self.getStatsCur().setHp(hpNew);
             return lang.get("hp") + " " + hpOld + " -> " + hpNew + " (+" + Math.max(hpNew - hpOld, 0) + ")";
         }

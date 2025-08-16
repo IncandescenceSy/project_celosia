@@ -10,22 +10,49 @@ import static io.github.celosia.sys.settings.Lang.lang;
 public class ChangeSP implements SkillEffect {
 
     private final int change;
+    private final boolean isInstant;
+    private final boolean giveToSelf;
+    private final boolean mainTargetOnly;
+
+    public ChangeSP(int change, boolean isInstant, boolean giveToSelf, boolean mainTargetOnly) {
+        this.change = change;
+        this.isInstant = isInstant;
+        this.giveToSelf = giveToSelf;
+        this.mainTargetOnly = mainTargetOnly;
+    }
+
+    public ChangeSP(int change, boolean isInstant, boolean giveToSelf) {
+        this(change, isInstant, giveToSelf, false);
+    }
+
+    public ChangeSP(int change, boolean giveToSelf) {
+        this(change, true, giveToSelf, false);
+    }
 
     public ChangeSP(int change) {
-        this.change = change;
+        this(change, true, false, false);
     }
 
     @Override
-    public Result apply(Combatant self, Combatant target, ResultType resultPrev) {
-        int spOld = target.getSp();
-        int spNew = Math.clamp(spOld + change, 0, 1000);
-        String msg;
+    public Result apply(Combatant self, Combatant target, boolean isMainTarget, ResultType resultPrev) {
+        if(!mainTargetOnly || isMainTarget) {
+            int spOld = target.getSp();
+            int spNew = Math.clamp(spOld + (int) (change * (Math.max(self.getMultSpGain(), 10) / 100d)), 0, 1000);
+            String msg;
 
-        if(spNew != spOld) {
-            target.setSp(spNew);
-            msg = target.getCmbType().getName() + "'s " + lang.get("sp") + " " + String.format("%,d", spOld) + " -> " + String.format("%,d", spNew) + "\n";
-        } else msg = ""; //target.getCmbType().getName() + "'s " + lang.get("sp") + " " + ((spOld == 100) ? lang.get("log.max") : lang.get("log.min")) + "\n";
+            if (spNew != spOld) {
+                Combatant cmb = (giveToSelf) ? self : target;
+                cmb.setSp(spNew);
+                msg = cmb.getCmbType().getName() + "'s " + lang.get("sp") + " " + String.format("%,d", spOld) + " -> " + String.format("%,d", spNew) + "\n";
+            } else
+                msg = "";
 
-        return new Result(ResultType.SUCCESS, msg);
+            return new Result(ResultType.SUCCESS, msg);
+        } else return new Result(ResultType.SUCCESS, "");
+    }
+
+    @Override
+    public boolean isInstant() {
+        return isInstant;
     }
 }

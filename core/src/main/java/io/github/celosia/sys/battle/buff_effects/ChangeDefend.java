@@ -7,9 +7,9 @@ import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeDefend implements BuffEffect {
 
-    private final float change; // Defend to add in % of max HP
+    private final double change; // Defend to add in % of max HP
 
-    public ChangeDefend(float change) {
+    public ChangeDefend(double change) {
         this.change = change;
     }
 
@@ -20,29 +20,15 @@ public class ChangeDefend implements BuffEffect {
         int defendOld = self.getDefend();
         int defendNew = (self.getShield() + defendOld + (change * hpMax) > hpMax) ? hpMax - self.getShield() : (int) (change * hpMax);
         self.setDefend(defendNew);
-        return self.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (self.getShield() + defendOld)) + " -> " + String.format("%,d", (self.getShield() + defendNew)) + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", ((self.getShield() + defendNew) - (self.getShield() + defendOld))) + ")";
+        return self.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (self.getShield() + defendOld)) + " -> " + String.format("%,d", (self.getShield() + defendNew)) +
+            "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", ((self.getShield() + defendNew) - (self.getShield() + defendOld))) + ")";
     }
 
     @Override
     public String onRemove(Combatant self) {
         int defendOld = self.getDefend();
         self.setDefend(0);
-        return self.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (self.getShield() + defendOld)) + " -> " + String.format("%,d", (self.getShield() + 0)) + "/" + String.format("%,d", self.getStatsDefault().getHp()) + " (" + String.format("%,d", ((self.getShield() + 0) - (self.getShield() + defendOld))) + ")";
-    }
-
-    @Override
-    public String onUseSkill(Combatant self, Combatant target) {
-        return "";
-    }
-
-    // Todo implement
-    @Override
-    public String onTakeDamage(Combatant self) {
-        return "";
-    }
-
-    @Override
-    public String onTurnEnd(Combatant self) {
-        return "";
+        return self.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (self.getShield() + defendOld)) + " -> " + String.format("%,d", (self.getShield() + 0)) + "/" +
+            String.format("%,d", self.getStatsDefault().getHp()) + " (" + String.format("%,d", ((self.getShield() + 0) - (self.getShield() + defendOld))) + ")";
     }
 }
