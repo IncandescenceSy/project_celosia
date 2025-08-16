@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static io.github.celosia.sys.battle.AffLib.getAffMultSpCost;
+import static io.github.celosia.sys.battle.PosLib.getHeight;
 import static io.github.celosia.sys.menu.MenuLib.setTextIfChanged;
 import static io.github.celosia.sys.settings.Lang.lang;
 
@@ -261,7 +262,8 @@ public class BattleController {
                 // The next move plays out
                 Move move = moves.get(0);
 
-                if (isMoveValid(move)) {
+                // Is in range
+                if (Math.abs(getHeight(move.getSelf().getPos()) - getHeight(move.getTargetPos())) <= move.getSkill().getRange().getRangeVertical()) {
                     // Invalid newSp will cancel move
                     int newSp;
 
@@ -307,7 +309,8 @@ public class BattleController {
 
                             resultType = ResultType.SUCCESS;
                         } else {
-                            logText += move.getSelf().getCmbType().getName() + " " + lang.get("log.tries_to_use") + " " + move.getSkill().getName() + ", " + lang.get("log.but_doesnt_have_enough") + " " + (move.getSkill().isBloom() ? lang.get("bloom") : lang.get("sp")) + "\n";
+                            logText += move.getSelf().getCmbType().getName() + " " + lang.get("log.tries_to_use") + " " + move.getSkill().getName() + " " + lang.get("log.on") + " " +
+                                battle.getCmbAtPos(move.getTargetPos()).getCmbType().getName() + ", " + lang.get("log.but_doesnt_have_enough") + " " + (move.getSkill().isBloom() ? lang.get("bloom") : lang.get("sp")) + "\n";
                         }
                     } else newSp = 0; // SP shouldn't change
 
@@ -343,7 +346,11 @@ public class BattleController {
                     } else endMove();
 
                     // todo delete killed combatants
-                } else endMove();
+                } else {
+                    logText += move.getSelf().getCmbType().getName() + " " + lang.get("log.tries_to_use") + " " + move.getSkill().getName() + " " + lang.get("log.on") + " " +
+                        battle.getCmbAtPos(move.getTargetPos()).getCmbType().getName() + ", " + lang.get("log.but_cant_reach") + "\n";
+                    endMove();
+                }
             }
         } else if (menuType == MenuType.TARGETING) { // Picking a target
 

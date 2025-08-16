@@ -18,7 +18,7 @@ public class PosLib {
         return pos + (4 * ((pos < 4) ? 1 : -1));
     }
 
-    // Returns the poses of the team members except the provided one
+    // Returns the poses of the Combatants on the team except the provided one
     public static List<Integer> getTeamWithout(int pos) {
         List<Integer> result = new ArrayList<>();
 
@@ -30,5 +30,10 @@ public class PosLib {
         }
 
         return result;
+    }
+
+    // Returns the height 0-3 of the Combatant
+    public static int getHeight(int pos) {
+        return (pos < 4) ? pos : pos - 4;
     }
 }
