@@ -7,7 +7,7 @@ import io.github.celosia.sys.battle.Mult;
 public class ChangeMult implements BuffEffect {
 
     private final Mult mult;
-    private final int change; // Amount to add
+    private final int change; // Amount to add in %
 
     public ChangeMult(Mult mult, int change) {
         this.mult = mult;

@@ -1,7 +1,7 @@
 package io.github.celosia.sys.battle;
 
 // Skills (any action that is attributed to a Combatant and has impact on the battle)
-// todo lang, functional range, display type even for non-damaging skills, explicitly define which are "for allies" and which are "for opponents" for autotargeting and AI
+// todo functional range, skill "roles" (for autotargeting and AI)
 public class Skill {
     private final String name;
     private final String desc;

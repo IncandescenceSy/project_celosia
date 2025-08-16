@@ -84,7 +84,7 @@ public class BattleController {
     static int logScroll = 0;
     static int logSize;
 
-    // battle mechanics todo: Range, Passives, Follow-Ups, Accessories
+    // battle mechanics todo: Passives, Follow-Ups, Accessories
     public static void create(Stage stage) {
         // Setup teams (temp)
         Stats johnyStats = new Stats(100, 100, 100, 100, 100, 100, 100);

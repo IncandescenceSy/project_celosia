@@ -108,7 +108,7 @@ public class Skills {
     // Ignis
 
     // Glacies
-    static Skill ICE_AGE = new Skill(lang.get("skill.ice_age"), lang.get("skill.ice_age.desc"), Element.GLACIES, Ranges.OTHER_2R, 600, true, new Damage(SkillType.STR, Element.GLACIES, 260, true), new GiveBuff(Buffs.FROSTBITE, 3, 3));
+    static Skill ICE_AGE = new Skill(lang.get("skill.ice_age"), lang.get("skill.ice_age.desc"), Element.GLACIES, Ranges.OTHER_2R, 600, true, new Damage(SkillType.STR, Element.GLACIES, 260, true), new GiveBuff(Buffs.FROSTBITE, 3, 3), new GiveBuff(Buffs.FROSTBOUND, 3));
 
     // Fulgur
 

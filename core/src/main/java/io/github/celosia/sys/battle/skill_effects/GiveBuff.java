@@ -71,7 +71,7 @@ public class GiveBuff implements SkillEffect {
                 if(turns > turnsOld) {
                     buffInstance.setTurns(turns);
                     msg.append(cmb.getCmbType().getName()).append("'s ").append(buff.getName()).append(" ").append(lang.format("turn_s", turns)).append(" ").append(turnsOld).append(" -> ").append(turns);
-                } //else msg = ""; //target.getCmbType().getName() + "'s " + buff.getName() + " " + lang.get("log.duration_unchanged");
+                }
 
                 // Add stacks
                 int stacksOld = buffInstance.getStacks();
