@@ -50,7 +50,8 @@ public class Heal implements SkillEffect {
                 String[] msg = new String[2];
                 if (shieldNew > shieldCur) {
                     target.setShield(shieldNew);
-                    msg[0] = target.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (shieldCur + target.getDefend())) + " -> " + String.format("%,d", (shieldNew + target.getDefend())) + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", (shieldNew - shieldCur)) + ")";
+                    msg[0] = target.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (shieldCur + target.getDefend())) + " -> " + String.format("%,d", (shieldNew +
+                        target.getDefend())) + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", (shieldNew - shieldCur)) + ")";
                 } else
                     msg[0] = "";
 
@@ -65,6 +66,11 @@ public class Heal implements SkillEffect {
                     msg[1] = "";
                 }
 
+                // Effect block message
+                if(shieldCur == 0 && shieldNew > 0 && target.getEffectBlock() <= 0 && target.getDefend() == 0) {
+                    msg[1] += self.getCmbType().getName() + " " + lang.get("log.is_now") + " " + lang.get("log.effect_block") + "\n";
+                }
+
                 return new Result(ResultType.SUCCESS, msg);
             } else { // Heals
                 int hpCur = target.getStatsCur().getHp();
@@ -74,7 +80,8 @@ public class Heal implements SkillEffect {
 
                 if (hpNew > hpCur) {
                     target.getStatsCur().setHp(hpNew);
-                    return new Result(ResultType.SUCCESS, target.getCmbType().getName() + "'s " + lang.get("hp") + " " + String.format("%,d", hpCur) + " -> " + String.format("%,d", hpNew) + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", (hpNew - hpCur)) + ")" + "\n");
+                    return new Result(ResultType.SUCCESS, target.getCmbType().getName() + "'s " + lang.get("hp") + " " + String.format("%,d", hpCur) + " -> " + String.format("%,d", hpNew)
+                        + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", (hpNew - hpCur)) + ")" + "\n");
                 } else return new Result(ResultType.SUCCESS, "");
             }
         } else return new Result(ResultType.SUCCESS, "");

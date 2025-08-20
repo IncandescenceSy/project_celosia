@@ -33,12 +33,13 @@ public class InputLib {
         Button.DD.setMapping(mapping.buttonDpadDown);
         Button.L1.setMapping(mapping.buttonL1);
         Button.R1.setMapping(mapping.buttonR1);
-        // todo don't assume mappings are always 4/5 (may require gdx-controllers bugfix)
-        // I'm told that on non-desktop platforms, the button mappings do work
-        //Button.L2.setMapping(mapping.buttonL2);
-        Button.L2.setMapping(4);
-        //Button.R2.setMapping(mapping.buttonR2);
-        Button.R2.setMapping(5);
+        if(Debug.treatTriggersAsAxes) {
+            Button.L2.setMapping(4);
+            Button.R2.setMapping(5);
+        } else {
+            Button.L2.setMapping(mapping.buttonL2);
+            Button.R2.setMapping(mapping.buttonR2);
+        }
         Button.LX.setMapping(mapping.axisLeftX);
         Button.LY.setMapping(mapping.axisLeftY);
         Button.RX.setMapping(mapping.axisRightX);

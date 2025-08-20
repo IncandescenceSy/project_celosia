@@ -77,7 +77,8 @@ public class Damage implements SkillEffect {
                 }
             }
 
-            double dmg = (atk / def) * (pow * 10) * 2 * affMultDmgDealt * affMultDmgTaken * (Math.max(self.getMultDmgDealt(), 10) / 100d) * (Math.max(target.getMultDmgTaken(), 10) / 100d) * (Math.max(multWeakDmgDealt, 10) / 100d) * (Math.max(multWeakDmgTaken, 10) / 100d) *
+            double dmg = (atk / def) * (pow * 10) * 2 * affMultDmgDealt * affMultDmgTaken * (Math.max(self.getMultDmgDealt(), 10) / 100d) *
+                (Math.max(target.getMultDmgTaken(), 10) / 100d) * (Math.max(multWeakDmgDealt, 10) / 100d) * (Math.max(multWeakDmgTaken, 10) / 100d) *
                 (Math.max(self.getMultElementDmgDealt(element), 10) / 100d) * (Math.max(target.getMultElementDmgTaken(element), 10) / 100d);
 
             if(isFollowUp) dmg = dmg * (Math.max(self.getMultFollowUpDmgDealt(), 10) / 100d) * (Math.max(target.getMultFollowUpDmgTaken(), 10) / 100d);

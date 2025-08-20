@@ -89,6 +89,9 @@ public class Combatant {
     // Extra actions
     private int extraActions;
 
+    // Secondary effect block; >=1 means blocks secondary effects the same as Barrier
+    private int effectBlock;
+
     private List<BuffInstance> buffInstances = new ArrayList<>();
 
     public Combatant(CombatantType cmbType, int lvl, Skill[] skills, int pos) {
@@ -142,6 +145,7 @@ public class Combatant {
         shieldTurns = 0;
         defend = 0;
         extraActions = 0;
+        effectBlock = 0;
     }
 
     public CombatantType getCmbType() {
@@ -703,6 +707,14 @@ public class Combatant {
         return extraActions;
     }
 
+    public void setEffectBlock(int effectBlock) {
+        this.effectBlock = effectBlock;
+    }
+
+    public int getEffectBlock() {
+        return effectBlock;
+    }
+
     public void setBuffInstances(List<BuffInstance> buffInstances) {
         this.buffInstances = buffInstances;
     }
@@ -713,6 +725,10 @@ public class Combatant {
 
     public void addBuffInstance(BuffInstance buffInstance) {
         buffInstances.add(buffInstance);
+    }
+
+    public boolean isProtected() {
+        return multDmgTaken <= -50000;
     }
 
     // Returns the requested BuffInstance if present
@@ -784,7 +800,7 @@ public class Combatant {
         int dmgFull = dmg;
         int defendOld = defend;
 
-        String[] msg = new String[2];
+        String[] msg = {"", ""};
 
         if (!pierce) { // Pierce skips Defend and Shield
             if (defend > 0 && dmg > 0) { // There's Defend and dmg
@@ -794,6 +810,7 @@ public class Combatant {
                 } else { // Destroy Defend and proceed to Shield
                     dmg -= defend;
                     defend = 0;
+                    if(shield == 0 && effectBlock <= 0) msg[0] = this.getCmbType().getName() + " " + lang.get("log.is_no_longer") + " " + lang.get("log.effect_block") + "\n";
                 }
             }
 
@@ -803,10 +820,11 @@ public class Combatant {
                     shield -= dmg;
                     return new Result(ResultType.HIT_SHIELD, this.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (defendOld + shieldOld)) + " -> " + String.format("%,d", shield) + "/" + String.format("%,d", this.getStatsDefault().getHp()) + " (-" + String.format("%,d", dmgFull) + ")" + "\n");
                 } else { // Destroy Shield and proceed to HP
-                    msg[0] = this.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (defendOld + shield)) + " -> " + 0 + "/" + this.getStatsDefault().getHp() + " (-" + String.format("%,d", (defendOld + shield)) + ")" + "\n";
+                    msg[0] += this.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (defendOld + shield)) + " -> " + 0 + "/" + this.getStatsDefault().getHp() + " (-" + String.format("%,d", (defendOld + shield)) + ")" + "\n";
                     dmg -= shield;
                     shield = 0;
                     shieldTurns = 0;
+                    if(effectBlock <= 0) msg[0] += this.getCmbType().getName() + " " + lang.get("log.is_no_longer") + " " + lang.get("log.effect_block") + "\n";
                 }
             }
         }
@@ -817,7 +835,7 @@ public class Combatant {
         msg[1] = this.getCmbType().getName() + "'s " + lang.get("hp") + " " + String.format("%,d", hpOld) + " -> " + String.format("%,d", hpNew) + " (-" + String.format("%,d", dmg) + ")" + "\n";
         this.getStatsCur().setHp(hpNew);
 
-        if (multDmgTaken <= -50000) { // Hit Protect
+        if (effectBlock > 0) { // todo should this be a separate result from hitting shield
             return new Result(ResultType.HIT_SHIELD, msg);
         } else if (dmg > 0) { // Did damage
             return new Result(ResultType.SUCCESS, msg);

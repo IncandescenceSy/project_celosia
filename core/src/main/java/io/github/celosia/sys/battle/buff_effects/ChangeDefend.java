@@ -21,7 +21,8 @@ public class ChangeDefend implements BuffEffect {
         int defendNew = (self.getShield() + defendOld + (change * hpMax) > hpMax) ? hpMax - self.getShield() : (int) (change * hpMax);
         self.setDefend(defendNew);
         return self.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (self.getShield() + defendOld)) + " -> " + String.format("%,d", (self.getShield() + defendNew)) +
-            "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", ((self.getShield() + defendNew) - (self.getShield() + defendOld))) + ")";
+            "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", ((self.getShield() + defendNew) - (self.getShield() + defendOld))) + ")" +
+            ((self.getEffectBlock() <= 0 && self.getShield() == 0 && defendOld == 0) ? "\n" + self.getCmbType().getName() + " " + lang.get("log.is_now") + " " + lang.get("log.effect_block") : "");
     }
 
     @Override
@@ -29,6 +30,7 @@ public class ChangeDefend implements BuffEffect {
         int defendOld = self.getDefend();
         self.setDefend(0);
         return self.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (self.getShield() + defendOld)) + " -> " + String.format("%,d", (self.getShield() + 0)) + "/" +
-            String.format("%,d", self.getStatsDefault().getHp()) + " (" + String.format("%,d", ((self.getShield() + 0) - (self.getShield() + defendOld))) + ")";
+            String.format("%,d", self.getStatsDefault().getHp()) + " (" + String.format("%,d", ((self.getShield() + 0) - (self.getShield() + defendOld))) + ")" +
+        ((self.getEffectBlock() <= 0 && self.getShield() == 0) ? "\n" + self.getCmbType().getName() + " " + lang.get("log.is_no_longer") + " " + lang.get("log.effect_block") : "");
     }
 }

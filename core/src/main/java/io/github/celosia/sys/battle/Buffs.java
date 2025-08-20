@@ -8,9 +8,9 @@ public class Buffs {
     // Basic
     static Buff DEFEND = new Buff(lang.get("skill.defend"), lang.get("buff.defend.desc"), BuffType.BUFF, 1, new ChangeDefend(0.2), new ChangeMult(Mult.DMG_TAKEN, -20));
 
-    // Decreases multDef by way more than necessary so that (multDef < -500f) can be used as a check for Protect
+    // Decreases multDef by way more than necessary to be absolutely certain this minimizes it
     // todo: is it fine that having less multDef makes this proportionately worse?
-    static Buff PROTECT = new Buff(lang.get("buff.protect"), lang.get("buff.protect.desc"), BuffType.BUFF, 1, new ChangeMult(Mult.DMG_TAKEN, -100000));
+    static Buff PROTECT = new Buff(lang.get("buff.protect"), lang.get("buff.protect.desc"), BuffType.BUFF, 1, new ChangeMult(Mult.DMG_TAKEN, -100000), new ChangeEffectBlock(1));
 
     // todo: affinity should convey immunity to these
     // Elemental debuffs

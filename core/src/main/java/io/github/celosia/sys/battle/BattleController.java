@@ -74,9 +74,9 @@ public class BattleController {
     static List<TypingLabel> skillsL = new ArrayList<>();
 
     // temp
-    static Skill[] skills = new Skill[]{Skills.FIREBALL, Skills.INFERNAL_PROVENANCE, Skills.HEAT_WAVE, Skills.ULTRA_KILL, Skills.ICE_AGE, Skills.ATTACK, Skills.DEFEND};
-    static Skill[] skills2 = new Skill[]{Skills.ATTACK_UP_GROUP, Skills.ICE_BEAM, Skills.SHIELD, Skills.PROTECT, Skills.ICE_AGE, Skills.ATTACK, Skills.DEFEND};
-    static Skill[] skills3 = new Skill[]{Skills.THUNDERBOLT, Skills.ATTACK_UP_GROUP, Skills.HEAT_WAVE, Skills.AMBROSIA, Skills.ICE_AGE, Skills.ATTACK, Skills.DEFEND};
+    static Skill[] skills = new Skill[]{Skills.FIREBALL, Skills.INFERNAL_PROVENANCE, Skills.HEAT_WAVE, Skills.ULTRA_KILL, Skills.ICE_AGE, Skills.DEFEND};
+    static Skill[] skills2 = new Skill[]{Skills.ATTACK_UP_GROUP, Skills.ICE_BEAM, Skills.SHIELD, Skills.PROTECT, Skills.ICE_AGE, Skills.DEFEND};
+    static Skill[] skills3 = new Skill[]{Skills.THUNDERBOLT, Skills.ATTACK_UP_GROUP, Skills.HEAT_WAVE, Skills.AMBROSIA, Skills.ICE_AGE, Skills.DEFEND};
 
     // Battle log
     // todo press L2(?) to bring up full log, better positioning
@@ -147,7 +147,7 @@ public class BattleController {
 
         // Skill menu display
         // todo support arbitrary size
-        for(int i = 0; i < 7; i++) {
+        for(int i = 0; i < 6; i++) {
             skillsL.add(new TypingLabel("", FontType.KORURI.getSize30()));
             stage.addActor(skillsL.get(i));
         }
@@ -174,7 +174,7 @@ public class BattleController {
                 if (selectingMove < battle.getPlayerTeam().getCmbs().length) { // if there are more allies yet to act
                     // Skill selection display
                     // todo support arbitrary size
-                    for (int i = 0; i < 7; i++) {
+                    for (int i = 0; i < 6; i++) {
                         skillsL.get(i).setPosition(600, (World.HEIGHT - 400 - 250 * selectingMove) - ((i - 2) * 35));
                         setTextIfChanged(skillsL.get(i), battle.getPlayerTeam().getCmbs()[selectingMove].getSkills()[i].getName()); // todo support ExtraActions
                     }
@@ -497,13 +497,8 @@ public class BattleController {
         }
     }
 
-    // todo
-    public static boolean isMoveValid(Move move) {
-        return true;
-    }
-
     public static MenuType selectMove() {
-        // todo make sure this actually works (esp with ExtraActions)
+        // todo fix bug where this doesnt delete the previous move and make sure this works with extra actions
         if (InputLib.checkInput(Keybind.BACK) && selectingMove != 0) {
             // Reset for next time
             for (TypingLabel skill : skillsL) {
@@ -513,6 +508,7 @@ public class BattleController {
 
             selectingMove--;
             movesL.get(selectingMove).setText("");
+            moves.removeLast();
 
             return MenuType.BATTLE;
         }
@@ -546,7 +542,7 @@ public class BattleController {
     public static void endMove() {
         usingMove++;
         applyingEffect = 0;
-        moves.remove(0);
+        moves.removeFirst();
         wait += 1 * Settings.battleSpeed;
     }
 }
