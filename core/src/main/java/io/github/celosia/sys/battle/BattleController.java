@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.github.celosia.sys.battle.AffLib.getAffMultSpCost;
 import static io.github.celosia.sys.battle.PosLib.getHeight;
@@ -74,16 +75,15 @@ public class BattleController {
     static List<TypingLabel> skillsL = new ArrayList<>();
 
     // temp
-    static Skill[] skills = new Skill[]{Skills.FIREBALL, Skills.INFERNAL_PROVENANCE, Skills.HEAT_WAVE, Skills.ULTRA_KILL, Skills.ICE_AGE, Skills.DEFEND};
-    static Skill[] skills2 = new Skill[]{Skills.ATTACK_UP_GROUP, Skills.ICE_BEAM, Skills.SHIELD, Skills.PROTECT, Skills.ICE_AGE, Skills.DEFEND};
-    static Skill[] skills3 = new Skill[]{Skills.THUNDERBOLT, Skills.ATTACK_UP_GROUP, Skills.HEAT_WAVE, Skills.AMBROSIA, Skills.ICE_AGE, Skills.DEFEND};
+    static Skill[] skills = new Skill[]{Skills.FIREBALL, Skills.INFERNAL_PROVENANCE, Skills.SHIELD, Skills.RASETU_FEAST, Skills.ICE_AGE, Skills.DEFEND};
+    static Skill[] skills2 = new Skill[]{Skills.ATTACK_UP_GROUP, Skills.ICE_BEAM, Skills.RASETU_FEAST, Skills.SHIELD, Skills.ICE_AGE, Skills.DEFEND};
+    static Skill[] skills3 = new Skill[]{Skills.THUNDERBOLT, Skills.ATTACK_UP_GROUP, Skills.DEMON_SCYTHE, Skills.RASETU_FEAST, Skills.ICE_AGE, Skills.DEFEND};
 
     // Battle log
     // todo press L2(?) to bring up full log, better positioning
     static TextraLabel battleLog = new TextraLabel("", FontType.KORURI.getSize20());
-    static String logText = "[PURPLE]" + lang.get("turn") + " " + 1 + "[WHITE]\n" + lang.get("log.gain_sp_bloom") + "\n";
+    static List<String> logText = new ArrayList<>();
     static int logScroll = 0;
-    static int logSize;
 
     // battle mechanics todo: Passives, Follow-Ups, Accessories
     public static void create(Stage stage) {
@@ -145,6 +145,10 @@ public class BattleController {
             stage.addActor(moves);
         }
 
+        // Log
+        appendToLog("[PURPLE]" + lang.get("turn") + " " + 1 + "[WHITE]");
+        appendToLog(lang.get("log.gain_sp_bloom"));
+
         // Skill menu display
         // todo support arbitrary size
         for(int i = 0; i < 6; i++) {
@@ -154,18 +158,14 @@ public class BattleController {
     }
 
     public static MenuType input(MenuType menuType) {
-        // If logSize exceeds ~2500, remove ~500 lines (so this doesn't have to get called again soon)
-        // logSize will be less than the exact amount of lines (by ~20% or less if I had to guess), but it'll be close enough
-        // todo test if this actually works + figure out a good size limit
-        if(logSize > 2500) {
-            logText = logText.lines().skip(logSize - 2000).collect(Collectors.joining("\n"));
-            logSize -= 500;
-        }
-
         // Debug
-        if(Debug.enableDebugHotkeys && Gdx.input.isKeyJustPressed(Input.Keys.Q)) Gdx.app.log("", logText);
+        if(Debug.enableDebugHotkeys && Gdx.input.isKeyJustPressed(Input.Keys.Q)) Gdx.app.log("", String.join("\n", logText));
 
-        logScroll = MenuLib.checkLogScroll(logScroll, (int) logText.lines().count());
+        int logScrollNew = MenuLib.checkLogScroll(logScroll, logText.size());
+        if(logScroll != logScrollNew) {
+            logScroll = logScrollNew;
+            updateLog();
+        }
 
         if (wait > 0f) {
             wait -= Gdx.graphics.getDeltaTime();
@@ -210,7 +210,6 @@ public class BattleController {
                         movesL.get(i).setColor(Color.WHITE);
                     }
 
-                    StringBuilder builder = new StringBuilder();
                     for (Combatant cmb : battle.getAllCombatants()) {
                         // Increase SP
                         cmb.setSp(Math.min((int) (cmb.getSp() + (100 * (Math.max(cmb.getMultSpGain(), 10) / 100d))), 1000));
@@ -224,26 +223,23 @@ public class BattleController {
                             turnEnd1.append(cmb.getCmbType().getName()).append("'s ").append(buffInstance.getBuff().getName()).append(": ");
                             for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
                                 for(int i = 1; i <= buffInstance.getStacks(); i++) {
-                                    turnEnd2.append(buffEffect.onTurnEnd(cmb));
-                                    logSize++;
+                                    String[] onTurnEnd = buffEffect.onTurnEnd(cmb);
+                                    for(String turnEnd : onTurnEnd) if(!Objects.equals(turnEnd, "")) turnEnd2.append(turnEnd);
                                 }
                             }
                         }
 
                         // Only have turn end message if both have messages
-                        if(turnEnd1 != null && !Objects.equals(turnEnd2.toString(), "")) builder.append(turnEnd1).append(turnEnd2);
+                        if(turnEnd1 != null && !Objects.equals(turnEnd2.toString(), "")) appendToLog(turnEnd1 + turnEnd2.toString());
 
                         // Decrement stage/shield/buff turns and remove expired stages/shields/buffs
-                        // Don't increase logSize because most of the time this will be blank
-                        builder.append(cmb.decrementTurns());
+                        List<String> decrement = cmb.decrementTurns();
+                        if(!decrement.isEmpty()) appendAllToLog(decrement);
                     }
 
                     // Log
-                    logScroll = 0;
-                    builder.append("[PURPLE]").append(lang.get("turn")).append(" ").append(battle.getTurn() + 1).append("[WHITE]\n").append(lang.get("log.gain_sp_bloom")).append("\n");
-                    logSize += 3;
-
-                    logText += builder;
+                    appendToLog("[PURPLE]" + lang.get("turn") + " " + (battle.getTurn() + 1) + "[WHITE]");
+                    appendToLog(lang.get("log.gain_sp_bloom"));
 
                     // Increase bloom
                     battle.getPlayerTeam().setBloom(Math.min(battle.getPlayerTeam().getBloom() + 100, 1000));
@@ -260,7 +256,7 @@ public class BattleController {
                     .thenComparingInt(entry -> entry.getSelf().getAgiWithStage()).reversed());
 
                 // The next move plays out
-                Move move = moves.get(0);
+                Move move = moves.getFirst();
 
                 // Is in range
                 if (Math.abs(getHeight(move.getSelf().getPos()) - getHeight(move.getTargetPos())) <= move.getSkill().getRange().getRangeVertical()) {
@@ -269,8 +265,6 @@ public class BattleController {
 
                     // Execute move
                     if(applyingEffect == 0) {
-                        logScroll = 0;
-                        logSize++;
 
                         // Set newSp
                         Element element = move.getSkill().getElement();
@@ -279,23 +273,25 @@ public class BattleController {
                         int cost = move.getSkill().getCost();
                         newSp = ((move.getSkill().isBloom()) ? team.getBloom() : move.getSelf().getSp()) - (int) Math.max(Math.ceil((cost * getAffMultSpCost(move.getSelf().getAff(element)))), 1);
 
+                        StringBuilder builder = new StringBuilder();
                         if(newSp >= 0) {
-                            logText += move.getSelf().getCmbType().getName() + " " + lang.get("log.uses") + " " + move.getSkill().getName() + " " + lang.get("log.on") + " " + battle.getCmbAtPos(move.getTargetPos()).getCmbType().getName();
+                            builder.append(move.getSelf().getCmbType().getName()).append(" ").append(lang.get("log.uses")).append(" ").append(move.getSkill().getName()).append(" ").append(lang.get("log.on")).append(" ").append(battle.getCmbAtPos(move.getTargetPos()).getCmbType().getName());
 
                             if (move.getSkill().isBloom()) {
-                                logText += " (" + ((isPlayerTeam) ? lang.get("log.team_player") : lang.get("log.team_opponent")) + " " + lang.get("bloom") + " " + String.format("%,d", team.getBloom()) + " -> " + String.format("%,d", newSp) + ")";
+                                builder.append(" (").append((isPlayerTeam) ? lang.get("log.team_player") : lang.get("log.team_opponent")).append(" ").append(lang.get("bloom")).append(" ").append(String.format("%,d", team.getBloom())).append(" -> ").append(String.format("%,d", newSp)).append(")");
                                 team.setBloom(newSp);
                             } else if (newSp != move.getSelf().getSp()) { // Use SP
-                                logText += " (" + lang.get("sp") + " " + String.format("%,d", move.getSelf().getSp()) + " -> " + String.format("%,d", newSp) + ")";
+                                builder.append(" (").append(lang.get("sp")).append(" ").append(String.format("%,d", move.getSelf().getSp())).append(" -> ").append(String.format("%,d", newSp)).append(")");
                                 move.getSelf().setSp(newSp);
                             }
 
-                            logText += "\n";
+                            appendToLog(builder.toString());
 
                             // Apply on-skill use BuffEffects
                             for (BuffInstance buffInstance : move.getSelf().getBuffInstances()) {
                                 for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
-                                    logText += buffEffect.onUseSkill(move.getSelf(), battle.getCmbAtPos(move.getTargetPos()));
+                                    String[] onUseSkill = buffEffect.onUseSkill(move.getSelf(), battle.getCmbAtPos(move.getTargetPos()));
+                                    for(String useSkill : onUseSkill) if(!Objects.equals(useSkill, "")) appendToLog(useSkill);
                                 }
                             }
 
@@ -309,8 +305,7 @@ public class BattleController {
 
                             resultType = ResultType.SUCCESS;
                         } else {
-                            logText += move.getSelf().getCmbType().getName() + " " + lang.get("log.tries_to_use") + " " + move.getSkill().getName() + " " + lang.get("log.on") + " " +
-                                battle.getCmbAtPos(move.getTargetPos()).getCmbType().getName() + ", " + lang.get("log.but_doesnt_have_enough") + " " + (move.getSkill().isBloom() ? lang.get("bloom") : lang.get("sp")) + "\n";
+                            appendToLog(move.getSelf().getCmbType().getName() + " " + lang.get("log.tries_to_use") + " " + move.getSkill().getName() + ", " + lang.get("log.but_doesnt_have_enough") + " " + (move.getSkill().isBloom() ? lang.get("bloom") : lang.get("sp")));
                         }
                     } else newSp = 0; // SP shouldn't change
 
@@ -328,13 +323,20 @@ public class BattleController {
                                 if(targetPos != -1) {
                                     Combatant targetCur = battle.getCmbAtPos(targetPos);
                                     Result result = skillEffects[applyingEffect].apply(move.getSelf(), targetCur, targetCur == targetMain, resultType);
+                                    if(applyingEffect == 0) {
+                                        // Apply onTargetedBySkill BuffEffects
+                                        for (BuffInstance buffInstance : targetCur.getBuffInstances()) {
+                                            for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
+                                                String[] onTargetedBySkill = buffEffect.onTargetedBySkill(battle.getCmbAtPos(move.getTargetPos()));
+                                                for(String targetedBySkill : onTargetedBySkill) if(!Objects.equals(targetedBySkill, "")) appendToLog(targetedBySkill);
+                                            }
+                                        }
+                                    }
                                     resultType = result.getResultType();
-                                    String[] msgs = result.getMessages();
+                                    List<String> msgs = result.getMessages();
                                     for (String msg : msgs)
                                         if (msg != null && !Objects.equals(msg, "")) {
-                                            logScroll = 0; // Reset scroll
-                                            logText += msg; // Add to log
-                                            logSize++;
+                                            appendToLog(msg); // Add to log
                                         }
                                 }
                             }
@@ -347,8 +349,8 @@ public class BattleController {
 
                     // todo delete killed combatants
                 } else {
-                    logText += move.getSelf().getCmbType().getName() + " " + lang.get("log.tries_to_use") + " " + move.getSkill().getName() + " " + lang.get("log.on") + " " +
-                        battle.getCmbAtPos(move.getTargetPos()).getCmbType().getName() + ", " + lang.get("log.but_cant_reach") + "\n";
+                    appendToLog(move.getSelf().getCmbType().getName() + " " + lang.get("log.tries_to_use") + " " + move.getSkill().getName() + " " + lang.get("log.on") + " " +
+                        battle.getCmbAtPos(move.getTargetPos()).getCmbType().getName() + ", " + lang.get("log.but_cant_reach"));
                     endMove();
                 }
             }
@@ -435,26 +437,6 @@ public class BattleController {
         queue.setPosition(World.WIDTH_2, World.HEIGHT - 120, Align.center); // Must be set here so it aligns properly
         queue.skipToTheEnd();
 
-        // Log
-        // todo clean this up (only run this when logScroll or logText changes) also maybe make it always a list?
-        List<String> lines = logText.lines().toList();
-        int size = Math.toIntExact(lines.size());
-        if(size >= 8) {
-            StringBuilder logNew = new StringBuilder();
-            if (size - logScroll >= 8) {
-                for(int i = 8; i >= 1; i--) {
-                    logNew.append(lines.get(size - logScroll - i));
-                    if(i != 1) logNew.append("\n");
-                }
-            } else {
-                for(int i = 0; i <= 7; i++) {
-                    logNew.append(lines.get(i));
-                    if(i != 7) logNew.append("\n");
-                }
-            }
-            battleLog.setText(logNew.toString());
-        } else battleLog.setText(logText);
-
         // Update combatant stat display
         // todo disambiguation + system to display all status updates
         for (int i = 0; i < 8; i++) {
@@ -495,6 +477,43 @@ public class BattleController {
                 setTextIfChanged(statsL.get(i), text.toString());
             } else statsL.get(i).setText("");
         }
+    }
+
+    public static void appendToLog(String entry) {
+        // If logSize exceeds 2500, remove ~500 lines (so this doesn't have to get called again soon)
+        // logSize will be less than the exact amount of lines (by ~20% or less if I had to guess), but it'll be close enough
+        // todo test if this actually works + figure out a good size limit
+        if(logText.size() > 2500) logText.subList(0, 500).clear();
+
+        logText.add(entry);
+
+        // Reset scroll to bottom
+        logScroll = 0;
+
+        updateLog();
+    }
+
+    public static void appendAllToLog(List<String> entry) {
+        if(logText.size() > 2500) logText.subList(0, 500).clear();
+
+        logText.addAll(entry);
+
+        // Reset scroll to bottom
+        logScroll = 0;
+
+        updateLog();
+    }
+
+    public static void updateLog() {
+        battleLog.setText(formatLog());
+    }
+
+    public static String formatLog() {
+        if (logText == null || logText.isEmpty() || logScroll < 0 || logScroll > logText.size()) return "";
+        int start = Math.max(0, logText.size() - 8 - logScroll);
+        int end = Math.min(start + 8, logText.size());
+        List<String> subList = logText.subList(start, end);
+        return String.join("\n", subList);
     }
 
     public static MenuType selectMove() {
