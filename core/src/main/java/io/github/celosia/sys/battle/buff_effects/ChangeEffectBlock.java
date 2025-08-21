@@ -14,18 +14,18 @@ public class ChangeEffectBlock implements BuffEffect {
     }
 
     @Override
-    public String onGive(Combatant self) {
+    public String[] onGive(Combatant self) {
         int effectBlockOld = self.getEffectBlock();
         int effectBlockNew = effectBlockOld + change;
         self.setEffectBlock(effectBlockNew);
-        return (effectBlockNew > 0 && self.getShield() == 0 && self.getDefend() == 0) ? self.getCmbType().getName() + " " + lang.get("log.is_now") + " " + lang.get("log.effect_block") : "";
+        return new String[]{(effectBlockNew > 0 && self.getShield() == 0 && self.getDefend() == 0) ? self.getCmbType().getName() + " " + lang.get("log.is_now") + " " + lang.get("log.effect_block") : ""};
     }
 
     @Override
-    public String onRemove(Combatant self) {
+    public String[] onRemove(Combatant self) {
         int effectBlockOld = self.getEffectBlock();
         int effectBlockNew = effectBlockOld - change;
         self.setEffectBlock(effectBlockNew);
-        return (effectBlockNew <= 0 && self.getShield() == 0 && self.getDefend() == 0) ? self.getCmbType().getName() + " " + lang.get("log.is_no_longer") + " " + lang.get("log.effect_block") : "";
+        return new String[]{(effectBlockNew <= 0 && self.getShield() == 0 && self.getDefend() == 0) ? self.getCmbType().getName() + " " + lang.get("log.is_no_longer") + " " + lang.get("log.effect_block") : ""};
     }
 }

@@ -2,6 +2,7 @@ package io.github.celosia.sys.battle.skill_effects;
 
 import io.github.celosia.sys.battle.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -64,13 +65,14 @@ public class GiveBuff implements SkillEffect {
             BuffInstance buffInstance = cmb.findBuff(buff);
 
             if(buffInstance != null) { // Already has buff
-                StringBuilder msg = new StringBuilder();
+                List<String> msg = new ArrayList<>();
+                String str = "";
 
                 // Refresh turns
                 int turnsOld = buffInstance.getTurns();
                 if(turns > turnsOld) {
                     buffInstance.setTurns(turns);
-                    msg.append(cmb.getCmbType().getName()).append("'s ").append(buff.getName()).append(" ").append(lang.format("turn_s", turns)).append(" ").append(turnsOld).append(" -> ").append(turns);
+                    str = cmb.getCmbType().getName() + "'s " + buff.getName() + " " + lang.format("turn_s", turns) + " " + turnsOld + " -> " + turns;
                 }
 
                 // Add stacks
@@ -78,33 +80,33 @@ public class GiveBuff implements SkillEffect {
                 int stacksNew = Math.min(buffInstance.getBuff().getMaxStacks(), stacksOld + stacks);
                 if(stacksNew != stacksOld) {
                     buffInstance.setStacks(stacksNew);
-                    if(turns > turnsOld) msg.append(", ").append(lang.format("stack_s", stacksNew)).append(" ").append(stacksOld).append(" -> ").append(stacksNew).append("\n");
-                    else msg.append(cmb.getCmbType().getName()).append("'s ").append(buff.getName()).append(" ").append(lang.get("stacks")).append(" ").append(stacksOld).append(" -> ").append(stacksNew).append("\n");
-                } else if(turns > turnsOld) msg.append("\n");
+                    if(turns > turnsOld) msg.add(str + ", " + lang.format("stack_s", stacksNew) + " " + stacksOld + " -> " + stacksNew);
+                    else msg.add(cmb.getCmbType().getName() + "'s " + buff.getName() + " " + lang.get("stacks") + " " + stacksOld + " -> " + stacksNew);
+                }
 
                 // Apply once for each newly added stack
                 int stacksAdded = stacksNew - stacksOld;
                 for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
                     for (int i = 1; i <= stacksAdded; i++) {
-                        String onGive = buffEffect.onGive(cmb);
-                        if(!Objects.equals(onGive, "")) msg.append(onGive).append("\n");
+                        String[] onGive = buffEffect.onGive(cmb);
+                        for(String give : onGive) if(!Objects.equals(give, "")) msg.add(give);
                     }
                 }
 
-                return new Result(ResultType.SUCCESS, msg.toString());
+                return new Result(ResultType.SUCCESS, msg);
             } else { // Doesn't have buff
-                String[] msg = new String[2];
-                msg[0] = cmb.getCmbType().getName() + " " + lang.get("log.gains") + " " + buff.getName() + " " + lang.get("log.with") + " " + ((buff.getMaxStacks() > 1) ? (stacks + " " + lang.format("stack_s", stacks) + " " + lang.get("log.and")) + " " : "") + turns + " " + lang.format("turn_s", turns) + "\n";
-                msg[1] = "";
+                List<String> msg = new ArrayList<>();
+                msg.add(cmb.getCmbType().getName() + " " + lang.get("log.gains") + " " + buff.getName() + " " + lang.get("log.with") + " " + ((buff.getMaxStacks() > 1) ?
+                    (stacks + " " + lang.format("stack_s", stacks) + " " + lang.get("log.and")) + " " : "") + turns + " " + lang.format("turn_s", turns));
                 cmb.addBuffInstance(new BuffInstance(buff, turns, stacks));
-                buffInstance = buffInstances.get(buffInstances.size() - 1);
+                buffInstance = buffInstances.getLast();
 
                 // Apply once for each stack
                 BuffEffect[] buffEffects = buffInstance.getBuff().getBuffEffects();
                 for (int i = 0; i < buffEffects.length; i++) {
                     for (int j = 0; j < buffInstance.getStacks(); j++) {
-                        String onGive = buffEffects[i].onGive(cmb);
-                        if(!Objects.equals(onGive, "")) msg[1] += onGive + "\n";
+                        String[] onGive = buffEffects[i].   onGive(cmb);
+                        for(String give : onGive) if(!Objects.equals(give, "")) msg.add(give);
                     }
                 }
                 return new Result(ResultType.SUCCESS, msg);

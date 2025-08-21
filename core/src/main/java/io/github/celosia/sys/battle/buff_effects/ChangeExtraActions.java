@@ -14,18 +14,18 @@ public class ChangeExtraActions implements BuffEffect {
     }
 
     @Override
-    public String onGive(Combatant self) {
+    public String[] onGive(Combatant self) {
         int exAOld = self.getExtraActions();
         int exANew = exAOld + change;
         self.setExtraActions(exANew);
-        return self.getCmbType().getName() + "'s " + lang.get("extra_actions") + " " + Math.max(exAOld, 0) + " -> " + Math.max(exANew, 0);
+        return new String[]{self.getCmbType().getName() + "'s " + lang.get("extra_actions") + " " + Math.max(exAOld, 0) + " -> " + Math.max(exANew, 0)};
     }
 
     @Override
-    public String onRemove(Combatant self) {
+    public String[] onRemove(Combatant self) {
         int exAOld = self.getExtraActions();
         int exANew = exAOld - change;
         self.setExtraActions(exANew);
-        return self.getCmbType().getName() + "'s " + lang.get("extra_actions") + " " + Math.max(exAOld, 0) + " -> " + Math.max(exANew, 0);
+        return new String[]{self.getCmbType().getName() + "'s " + lang.get("extra_actions") + " " + Math.max(exAOld, 0) + " -> " + Math.max(exANew, 0)};
     }
 }

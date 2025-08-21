@@ -17,18 +17,18 @@ public class ChangeAff implements BuffEffect {
     }
 
     @Override
-    public String onGive(Combatant self) {
+    public String[] onGive(Combatant self) {
         int affOld = self.getAff(element);
         int affNew = affOld + change;
         self.setAff(element, affNew);
-        return self.getCmbType().getName() + "'s " + element.getName() + " " + lang.get("affinity") + " " + Math.clamp(affOld, -5, 5) + " -> " + Math.clamp(affNew, -5, 5);
+        return new String[]{self.getCmbType().getName() + "'s " + element.getName() + " " + lang.get("affinity") + " " + Math.clamp(affOld, -5, 5) + " -> " + Math.clamp(affNew, -5, 5)};
     }
 
     @Override
-    public String onRemove(Combatant self) {
+    public String[] onRemove(Combatant self) {
         int affOld = self.getAff(element);
         int affNew = affOld - change;
         self.setAff(element, affNew);
-        return self.getCmbType().getName() + "'s " + element.getName() + " " + lang.get("affinity") + " " + Math.clamp(affOld, -5, 5) + " -> " + Math.clamp(affNew, -5, 5);
+        return new String[]{self.getCmbType().getName() + "'s " + element.getName() + " " + lang.get("affinity") + " " + Math.clamp(affOld, -5, 5) + " -> " + Math.clamp(affNew, -5, 5)};
     }
 }

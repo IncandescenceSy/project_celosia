@@ -15,18 +15,18 @@ public class ChangeMult implements BuffEffect {
     }
 
     @Override
-    public String onGive(Combatant self) {
+    public String[] onGive(Combatant self) {
         int multOld = self.getMult(mult);
         self.setMult(mult, multOld + change);
         double changeDisplay = Math.max(multOld + change, 10) - Math.max(multOld, 10);
-        return self.getCmbType().getName() + "'s " + mult.getName() + " " + Math.max(multOld, 10) + "% -> " + Math.max(multOld + change, 10) + ((change > 0) ? "% (+" : "% (") + changeDisplay + "%)";
+        return new String[]{self.getCmbType().getName() + "'s " + mult.getName() + " " + Math.max(multOld, 10) + "% -> " + Math.max(multOld + change, 10) + ((change > 0) ? "% (+" : "% (") + changeDisplay + "%)"};
     }
 
     @Override
-    public String onRemove(Combatant self) {
+    public String[] onRemove(Combatant self) {
         int multOld = self.getMult(mult);
         self.setMult(mult, multOld - change);
         double changeDisplay = Math.max(multOld + change, 10) - Math.max(multOld, 10);
-        return self.getCmbType().getName() + "'s " + mult.getName() + " " + Math.max(multOld, 10) + "% -> " + (Math.max(multOld - change, 10)) + ((change < 0) ? "% (+" : "% (") + (changeDisplay * -1) + "%)";
+        return new String[]{self.getCmbType().getName() + "'s " + mult.getName() + " " + Math.max(multOld, 10) + "% -> " + (Math.max(multOld - change, 10)) + ((change < 0) ? "% (+" : "% (") + (changeDisplay * -1) + "%)"};
     }
 }

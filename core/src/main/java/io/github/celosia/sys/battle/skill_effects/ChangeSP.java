@@ -43,7 +43,7 @@ public class ChangeSP implements SkillEffect {
             if (spNew != spOld) {
                 Combatant cmb = (giveToSelf) ? self : target;
                 cmb.setSp(spNew);
-                msg = cmb.getCmbType().getName() + "'s " + lang.get("sp") + " " + String.format("%,d", spOld) + " -> " + String.format("%,d", spNew) + "\n";
+                msg = cmb.getCmbType().getName() + "'s " + lang.get("sp") + " " + String.format("%,d", spOld) + " -> " + String.format("%,d", spNew);
             } else
                 msg = "";
 

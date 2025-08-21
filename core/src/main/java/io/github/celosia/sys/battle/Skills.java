@@ -9,6 +9,7 @@ public class Skills {
     static Skill OVERHEAL = new Skill("Overheal", "", Element.VIS, Ranges.OTHER_1R_OR_SELF, 1, new Heal(500, 0.5));
     static Skill INFERNAL_PROVENANCE = new Skill("Infernal Provenance", "", Element.IGNIS, Ranges.OTHER_1R_OR_SELF, 1, new Damage(SkillType.MAG, Element.IGNIS, 100), new GiveBuff(Buffs.EXTRA_ACTION, 2, true, true));
     static Skill ULTRA_KILL = new Skill("Ultra Kill", "", Element.IGNIS, Ranges.COLUMN_OF_3_1R, 1, new Damage(SkillType.STR, Element.IGNIS, 100), new Damage(SkillType.STR, Element.IGNIS, 100, false, false, true));
+    static Skill RASETU_FEAST = new Skill("Rasetu Feast", "", Element.VIS, Ranges.OTHER_2R, 1, new GiveBuff(Buffs.BURN, 3, 3), new GiveBuff(Buffs.FROSTBITE, 3, 3), new GiveBuff(Buffs.POISON, 3, 3), new GiveBuff(Buffs.CURSE, 3, 3));
 
     // Basic skills
     static Skill NOTHING = new Skill(lang.get("skill.nothing"), lang.get("skill.nothing.desc"), Element.VIS, Ranges.SELF, 0);

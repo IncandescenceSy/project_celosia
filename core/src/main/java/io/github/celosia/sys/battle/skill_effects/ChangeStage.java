@@ -2,6 +2,9 @@ package io.github.celosia.sys.battle.skill_effects;
 
 import io.github.celosia.sys.battle.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeStage implements SkillEffect {
@@ -31,31 +34,26 @@ public class ChangeStage implements SkillEffect {
     @Override
     public Result apply(Combatant self, Combatant target, boolean isMainTarget, ResultType resultPrev) {
         if(!mainTargetOnly || isMainTarget) {
+            List<String> msg = new ArrayList<>();
+            String str = "";
+
             int stageOld = target.getStage(stageType);
             int stageNew = Math.clamp(stageOld + change, -5, 5);
 
-            String[] msg = new String[2];
             if (stageNew != stageOld) {
                 target.setStage(stageType, stageNew);
-                msg[0] = target.getCmbType().getName() + "'s " + stageType.getName() + " " + lang.get("stage") + " " + stageOld + " -> " + stageNew;
-            } else
-                msg[0] = "";
+                str = target.getCmbType().getName() + "'s " + stageType.getName() + " " + lang.get("stage") + " " + stageOld + " -> " + stageNew;
+            }
 
             if ((stageOld >= 0 && change >= 0) || (stageOld <= 0 && change <= 0)) { // Refresh turns
                 int turnsOld = target.getStageTurns(stageType);
                 if (turns > turnsOld) {
                     target.setStageTurns(stageType, turns);
                     if (stageNew != stageOld)
-                        msg[0] += ", " + lang.get("turns") + " " + turnsOld + " -> " + turns + "\n";
+                        msg.add(str + ", " + lang.get("turns") + " " + turnsOld + " -> " + turns);
                     else
-                        msg[1] = target.getCmbType().getName() + "'s " + stageType.getName() + " " + lang.get("stage") + " " + lang.get("turns") + " " + turnsOld + " -> " + turns + "\n";
-                } else {
-                    if (stageNew != stageOld) msg[0] += "\n";
-                    msg[1] = "";
+                        msg.add(target.getCmbType().getName() + "'s " + stageType.getName() + " " + lang.get("stage") + " " + lang.get("turns") + " " + turnsOld + " -> " + turns);
                 }
-            } else {
-                if (stageNew != stageOld) msg[0] += "\n";
-                msg[1] = "";
             }
 
             return new Result(ResultType.SUCCESS, msg);

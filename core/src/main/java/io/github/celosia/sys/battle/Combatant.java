@@ -739,31 +739,31 @@ public class Combatant {
         return null;
     }
 
-    public String decrementTurns() {
-        StringBuilder msg = new StringBuilder();
+    public List<String> decrementTurns() {
+        List<String> msg = new ArrayList<>();
 
         // Stages
         if (stageAtk != 0 && --stageAtkTurns <= 0) {
             // todo stage(s)
-            msg.append(this.getCmbType().getName()).append(" ").append(lang.get("log.loses")).append(" ").append(stageAtk).append(lang.get("stages")).append(" ").append(StageType.ATK.getName()).append("\n");
+            msg.add(this.getCmbType().getName() + " " + lang.get("log.loses") + " " + stageAtk + lang.get("stages") + " " + StageType.ATK.getName());
             stageAtk = 0; // Remove stages
         }
         if (stageDef != 0 && --stageDefTurns <= 0) {
-            msg.append(this.getCmbType().getName()).append(" ").append(lang.get("log.loses")).append(" ").append(stageDef).append(lang.get("stages")).append(" ").append(StageType.DEF.getName()).append("\n");
+            msg.add(this.getCmbType().getName() + " " + lang.get("log.loses") + " " + stageDef + lang.get("stages") + " " + StageType.DEF.getName());
             stageDef = 0;
         }
         if (stageFth != 0 && --stageFthTurns <= 0) {
-            msg.append(this.getCmbType().getName()).append(" ").append(lang.get("log.loses")).append(" ").append(stageFth).append(lang.get("stages")).append(" ").append(StageType.FTH.getName()).append("\n");
+            msg.add(this.getCmbType().getName() + " " + lang.get("log.loses") + " " + stageFth + lang.get("stages") + " " + StageType.FTH.getName());
             stageFth = 0;
         }
         if (stageAgi != 0 && --stageAgiTurns <= 0) {
-            msg.append(this.getCmbType().getName()).append(" ").append(lang.get("log.loses")).append(" ").append(stageAgi).append(lang.get("stages")).append(" ").append(StageType.AGI.getName()).append("\n");
+            msg.add(this.getCmbType().getName() + " " + lang.get("log.loses") + " " + stageAgi + lang.get("stages") + " " + StageType.AGI.getName());
             stageAgi = 0;
         }
 
         // Shield
         if (shield != 0 && --shieldTurns <= 0) {
-            msg.append(this.getCmbType().getName()).append(" ").append(lang.get("log.loses")).append(" ").append(shield).append(" ").append(lang.get("shield")).append("\n");
+            msg.add(this.getCmbType().getName() + " " + lang.get("log.loses") + " " + shield + " " + lang.get("shield"));
             shield = 0;
         }
 
@@ -774,43 +774,48 @@ public class Combatant {
             if (turns >= 2 && turns < 1000) { // 1000+ turns = infinite
                 buffInstance.setTurns(turns - 1);
             } else {
+                StringBuilder str = new StringBuilder();
                 int maxStacks = buffInstance.getBuff().getMaxStacks();
-                msg.append(this.getCmbType().getName()).append(" ").append(lang.get("log.loses")).append(" ");
-                if(maxStacks > 1) msg.append(buffInstance.getStacks()).append(" ");
-                msg.append(buffInstance.getBuff().getName());
-                if(maxStacks > 1) msg.append(" ").append(lang.get("stacks"));
-                msg.append("\n");
+                str.append(this.getCmbType().getName()).append(" ").append(lang.get("log.loses")).append(" ");
+                if(maxStacks > 1) str.append(buffInstance.getStacks()).append(" ");
+                str.append(buffInstance.getBuff().getName());
+                if(maxStacks > 1) str.append(" ").append(lang.get("stacks"));
+                msg.add(str.toString());
 
                 // todo condense lines when giving/removing multiple stacks at once
                 for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
                     for(int j = 1; j <= buffInstance.getStacks(); j++) { // Remove all stacks
-                        String onRemove = buffEffect.onRemove(this);
-                        if(!Objects.equals(onRemove, "")) msg.append(onRemove).append("\n");
+                        String[] onRemove = buffEffect.onRemove(this);
+                        for(String remove : onRemove) if(!Objects.equals(remove, "")) msg.add(remove);
                     }
                 }
                 buffInstances.remove(buffInstance);
             }
         }
 
-        return msg.toString();
+        return msg;
     }
 
     // Damage Combatant, taking into account Defend and Shield. Returns false if HP was lowered
-    public Result damage(int dmg, boolean pierce) {
+    public Result damage(int dmg, boolean pierce, boolean useName) {
         int dmgFull = dmg;
         int defendOld = defend;
 
-        String[] msg = {"", ""};
+        List<String> msg = new ArrayList<>();
+
+        String name = (useName) ? this.getCmbType().getName() + " " : "";
+        String name_s = (useName) ? this.getCmbType().getName() + "'s " : "";
 
         if (!pierce) { // Pierce skips Defend and Shield
             if (defend > 0 && dmg > 0) { // There's Defend and dmg
                 if (defend > dmg) { // Only hit Defend
                     defend -= dmg;
-                    return new Result(ResultType.HIT_SHIELD, this.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (defendOld + shield)) + " -> " + String.format("%,d", (defend + shield)) + "/" + String.format("%,d", this.getStatsDefault().getHp()) + " (-" + String.format("%,d", dmgFull) + ")" + "\n");
+                    return new Result(ResultType.HIT_SHIELD, name_s + lang.get("shield") + " " + String.format("%,d", (defendOld + shield)) + " -> "
+                        + String.format("%,d", (defend + shield)) + "/" + String.format("%,d", this.getStatsDefault().getHp()) + " (-" + String.format("%,d", dmgFull) + ")");
                 } else { // Destroy Defend and proceed to Shield
                     dmg -= defend;
                     defend = 0;
-                    if(shield == 0 && effectBlock <= 0) msg[0] = this.getCmbType().getName() + " " + lang.get("log.is_no_longer") + " " + lang.get("log.effect_block") + "\n";
+                    if(shield == 0 && effectBlock <= 0) msg.add(name + lang.get("log.is_no_longer") + " " + lang.get("log.effect_block"));
                 }
             }
 
@@ -818,13 +823,15 @@ public class Combatant {
                 if (shield > dmg) { // Only hit Shield
                     int shieldOld = shield;
                     shield -= dmg;
-                    return new Result(ResultType.HIT_SHIELD, this.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (defendOld + shieldOld)) + " -> " + String.format("%,d", shield) + "/" + String.format("%,d", this.getStatsDefault().getHp()) + " (-" + String.format("%,d", dmgFull) + ")" + "\n");
+                    return new Result(ResultType.HIT_SHIELD, name_s + lang.get("shield") + " " + String.format("%,d", (defendOld + shieldOld)) + " -> "
+                        + String.format("%,d", shield) + "/" + String.format("%,d", this.getStatsDefault().getHp()) + " (-" + String.format("%,d", dmgFull) + ")");
                 } else { // Destroy Shield and proceed to HP
-                    msg[0] += this.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (defendOld + shield)) + " -> " + 0 + "/" + this.getStatsDefault().getHp() + " (-" + String.format("%,d", (defendOld + shield)) + ")" + "\n";
+                    msg.add(name_s + lang.get("shield") + " " + String.format("%,d", (defendOld + shield)) + " -> " + 0 + "/" + this.getStatsDefault().getHp() +
+                        " (-" + String.format("%,d", (defendOld + shield)) + ")");
                     dmg -= shield;
                     shield = 0;
                     shieldTurns = 0;
-                    if(effectBlock <= 0) msg[0] += this.getCmbType().getName() + " " + lang.get("log.is_no_longer") + " " + lang.get("log.effect_block") + "\n";
+                    if(effectBlock <= 0) msg.add(name+ lang.get("log.is_no_longer") + " " + lang.get("log.effect_block"));
                 }
             }
         }
@@ -832,17 +839,20 @@ public class Combatant {
         // Lower HP
         int hpOld = this.getStatsCur().getHp();
         int hpNew = Math.clamp(hpOld - dmg, 0, this.getStatsDefault().getHp());
-        msg[1] = this.getCmbType().getName() + "'s " + lang.get("hp") + " " + String.format("%,d", hpOld) + " -> " + String.format("%,d", hpNew) + " (-" + String.format("%,d", dmg) + ")" + "\n";
+        msg.add(name_s + lang.get("hp") + " " + String.format("%,d", hpOld) + " -> " + String.format("%,d", hpNew) + " (-" + String.format("%,d", dmg) + ")");
         this.getStatsCur().setHp(hpNew);
 
         if (effectBlock > 0) { // todo should this be a separate result from hitting shield
             return new Result(ResultType.HIT_SHIELD, msg);
         } else if (dmg > 0) { // Did damage
             return new Result(ResultType.SUCCESS, msg);
-        } else return new Result(ResultType.FAIL, lang.get("log.no_effect") + " " + lang.get("log.on") + " " + this.getCmbType().getName() + "\n"); // Did no damage
+        } else return new Result(ResultType.FAIL, lang.get("log.no_effect") + " " + lang.get("log.on") + " " + this.getCmbType().getName()); // Did no damage
     }
 
+    public Result damage(int dmg, boolean pierce) {
+        return this.damage(dmg, pierce, true);
+    }
     public Result damage(int dmg) {
-        return this.damage(dmg, false);
+        return this.damage(dmg, false, true);
     }
 }
