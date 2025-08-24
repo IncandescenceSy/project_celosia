@@ -5,10 +5,14 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Align;
 import com.github.tommyettinger.textra.Font;
 import com.github.tommyettinger.textra.TypingLabel;
+import io.github.celosia.sys.battle.Range;
+import io.github.celosia.sys.battle.Ranges;
+import io.github.celosia.sys.battle.Side;
 import io.github.celosia.sys.settings.Keybind;
 
 import java.util.List;
 
+import static io.github.celosia.sys.battle.PosLib.*;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class MenuLib {
@@ -24,18 +28,27 @@ public class MenuLib {
 
     // Check menu movement input (targeting) and handle wrapping
     // todo: complex targeting (dread)
-    public static int checkMovementTargeting(int index) {
-        if (InputLib.checkInput(true, Keybind.UP)) {
-            if (index < 4) { // On player side
-                return --index < 0 ? 3 : index;
-            } else return --index < 4 ? 7 : index;
-        } else if (InputLib.checkInput(true, Keybind.DOWN)) {
-            if (index < 4) { // On player side
-                return ++index >= 4 ? 0 : index;
-            } else return ++index >= 8 ? 4 : index;
-        } else if (InputLib.checkInput(true, Keybind.LEFT, Keybind.RIGHT)) {
-            return (index < 4) ? index + 4 : index - 4;
-        } else return index;
+    public static int checkMovementTargeting(int index, int selectingMove, Range range) {
+        // Lock cursor to self for self Ranges
+        if(range != Ranges.SELF && range != Ranges.SELF_UP_DOWN) {
+            int newIndex = index;
+
+            if (InputLib.checkInput(true, Keybind.UP)) {
+                if (index < 4) { // On player side
+                    newIndex = (index - 1) < 0 ? 3 : index - 1;
+                } else newIndex = (index - 1) < 4 ? 7 : index - 1;
+            } else if (InputLib.checkInput(true, Keybind.DOWN)) {
+                if (index < 4) { // On player side
+                    newIndex = (index + 1) >= 4 ? 0 : index + 1;
+                } else newIndex = (index + 1) >= 8 ? 4 : index + 1;
+            } else if (InputLib.checkInput(true, Keybind.LEFT, Keybind.RIGHT)) {
+                newIndex = (index < 4) ? index + 4 : index - 4;
+            }
+
+            if(range.getSide() == Side.BOTH) return newIndex;
+            else if(range.getSide() == getRelativeSide(selectingMove, newIndex)) return newIndex;
+            else return index;
+        } else return selectingMove;
     }
 
     // Check for scrolling the battle log

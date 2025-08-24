@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static io.github.celosia.sys.battle.Element.IGNIS;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 // Species and current stats
-public class Combatant {
-    private final CombatantType cmbType;
+public class Unit {
+    private final UnitType unitType;
     private final int lvl; // Level
 
     // Current stats
@@ -92,12 +91,18 @@ public class Combatant {
     // Secondary effect block; >=1 means blocks secondary effects the same as Barrier
     private int effectBlock;
 
+    // Buff/debuff duration modifiers
+    private int durationModBuffDealt;
+    private int durationModBuffTaken;
+    private int durationModDebuffDealt;
+    private int durationModDebuffTaken;
+
     private List<BuffInstance> buffInstances = new ArrayList<>();
 
-    public Combatant(CombatantType cmbType, int lvl, Skill[] skills, int pos) {
-        this.cmbType = cmbType;
+    public Unit(UnitType unitType, int lvl, Skill[] skills, int pos) {
+        this.unitType = unitType;
         this.lvl = lvl;
-        statsDefault = cmbType.getStatsBase().getRealStats(lvl);
+        statsDefault = unitType.getStatsBase().getRealStats(lvl);
         statsCur = new Stats(statsDefault);
         this.skills = skills;
         sp = 200;
@@ -110,13 +115,13 @@ public class Combatant {
         stageFthTurns = 0;
         stageAgi = 0;
         stageAgiTurns = 0;
-        affIgnis = cmbType.getAffIgnis();
-        affGlacies = cmbType.getAffGlacies();
-        affFulgur = cmbType.getAffFulgur();
-        affVentus = cmbType.getAffVentus();
-        affTerra = cmbType.getAffTerra();
-        affLux = cmbType.getAffLux();
-        affMalum = cmbType.getAffMalum();
+        affIgnis = unitType.getAffIgnis();
+        affGlacies = unitType.getAffGlacies();
+        affFulgur = unitType.getAffFulgur();
+        affVentus = unitType.getAffVentus();
+        affTerra = unitType.getAffTerra();
+        affLux = unitType.getAffLux();
+        affMalum = unitType.getAffMalum();
         multDmgDealt = 100;
         multDmgTaken = 100;
         multIgnisDmgDealt = 100;
@@ -146,10 +151,14 @@ public class Combatant {
         defend = 0;
         extraActions = 0;
         effectBlock = 0;
+        durationModBuffDealt = 0;
+        durationModBuffTaken = 0;
+        durationModDebuffDealt = 0;
+        durationModDebuffTaken = 0;
     }
 
-    public CombatantType getCmbType() {
-        return cmbType;
+    public UnitType getUnitType() {
+        return unitType;
     }
 
     public int getLvl() {
@@ -238,6 +247,14 @@ public class Combatant {
 
     public int getStageAgi() {
         return stageAgi;
+    }
+
+    public void setStageAgiTurns(int stageAgiTurns) {
+        this.stageAgiTurns = stageAgiTurns;
+    }
+
+    public int getStageAgiTurns() {
+        return stageAgiTurns;
     }
 
     public void setStage(StageType stageType, int stage) {
@@ -715,6 +732,56 @@ public class Combatant {
         return effectBlock;
     }
 
+    public void setDurationModBuffDealt(int durationModBuffDealt) {
+        this.durationModBuffDealt = durationModBuffDealt;
+    }
+
+    public int getDurationModBuffDealt() {
+        return durationModBuffDealt;
+    }
+
+    public void setDurationModBuffTaken(int durationModBuffTaken) {
+        this.durationModBuffTaken = durationModBuffTaken;
+    }
+
+    public int getDurationModBuffTaken() {
+        return durationModBuffTaken;
+    }
+
+    public void setDurationModDebuffDealt(int durationModDebuffDealt) {
+        this.durationModDebuffDealt = durationModDebuffDealt;
+    }
+
+    public int getDurationModDebuffDealt() {
+        return durationModDebuffDealt;
+    }
+
+    public void setDurationModDebuffTaken(int durationModDebuffTaken) {
+        this.durationModDebuffTaken = durationModDebuffTaken;
+    }
+
+    public int getDurationModDebuffTaken() {
+        return durationModDebuffTaken;
+    }
+
+    public void setDurationModBuffTypeDealt(BuffType buffType, int durationModBuffTypeDealt) {
+        if(buffType == BuffType.BUFF) durationModBuffDealt = durationModBuffTypeDealt;
+        else durationModDebuffDealt = durationModBuffTypeDealt;
+    }
+
+    public int getDurationModBuffTypeDealt(BuffType buffType) {
+        return (buffType == BuffType.BUFF) ? durationModBuffDealt : durationModDebuffDealt;
+    }
+
+    public void setDurationModBuffTypeTaken(BuffType buffType, int durationModBuffTypeTaken) {
+        if(buffType == BuffType.BUFF) durationModBuffTaken = durationModBuffTypeTaken;
+        else durationModDebuffTaken = durationModBuffTypeTaken;
+    }
+
+    public int getDurationModBuffTypeTaken(BuffType buffType) {
+        return (buffType == BuffType.BUFF) ? durationModBuffTaken : durationModDebuffTaken;
+    }
+
     public void setBuffInstances(List<BuffInstance> buffInstances) {
         this.buffInstances = buffInstances;
     }
@@ -731,6 +798,22 @@ public class Combatant {
         return multDmgTaken <= -50000;
     }
 
+    public boolean isWeakTo(Element element) {
+        return this.getAff(element) < 0;
+    }
+
+    public boolean isResists(Element element) {
+        return this.getAff(element) > 0;
+    }
+
+    public boolean isImmuneTo(Element element) {
+        return this.getAff(element) >= 5;
+    }
+
+    public boolean isNeutralTo(Element element) {
+        return this.getAff(element) == 0;
+    }
+
     // Returns the requested BuffInstance if present
     public BuffInstance findBuff(Buff buff) {
         for(BuffInstance buffInstance : buffInstances) {
@@ -745,25 +828,25 @@ public class Combatant {
         // Stages
         if (stageAtk != 0 && --stageAtkTurns <= 0) {
             // todo stage(s)
-            msg.add(this.getCmbType().getName() + " " + lang.get("log.loses") + " " + stageAtk + lang.get("stages") + " " + StageType.ATK.getName());
+            msg.add(this.getUnitType().getName() + " " + lang.get("log.loses") + " " + stageAtk + lang.get("stages") + " " + StageType.ATK.getName());
             stageAtk = 0; // Remove stages
         }
         if (stageDef != 0 && --stageDefTurns <= 0) {
-            msg.add(this.getCmbType().getName() + " " + lang.get("log.loses") + " " + stageDef + lang.get("stages") + " " + StageType.DEF.getName());
+            msg.add(this.getUnitType().getName() + " " + lang.get("log.loses") + " " + stageDef + lang.get("stages") + " " + StageType.DEF.getName());
             stageDef = 0;
         }
         if (stageFth != 0 && --stageFthTurns <= 0) {
-            msg.add(this.getCmbType().getName() + " " + lang.get("log.loses") + " " + stageFth + lang.get("stages") + " " + StageType.FTH.getName());
+            msg.add(this.getUnitType().getName() + " " + lang.get("log.loses") + " " + stageFth + lang.get("stages") + " " + StageType.FTH.getName());
             stageFth = 0;
         }
         if (stageAgi != 0 && --stageAgiTurns <= 0) {
-            msg.add(this.getCmbType().getName() + " " + lang.get("log.loses") + " " + stageAgi + lang.get("stages") + " " + StageType.AGI.getName());
+            msg.add(this.getUnitType().getName() + " " + lang.get("log.loses") + " " + stageAgi + lang.get("stages") + " " + StageType.AGI.getName());
             stageAgi = 0;
         }
 
         // Shield
         if (shield != 0 && --shieldTurns <= 0) {
-            msg.add(this.getCmbType().getName() + " " + lang.get("log.loses") + " " + shield + " " + lang.get("shield"));
+            msg.add(this.getUnitType().getName() + " " + lang.get("log.loses") + " " + shield + " " + lang.get("shield"));
             shield = 0;
         }
 
@@ -776,18 +859,16 @@ public class Combatant {
             } else {
                 StringBuilder str = new StringBuilder();
                 int maxStacks = buffInstance.getBuff().getMaxStacks();
-                str.append(this.getCmbType().getName()).append(" ").append(lang.get("log.loses")).append(" ");
+                str.append(this.getUnitType().getName()).append(" ").append(lang.get("log.loses")).append(" ");
                 if(maxStacks > 1) str.append(buffInstance.getStacks()).append(" ");
                 str.append(buffInstance.getBuff().getName());
                 if(maxStacks > 1) str.append(" ").append(lang.get("stacks"));
                 msg.add(str.toString());
 
-                // todo condense lines when giving/removing multiple stacks at once
+                // Remove effects
                 for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
-                    for(int j = 1; j <= buffInstance.getStacks(); j++) { // Remove all stacks
-                        String[] onRemove = buffEffect.onRemove(this);
-                        for(String remove : onRemove) if(!Objects.equals(remove, "")) msg.add(remove);
-                    }
+                    String[] effectMsgs = buffEffect.onRemove(this, buffInstance.getStacks());
+                    for(String effectMsg : effectMsgs) if(!Objects.equals(effectMsg, "")) msg.add(effectMsg);
                 }
                 buffInstances.remove(buffInstance);
             }
@@ -796,15 +877,15 @@ public class Combatant {
         return msg;
     }
 
-    // Damage Combatant, taking into account Defend and Shield. Returns false if HP was lowered
+    // Damage Unit, taking into account Defend and Shield. Returns false if HP was lowered
     public Result damage(int dmg, boolean pierce, boolean useName) {
         int dmgFull = dmg;
         int defendOld = defend;
 
         List<String> msg = new ArrayList<>();
 
-        String name = (useName) ? this.getCmbType().getName() + " " : "";
-        String name_s = (useName) ? this.getCmbType().getName() + "'s " : "";
+        String name = (useName) ? this.getUnitType().getName() + " " : "";
+        String name_s = (useName) ? this.getUnitType().getName() + "'s " : "";
 
         if (!pierce) { // Pierce skips Defend and Shield
             if (defend > 0 && dmg > 0) { // There's Defend and dmg
@@ -846,7 +927,7 @@ public class Combatant {
             return new Result(ResultType.HIT_SHIELD, msg);
         } else if (dmg > 0) { // Did damage
             return new Result(ResultType.SUCCESS, msg);
-        } else return new Result(ResultType.FAIL, lang.get("log.no_effect") + " " + lang.get("log.on") + " " + this.getCmbType().getName()); // Did no damage
+        } else return new Result(ResultType.FAIL, lang.get("log.no_effect") + " " + lang.get("log.on") + " " + this.getUnitType().getName()); // Did no damage
     }
 
     public Result damage(int dmg, boolean pierce) {

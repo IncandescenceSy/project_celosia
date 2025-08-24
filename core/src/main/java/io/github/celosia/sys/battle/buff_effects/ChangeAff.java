@@ -1,7 +1,7 @@
 package io.github.celosia.sys.battle.buff_effects;
 
 import io.github.celosia.sys.battle.BuffEffect;
-import io.github.celosia.sys.battle.Combatant;
+import io.github.celosia.sys.battle.Unit;
 import io.github.celosia.sys.battle.Element;
 
 import static io.github.celosia.sys.settings.Lang.lang;
@@ -17,18 +17,18 @@ public class ChangeAff implements BuffEffect {
     }
 
     @Override
-    public String[] onGive(Combatant self) {
+    public String[] onGive(Unit self, int stacks) {
         int affOld = self.getAff(element);
-        int affNew = affOld + change;
+        int affNew = affOld + (change * stacks);
         self.setAff(element, affNew);
-        return new String[]{self.getCmbType().getName() + "'s " + element.getName() + " " + lang.get("affinity") + " " + Math.clamp(affOld, -5, 5) + " -> " + Math.clamp(affNew, -5, 5)};
+        return new String[]{self.getUnitType().getName() + "'s " + element.getName() + " " + lang.get("affinity") + " " + Math.clamp(affOld, -5, 5) + " -> " + Math.clamp(affNew, -5, 5)};
     }
 
     @Override
-    public String[] onRemove(Combatant self) {
+    public String[] onRemove(Unit self, int stacks) {
         int affOld = self.getAff(element);
-        int affNew = affOld - change;
+        int affNew = affOld - (change * stacks);
         self.setAff(element, affNew);
-        return new String[]{self.getCmbType().getName() + "'s " + element.getName() + " " + lang.get("affinity") + " " + Math.clamp(affOld, -5, 5) + " -> " + Math.clamp(affNew, -5, 5)};
+        return new String[]{self.getUnitType().getName() + "'s " + element.getName() + " " + lang.get("affinity") + " " + Math.clamp(affOld, -5, 5) + " -> " + Math.clamp(affNew, -5, 5)};
     }
 }

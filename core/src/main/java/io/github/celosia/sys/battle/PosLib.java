@@ -3,7 +3,7 @@ package io.github.celosia.sys.battle;
 import java.util.ArrayList;
 import java.util.List;
 
-// Utilities for dealing with Combatant positions
+// Utilities for dealing with Unit positions
 public class PosLib {
     // Returns the pos off spaces below this one, or -1 if it's invalid
     public static int getUpDown(int pos, int off) {
@@ -18,7 +18,7 @@ public class PosLib {
         return pos + (4 * ((pos < 4) ? 1 : -1));
     }
 
-    // Returns the poses of the Combatants on the team except the provided one
+    // Returns the poses of the Units on the team except the provided one
     public static List<Integer> getTeamWithout(int pos) {
         List<Integer> result = new ArrayList<>();
 
@@ -32,8 +32,20 @@ public class PosLib {
         return result;
     }
 
-    // Returns the height 0-3 of the Combatant
+    // Returns the height 0-3 of pos
     public static int getHeight(int pos) {
         return (pos < 4) ? pos : pos - 4;
+    }
+
+    // Returns the Side of pos
+    public static Side getSide(int pos) {
+        return (pos < 4) ? Side.ALLY : Side.OPPONENT;
+    }
+
+    // Returns the Side of pos2 relative to the Side of pos1
+    public static Side getRelativeSide(int pos1, int pos2) {
+        return (pos2 < 4) ?
+            (pos1 < 4) ? Side.ALLY : Side.OPPONENT
+            : (pos1 >= 4) ? Side.ALLY : Side.OPPONENT;
     }
 }

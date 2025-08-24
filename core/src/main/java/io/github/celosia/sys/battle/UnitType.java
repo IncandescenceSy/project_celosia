@@ -1,7 +1,7 @@
 package io.github.celosia.sys.battle;
 
 // Monster species
-public class CombatantType {
+public class UnitType {
 
     String name;
 
@@ -17,14 +17,13 @@ public class CombatantType {
     private final int affLux;
     private final int affMalum;
 
-    // Passives
-    // todo
-
     // Skills
     // todo
 
-    public CombatantType(String name, Stats stats,
-                         int affIgnis, int affGlacies, int affFulgur, int affVentus, int affTerra, int affLux, int affMalum) {
+    // Passives
+    private final Passive[] passives;
+
+    public UnitType(String name, Stats stats, int affIgnis, int affGlacies, int affFulgur, int affVentus, int affTerra, int affLux, int affMalum, Passive... passives) {
         this.name = name;
         this.statsBase = stats;
         this.affIgnis = affIgnis;
@@ -34,6 +33,7 @@ public class CombatantType {
         this.affTerra = affTerra;
         this.affLux = affLux;
         this.affMalum = affMalum;
+        this.passives = passives;
     }
 
     public String getName() {
@@ -74,5 +74,9 @@ public class CombatantType {
 
     public int[] getAffs() {
         return new int[]{affIgnis, affGlacies, affFulgur, affVentus, affTerra, affLux, affMalum};
+    }
+
+    public Passive[] getPassives() {
+        return passives;
     }
 }

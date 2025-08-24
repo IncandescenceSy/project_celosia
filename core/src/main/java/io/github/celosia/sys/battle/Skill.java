@@ -1,6 +1,6 @@
 package io.github.celosia.sys.battle;
 
-// Skills (any action that is attributed to a Combatant and has impact on the battle)
+// Skills (any action that is attributed to a Unit and has impact on the battle)
 // todo functional range, skill "roles" (for autotargeting and AI)
 public class Skill {
     private final String name;

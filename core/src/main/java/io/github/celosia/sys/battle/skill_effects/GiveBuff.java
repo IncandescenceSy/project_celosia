@@ -57,22 +57,34 @@ public class GiveBuff implements SkillEffect {
     }
 
     @Override
-    public Result apply(Combatant self, Combatant target, boolean isMainTarget, ResultType resultPrev) {
+    public Result apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
         // Most attacks don't apply buffs if the previous hit was blocked by Shield or immunity
         if (resultPrev.ordinal() >= minResult.ordinal() && (!mainTargetOnly || isMainTarget)) {
-            Combatant cmb = (giveToSelf) ? self : target;
-            List<BuffInstance> buffInstances = cmb.getBuffInstances();
-            BuffInstance buffInstance = cmb.findBuff(buff);
+            List<String> msg = new ArrayList<>();
+
+            // Apply durationMod
+            int turnsMod = turns + self.getDurationModBuffTypeDealt(buff.getBuffType()) + target.getDurationModBuffTypeTaken(buff.getBuffType());
+
+            // Notify Passives onGiveBuff
+            for(Passive passive : self.getUnitType().getPassives()) {
+                for(PassiveEffect passiveEffect : passive.getPassiveEffects()) {
+                    String[] effectMsgs = passiveEffect.onGiveBuff(self, target, buff, turnsMod, stacks);
+                    for(String effectMsg : effectMsgs) if(!Objects.equals(effectMsg, "")) msg.add(effectMsg);
+                }
+            }
+
+            Unit unit = (giveToSelf) ? self : target;
+            List<BuffInstance> buffInstances = unit.getBuffInstances();
+            BuffInstance buffInstance = unit.findBuff(buff);
 
             if(buffInstance != null) { // Already has buff
-                List<String> msg = new ArrayList<>();
                 String str = "";
 
                 // Refresh turns
                 int turnsOld = buffInstance.getTurns();
-                if(turns > turnsOld) {
-                    buffInstance.setTurns(turns);
-                    str = cmb.getCmbType().getName() + "'s " + buff.getName() + " " + lang.format("turn_s", turns) + " " + turnsOld + " -> " + turns;
+                if(turnsMod > turnsOld) {
+                    buffInstance.setTurns(turnsMod);
+                    str = unit.getUnitType().getName() + "'s " + buff.getName() + " " + lang.format("turn_s", turnsMod) + " " + turnsOld + " -> " + turnsMod;
                 }
 
                 // Add stacks
@@ -80,34 +92,29 @@ public class GiveBuff implements SkillEffect {
                 int stacksNew = Math.min(buffInstance.getBuff().getMaxStacks(), stacksOld + stacks);
                 if(stacksNew != stacksOld) {
                     buffInstance.setStacks(stacksNew);
-                    if(turns > turnsOld) msg.add(str + ", " + lang.format("stack_s", stacksNew) + " " + stacksOld + " -> " + stacksNew);
-                    else msg.add(cmb.getCmbType().getName() + "'s " + buff.getName() + " " + lang.get("stacks") + " " + stacksOld + " -> " + stacksNew);
+                    if(turnsMod > turnsOld) msg.add(str + ", " + lang.format("stack_s", stacksNew) + " " + stacksOld + " -> " + stacksNew);
+                    else msg.add(unit.getUnitType().getName() + "'s " + buff.getName() + " " + lang.get("stacks") + " " + stacksOld + " -> " + stacksNew);
                 }
 
                 // Apply once for each newly added stack
                 int stacksAdded = stacksNew - stacksOld;
                 for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
-                    for (int i = 1; i <= stacksAdded; i++) {
-                        String[] onGive = buffEffect.onGive(cmb);
-                        for(String give : onGive) if(!Objects.equals(give, "")) msg.add(give);
-                    }
+                    String[] effectMsgs = buffEffect.onGive(unit, stacksAdded);
+                    for(String effectMsg : effectMsgs) if(!Objects.equals(effectMsg, "")) msg.add(effectMsg);
                 }
 
                 return new Result(ResultType.SUCCESS, msg);
             } else { // Doesn't have buff
-                List<String> msg = new ArrayList<>();
-                msg.add(cmb.getCmbType().getName() + " " + lang.get("log.gains") + " " + buff.getName() + " " + lang.get("log.with") + " " + ((buff.getMaxStacks() > 1) ?
-                    (stacks + " " + lang.format("stack_s", stacks) + " " + lang.get("log.and")) + " " : "") + turns + " " + lang.format("turn_s", turns));
-                cmb.addBuffInstance(new BuffInstance(buff, turns, stacks));
+                msg.add(unit.getUnitType().getName() + " " + lang.get("log.gains") + " " + buff.getName() + " " + lang.get("log.with") + " " + ((buff.getMaxStacks() > 1) ?
+                    (stacks + " " + lang.format("stack_s", stacks) + " " + lang.get("log.and")) + " " : "") + turnsMod + " " + lang.format("turn_s", turnsMod));
+                unit.addBuffInstance(new BuffInstance(buff, turnsMod, stacks));
                 buffInstance = buffInstances.getLast();
 
-                // Apply once for each stack
+                // Apply
                 BuffEffect[] buffEffects = buffInstance.getBuff().getBuffEffects();
-                for (int i = 0; i < buffEffects.length; i++) {
-                    for (int j = 0; j < buffInstance.getStacks(); j++) {
-                        String[] onGive = buffEffects[i].   onGive(cmb);
-                        for(String give : onGive) if(!Objects.equals(give, "")) msg.add(give);
-                    }
+                for (BuffEffect buffEffect : buffEffects) {
+                    String[] effectMsgs = buffEffect.onGive(unit, buffInstance.getStacks());
+                    for (String effectMsg : effectMsgs) if (!Objects.equals(effectMsg, "")) msg.add(effectMsg);
                 }
                 return new Result(ResultType.SUCCESS, msg);
             }

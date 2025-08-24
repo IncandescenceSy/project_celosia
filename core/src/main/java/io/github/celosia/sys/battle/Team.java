@@ -1,18 +1,18 @@
 package io.github.celosia.sys.battle;
 
-// A set of Combatants that share some attributes
+// A set of Units that share some attributes
 public class Team {
 
     String name;
 
-    Combatant[] cmbs;
+    Unit[] units;
 
     int bloom; // Bloom
 
     // Todo: field effects
 
-    public Team(Combatant[] cmbs) {
-        this.cmbs = cmbs;
+    public Team(Unit[] units) {
+        this.units = units;
         bloom = 0;
     }
 
@@ -28,11 +28,11 @@ public class Team {
         this.bloom = blm;
     }
 
-    public Combatant[] getCmbs() {
-        return cmbs;
+    public Unit[] getUnits() {
+        return units;
     }
 
-    public void setCmbs(Combatant[] cmbs) {
-        this.cmbs = cmbs;
+    public void setUnits(Unit[] units) {
+        this.units = units;
     }
 }

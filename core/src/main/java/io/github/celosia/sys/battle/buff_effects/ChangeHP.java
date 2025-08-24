@@ -2,8 +2,6 @@ package io.github.celosia.sys.battle.buff_effects;
 
 import io.github.celosia.sys.battle.*;
 
-import java.util.List;
-
 import static io.github.celosia.sys.settings.Lang.lang;
 
 // Todo heavily limit %-based damage on bosses
@@ -22,10 +20,10 @@ public class ChangeHP implements BuffEffect {
     }
 
     @Override
-    public String[] onTurnEnd(Combatant self) {
+    public String[] onTurnEnd(Unit self, int stacks) {
         if(change < 0) { // Damage
             //String hp = (self.getShield() + self.getDefend() > 0) ? lang.get("shield") : lang.get("hp");
-            Result result = self.damage((int) Math.abs((self.getStatsDefault().getHp() * change) * (Math.max(self.getMultDmgTaken(), 10) / 100d) * (Math.max(self.getMultDoTDmgTaken(), 10) / 100d)), pierce, false);
+            Result result = self.damage((int) Math.abs(((self.getStatsDefault().getHp() * change) * stacks) * (Math.max(self.getMultDmgTaken(), 10) / 100d) * (Math.max(self.getMultDoTDmgTaken(), 10) / 100d)), pierce, false);
 
             /*List<String> msgs = result.getMessages();
             String[] str1 = new String[]{""};
@@ -38,7 +36,7 @@ public class ChangeHP implements BuffEffect {
         } else { // Healing
             int hpOld = self.getStatsCur().getHp();
             int hpMax = self.getStatsDefault().getHp();
-            int hpNew = (int) Math.max(hpOld, Math.min(hpOld + ((hpMax * change) * (Math.max(self.getMultHealingTaken(), 10) / 100d)), hpMax));
+            int hpNew = (int) Math.max(hpOld, Math.min(hpOld + (((hpMax * change) * stacks) * (Math.max(self.getMultHealingTaken(), 10) / 100d)), hpMax));
             self.getStatsCur().setHp(hpNew);
             return new String[]{lang.get("hp") + " " + hpOld + " -> " + hpNew + " (+" + Math.max(hpNew - hpOld, 0) + ")"};
         }

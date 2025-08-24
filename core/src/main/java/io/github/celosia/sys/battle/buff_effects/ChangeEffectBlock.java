@@ -1,7 +1,7 @@
 package io.github.celosia.sys.battle.buff_effects;
 
 import io.github.celosia.sys.battle.BuffEffect;
-import io.github.celosia.sys.battle.Combatant;
+import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.settings.Lang.lang;
 
@@ -14,18 +14,18 @@ public class ChangeEffectBlock implements BuffEffect {
     }
 
     @Override
-    public String[] onGive(Combatant self) {
+    public String[] onGive(Unit self, int stacks) {
         int effectBlockOld = self.getEffectBlock();
-        int effectBlockNew = effectBlockOld + change;
+        int effectBlockNew = effectBlockOld + (change * stacks);
         self.setEffectBlock(effectBlockNew);
-        return new String[]{(effectBlockNew > 0 && self.getShield() == 0 && self.getDefend() == 0) ? self.getCmbType().getName() + " " + lang.get("log.is_now") + " " + lang.get("log.effect_block") : ""};
+        return new String[]{(effectBlockNew > 0 && self.getShield() == 0 && self.getDefend() == 0) ? self.getUnitType().getName() + " " + lang.get("log.is_now") + " " + lang.get("log.effect_block") : ""};
     }
 
     @Override
-    public String[] onRemove(Combatant self) {
+    public String[] onRemove(Unit self, int stacks) {
         int effectBlockOld = self.getEffectBlock();
-        int effectBlockNew = effectBlockOld - change;
+        int effectBlockNew = effectBlockOld - (change * stacks);
         self.setEffectBlock(effectBlockNew);
-        return new String[]{(effectBlockNew <= 0 && self.getShield() == 0 && self.getDefend() == 0) ? self.getCmbType().getName() + " " + lang.get("log.is_no_longer") + " " + lang.get("log.effect_block") : ""};
+        return new String[]{(effectBlockNew <= 0 && self.getShield() == 0 && self.getDefend() == 0) ? self.getUnitType().getName() + " " + lang.get("log.is_no_longer") + " " + lang.get("log.effect_block") : ""};
     }
 }

@@ -10,31 +10,33 @@ public class Skills {
     static Skill INFERNAL_PROVENANCE = new Skill("Infernal Provenance", "", Element.IGNIS, Ranges.OTHER_1R_OR_SELF, 1, new Damage(SkillType.MAG, Element.IGNIS, 100), new GiveBuff(Buffs.EXTRA_ACTION, 2, true, true));
     static Skill ULTRA_KILL = new Skill("Ultra Kill", "", Element.IGNIS, Ranges.COLUMN_OF_3_1R, 1, new Damage(SkillType.STR, Element.IGNIS, 100), new Damage(SkillType.STR, Element.IGNIS, 100, false, false, true));
     static Skill RASETU_FEAST = new Skill("Rasetu Feast", "", Element.VIS, Ranges.OTHER_2R, 1, new GiveBuff(Buffs.BURN, 3, 3), new GiveBuff(Buffs.FROSTBITE, 3, 3), new GiveBuff(Buffs.POISON, 3, 3), new GiveBuff(Buffs.CURSE, 3, 3));
+    static Skill ALLY_ONLY = new Skill("Ally Only", "", Element.VIS, Ranges.ALLY_3R, 1, new GiveBuff(Buffs.BURN, 2, 1));
+    static Skill OPPONENT_ONLY = new Skill("Opponent Only", "", Element.VIS, Ranges.OPPONENT_3R, 1, new GiveBuff(Buffs.BURN, 2, 1));
 
     // Basic skills
     static Skill NOTHING = new Skill(lang.get("skill.nothing"), lang.get("skill.nothing.desc"), Element.VIS, Ranges.SELF, 0);
-    static Skill DEFEND = new Skill(lang.get("skill.defend"), lang.get("skill.defend.desc"), Element.VIS, Ranges.SELF, 0, 3, new GiveBuff(Buffs.DEFEND), new ChangeSP(70, false, true)); // todo ChangeSP
-    static Skill PROTECT = new Skill(lang.get("skill.protect"), lang.get("skill.protect.desc"), Element.VIS, Ranges.SELF, 40, 3, new GiveBuff(Buffs.PROTECT, false)); // todo disallow using twice in a row
+    static Skill DEFEND = new Skill(lang.get("skill.defend"), lang.get("skill.defend.desc"), Element.VIS, Ranges.SELF, 0, 3, new GiveBuff(Buffs.DEFEND), new ChangeSP(70, false, true));
+    static Skill PROTECT = new Skill(lang.get("skill.protect"), lang.get("skill.protect.desc"), Element.VIS, Ranges.SELF, 40, 3, new GiveBuff(Buffs.PROTECT, false)); // todo cooldown
     static Skill BLOSSOM = new Skill(lang.get("skill.blossom"), lang.get("skill.blossom.desc"), Element.VIS, Ranges.SELF, 300); // todo
 
     // Stage changers
-    static Skill ATTACK_UP = new Skill(lang.get("skill.atk_up"), lang.get("skill.atk_up.desc"), Element.VIS, Ranges.OTHER_2R_OR_SELF, 50, new ChangeStage(StageType.ATK, 2, 5, false));
-    static Skill DEFENSE_UP = new Skill(lang.get("skill.def_up"), lang.get("skill.def_up.desc"), Element.VIS, Ranges.OTHER_2R_OR_SELF, 50, new ChangeStage(StageType.DEF, 2, 5, false));
-    static Skill FAITH_UP = new Skill(lang.get("skill.fth_up"), lang.get("skill.fth_up.desc"), Element.VIS, Ranges.OTHER_2R_OR_SELF, 50, new ChangeStage(StageType.FTH, 2, 5, false));
-    static Skill AGILITY_UP = new Skill(lang.get("skill.agi_up"), lang.get("skill.agi_up.desc"), Element.VIS, Ranges.OTHER_2R_OR_SELF, 50, new ChangeStage(StageType.AGI, 2, 5, false));
-    static Skill ATTACK_DOWN = new Skill(lang.get("skill.atk_down"), lang.get("skill.atk_down.desc"), Element.VIS, Ranges.OTHER_2R_OR_SELF, 50, new ChangeStage(StageType.ATK, -2, 5, false));
-    static Skill DEFENSE_DOWN = new Skill(lang.get("skill.def_down"), lang.get("skill.def_down.desc"), Element.VIS, Ranges.OTHER_2R_OR_SELF, 50, new ChangeStage(StageType.DEF, -2, 5, false));
-    static Skill FAITH_DOWN = new Skill(lang.get("skill.fth_down"), lang.get("skill.fth_down.desc"), Element.VIS, Ranges.OTHER_2R_OR_SELF, 50, new ChangeStage(StageType.FTH, -2, 5, false));
-    static Skill AGILITY_DOWN = new Skill(lang.get("skill.agi_down"), lang.get("skill.agi_down.desc"), Element.VIS, Ranges.OTHER_2R_OR_SELF, 50, new ChangeStage(StageType.AGI, -2, 5, false));
+    static Skill ATTACK_UP = new Skill(lang.get("skill.atk_up"), lang.get("skill.atk_up.desc"), Element.VIS, Ranges.OTHER_2R_OR_SELF, 50, new ChangeStage(StageType.ATK, 5, 2, false));
+    static Skill DEFENSE_UP = new Skill(lang.get("skill.def_up"), lang.get("skill.def_up.desc"), Element.VIS, Ranges.OTHER_2R_OR_SELF, 50, new ChangeStage(StageType.DEF, 5, 2, false));
+    static Skill FAITH_UP = new Skill(lang.get("skill.fth_up"), lang.get("skill.fth_up.desc"), Element.VIS, Ranges.OTHER_2R_OR_SELF, 50, new ChangeStage(StageType.FTH, 5, 2, false));
+    static Skill AGILITY_UP = new Skill(lang.get("skill.agi_up"), lang.get("skill.agi_up.desc"), Element.VIS, Ranges.OTHER_2R_OR_SELF, 50, new ChangeStage(StageType.AGI, 5, 2, false));
+    static Skill ATTACK_DOWN = new Skill(lang.get("skill.atk_down"), lang.get("skill.atk_down.desc"), Element.VIS, Ranges.OTHER_2R_OR_SELF, 50, new ChangeStage(StageType.ATK, 5, -2, false));
+    static Skill DEFENSE_DOWN = new Skill(lang.get("skill.def_down"), lang.get("skill.def_down.desc"), Element.VIS, Ranges.OTHER_2R_OR_SELF, 50, new ChangeStage(StageType.DEF, 5, -2, false));
+    static Skill FAITH_DOWN = new Skill(lang.get("skill.fth_down"), lang.get("skill.fth_down.desc"), Element.VIS, Ranges.OTHER_2R_OR_SELF, 50, new ChangeStage(StageType.FTH, 5, -2, false));
+    static Skill AGILITY_DOWN = new Skill(lang.get("skill.agi_down"), lang.get("skill.agi_down.desc"), Element.VIS, Ranges.OTHER_2R_OR_SELF, 50, new ChangeStage(StageType.AGI, 5, -2, false));
 
-    static Skill ATTACK_UP_GROUP = new Skill(lang.get("skill.atk_up_group"), lang.get("skill.atk_up_group.desc"), Element.VIS, Ranges.COLUMN_OF_3_1R, 150, new ChangeStage(StageType.ATK, 2, 5, false));
-    static Skill DEFENSE_UP_GROUP = new Skill(lang.get("skill.def_up_group"), lang.get("skill.def_up_group.desc"), Element.VIS, Ranges.COLUMN_OF_3_1R, 150, new ChangeStage(StageType.DEF, 2, 5, false));
-    static Skill FAITH_UP_GROUP = new Skill(lang.get("skill.fth_up_group"), lang.get("skill.fth_up_group.desc"), Element.VIS, Ranges.COLUMN_OF_3_1R, 150, new ChangeStage(StageType.FTH, 2, 5, false));
-    static Skill AGILITY_UP_GROUP = new Skill(lang.get("skill.agi_up_group"), lang.get("skill.agi_up_group.desc"), Element.VIS, Ranges.COLUMN_OF_3_1R, 150, new ChangeStage(StageType.AGI, 2, 5, false));
-    static Skill ATTACK_DOWN_GROUP = new Skill(lang.get("skill.atk_down_group"), lang.get("skill.atk_down_group.desc"), Element.VIS, Ranges.COLUMN_OF_3_1R, 150, new ChangeStage(StageType.ATK, -2, 5, false));
-    static Skill DEFENSE_DOWN_GROUP = new Skill(lang.get("skill.def_down_group"), lang.get("skill.def_down_group.desc"), Element.VIS, Ranges.COLUMN_OF_3_1R, 150, new ChangeStage(StageType.DEF, -2, 5, false));
-    static Skill FAITH_DOWN_GROUP = new Skill(lang.get("skill.fth_down_group"), lang.get("skill.fth_down_group.desc"), Element.VIS, Ranges.COLUMN_OF_3_1R, 150, new ChangeStage(StageType.FTH, -2, 5, false));
-    static Skill AGILITY_DOWN_GROUP = new Skill(lang.get("skill.agi_down_group"), lang.get("skill.agi_down_group.desc"), Element.VIS, Ranges.COLUMN_OF_3_1R, 150, new ChangeStage(StageType.AGI, -2, 5, false));
+    static Skill ATTACK_UP_GROUP = new Skill(lang.get("skill.atk_up_group"), lang.get("skill.atk_up_group.desc"), Element.VIS, Ranges.COLUMN_OF_3_1R, 150, new ChangeStage(StageType.ATK, 5, 2, false));
+    static Skill DEFENSE_UP_GROUP = new Skill(lang.get("skill.def_up_group"), lang.get("skill.def_up_group.desc"), Element.VIS, Ranges.COLUMN_OF_3_1R, 150, new ChangeStage(StageType.DEF, 5, 2, false));
+    static Skill FAITH_UP_GROUP = new Skill(lang.get("skill.fth_up_group"), lang.get("skill.fth_up_group.desc"), Element.VIS, Ranges.COLUMN_OF_3_1R, 150, new ChangeStage(StageType.FTH, 5, 2, false));
+    static Skill AGILITY_UP_GROUP = new Skill(lang.get("skill.agi_up_group"), lang.get("skill.agi_up_group.desc"), Element.VIS, Ranges.COLUMN_OF_3_1R, 150, new ChangeStage(StageType.AGI, 5, 2, false));
+    static Skill ATTACK_DOWN_GROUP = new Skill(lang.get("skill.atk_down_group"), lang.get("skill.atk_down_group.desc"), Element.VIS, Ranges.COLUMN_OF_3_1R, 150, new ChangeStage(StageType.ATK, 5, -2, false));
+    static Skill DEFENSE_DOWN_GROUP = new Skill(lang.get("skill.def_down_group"), lang.get("skill.def_down_group.desc"), Element.VIS, Ranges.COLUMN_OF_3_1R, 150, new ChangeStage(StageType.DEF, 5, -2, false));
+    static Skill FAITH_DOWN_GROUP = new Skill(lang.get("skill.fth_down_group"), lang.get("skill.fth_down_group.desc"), Element.VIS, Ranges.COLUMN_OF_3_1R, 150, new ChangeStage(StageType.FTH, 5, -2, false));
+    static Skill AGILITY_DOWN_GROUP = new Skill(lang.get("skill.agi_down_group"), lang.get("skill.agi_down_group.desc"), Element.VIS, Ranges.COLUMN_OF_3_1R, 150, new ChangeStage(StageType.AGI, 5, -2, false));
 
     // Resists
     // todo

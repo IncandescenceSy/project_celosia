@@ -1,12 +1,10 @@
 package io.github.celosia.sys.battle.skill_effects;
 
-import io.github.celosia.sys.battle.Combatant;
-import io.github.celosia.sys.battle.Result;
-import io.github.celosia.sys.battle.ResultType;
-import io.github.celosia.sys.battle.SkillEffect;
+import io.github.celosia.sys.battle.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static io.github.celosia.sys.settings.Lang.lang;
 
@@ -39,14 +37,27 @@ public class Heal implements SkillEffect {
     }
 
     @Override
-    public Result apply(Combatant self, Combatant target, boolean isMainTarget, ResultType resultPrev) {
+    public Result apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
         if(!mainTargetOnly || isMainTarget) {
+            List<String> msg = new ArrayList<>();
+
             // Heals by pow% of user's Fth
             int heal = (int) (self.getFthWithStage() * (pow / 100d) * (Math.max(self.getMultHealingDealt(), 10) / 100d) * (Math.max(target.getMultHealingTaken(), 10) / 100d));
 
-            if (shieldTurns > 0) { // Adds shield (shield + defend cannot exceed max HP)
-                List<String> msg = new ArrayList<>();
+            // Adds shield (shield + defend cannot exceed max HP)
+            if (shieldTurns > 0) {
                 String str = "";
+
+                // Apply self's durationMod
+                int turnsMod = shieldTurns + self.getDurationModBuffDealt() + target.getDurationModBuffTaken();
+
+                // Notify Passives onGiveShield
+                for(Passive passive : self.getUnitType().getPassives()) {
+                    for(PassiveEffect passiveEffect : passive.getPassiveEffects()) {
+                        String[] effectMsgs = passiveEffect.onGiveShield(self, target, turnsMod, heal);
+                        for(String effectMsg : effectMsgs) if(!Objects.equals(effectMsg, "")) msg.add(effectMsg);
+                    }
+                }
 
                 int hpMax = target.getStatsDefault().getHp();
                 int shieldCur = target.getShield();
@@ -55,25 +66,33 @@ public class Heal implements SkillEffect {
 
                 if (shieldNew > shieldCur) {
                     target.setShield(shieldNew);
-                    str = target.getCmbType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (shieldCur + target.getDefend())) + " -> " + String.format("%,d", (shieldNew +
+                    str = target.getUnitType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (shieldCur + target.getDefend())) + " -> " + String.format("%,d", (shieldNew +
                         target.getDefend())) + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", (shieldNew - shieldCur)) + ")";
                 }
 
-                if (shieldTurns > turnsCur) {
-                    target.setShieldTurns(shieldTurns);
+                if (turnsMod > turnsCur) {
+                    target.setShieldTurns(turnsMod);
                     if (shieldNew > shieldCur)
-                        msg.add(str + ", " + lang.get("turns") + " " + turnsCur + " -> " + shieldTurns);
+                        msg.add(str + ", " + lang.get("turns") + " " + turnsCur + " -> " + turnsMod);
                     else
-                        msg.add(target.getCmbType().getName() + " " + lang.get("shield") + " " + lang.get("turns") + " " + turnsCur + " -> " + shieldTurns);
+                        msg.add(target.getUnitType().getName() + " " + lang.get("shield") + " " + lang.get("turns") + " " + turnsCur + " -> " + turnsMod);
                 }
 
                 // Effect block message
                 if(shieldCur == 0 && shieldNew > 0 && target.getEffectBlock() <= 0 && target.getDefend() == 0) {
-                    msg.add(self.getCmbType().getName() + " " + lang.get("log.is_now") + " " + lang.get("log.effect_block"));
+                    msg.add(self.getUnitType().getName() + " " + lang.get("log.is_now") + " " + lang.get("log.effect_block"));
                 }
 
                 return new Result(ResultType.SUCCESS, msg);
             } else { // Heals
+                // Notify Passives onHeal
+                for(Passive passive : self.getUnitType().getPassives()) {
+                    for(PassiveEffect passiveEffect : passive.getPassiveEffects()) {
+                        String[] effectMsgs = passiveEffect.onHeal(self, target, heal, overHeal);
+                        for(String effectMsg : effectMsgs) if(!Objects.equals(effectMsg, "")) msg.add(effectMsg);
+                    }
+                }
+
                 int hpCur = target.getStatsCur().getHp();
                 int hpMax = target.getStatsDefault().getHp();
                 // Picks the lower of (current HP + heal amount) and (maximum allowed overHeal of this skill), and then the higher between that and current HP
@@ -81,9 +100,10 @@ public class Heal implements SkillEffect {
 
                 if (hpNew > hpCur) {
                     target.getStatsCur().setHp(hpNew);
-                    return new Result(ResultType.SUCCESS, target.getCmbType().getName() + "'s " + lang.get("hp") + " " + String.format("%,d", hpCur) + " -> " + String.format("%,d", hpNew)
+                    msg.add(target.getUnitType().getName() + "'s " + lang.get("hp") + " " + String.format("%,d", hpCur) + " -> " + String.format("%,d", hpNew)
                         + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", (hpNew - hpCur)) + ")");
-                } else return new Result(ResultType.SUCCESS, "");
+                    return new Result(ResultType.SUCCESS, msg);
+                } else return new Result(ResultType.SUCCESS, msg);
             }
         } else return new Result(ResultType.SUCCESS, "");
     }

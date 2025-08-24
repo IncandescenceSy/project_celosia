@@ -41,24 +41,24 @@ public class Battle {
         return (id == 0) ? playerTeam : opponentTeam;
     }
 
-    public Combatant getCmbAtPos(int pos) {
-        return (pos < 4) ? playerTeam.getCmbs()[pos] : opponentTeam.getCmbs()[pos - 4];
+    public Unit getUnitAtPos(int pos) {
+        return (pos < 4) ? playerTeam.getUnits()[pos] : opponentTeam.getUnits()[pos - 4];
     }
 
-    public List<Combatant> getAllCombatants() {
-        Combatant[] cmbsPlayer = playerTeam.getCmbs();
-        Combatant[] cmbsOpponent = opponentTeam.getCmbs();
-        List<Combatant> cmbsAll = new ArrayList<>();
-        Collections.addAll(cmbsAll, cmbsPlayer);
-        Collections.addAll(cmbsAll, cmbsOpponent);
-        return cmbsAll;
+    public List<Unit> getAllUnits() {
+        Unit[] unitsPlayer = playerTeam.getUnits();
+        Unit[] unitsOpponent = opponentTeam.getUnits();
+        List<Unit> unitsAll = new ArrayList<>();
+        Collections.addAll(unitsAll, unitsPlayer);
+        Collections.addAll(unitsAll, unitsOpponent);
+        return unitsAll;
     }
 
     public List<BuffInstance> getAllBuffInstances() {
         List<BuffInstance> buffInstances = new ArrayList<>();
-        List<Combatant> cmbsAll = getAllCombatants();
-        for(Combatant cmb : cmbsAll) {
-            Collections.addAll(buffInstances, cmb.getBuffInstances().toArray(new BuffInstance[0]));
+        List<Unit> unitsAll = getAllUnits();
+        for(Unit unit : unitsAll) {
+            Collections.addAll(buffInstances, unit.getBuffInstances().toArray(new BuffInstance[0]));
         }
         return buffInstances;
     }

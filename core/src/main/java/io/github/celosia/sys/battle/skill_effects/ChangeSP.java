@@ -1,6 +1,6 @@
 package io.github.celosia.sys.battle.skill_effects;
 
-import io.github.celosia.sys.battle.Combatant;
+import io.github.celosia.sys.battle.Unit;
 import io.github.celosia.sys.battle.Result;
 import io.github.celosia.sys.battle.ResultType;
 import io.github.celosia.sys.battle.SkillEffect;
@@ -34,16 +34,16 @@ public class ChangeSP implements SkillEffect {
     }
 
     @Override
-    public Result apply(Combatant self, Combatant target, boolean isMainTarget, ResultType resultPrev) {
+    public Result apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
         if(!mainTargetOnly || isMainTarget) {
             int spOld = target.getSp();
             int spNew = Math.clamp(spOld + (int) (change * (Math.max(self.getMultSpGain(), 10) / 100d)), 0, 1000);
             String msg;
 
             if (spNew != spOld) {
-                Combatant cmb = (giveToSelf) ? self : target;
-                cmb.setSp(spNew);
-                msg = cmb.getCmbType().getName() + "'s " + lang.get("sp") + " " + String.format("%,d", spOld) + " -> " + String.format("%,d", spNew);
+                Unit unit = (giveToSelf) ? self : target;
+                unit.setSp(spNew);
+                msg = unit.getUnitType().getName() + "'s " + lang.get("sp") + " " + String.format("%,d", spOld) + " -> " + String.format("%,d", spNew);
             } else
                 msg = "";
 

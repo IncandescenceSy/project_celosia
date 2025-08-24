@@ -1,7 +1,7 @@
 package io.github.celosia.sys.battle.buff_effects;
 
 import io.github.celosia.sys.battle.BuffEffect;
-import io.github.celosia.sys.battle.Combatant;
+import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.settings.Lang.lang;
 
@@ -14,18 +14,18 @@ public class ChangeExtraActions implements BuffEffect {
     }
 
     @Override
-    public String[] onGive(Combatant self) {
+    public String[] onGive(Unit self, int stacks) {
         int exAOld = self.getExtraActions();
-        int exANew = exAOld + change;
+        int exANew = exAOld + (change * stacks);
         self.setExtraActions(exANew);
-        return new String[]{self.getCmbType().getName() + "'s " + lang.get("extra_actions") + " " + Math.max(exAOld, 0) + " -> " + Math.max(exANew, 0)};
+        return new String[]{self.getUnitType().getName() + "'s " + lang.get("extra_actions") + " " + Math.max(exAOld, 0) + " -> " + Math.max(exANew, 0)};
     }
 
     @Override
-    public String[] onRemove(Combatant self) {
+    public String[] onRemove(Unit self, int stacks) {
         int exAOld = self.getExtraActions();
-        int exANew = exAOld - change;
+        int exANew = exAOld - (change * stacks);
         self.setExtraActions(exANew);
-        return new String[]{self.getCmbType().getName() + "'s " + lang.get("extra_actions") + " " + Math.max(exAOld, 0) + " -> " + Math.max(exANew, 0)};
+        return new String[]{self.getUnitType().getName() + "'s " + lang.get("extra_actions") + " " + Math.max(exAOld, 0) + " -> " + Math.max(exANew, 0)};
     }
 }

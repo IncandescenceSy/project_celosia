@@ -10,7 +10,7 @@ public enum SkillType {
     FTH(lang.get("stat.fth")),
     STAT(lang.get("skill_type.stat"));
 
-    private String name;
+    private final String name;
 
     SkillType(String name) {
         this.name = name;
