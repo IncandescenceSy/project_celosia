@@ -4,6 +4,8 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Unit;
 import io.github.celosia.sys.battle.Mult;
 
+import static io.github.celosia.sys.menu.TextLib.formatPossessive;
+
 public class ChangeMult implements BuffEffect {
 
     private final Mult mult;
@@ -19,8 +21,8 @@ public class ChangeMult implements BuffEffect {
         int multOld = self.getMult(mult);
         int changeFull = change * stacks;
         self.setMult(mult, multOld + changeFull);
-        double changeDisplay = Math.max(multOld + changeFull, 10) - Math.max(multOld, 10);
-        return new String[]{self.getUnitType().getName() + "'s " + mult.getName() + " " + Math.max(multOld, 10) + "% -> " + Math.max(multOld + changeFull, 10) + ((changeFull > 0) ? "% (+" : "% (") + changeDisplay + "%)"};
+        int changeDisplay = Math.max(multOld + changeFull, 10) - Math.max(multOld, 10);
+        return new String[]{formatPossessive(self.getUnitType().getName()) + " " + mult.getName() + " " + Math.max(multOld, 10) + "% -> " + Math.max(multOld + changeFull, 10) + ((changeFull > 0) ? "% (+" : "% (") + changeDisplay + "%)"};
     }
 
     @Override
@@ -28,7 +30,7 @@ public class ChangeMult implements BuffEffect {
         int multOld = self.getMult(mult);
         int changeFull = change * stacks;
         self.setMult(mult, multOld - changeFull);
-        double changeDisplay = Math.max(multOld + changeFull, 10) - Math.max(multOld, 10);
-        return new String[]{self.getUnitType().getName() + "'s " + mult.getName() + " " + Math.max(multOld, 10) + "% -> " + (Math.max(multOld - changeFull, 10)) + ((changeFull < 0) ? "% (+" : "% (") + (changeDisplay * -1) + "%)"};
+        int changeDisplay = Math.max(multOld + changeFull, 10) - Math.max(multOld, 10);
+        return new String[]{formatPossessive(self.getUnitType().getName()) + " " + mult.getName() + " " + Math.max(multOld, 10) + "% -> " + (Math.max(multOld - changeFull, 10)) + ((changeFull < 0) ? "% (+" : "% (") + (changeDisplay * -1) + "%)"};
     }
 }

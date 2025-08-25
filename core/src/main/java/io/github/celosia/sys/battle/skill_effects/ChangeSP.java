@@ -5,6 +5,7 @@ import io.github.celosia.sys.battle.Result;
 import io.github.celosia.sys.battle.ResultType;
 import io.github.celosia.sys.battle.SkillEffect;
 
+import static io.github.celosia.sys.menu.TextLib.formatPossessive;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeSP implements SkillEffect {
@@ -43,7 +44,7 @@ public class ChangeSP implements SkillEffect {
             if (spNew != spOld) {
                 Unit unit = (giveToSelf) ? self : target;
                 unit.setSp(spNew);
-                msg = unit.getUnitType().getName() + "'s " + lang.get("sp") + " " + String.format("%,d", spOld) + " -> " + String.format("%,d", spNew);
+                msg = formatPossessive(unit.getUnitType().getName()) + " " + lang.get("sp") + " " + String.format("%,d", spOld) + " -> " + String.format("%,d", spNew);
             } else
                 msg = "";
 

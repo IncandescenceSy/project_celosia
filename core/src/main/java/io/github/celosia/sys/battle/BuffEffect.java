@@ -10,7 +10,7 @@ public interface BuffEffect {
         return new String[]{""};
     }
 
-    default String[] onUseSkill(Unit self, Unit target, int stacks) {
+    default String[] onUseSkill(Unit self, Unit target, int stacks, Skill skill) {
         return new String[]{""};
     }
 
@@ -20,6 +20,22 @@ public interface BuffEffect {
     }
 
     default String[] onTurnEnd(Unit self, int stacks) {
+        return new String[]{""};
+    }
+
+    default String[] onGiveBuff(Unit self, Unit target, int stacks, Buff buff, int turns, int stacksChange) {
+        return new String[]{""};
+    }
+
+    default String[] onChangeStage(Unit self, Unit target, int stacks, StageType stageType, int turns, int stacksChange) {
+        return new String[]{""};
+    }
+
+    default String[] onHeal(Unit self, Unit target, int stacks, int heal, double overHeal) {
+        return new String[]{""};
+    }
+
+    default String[] onGiveShield(Unit self, Unit target, int stacks, int turns, int stacksChange) {
         return new String[]{""};
     }
 }

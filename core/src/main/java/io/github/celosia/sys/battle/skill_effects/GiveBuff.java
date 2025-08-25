@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnGiveBuff;
+import static io.github.celosia.sys.menu.TextLib.formatPossessive;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class GiveBuff implements SkillEffect {
@@ -65,13 +67,7 @@ public class GiveBuff implements SkillEffect {
             // Apply durationMod
             int turnsMod = turns + self.getDurationModBuffTypeDealt(buff.getBuffType()) + target.getDurationModBuffTypeTaken(buff.getBuffType());
 
-            // Notify Passives onGiveBuff
-            for(Passive passive : self.getUnitType().getPassives()) {
-                for(PassiveEffect passiveEffect : passive.getPassiveEffects()) {
-                    String[] effectMsgs = passiveEffect.onGiveBuff(self, target, buff, turnsMod, stacks);
-                    for(String effectMsg : effectMsgs) if(!Objects.equals(effectMsg, "")) msg.add(effectMsg);
-                }
-            }
+            notifyOnGiveBuff(self, target, buff, turnsMod, stacks);
 
             Unit unit = (giveToSelf) ? self : target;
             List<BuffInstance> buffInstances = unit.getBuffInstances();
@@ -84,7 +80,7 @@ public class GiveBuff implements SkillEffect {
                 int turnsOld = buffInstance.getTurns();
                 if(turnsMod > turnsOld) {
                     buffInstance.setTurns(turnsMod);
-                    str = unit.getUnitType().getName() + "'s " + buff.getName() + " " + lang.format("turn_s", turnsMod) + " " + turnsOld + " -> " + turnsMod;
+                    str = formatPossessive(unit.getUnitType().getName()) + " " + buff.getName() + " " + lang.format("turn_s", turnsMod) + " " + turnsOld + " -> " + turnsMod;
                 }
 
                 // Add stacks
@@ -93,7 +89,7 @@ public class GiveBuff implements SkillEffect {
                 if(stacksNew != stacksOld) {
                     buffInstance.setStacks(stacksNew);
                     if(turnsMod > turnsOld) msg.add(str + ", " + lang.format("stack_s", stacksNew) + " " + stacksOld + " -> " + stacksNew);
-                    else msg.add(unit.getUnitType().getName() + "'s " + buff.getName() + " " + lang.get("stacks") + " " + stacksOld + " -> " + stacksNew);
+                    else msg.add(formatPossessive(unit.getUnitType().getName()) + " " + buff.getName() + " " + lang.get("stacks") + " " + stacksOld + " -> " + stacksNew);
                 }
 
                 // Apply once for each newly added stack
@@ -116,6 +112,7 @@ public class GiveBuff implements SkillEffect {
                     String[] effectMsgs = buffEffect.onGive(unit, buffInstance.getStacks());
                     for (String effectMsg : effectMsgs) if (!Objects.equals(effectMsg, "")) msg.add(effectMsg);
                 }
+
                 return new Result(ResultType.SUCCESS, msg);
             }
         }

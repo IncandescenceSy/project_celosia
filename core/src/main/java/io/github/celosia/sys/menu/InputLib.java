@@ -47,7 +47,6 @@ public class InputLib {
     }
 
     // Checks for input between the keyboard and the currently in-use controller
-    // todo make L2/R2 work (they're treated as axes)
     public static boolean checkInput(boolean allowHold, Keybind... keybinds) {
         for(Keybind keybind : keybinds) if (isKeybindPressed(keybind, allowHold)) return true;
         return false;
@@ -83,26 +82,17 @@ public class InputLib {
 
     // todo: stick sensitivity setting? also dont make L1/R1 automatically map to R stick
     public static boolean checkKeybind2Axis(Keybind keybind) {
-        switch(keybind) {
-            case LEFT:
-                return checkAxis(Button.LX.getMapping(), -0.4f);
-            case RIGHT:
-                return checkAxis(Button.LX.getMapping(), 0.4f);
-            case UP:
-                return checkAxis(Button.LY.getMapping(), -0.4f);
-            case DOWN:
-                return checkAxis(Button.LY.getMapping(), 0.4f);
-            case PAGE_L1:
-                return checkAxis(Button.RY.getMapping(), -0.4f);
-            case PAGE_R1:
-                return checkAxis(Button.RY.getMapping(), 0.4f);
-            case PAGE_L2:
-                return checkAxis(Button.L2.getMapping(), 0.4f);
-            case PAGE_R2:
-                return checkAxis(Button.R2.getMapping(), 0.4f);
-            default:
-                return false;
-        }
+        return switch (keybind) {
+            case LEFT -> checkAxis(Button.LX.getMapping(), -0.4f);
+            case RIGHT -> checkAxis(Button.LX.getMapping(), 0.4f);
+            case UP -> checkAxis(Button.LY.getMapping(), -0.4f);
+            case DOWN -> checkAxis(Button.LY.getMapping(), 0.4f);
+            case PAGE_L1 -> checkAxis(Button.RY.getMapping(), -0.4f);
+            case PAGE_R1 -> checkAxis(Button.RY.getMapping(), 0.4f);
+            case PAGE_L2 -> checkAxis(Button.L2.getMapping(), 0.4f);
+            case PAGE_R2 -> checkAxis(Button.R2.getMapping(), 0.4f);
+            default -> false;
+        };
     }
 
     // Checks a stick axis to see if it's tilted further than a specified value

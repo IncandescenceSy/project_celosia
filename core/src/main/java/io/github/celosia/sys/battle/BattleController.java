@@ -20,7 +20,9 @@ import io.github.celosia.sys.settings.Settings;
 import java.util.*;
 
 import static io.github.celosia.sys.battle.AffLib.getAffMultSpCost;
+import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnUseSkill;
 import static io.github.celosia.sys.menu.MenuLib.setTextIfChanged;
+import static io.github.celosia.sys.menu.TextLib.formatPossessive;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class BattleController {
@@ -82,7 +84,7 @@ public class BattleController {
     public static void create(Stage stage) {
         // Setup teams (temp)
         Stats johnyStats = new Stats(100, 100, 100, 100, 100, 100, 100);
-        UnitType johny = new UnitType("Johny", johnyStats, 4, -4, 0, 0 ,0, 0, 0, Passives.DEBUFF_DURATION_UP);
+        UnitType johny = new UnitType("Johny", johnyStats, 4, -4, 0, 0 ,0, 0, 0, Passives.DEBUFF_DURATION_UP, Passives.RESTORATION);
         Stats jerryStats = new Stats(100, 100, 100, 100, 100, 100, 115);
         UnitType jerry = new UnitType("Jerry", jerryStats, 5, -4, 0, 5 ,0, 0, 0, Passives.DEBUFF_DURATION_UP);
         UnitType james = new UnitType("James", jerryStats, -4, 5, 0, 0 ,0, 0, 0, Passives.DEBUFF_DURATION_UP);
@@ -138,10 +140,6 @@ public class BattleController {
             stage.addActor(moves);
         }
 
-        // Log
-        appendToLog("[PURPLE]" + lang.get("turn") + " " + 1 + "[WHITE]");
-        appendToLog(lang.get("log.gain_sp_bloom"));
-
         // Skill menu display
         // todo support arbitrary size
         for(int i = 0; i < 6; i++) {
@@ -149,15 +147,19 @@ public class BattleController {
             stage.addActor(skillsL.get(i));
         }
 
-        // Notify Passives onBattleStart
+        // Notify Passives onGive
         for(Unit unit : battle.getAllUnits()) {
-            for (Passive passive : unit.getUnitType().getPassives()) {
-                for (PassiveEffect passiveEffect : passive.getPassiveEffects()) {
-                    String[] effectMsgs = passiveEffect.onBattleStart(unit);
+            for (Passive passive : unit.getPassives()) {
+                for (BuffEffect buffEffect : passive.getBuffEffects()) {
+                    String[] effectMsgs = buffEffect.onGive(unit, 1);
                     for (String effectMsg : effectMsgs) if (!Objects.equals(effectMsg, "")) appendToLog(effectMsg);
                 }
             }
         }
+
+        // Log
+        appendToLog("[PURPLE]" + lang.get("turn") + " " + 1 + "[WHITE]");
+        appendToLog(lang.get("log.gain_sp_bloom"));
     }
 
     public static MenuType input(MenuType menuType) {
@@ -217,21 +219,33 @@ public class BattleController {
                         // Increase SP
                         unit.setSp(Math.min((int) (unit.getSp() + (100 * (Math.max(unit.getMultSpGain(), 10) / 100d))), 1000));
 
-                        StringBuilder turnEnd1 = null;
-                        StringBuilder turnEnd2 = new StringBuilder();
+                        // Apply turn end BuffEffects
+                        for (Passive passive : unit.getPassives()) {
+                            StringBuilder turnEnd1 = new StringBuilder();
+                            turnEnd1.append(formatPossessive(unit.getUnitType().getName())).append(" ").append(passive.getName()).append(": ");
 
-                        // Apply buff turn end effects
-                        for(BuffInstance buffInstance : unit.getBuffInstances()) {
-                            turnEnd1 = new StringBuilder();
-                            turnEnd1.append(unit.getUnitType().getName()).append("'s ").append(buffInstance.getBuff().getName()).append(": ");
-                            for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
-                                String[] effectMsgs = buffEffect.onTurnEnd(unit, buffInstance.getStacks());
-                                for(String effectMsg : effectMsgs) if(!Objects.equals(effectMsg, "")) turnEnd2.append(effectMsg);
+                            for (BuffEffect buffEffect : passive.getBuffEffects()) {
+                                StringBuilder turnEnd2 = new StringBuilder();
+                                String[] effectMsgs = buffEffect.onTurnEnd(unit, 1);
+                                for (String effectMsg : effectMsgs) if (!effectMsg.isEmpty()) turnEnd2.append(effectMsg);
+
+                                // Only have turn end message if both have messages
+                                if(!turnEnd2.isEmpty()) appendToLog(turnEnd1 + turnEnd2.toString());
                             }
                         }
 
-                        // Only have turn end message if both have messages
-                        if(turnEnd1 != null && !Objects.equals(turnEnd2.toString(), "")) appendToLog(turnEnd1 + turnEnd2.toString());
+                        for(BuffInstance buffInstance : unit.getBuffInstances()) {
+                            StringBuilder turnEnd1 = new StringBuilder();
+                            turnEnd1.append(formatPossessive(unit.getUnitType().getName())).append(" ").append(buffInstance.getBuff().getName()).append(": ");
+
+                            for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
+                                StringBuilder turnEnd2 = new StringBuilder();
+                                String[] effectMsgs = buffEffect.onTurnEnd(unit, buffInstance.getStacks());
+                                for(String effectMsg : effectMsgs) if(!effectMsg.isEmpty()) turnEnd2.append(effectMsg);
+
+                                if(!turnEnd2.isEmpty()) appendToLog(turnEnd1 + turnEnd2.toString());
+                            }
+                        }
 
                         // Decrement stage/shield/buff turns and remove expired stages/shields/buffs
                         List<String> decrement = unit.decrementTurns();
@@ -272,7 +286,9 @@ public class BattleController {
                         boolean isPlayerTeam = move.getSelf().getPos() < 4;
                         Team team = (isPlayerTeam) ? battle.getPlayerTeam() : battle.getOpponentTeam();
                         int cost = move.getSkill().getCost();
-                        newSp = ((move.getSkill().isBloom()) ? team.getBloom() : move.getSelf().getSp()) - (int) Math.max(Math.ceil((cost * getAffMultSpCost(move.getSelf().getAff(element)))), 1);
+                        // Make sure cost doesn't go below 1 unless the skill has a base 0 SP cost
+                        int costMod = (cost > 0) ? (int) Math.max(Math.ceil((cost * getAffMultSpCost(move.getSelf().getAff(element)))), 1) : 0;
+                        newSp = ((move.getSkill().isBloom()) ? team.getBloom() : move.getSelf().getSp()) - costMod;
 
                         StringBuilder builder = new StringBuilder();
                         if(newSp >= 0) {
@@ -289,12 +305,7 @@ public class BattleController {
                             appendToLog(builder.toString());
 
                             // Apply on-skill use BuffEffects
-                            for (BuffInstance buffInstance : move.getSelf().getBuffInstances()) {
-                                for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
-                                    String[] effectMsgs = buffEffect.onUseSkill(move.getSelf(), battle.getUnitAtPos(move.getTargetPos()), buffInstance.getStacks());
-                                    for(String effectMsg : effectMsgs) if(!Objects.equals(effectMsg, "")) appendToLog(effectMsg);
-                                }
-                            }
+                            notifyOnUseSkill(move.getSelf(), battle.getUnitAtPos(move.getTargetPos()), move.getSkill());
 
                             // Color move for currently acting combatant (temp)
                             for (int i = 0; i < 8; i++) {
@@ -503,12 +514,14 @@ public class BattleController {
         // todo test if this actually works + figure out a good size limit
         if(logText.size() > 2500) logText.subList(0, 500).clear();
 
-        logText.add(entry);
+        if(!entry.isEmpty()) {
+            logText.add(entry);
 
-        // Reset scroll to bottom
-        logScroll = 0;
+            // Reset scroll to bottom
+            logScroll = 0;
 
-        updateLog();
+            updateLog();
+        }
     }
 
     public static void appendAllToLog(List<String> entry) {
@@ -535,7 +548,7 @@ public class BattleController {
     }
 
     public static MenuType selectMove() {
-        // todo fix bug where this doesnt delete the previous move and make sure this works with extra actions
+        // todo make sure this works with extra actions
         if (InputLib.checkInput(Keybind.BACK) && selectingMove != 0) {
             // Reset for next time
             for (TypingLabel skill : skillsL) {

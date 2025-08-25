@@ -3,12 +3,12 @@ package io.github.celosia.sys.battle;
 public class Passive {
     private final String name;
     private final String desc;
-    private final PassiveEffect[] passiveEffects;
+    private final BuffEffect[] buffEffects;
 
-    Passive(String name, String desc, PassiveEffect... passiveEffects) {
+    Passive(String name, String desc, BuffEffect... buffEffects) {
         this.name = name;
         this.desc = desc;
-        this.passiveEffects = passiveEffects;
+        this.buffEffects = buffEffects;
     }
 
     public String getName() {
@@ -19,7 +19,7 @@ public class Passive {
         return desc;
     }
 
-    public PassiveEffect[] getPassiveEffects() {
-        return passiveEffects;
+    public BuffEffect[] getBuffEffects() {
+        return buffEffects;
     }
 }

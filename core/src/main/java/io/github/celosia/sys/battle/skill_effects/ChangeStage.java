@@ -4,9 +4,10 @@ import io.github.celosia.sys.battle.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static io.github.celosia.sys.battle.BattleLib.getStageBuffType;
+import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnChangeStage;
+import static io.github.celosia.sys.menu.TextLib.formatPossessive;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeStage implements SkillEffect {
@@ -46,20 +47,14 @@ public class ChangeStage implements SkillEffect {
             int turnsMod = turns + self.getDurationModBuffTypeDealt(getStageBuffType(target.getStage(stageType) + stacks)) +
                 target.getDurationModBuffTypeTaken(getStageBuffType(target.getStage(stageType) + stacks));
 
-            // Notify Passives onGiveBuff
-            for(Passive passive : self.getUnitType().getPassives()) {
-                for(PassiveEffect passiveEffect : passive.getPassiveEffects()) {
-                    String[] effectMsgs = passiveEffect.onChangeStage(self, target, stageType, turnsMod, stacks);
-                    for(String effectMsg : effectMsgs) if(!Objects.equals(effectMsg, "")) msg.add(effectMsg);
-                }
-            }
+            notifyOnChangeStage(self, target, stageType, turnsMod, stacks);
 
             int stageOld = target.getStage(stageType);
             int stageNew = Math.clamp(stageOld + stacks, -5, 5);
 
             if (stageNew != stageOld) {
                 target.setStage(stageType, stageNew);
-                str = target.getUnitType().getName() + "'s " + stageType.getName() + " " + lang.get("stage") + " " + stageOld + " -> " + stageNew;
+                str = formatPossessive(target.getUnitType().getName()) + " " + stageType.getName() + " " + lang.get("stage") + " " + stageOld + " -> " + stageNew;
             }
 
             if ((stageOld >= 0 && stacks >= 0) || (stageOld <= 0 && stacks <= 0)) { // Refresh turns
@@ -69,7 +64,7 @@ public class ChangeStage implements SkillEffect {
                     if (stageNew != stageOld)
                         msg.add(str + ", " + lang.get("turns") + " " + turnsOld + " -> " + turnsMod);
                     else
-                        msg.add(target.getUnitType().getName() + "'s " + stageType.getName() + " " + lang.get("stage") + " " + lang.get("turns") + " " + turnsOld + " -> " + turnsMod);
+                        msg.add(formatPossessive(target.getUnitType().getName()) + " " + stageType.getName() + " " + lang.get("stage") + " " + lang.get("turns") + " " + turnsOld + " -> " + turnsMod);
                 }
             } else msg.add(str);
 

@@ -22,23 +22,16 @@ public class ChangeHP implements BuffEffect {
     @Override
     public String[] onTurnEnd(Unit self, int stacks) {
         if(change < 0) { // Damage
-            //String hp = (self.getShield() + self.getDefend() > 0) ? lang.get("shield") : lang.get("hp");
             Result result = self.damage((int) Math.abs(((self.getStatsDefault().getHp() * change) * stacks) * (Math.max(self.getMultDmgTaken(), 10) / 100d) * (Math.max(self.getMultDoTDmgTaken(), 10) / 100d)), pierce, false);
-
-            /*List<String> msgs = result.getMessages();
-            String[] str1 = new String[]{""};
-            String[] str2 = new String[]{""};
-            // todo fix "Jacob's Burn: HPcob" (how does this even happen? I know this was working fine earlier too)
-            if (msgs.get(0) != null) str1 = msgs.get(0).split("[.*" + lang.get("hp") + "|.*" + lang.get("shield") + "]");
-            if (msgs.size() > 1 && msgs.get(1) != null) str2 = msgs.get(1).split("[.*" + lang.get("hp") + "|.*" + lang.get("shield") + "]");*/
-
             return result.getMessages().toArray(String[]::new);
         } else { // Healing
             int hpOld = self.getStatsCur().getHp();
             int hpMax = self.getStatsDefault().getHp();
             int hpNew = (int) Math.max(hpOld, Math.min(hpOld + (((hpMax * change) * stacks) * (Math.max(self.getMultHealingTaken(), 10) / 100d)), hpMax));
-            self.getStatsCur().setHp(hpNew);
-            return new String[]{lang.get("hp") + " " + hpOld + " -> " + hpNew + " (+" + Math.max(hpNew - hpOld, 0) + ")"};
+            if(hpNew > hpOld) {
+                self.getStatsCur().setHp(hpNew);
+                return new String[]{lang.get("hp") + " " + String.format("%,d", hpOld) + " -> " + String.format("%,d", hpNew) + " (+" + String.format("%,d", Math.max(hpNew - hpOld, 0)) + ")"};
+            } else return new String[]{""};
         }
     }
 }

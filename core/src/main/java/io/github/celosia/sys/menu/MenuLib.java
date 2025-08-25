@@ -27,12 +27,12 @@ public class MenuLib {
     }
 
     // Check menu movement input (targeting) and handle wrapping
-    // todo: complex targeting (dread)
     public static int checkMovementTargeting(int index, int selectingMove, Range range) {
         // Lock cursor to self for self Ranges
         if(range != Ranges.SELF && range != Ranges.SELF_UP_DOWN) {
             int newIndex = index;
 
+            // Move selection
             if (InputLib.checkInput(true, Keybind.UP)) {
                 if (index < 4) { // On player side
                     newIndex = (index - 1) < 0 ? 3 : index - 1;
@@ -45,6 +45,7 @@ public class MenuLib {
                 newIndex = (index < 4) ? index + 4 : index - 4;
             }
 
+            // Lock cursor to valid side
             if(range.getSide() == Side.BOTH) return newIndex;
             else if(range.getSide() == getRelativeSide(selectingMove, newIndex)) return newIndex;
             else return index;

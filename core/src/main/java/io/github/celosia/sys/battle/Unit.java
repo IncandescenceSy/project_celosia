@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static io.github.celosia.sys.menu.TextLib.formatPossessive;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 // Species and current stats
@@ -17,6 +18,9 @@ public class Unit {
 
     // Skills
     private final Skill[] skills;
+
+    // Passives
+    private List<Passive> passives = new ArrayList<>();
 
     private int sp; // Skill Points
     private int pos; // Position on the battlefield
@@ -105,6 +109,7 @@ public class Unit {
         statsDefault = unitType.getStatsBase().getRealStats(lvl);
         statsCur = new Stats(statsDefault);
         this.skills = skills;
+        this.passives = List.of(unitType.getPassives());
         sp = 200;
         this.pos = pos;
         stageAtk = 0;
@@ -175,6 +180,10 @@ public class Unit {
 
     public Skill[] getSkills() {
         return skills;
+    }
+
+    public Passive[] getPassives() {
+        return passives.toArray(Passive[]::new);
     }
 
     public void setSp(int sp) {
@@ -827,26 +836,26 @@ public class Unit {
 
         // Stages
         if (stageAtk != 0 && --stageAtkTurns <= 0) {
-            // todo stage(s)
-            msg.add(this.getUnitType().getName() + " " + lang.get("log.loses") + " " + stageAtk + lang.get("stages") + " " + StageType.ATK.getName());
+            msg.add(unitType.getName() + " " + lang.get("log.loses") + " " + stageAtk + lang.format("stage_s", stageAtk) + " " + StageType.ATK.getName());
             stageAtk = 0; // Remove stages
         }
         if (stageDef != 0 && --stageDefTurns <= 0) {
-            msg.add(this.getUnitType().getName() + " " + lang.get("log.loses") + " " + stageDef + lang.get("stages") + " " + StageType.DEF.getName());
+            msg.add(unitType.getName() + " " + lang.get("log.loses") + " " + stageDef + lang.format("stage_s", stageDef) + " " + StageType.DEF.getName());
             stageDef = 0;
         }
         if (stageFth != 0 && --stageFthTurns <= 0) {
-            msg.add(this.getUnitType().getName() + " " + lang.get("log.loses") + " " + stageFth + lang.get("stages") + " " + StageType.FTH.getName());
+            msg.add(unitType.getName() + " " + lang.get("log.loses") + " " + stageFth + lang.format("stage_s", stageFth) + " " + StageType.FTH.getName());
             stageFth = 0;
         }
         if (stageAgi != 0 && --stageAgiTurns <= 0) {
-            msg.add(this.getUnitType().getName() + " " + lang.get("log.loses") + " " + stageAgi + lang.get("stages") + " " + StageType.AGI.getName());
+            msg.add(unitType.getName() + " " + lang.get("log.loses") + " " + stageAgi + lang.format("stage_s", stageAgi) + " " + StageType.AGI.getName());
             stageAgi = 0;
         }
 
         // Shield
         if (shield != 0 && --shieldTurns <= 0) {
-            msg.add(this.getUnitType().getName() + " " + lang.get("log.loses") + " " + shield + " " + lang.get("shield"));
+            if(defend == 0) msg.add(unitType.getName() + " " + lang.get("log.loses") + " " + String.format("%,d", shield) + " " + lang.get("shield"));
+            else msg.add(formatPossessive(unitType.getName()) + " " + lang.get("shield") + " " + String.format("%,d", (shield + defend)) + " -> " + String.format("%,d", defend));
             shield = 0;
         }
 
@@ -859,7 +868,7 @@ public class Unit {
             } else {
                 StringBuilder str = new StringBuilder();
                 int maxStacks = buffInstance.getBuff().getMaxStacks();
-                str.append(this.getUnitType().getName()).append(" ").append(lang.get("log.loses")).append(" ");
+                str.append(unitType.getName()).append(" ").append(lang.get("log.loses")).append(" ");
                 if(maxStacks > 1) str.append(buffInstance.getStacks()).append(" ");
                 str.append(buffInstance.getBuff().getName());
                 if(maxStacks > 1) str.append(" ").append(lang.get("stacks"));
@@ -884,8 +893,8 @@ public class Unit {
 
         List<String> msg = new ArrayList<>();
 
-        String name = (useName) ? this.getUnitType().getName() + " " : "";
-        String name_s = (useName) ? this.getUnitType().getName() + "'s " : "";
+        String name = (useName) ? unitType.getName() + " " : "";
+        String name_s = (useName) ? formatPossessive(unitType.getName()) + " " : "";
 
         if (!pierce) { // Pierce skips Defend and Shield
             if (defend > 0 && dmg > 0) { // There's Defend and dmg
@@ -927,7 +936,7 @@ public class Unit {
             return new Result(ResultType.HIT_SHIELD, msg);
         } else if (dmg > 0) { // Did damage
             return new Result(ResultType.SUCCESS, msg);
-        } else return new Result(ResultType.FAIL, lang.get("log.no_effect") + " " + lang.get("log.on") + " " + this.getUnitType().getName()); // Did no damage
+        } else return new Result(ResultType.FAIL, lang.get("log.no_effect") + " " + lang.get("log.on") + " " + unitType.getName()); // Did no damage
     }
 
     public Result damage(int dmg, boolean pierce) {

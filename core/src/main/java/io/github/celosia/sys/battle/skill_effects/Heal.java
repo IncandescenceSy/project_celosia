@@ -4,8 +4,10 @@ import io.github.celosia.sys.battle.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
+import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnGiveShield;
+import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnHeal;
+import static io.github.celosia.sys.menu.TextLib.formatPossessive;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class Heal implements SkillEffect {
@@ -51,13 +53,7 @@ public class Heal implements SkillEffect {
                 // Apply self's durationMod
                 int turnsMod = shieldTurns + self.getDurationModBuffDealt() + target.getDurationModBuffTaken();
 
-                // Notify Passives onGiveShield
-                for(Passive passive : self.getUnitType().getPassives()) {
-                    for(PassiveEffect passiveEffect : passive.getPassiveEffects()) {
-                        String[] effectMsgs = passiveEffect.onGiveShield(self, target, turnsMod, heal);
-                        for(String effectMsg : effectMsgs) if(!Objects.equals(effectMsg, "")) msg.add(effectMsg);
-                    }
-                }
+                notifyOnGiveShield(self, target, turnsMod, heal);
 
                 int hpMax = target.getStatsDefault().getHp();
                 int shieldCur = target.getShield();
@@ -66,7 +62,7 @@ public class Heal implements SkillEffect {
 
                 if (shieldNew > shieldCur) {
                     target.setShield(shieldNew);
-                    str = target.getUnitType().getName() + "'s " + lang.get("shield") + " " + String.format("%,d", (shieldCur + target.getDefend())) + " -> " + String.format("%,d", (shieldNew +
+                    str = formatPossessive(target.getUnitType().getName()) + " " + lang.get("shield") + " " + String.format("%,d", (shieldCur + target.getDefend())) + " -> " + String.format("%,d", (shieldNew +
                         target.getDefend())) + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", (shieldNew - shieldCur)) + ")";
                 }
 
@@ -75,7 +71,7 @@ public class Heal implements SkillEffect {
                     if (shieldNew > shieldCur)
                         msg.add(str + ", " + lang.get("turns") + " " + turnsCur + " -> " + turnsMod);
                     else
-                        msg.add(target.getUnitType().getName() + " " + lang.get("shield") + " " + lang.get("turns") + " " + turnsCur + " -> " + turnsMod);
+                        msg.add(formatPossessive(target.getUnitType().getName()) + " " + lang.get("shield") + " " + lang.get("turns") + " " + turnsCur + " -> " + turnsMod);
                 }
 
                 // Effect block message
@@ -85,13 +81,7 @@ public class Heal implements SkillEffect {
 
                 return new Result(ResultType.SUCCESS, msg);
             } else { // Heals
-                // Notify Passives onHeal
-                for(Passive passive : self.getUnitType().getPassives()) {
-                    for(PassiveEffect passiveEffect : passive.getPassiveEffects()) {
-                        String[] effectMsgs = passiveEffect.onHeal(self, target, heal, overHeal);
-                        for(String effectMsg : effectMsgs) if(!Objects.equals(effectMsg, "")) msg.add(effectMsg);
-                    }
-                }
+                notifyOnHeal(self, target, heal, overHeal);
 
                 int hpCur = target.getStatsCur().getHp();
                 int hpMax = target.getStatsDefault().getHp();
@@ -100,7 +90,7 @@ public class Heal implements SkillEffect {
 
                 if (hpNew > hpCur) {
                     target.getStatsCur().setHp(hpNew);
-                    msg.add(target.getUnitType().getName() + "'s " + lang.get("hp") + " " + String.format("%,d", hpCur) + " -> " + String.format("%,d", hpNew)
+                    msg.add(formatPossessive(target.getUnitType().getName()) + " " + lang.get("hp") + " " + String.format("%,d", hpCur) + " -> " + String.format("%,d", hpNew)
                         + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", (hpNew - hpCur)) + ")");
                     return new Result(ResultType.SUCCESS, msg);
                 } else return new Result(ResultType.SUCCESS, msg);
