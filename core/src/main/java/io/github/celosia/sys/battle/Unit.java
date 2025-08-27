@@ -79,8 +79,9 @@ public class Unit {
     private int multHealingDealt;
     private int multHealingTaken;
 
-    // Multiplies all SP gain
+    // Multiplies all SP gain/use
     private int multSpGain;
+    private int multSpUse;
 
     // Shield
     private int shield;
@@ -151,6 +152,7 @@ public class Unit {
         multHealingDealt = 100;
         multHealingTaken = 100;
         multSpGain = 100;
+        multSpUse = 100;
         shield = 0;
         shieldTurns = 0;
         defend = 0;
@@ -182,8 +184,20 @@ public class Unit {
         return skills;
     }
 
-    public Passive[] getPassives() {
-        return passives.toArray(Passive[]::new);
+    public void setPassives(List<Passive> passives) {
+        this.passives = passives;
+    }
+
+    public List<Passive> getPassives() {
+        return passives;
+    }
+
+    public void addPassive(Passive passive) {
+        passives.add(passive);
+    }
+
+    public void addPassives(Passive... passives) {
+        this.passives.addAll(List.of(passives));
     }
 
     public void setSp(int sp) {
@@ -615,6 +629,14 @@ public class Unit {
         return multSpGain;
     }
 
+    public void setMultSpUse(int multSpUse) {
+        this.multSpUse = multSpUse;
+    }
+
+    public int getMultSpUse() {
+        return multSpUse;
+    }
+
     public void setMult(Mult mult, int set) {
         switch (mult) {
             case DMG_DEALT -> multDmgDealt = set;
@@ -641,6 +663,7 @@ public class Unit {
             case HEALING_DEALT -> multHealingDealt = set;
             case HEALING_TAKEN -> multHealingTaken = set;
             case SP_GAIN -> multSpGain = set;
+            case SP_USE -> multSpUse = set;
         }
     }
 
@@ -670,6 +693,7 @@ public class Unit {
             case HEALING_DEALT -> multHealingDealt;
             case HEALING_TAKEN -> multHealingTaken;
             case SP_GAIN -> multSpGain;
+            case SP_USE -> multSpUse;
         };
     }
 
@@ -803,6 +827,10 @@ public class Unit {
         buffInstances.add(buffInstance);
     }
 
+    public void addBuffInstances(BuffInstance... buffInstances) {
+        this.buffInstances.addAll(List.of(buffInstances));
+    }
+
     public boolean isProtected() {
         return multDmgTaken <= -50000;
     }
@@ -821,6 +849,14 @@ public class Unit {
 
     public boolean isNeutralTo(Element element) {
         return this.getAff(element) == 0;
+    }
+
+    // Returns if the requested Passive is present
+    public boolean findPassive(Passive passiveTarget) {
+        for(Passive passive : passives) {
+            if(passive == passiveTarget) return true;
+        }
+        return false;
     }
 
     // Returns the requested BuffInstance if present
@@ -877,7 +913,7 @@ public class Unit {
                 // Remove effects
                 for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
                     String[] effectMsgs = buffEffect.onRemove(this, buffInstance.getStacks());
-                    for(String effectMsg : effectMsgs) if(!Objects.equals(effectMsg, "")) msg.add(effectMsg);
+                    for(String effectMsg : effectMsgs) if(!effectMsg.isEmpty()) msg.add(effectMsg);
                 }
                 buffInstances.remove(buffInstance);
             }

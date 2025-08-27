@@ -8,39 +8,69 @@ import static io.github.celosia.sys.battle.AffLib.getAffMultDmgTaken;
 public class Damage implements SkillEffect {
 
     private final SkillType type;
-    private final int pow;
     private final Element element;
-    private final boolean pierce;
+    private final int pow;
     private final ResultType minResult;
+    private final boolean isPierce;
     private final boolean isInstant;
     private final boolean mainTargetOnly;
     private final boolean isFollowUp;
 
-    public Damage(SkillType type, Element element, int pow, boolean pierce, ResultType minResult, boolean isInstant, boolean mainTargetOnly, boolean isFollowUp) {
-        this.type = type;
-        this.element = element;
-        this.pow = pow;
-        this.pierce = pierce;
-        this.minResult = minResult;
-        this.isInstant = isInstant;
-        this.mainTargetOnly = mainTargetOnly;
-        this.isFollowUp = isFollowUp;
+    public Damage(Builder builder) {
+        type = builder.type;
+        element = builder.element;
+        pow = builder.pow;
+        minResult = builder.minResult;
+        isPierce = builder.isPierce;
+        isInstant = builder.isInstant;
+        mainTargetOnly = builder.mainTargetOnly;
+        isFollowUp = builder.isFollowUp;
     }
 
-    public Damage(SkillType type, Element element, int pow, boolean pierce, boolean isInstant, boolean mainTargetOnly) {
-        this(type, element, pow, pierce, ResultType.HIT_SHIELD, isInstant, mainTargetOnly, false);
-    }
+    public static class Builder {
+        private final SkillType type;
+        private final Element element;
+        private final int pow;
+        private ResultType minResult = ResultType.HIT_SHIELD;
+        private boolean isPierce = false;
+        private boolean isInstant = false;
+        private boolean mainTargetOnly = false;
+        private boolean isFollowUp = false;
 
-    public Damage(SkillType type, Element element, int pow, boolean pierce) {
-        this(type, element, pow, pierce, ResultType.HIT_SHIELD, false, false, false);
-    }
+        public Builder(SkillType type, Element element, int pow) {
+            this.type = type;
+            this.element = element;
+            this.pow = pow;
+        }
 
-    public Damage(SkillType type, Element element, int pow, ResultType minResult) {
-        this(type, element, pow, false, minResult, false, false, false);
-    }
+        public Builder minResult(ResultType minResult) {
+            this.minResult = minResult;
+            return this;
+        }
 
-    public Damage(SkillType type, Element element, int pow) {
-        this(type, element, pow, false, ResultType.HIT_SHIELD, false, false, false);
+        public Builder pierce() {
+            this.isPierce = true;
+            return this;
+        }
+
+        public Builder instant() {
+            this.isInstant = true;
+            return this;
+        }
+
+        public Builder mainTargetOnly() {
+            this.mainTargetOnly = true;
+            return this;
+        }
+
+        public Builder followUp() {
+            this.isFollowUp = true;
+            return this;
+        }
+
+        public Damage build() {
+            return new Damage(this);
+        }
     }
 
     @Override
@@ -77,14 +107,14 @@ public class Damage implements SkillEffect {
                 }
             }
 
-            double dmg = (atk / def) * (pow * 10) * 2 * affMultDmgDealt * affMultDmgTaken * (Math.max(self.getMultDmgDealt(), 10) / 100d) *
+            double dmg = (atk / def) * (pow * 10) * affMultDmgDealt * affMultDmgTaken * (Math.max(self.getMultDmgDealt(), 10) / 100d) *
                 (Math.max(target.getMultDmgTaken(), 10) / 100d) * (Math.max(multWeakDmgDealt, 10) / 100d) * (Math.max(multWeakDmgTaken, 10) / 100d) *
                 (Math.max(self.getMultElementDmgDealt(element), 10) / 100d) * (Math.max(target.getMultElementDmgTaken(element), 10) / 100d);
 
             if(isFollowUp) dmg = dmg * (Math.max(self.getMultFollowUpDmgDealt(), 10) / 100d) * (Math.max(target.getMultFollowUpDmgTaken(), 10) / 100d);
 
             // Deal damage
-            return target.damage((int) dmg, pierce);
+            return target.damage((int) dmg, isPierce);
         } else {
             // If the previous hit failed entirely, this one wouldn't have been reached. If this return statement is ever reached, it's under special circumstances, so let the attack continue just to be safe
             return new Result(ResultType.SUCCESS, "");

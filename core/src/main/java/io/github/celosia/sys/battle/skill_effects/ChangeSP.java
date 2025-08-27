@@ -15,23 +15,41 @@ public class ChangeSP implements SkillEffect {
     private final boolean giveToSelf;
     private final boolean mainTargetOnly;
 
-    public ChangeSP(int change, boolean isInstant, boolean giveToSelf, boolean mainTargetOnly) {
-        this.change = change;
-        this.isInstant = isInstant;
-        this.giveToSelf = giveToSelf;
-        this.mainTargetOnly = mainTargetOnly;
+    public ChangeSP(Builder builder) {
+        change = builder.change;
+        isInstant = builder.isInstant;
+        giveToSelf = builder.giveToSelf;
+        mainTargetOnly = builder.mainTargetOnly;
     }
 
-    public ChangeSP(int change, boolean isInstant, boolean giveToSelf) {
-        this(change, isInstant, giveToSelf, false);
-    }
+    public static class Builder {
+        private final int change;
+        private boolean isInstant = true;
+        private boolean giveToSelf = false;
+        private boolean mainTargetOnly = false;
 
-    public ChangeSP(int change, boolean giveToSelf) {
-        this(change, true, giveToSelf, false);
-    }
+        public Builder(int change) {
+            this.change = change;
+        }
 
-    public ChangeSP(int change) {
-        this(change, true, false, false);
+        public Builder notInstant() {
+            this.isInstant = false;
+            return this;
+        }
+
+        public Builder giveToSelf() {
+            this.giveToSelf = true;
+            return this;
+        }
+
+        public Builder mainTargetOnly() {
+            this.mainTargetOnly = true;
+            return this;
+        }
+
+        public ChangeSP build() {
+            return new ChangeSP(this);
+        }
     }
 
     @Override

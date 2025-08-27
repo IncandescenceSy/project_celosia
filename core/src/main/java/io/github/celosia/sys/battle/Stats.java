@@ -111,24 +111,17 @@ public class Stats {
     }
 
     public int getStat(Stat stat) {
-        switch(stat) {
-            case STR:
-                return str;
-            case MAG:
-                return mag;
-            case FTH:
-                return fth;
-            case AMR:
-                return amr;
-            case RES:
-                return res;
-            case AGI:
-                return agi;
-        }
-        return -1;
+        return switch (stat) {
+            case STR -> str;
+            case MAG -> mag;
+            case FTH -> fth;
+            case AMR -> amr;
+            case RES -> res;
+            case AGI -> agi;
+        };
     }
 
     public Stats getRealStats(int lvl) {
-        return new Stats((hp + (hp / 2) * lvl) * 10, str + (str / 2) * lvl, mag + (mag / 2) * lvl, fth + (fth / 2) * lvl, amr + (amr / 2) * lvl, res + (res / 2) * lvl, agi + (agi / 2) * lvl);
+        return new Stats((hp + (hp / 2) * lvl) * 5, str + (str / 2) * lvl, mag + (mag / 2) * lvl, fth + (fth / 2) * lvl, amr + (amr / 2) * lvl, res + (res / 2) * lvl, agi + (agi / 2) * lvl);
     }
 }

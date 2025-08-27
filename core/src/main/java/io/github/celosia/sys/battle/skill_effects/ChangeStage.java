@@ -16,22 +16,52 @@ public class ChangeStage implements SkillEffect {
     private final int turns; // How many turns to change it for
     private final int stacks; // How much to change it by
     private final boolean isInstant;
+    private final boolean giveToSelf;
     private final boolean mainTargetOnly;
 
-    public ChangeStage(StageType stageType, int turns, int stacks, boolean isInstant, boolean mainTargetOnly) {
-        this.stageType = stageType;
-        this.turns = turns;
-        this.stacks = stacks;
-        this.isInstant = isInstant;
-        this.mainTargetOnly = mainTargetOnly;
+    public ChangeStage(Builder builder) {
+        this.stageType = builder.stageType;
+        this.turns = builder.turns;
+        this.stacks = builder.stacks;
+        this.isInstant = builder.isInstant;
+        this.giveToSelf = builder.giveToSelf;
+        this.mainTargetOnly = builder.mainTargetOnly;
     }
 
-    public ChangeStage(StageType stageType, int turns, int stacks, boolean isInstant) {
-        this(stageType, turns, stacks, isInstant, false);
-    }
+    public static class Builder {
+        private final StageType stageType;
+        private final int turns;
+        private final int stacks;
+        private boolean isInstant;
+        private boolean giveToSelf;
+        private boolean mainTargetOnly;
 
-    public ChangeStage(StageType stageType, int change, int turns) {
-        this(stageType, change, turns, true, false);
+        public Builder(StageType stageType, int turns, int stacks) {
+            this.stageType = stageType;
+            this.turns = turns;
+            this.stacks = stacks;
+        }
+
+        public Builder notInstant() {
+            this.isInstant = false;
+            return this;
+        }
+
+        public Builder giveToSelf() {
+            this.giveToSelf = true;
+            return this;
+        }
+
+        public Builder mainTargetOnly() {
+            this.mainTargetOnly = true;
+            return this;
+        }
+
+        public ChangeStage build() {
+            return new ChangeStage(this);
+        }
+
+
     }
 
     @Override
@@ -52,19 +82,21 @@ public class ChangeStage implements SkillEffect {
             int stageOld = target.getStage(stageType);
             int stageNew = Math.clamp(stageOld + stacks, -5, 5);
 
+            Unit unit = (giveToSelf) ? self : target;
+
             if (stageNew != stageOld) {
-                target.setStage(stageType, stageNew);
-                str = formatPossessive(target.getUnitType().getName()) + " " + stageType.getName() + " " + lang.get("stage") + " " + stageOld + " -> " + stageNew;
+                unit.setStage(stageType, stageNew);
+                str = formatPossessive(unit.getUnitType().getName()) + " " + stageType.getName() + " " + lang.get("stage") + " " + stageOld + " -> " + stageNew;
             }
 
             if ((stageOld >= 0 && stacks >= 0) || (stageOld <= 0 && stacks <= 0)) { // Refresh turns
-                int turnsOld = target.getStageTurns(stageType);
+                int turnsOld = unit.getStageTurns(stageType);
                 if (turnsMod > turnsOld) {
-                    target.setStageTurns(stageType, turnsMod);
+                    unit.setStageTurns(stageType, turnsMod);
                     if (stageNew != stageOld)
                         msg.add(str + ", " + lang.get("turns") + " " + turnsOld + " -> " + turnsMod);
                     else
-                        msg.add(formatPossessive(target.getUnitType().getName()) + " " + stageType.getName() + " " + lang.get("stage") + " " + lang.get("turns") + " " + turnsOld + " -> " + turnsMod);
+                        msg.add(formatPossessive(unit.getUnitType().getName()) + " " + stageType.getName() + " " + lang.get("stage") + " " + lang.get("turns") + " " + turnsOld + " -> " + turnsMod);
                 }
             } else msg.add(str);
 

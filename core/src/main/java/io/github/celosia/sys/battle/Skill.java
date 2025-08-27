@@ -1,5 +1,9 @@
 package io.github.celosia.sys.battle;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 // Skills (any action that is attributed to a Unit and has impact on the battle)
 // todo functional range, skill "roles" (for autotargeting and AI)
 public class Skill {
@@ -9,7 +13,6 @@ public class Skill {
     private final Range range;
     private final int cost;
 
-    // todo: NYI
     // Skills happen in order of prio, and in order of user Agi within each prio
     // Prio brackets:
     // -9: Always happens last (Slow Follow-Ups)
@@ -22,29 +25,75 @@ public class Skill {
     private final int prio;
 
     private final boolean isBloom;
-    private final SkillEffect[] skillEffects;
 
-    Skill(String name, String desc, Element element, Range range, int cost, int prio, boolean isBloom, SkillEffect... skillEffects) {
-        this.name = name;
-        this.desc = desc;
-        this.element = element;
-        this.range = range;
-        this.cost = cost;
-        this.prio = prio;
-        this.isBloom = isBloom;
-        this.skillEffects = skillEffects;
+    private final List<SkillRole> skillRoles;
+    private final List<SkillEffect> skillEffects;
+
+    Skill(Builder builder) {
+        name = builder.name;
+        desc = builder.desc;
+        element = builder.element;
+        range = builder.range;
+        cost = builder.cost;
+        prio = builder.prio;
+        isBloom = builder.isBloom;
+        skillRoles = builder.skillRoles;
+        skillEffects = builder.skillEffects;
     }
 
-    Skill(String name, String desc, Element element, Range range, int cost, int prio, SkillEffect... skillEffects) {
-        this(name, desc, element, range, cost, prio, false, skillEffects);
-    }
+    public static class Builder {
+        private final String name;
+        private final String desc;
+        private final Element element;
+        private final Range range;
+        private final int cost;
+        private int prio = 0;
+        private boolean isBloom = false;
 
-    Skill(String name, String desc, Element element, Range range, int cost, boolean isBloom, SkillEffect... skillEffects) {
-        this(name, desc, element, range, cost, 0, isBloom, skillEffects);
-    }
+        private final List<SkillRole> skillRoles = new ArrayList<>();
+        private final List<SkillEffect> skillEffects = new ArrayList<>();
 
-    Skill(String name, String desc, Element element, Range range, int cost, SkillEffect... skillEffects) {
-        this(name, desc, element, range, cost, 0, false, skillEffects);
+        public Builder(String name, String desc, Element element, Range range, int cost) {
+            this.name = name;
+            this.desc = desc;
+            this.element = element;
+            this.range = range;
+            this.cost = cost;
+        }
+
+        public Builder prio(int prio) {
+            this.prio = prio;
+            return this;
+        }
+
+        public Builder bloom() {
+            isBloom = true;
+            return this;
+        }
+
+        public Builder role(SkillRole skillRole) {
+            this.skillRoles.add(skillRole);
+            return this;
+        }
+
+        public Builder roles(SkillRole... skillRoles) {
+            this.skillRoles.addAll(Arrays.asList(skillRoles));
+            return this;
+        }
+
+        public Builder effect(SkillEffect skillEffect) {
+            this.skillEffects.add(skillEffect);
+            return this;
+        }
+
+        public Builder effects(SkillEffect... skillEffects) {
+            this.skillEffects.addAll(Arrays.asList(skillEffects));
+            return this;
+        }
+
+        public Skill build() {
+            return new Skill(this);
+        }
     }
 
     public String getName() {
@@ -75,7 +124,11 @@ public class Skill {
         return isBloom;
     }
 
-    public SkillEffect[] getSkillEffects() {
+    public List<SkillEffect> getSkillEffects() {
         return skillEffects;
+    }
+
+    public List<SkillRole> getSkillRoles() {
+        return skillRoles;
     }
 }

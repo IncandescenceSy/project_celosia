@@ -45,6 +45,11 @@ public class Battle {
         return (pos < 4) ? playerTeam.getUnits()[pos] : opponentTeam.getUnits()[pos - 4];
     }
 
+    // Returns the team that the Unit at pos belongs to
+    public Team getTeamAtPos(int pos) {
+        return (pos < 4) ? playerTeam : opponentTeam;
+    }
+
     public List<Unit> getAllUnits() {
         Unit[] unitsPlayer = playerTeam.getUnits();
         Unit[] unitsOpponent = opponentTeam.getUnits();

@@ -70,9 +70,9 @@ public class BattleController {
     static List<TypingLabel> skillsL = new ArrayList<>();
 
     // temp
-    static Skill[] skills = new Skill[]{Skills.ATTACK_DOWN_GROUP, Skills.OPPONENT_ONLY, Skills.HEAT_WAVE, Skills.RASETU_FEAST, Skills.ICE_AGE, Skills.DEFEND};
-    static Skill[] skills2 = new Skill[]{Skills.ATTACK_UP_GROUP, Skills.OPPONENT_ONLY, Skills.FIREBALL, Skills.SHIELD, Skills.ICE_AGE, Skills.DEFEND};
-    static Skill[] skills3 = new Skill[]{Skills.ATTACK_UP_GROUP, Skills.OPPONENT_ONLY, Skills.HEAT_WAVE, Skills.RASETU_FEAST, Skills.ICE_AGE, Skills.DEFEND};
+    static Skill[] skills = new Skill[]{Skills.ATTACK_DOWN_GROUP, Skills.FIREBALL, Skills.HEAT_WAVE, Skills.THUNDERBOLT, Skills.ICE_AGE, Skills.DEFEND};
+    static Skill[] skills2 = new Skill[]{Skills.ATTACK_UP_GROUP, Skills.THUNDERBOLT, Skills.FIREBALL, Skills.SHIELD, Skills.ICE_AGE, Skills.DEFEND};
+    static Skill[] skills3 = new Skill[]{Skills.ATTACK_UP_GROUP, Skills.SHIELD, Skills.HEAT_WAVE, Skills.PROTECT, Skills.ICE_AGE, Skills.DEFEND};
 
     // Battle log
     // todo press L2(?) to bring up full log, better positioning
@@ -152,7 +152,7 @@ public class BattleController {
             for (Passive passive : unit.getPassives()) {
                 for (BuffEffect buffEffect : passive.getBuffEffects()) {
                     String[] effectMsgs = buffEffect.onGive(unit, 1);
-                    for (String effectMsg : effectMsgs) if (!Objects.equals(effectMsg, "")) appendToLog(effectMsg);
+                    for (String effectMsg : effectMsgs) if (!effectMsg.isEmpty()) appendToLog(effectMsg);
                 }
             }
         }
@@ -190,7 +190,7 @@ public class BattleController {
                 if(!Debug.selectOpponentMoves) {
                     if ((selectingMove - 4) < battle.getOpponentTeam().getUnits().length) { // if there are more opponents yet to act
                         //Skill selectedSkill = skills2[MathUtils.random(skills.length - 1)];
-                        Skill selectedSkill = Skills.ALLY_ONLY;
+                        Skill selectedSkill = Skills.NOTHING;
                         Unit target = battle.getPlayerTeam().getUnits()[MathUtils.random(battle.getPlayerTeam().getUnits().length - 1)];
                         setTextIfChanged(movesL.get(selectingMove), selectedSkill.getName() + " -> " + target.getUnitType().getName()); // todo support ExtraActions
                         moves.add(new Move(selectedSkill, battle.getOpponentTeam().getUnits()[selectingMove - 4], target.getPos())); // todo AI
@@ -288,7 +288,7 @@ public class BattleController {
                         int cost = move.getSkill().getCost();
                         // Make sure cost doesn't go below 1 unless the skill has a base 0 SP cost
                         int costMod = (cost > 0) ? (int) Math.max(Math.ceil((cost * getAffMultSpCost(move.getSelf().getAff(element)))), 1) : 0;
-                        newSp = ((move.getSkill().isBloom()) ? team.getBloom() : move.getSelf().getSp()) - costMod;
+                        newSp = ((move.getSkill().isBloom()) ? team.getBloom() : (int) (move.getSelf().getSp() - (costMod * (Math.max(move.getSelf().getMultSpUse(), 10) / 100d))));
 
                         StringBuilder builder = new StringBuilder();
                         if(newSp >= 0) {
@@ -324,12 +324,12 @@ public class BattleController {
                     // Make sure newSp is valid
                     if(newSp >= 0) {
                         // Apply all SkillEffects over a period of time
-                        SkillEffect[] skillEffects = move.getSkill().getSkillEffects();
+                        List<SkillEffect> skillEffects = move.getSkill().getSkillEffects();
 
                         Unit targetMain = battle.getUnitAtPos(move.getTargetPos());
 
                         // Apply SkillEffects one at a time
-                        if (applyingEffect < skillEffects.length) {
+                        if (applyingEffect < skillEffects.size()) {
                             // Looking for at least 1 non-fail to continue the skill after the first effect
                             if(nonFails > 0 || applyingEffect == 0) {
                                 // Apply to all targets
@@ -345,7 +345,7 @@ public class BattleController {
                                                 for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
                                                     String[] effectMsgs = buffEffect.onTargetedBySkill(targetCur, buffInstance.getStacks());
                                                     for (String effectMsg : effectMsgs)
-                                                        if (!Objects.equals(effectMsg, ""))
+                                                        if (!effectMsg.isEmpty())
                                                             appendToLog(effectMsg);
                                                 }
                                             }
@@ -357,20 +357,20 @@ public class BattleController {
                                             nonFails++;
 
                                             // Apply effect and track result
-                                            Result result = skillEffects[applyingEffect].apply(move.getSelf(), targetCur, targetCur == targetMain, prevResults.get(targetPos));
+                                            Result result = skillEffects.get(applyingEffect).apply(move.getSelf(), targetCur, targetCur == targetMain, prevResults.get(targetPos));
                                             prevResults.put(targetPos, result.getResultType());
 
                                             // Log message
                                             List<String> msgs = result.getMessages();
                                             for (String msg : msgs)
-                                                if (msg != null && !Objects.equals(msg, "")) {
+                                                if (msg != null && !msg.isEmpty()) {
                                                     appendToLog(msg); // Add to log
                                                 }
                                         }
                                     }
                                 }
                                 // Wait a bit before next SkillEffect
-                                if (!skillEffects[applyingEffect].isInstant()) wait += 0.25f * Settings.battleSpeed;
+                                if (!skillEffects.get(applyingEffect).isInstant()) wait += 0.25f * Settings.battleSpeed;
                                 applyingEffect++;
                             } else endMove();
                         } else endMove();

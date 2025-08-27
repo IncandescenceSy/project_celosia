@@ -4,7 +4,6 @@ import io.github.celosia.sys.battle.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnGiveBuff;
 import static io.github.celosia.sys.menu.TextLib.formatPossessive;
@@ -20,42 +19,58 @@ public class GiveBuff implements SkillEffect {
     private final boolean mainTargetOnly;
     private final boolean isInstant;
 
-    public GiveBuff(Buff buff, int turns, int stacks, ResultType minResult, boolean isInstant, boolean giveToSelf, boolean mainTargetOnly) {
-        this.buff = buff;
-        this.turns = turns;
-        this.stacks = stacks;
-        this.minResult = minResult;
-        this.isInstant = isInstant;
-        this.giveToSelf = giveToSelf;
-        this.mainTargetOnly = mainTargetOnly;
+    public GiveBuff(Builder builder) {
+        buff = builder.buff;
+        turns = builder.turns;
+        stacks = builder.stacks;
+        minResult = builder.minResult;
+        isInstant = builder.isInstant;
+        giveToSelf = builder.giveToSelf;
+        mainTargetOnly = builder.mainTargetOnly;
     }
 
-    public GiveBuff(Buff buff, int turns, boolean isInstant, boolean giveToSelf, boolean mainTargetOnly) {
-        this(buff, turns, 1, ResultType.SUCCESS, true, giveToSelf, mainTargetOnly);
-    }
+    public static class Builder {
+        private final Buff buff;
+        private final int turns;
+        private int stacks = 1;
+        private ResultType minResult = ResultType.SUCCESS;
+        private boolean giveToSelf = false;
+        private boolean mainTargetOnly = false;
+        private boolean isInstant = true;
 
-    public GiveBuff(Buff buff, int turns, boolean isInstant, boolean giveToSelf) {
-        this(buff, turns, 1, ResultType.SUCCESS, isInstant, giveToSelf, false);
-    }
+        public Builder(Buff buff, int turns) {
+            this.buff = buff;
+            this.turns = turns;
+        }
 
-    public GiveBuff(Buff buff, int turns, int stacks) {
-        this(buff, turns, stacks, ResultType.SUCCESS, true, false, false);
-    }
+        public Builder stacks(int stacks) {
+            this.stacks = stacks;
+            return this;
+        }
 
-    public GiveBuff(Buff buff, int turns, boolean isInstant) {
-        this(buff, turns, 1, ResultType.SUCCESS, isInstant, false, false);
-    }
+        public Builder minResult(ResultType minResult) {
+            this.minResult = minResult;
+            return this;
+        }
 
-    public GiveBuff(Buff buff, int turns) {
-        this(buff, turns, 1, ResultType.SUCCESS, true, false, false);
-    }
+        public Builder giveToSelf() {
+            this.giveToSelf = true;
+            return this;
+        }
 
-    public GiveBuff(Buff buff, boolean isInstant) {
-        this(buff, 1, 1, ResultType.SUCCESS, isInstant, false, false);
-    }
+        public Builder mainTargetOnly() {
+            this.mainTargetOnly = true;
+            return this;
+        }
 
-    public GiveBuff(Buff buff) {
-        this(buff, 1, 1, ResultType.SUCCESS, true, false, false);
+        public Builder notInstant() {
+            this.isInstant = false;
+            return this;
+        }
+
+        public GiveBuff build() {
+            return new GiveBuff(this);
+        }
     }
 
     @Override
@@ -96,7 +111,7 @@ public class GiveBuff implements SkillEffect {
                 int stacksAdded = stacksNew - stacksOld;
                 for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
                     String[] effectMsgs = buffEffect.onGive(unit, stacksAdded);
-                    for(String effectMsg : effectMsgs) if(!Objects.equals(effectMsg, "")) msg.add(effectMsg);
+                    for(String effectMsg : effectMsgs) if(!effectMsg.isEmpty()) msg.add(effectMsg);
                 }
 
                 return new Result(ResultType.SUCCESS, msg);
@@ -110,7 +125,7 @@ public class GiveBuff implements SkillEffect {
                 BuffEffect[] buffEffects = buffInstance.getBuff().getBuffEffects();
                 for (BuffEffect buffEffect : buffEffects) {
                     String[] effectMsgs = buffEffect.onGive(unit, buffInstance.getStacks());
-                    for (String effectMsg : effectMsgs) if (!Objects.equals(effectMsg, "")) msg.add(effectMsg);
+                    for (String effectMsg : effectMsgs) if (!effectMsg.isEmpty()) msg.add(effectMsg);
                 }
 
                 return new Result(ResultType.SUCCESS, msg);

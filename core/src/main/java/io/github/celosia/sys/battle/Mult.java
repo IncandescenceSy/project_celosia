@@ -26,7 +26,8 @@ public enum Mult {
     DOT_DMG_TAKEN(lang.get("mult.dot_dmg_taken")),
     HEALING_DEALT(lang.get("mult.healing_dealt")),
     HEALING_TAKEN(lang.get("mult.healing_taken")),
-    SP_GAIN(lang.get("mult.sp_gain"));
+    SP_GAIN(lang.get("mult.sp_gain")),
+    SP_USE(lang.get("mult.sp_use"));
 
     private final String name;
 
