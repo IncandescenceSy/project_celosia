@@ -7,10 +7,10 @@ import static io.github.celosia.sys.settings.Lang.lang;
 
 // Todo: alternate keys, remapping
 public enum Keybind {
-        CONFIRM(lang.get("key.confirm"), Input.Keys.Z, Button.A), // Also Attack
-        BACK(lang.get("key.back"), Input.Keys.X, Button.B), // Also Cancel and Defend
-        MENU(lang.get("key.menu"), Input.Keys.C, Button.Y), // Also Skills
-        MAP(lang.get("key.map"), Input.Keys.V, Button.X), // Also Inspect
+        CONFIRM(lang.get("key.confirm"), Input.Keys.Z, Button.A), // (Bottom button)
+        BACK(lang.get("key.back"), Input.Keys.X, Button.B), // (Right button)
+        MENU(lang.get("key.menu"), Input.Keys.C, Button.Y), // (Top button) Also Open Full Log
+        MAP(lang.get("key.map"), Input.Keys.V, Button.X), // (Left button) Also Inspect
         PAGE_L1(lang.get("key.page_l1"), Input.Keys.F, Button.L1),
         PAGE_R1(lang.get("key.page_r1"), Input.Keys.G, Button.R1),
         PAGE_L2(lang.get("key.page_l2"), Input.Keys.S, Button.L2),

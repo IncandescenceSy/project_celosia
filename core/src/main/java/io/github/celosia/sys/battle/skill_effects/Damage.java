@@ -77,8 +77,8 @@ public class Damage implements SkillEffect {
     public Result apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
         // Multi-hit attacks should continue unless they hit an immunity
         if (resultPrev.ordinal() >= minResult.ordinal() && (!mainTargetOnly || isMainTarget)) {
-            double atk = -1f;
-            double def = -1f;
+            double atk = -1;
+            double def = -1;
 
             if (type == SkillType.STR) {
                 atk = Math.max(1, self.getStrWithStage());
@@ -108,8 +108,8 @@ public class Damage implements SkillEffect {
             }
 
             double dmg = (atk / def) * (pow * 10) * affMultDmgDealt * affMultDmgTaken * (Math.max(self.getMultDmgDealt(), 10) / 100d) *
-                (Math.max(target.getMultDmgTaken(), 10) / 100d) * (Math.max(multWeakDmgDealt, 10) / 100d) * (Math.max(multWeakDmgTaken, 10) / 100d) *
-                (Math.max(self.getMultElementDmgDealt(element), 10) / 100d) * (Math.max(target.getMultElementDmgTaken(element), 10) / 100d);
+                (Math.max(target.getMultDmgTaken(), 10) / 100d) * (Math.max(self.getMultElementDmgDealt(element), 10) / 100d) *
+                (Math.max(target.getMultElementDmgTaken(element), 10) / 100d) * (Math.max(multWeakDmgDealt, 10) / 100d) * (Math.max(multWeakDmgTaken, 10) / 100d);
 
             if(isFollowUp) dmg = dmg * (Math.max(self.getMultFollowUpDmgDealt(), 10) / 100d) * (Math.max(target.getMultFollowUpDmgTaken(), 10) / 100d);
 

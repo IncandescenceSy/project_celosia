@@ -1,6 +1,7 @@
 package io.github.celosia.sys.battle;
 
-import static io.github.celosia.sys.battle.PosLib.*;
+import static io.github.celosia.sys.battle.PosLib.getHeight;
+import static io.github.celosia.sys.battle.PosLib.getRelativeSide;
 
 // A skill with self and target attached
 public class Move {

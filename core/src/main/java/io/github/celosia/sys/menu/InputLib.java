@@ -6,6 +6,7 @@ import com.badlogic.gdx.controllers.ControllerMapping;
 import io.github.celosia.sys.Debug;
 import io.github.celosia.sys.InputHandler;
 import io.github.celosia.sys.settings.Keybind;
+import io.github.celosia.sys.settings.Settings;
 
 public class InputLib {
     // How long each keybind has been held down for
@@ -16,17 +17,15 @@ public class InputLib {
     public static void setupController(Controller controller) {
         ControllerMapping mapping = controller.getMapping();
 
-        if (Debug.swapFaceButtons) {
+        if (Debug.alwaysUseNintendoLayout || (Settings.detectNintendoController && isNintendoController(controller))) {
             Button.B.setMapping(mapping.buttonA);
             Button.A.setMapping(mapping.buttonB);
-            Button.Y.setMapping(mapping.buttonX);
-            Button.X.setMapping(mapping.buttonY);
         } else {
             Button.B.setMapping(mapping.buttonB);
             Button.A.setMapping(mapping.buttonA);
-            Button.Y.setMapping(mapping.buttonY);
-            Button.X.setMapping(mapping.buttonX);
         }
+        Button.Y.setMapping(mapping.buttonY);
+        Button.X.setMapping(mapping.buttonX);
         Button.DL.setMapping(mapping.buttonDpadLeft);
         Button.DR.setMapping(mapping.buttonDpadRight);
         Button.DU.setMapping(mapping.buttonDpadUp);
@@ -98,5 +97,12 @@ public class InputLib {
     // Checks a stick axis to see if it's tilted further than a specified value
     public static boolean checkAxis(int mapping, float dist) {
         return InputHandler.getController() != null && (dist > 0f ? InputHandler.getController().getAxis(mapping) > dist : InputHandler.getController().getAxis(mapping) < dist);
+    }
+
+    // Tries to determine if a controller is a Nintendo controller via its name
+    public static boolean isNintendoController(Controller controller) {
+        String name = controller.getName().toLowerCase();
+
+        return name.contains("nintendo") || name.contains("switch");
     }
 }

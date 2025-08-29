@@ -21,10 +21,14 @@ public class Fonts {
         StringBuilder builder = new StringBuilder();
 
         // Hiragana
+        // todo fix (doesnt work)
         //for(char c = 0x3041; c <= 0x309f; c++) builder.append(c);
 
         // Katakana
         //for(char c = 0x30a0; c <= 0x30ff; c++) builder.append(c);
+
+        // Infinity symbol ∞
+        builder.append("∞");
 
         parameter.characters += builder;
 
@@ -51,6 +55,7 @@ public class Fonts {
         genKoruri.dispose();
     }
 
+    // todo refactor
     public enum FontType {
         KORURI(koruri20, koruri30, koruri40, koruri60, koruri80);
 

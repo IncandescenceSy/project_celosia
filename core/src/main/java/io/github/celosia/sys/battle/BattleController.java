@@ -28,7 +28,7 @@ import static io.github.celosia.sys.settings.Lang.lang;
 public class BattleController {
 
     // Battle
-    static Battle battle;
+    public static Battle battle;
 
     // Time to wait in seconds
     static float wait = 0f;
@@ -71,8 +71,8 @@ public class BattleController {
 
     // temp
     static Skill[] skills = new Skill[]{Skills.ATTACK_DOWN_GROUP, Skills.FIREBALL, Skills.HEAT_WAVE, Skills.THUNDERBOLT, Skills.ICE_AGE, Skills.DEFEND};
-    static Skill[] skills2 = new Skill[]{Skills.ATTACK_UP_GROUP, Skills.THUNDERBOLT, Skills.FIREBALL, Skills.SHIELD, Skills.ICE_AGE, Skills.DEFEND};
-    static Skill[] skills3 = new Skill[]{Skills.ATTACK_UP_GROUP, Skills.SHIELD, Skills.HEAT_WAVE, Skills.PROTECT, Skills.ICE_AGE, Skills.DEFEND};
+    static Skill[] skills2 = new Skill[]{Skills.ATTACK_UP_GROUP, Skills.BLOSSOM, Skills.FIREBALL, Skills.SHIELD, Skills.ICE_AGE, Skills.DEFEND};
+    static Skill[] skills3 = new Skill[]{Skills.BLOSSOM, Skills.SHIELD, Skills.HEAT_WAVE, Skills.PROTECT, Skills.ICE_AGE, Skills.DEFEND};
 
     // Battle log
     // todo press L2(?) to bring up full log, better positioning
@@ -87,7 +87,7 @@ public class BattleController {
         UnitType johny = new UnitType("Johny", johnyStats, 4, -4, 0, 0 ,0, 0, 0, Passives.DEBUFF_DURATION_UP, Passives.RESTORATION);
         Stats jerryStats = new Stats(100, 100, 100, 100, 100, 100, 115);
         UnitType jerry = new UnitType("Jerry", jerryStats, 5, -4, 0, 5 ,0, 0, 0, Passives.DEBUFF_DURATION_UP);
-        UnitType james = new UnitType("James", jerryStats, -4, 5, 0, 0 ,0, 0, 0, Passives.DEBUFF_DURATION_UP);
+        UnitType james = new UnitType("James", jerryStats, -4, 5, 0, 0 ,0, 0, 0, Passives.DEBUFF_DURATION_UP, Passives.ETERNAL_WELLSPRING);
         UnitType jacob = new UnitType("Jacob", johnyStats, 0, 0, 5, -4 ,0, 0, 0, Passives.DEBUFF_DURATION_UP);
         UnitType julia = new UnitType("Julia", johnyStats, 0, 0, -4, 5 ,0, 0, 0, Passives.DEBUFF_DURATION_UP);
         UnitType jude = new UnitType("Jude", jerryStats, 0, 0, -3, -3 ,5, 0, 0, Passives.DEBUFF_DURATION_UP);
@@ -217,7 +217,7 @@ public class BattleController {
 
                     for (Unit unit : battle.getAllUnits()) {
                         // Increase SP
-                        unit.setSp(Math.min((int) (unit.getSp() + (100 * (Math.max(unit.getMultSpGain(), 10) / 100d))), 1000));
+                        if(!unit.isInfiniteSp()) unit.setSp(Math.min((int) (unit.getSp() + (100 * (Math.max(unit.getMultSpGain(), 10) / 100d))), 1000));
 
                         // Apply turn end BuffEffects
                         for (Passive passive : unit.getPassives()) {
@@ -282,42 +282,49 @@ public class BattleController {
                     if(applyingEffect == 0) {
 
                         // Set newSp
-                        Element element = move.getSkill().getElement();
-                        boolean isPlayerTeam = move.getSelf().getPos() < 4;
+                        Unit self = move.getSelf();
+                        Skill skill = move.getSkill();
+
+                        Element element = skill.getElement();
+                        boolean isPlayerTeam = self.getPos() < 4;
                         Team team = (isPlayerTeam) ? battle.getPlayerTeam() : battle.getOpponentTeam();
-                        int cost = move.getSkill().getCost();
+                        int cost = (self.isInfiniteSp() && !skill.isBloom()) ? 0 : skill.getCost();
                         // Make sure cost doesn't go below 1 unless the skill has a base 0 SP cost
-                        int costMod = (cost > 0) ? (int) Math.max(Math.ceil((cost * getAffMultSpCost(move.getSelf().getAff(element)))), 1) : 0;
-                        newSp = ((move.getSkill().isBloom()) ? team.getBloom() : (int) (move.getSelf().getSp() - (costMod * (Math.max(move.getSelf().getMultSpUse(), 10) / 100d))));
+                        int costMod = (cost > 0) ? (int) Math.max(Math.ceil((cost * getAffMultSpCost(self.getAff(element)))), 1) : 0;
+                        newSp = ((skill.isBloom()) ? team.getBloom() - costMod : (int) (self.getSp() - (costMod * (Math.max(self.getMultSpUse(), 10) / 100d))));
 
                         StringBuilder builder = new StringBuilder();
                         if(newSp >= 0) {
-                            builder.append(move.getSelf().getUnitType().getName()).append(" ").append(lang.get("log.uses")).append(" ").append(move.getSkill().getName()).append(" ").append(lang.get("log.on")).append(" ").append(battle.getUnitAtPos(move.getTargetPos()).getUnitType().getName());
+                            builder.append(self.getUnitType().getName()).append(" ").append(lang.get("log.uses")).append(" ").append(skill.getName());
+                            if(!skill.isRangeSelf()) builder.append(" ").append(lang.get("log.on")).append(" ").append(battle.getUnitAtPos(move.getTargetPos()).getUnitType().getName());
 
-                            if (move.getSkill().isBloom()) {
+                            if (skill.isBloom()) {
                                 builder.append(" (").append((isPlayerTeam) ? lang.get("log.team_player") : lang.get("log.team_opponent")).append(" ").append(lang.get("bloom")).append(" ").append(String.format("%,d", team.getBloom())).append(" -> ").append(String.format("%,d", newSp)).append(")");
                                 team.setBloom(newSp);
-                            } else if (newSp != move.getSelf().getSp()) { // Use SP
-                                builder.append(" (").append(lang.get("sp")).append(" ").append(String.format("%,d", move.getSelf().getSp())).append(" -> ").append(String.format("%,d", newSp)).append(")");
-                                move.getSelf().setSp(newSp);
+                            } else if (newSp != self.getSp()) { // Use SP
+                                builder.append(" (").append(lang.get("sp")).append(" ").append(String.format("%,d", self.getSp())).append(" -> ").append(String.format("%,d", newSp)).append(")");
+                                self.setSp(newSp);
                             }
 
                             appendToLog(builder.toString());
 
                             // Apply on-skill use BuffEffects
-                            notifyOnUseSkill(move.getSelf(), battle.getUnitAtPos(move.getTargetPos()), move.getSkill());
+                            notifyOnUseSkill(self, battle.getUnitAtPos(move.getTargetPos()), skill);
 
                             // Color move for currently acting combatant (temp)
                             for (int i = 0; i < 8; i++) {
-                                //statsL.get(i).setX(((move.getSelf().getPos()) == i) ? (i >= 4) ? World.WIDTH - 300 : 200 : (i >= 4) ? World.WIDTH - 250 : 150);
-                                if (move.getSelf().getPos() == i) {
+                                //statsL.get(i).setX(((self.getPos()) == i) ? (i >= 4) ? World.WIDTH - 300 : 200 : (i >= 4) ? World.WIDTH - 250 : 150);
+                                if (self.getPos() == i) {
                                     movesL.get(i).setColor(Color.PINK);
                                 } else movesL.get(i).setColor(Color.WHITE);
                             }
 
                             prevResults = new HashMap<>();
                         } else {
-                            appendToLog(move.getSelf().getUnitType().getName() + " " + lang.get("log.tries_to_use") + " " + move.getSkill().getName() + ", " + lang.get("log.but_doesnt_have_enough") + " " + (move.getSkill().isBloom() ? lang.get("bloom") : lang.get("sp")));
+                            String msg = self.getUnitType().getName() + " " + lang.get("log.tries_to_use") + " " + skill.getName();
+                            if(!skill.isRangeSelf()) msg += " " + lang.get("log.on") + " " + battle.getUnitAtPos(move.getTargetPos()).getUnitType().getName();
+                            msg += ", " + lang.get("log.but_doesnt_have_enough") + " " + (skill.isBloom() ? lang.get("bloom") : lang.get("sp"));
+                            appendToLog(msg);
                         }
                     } else newSp = 0; // SP shouldn't change
 
@@ -473,7 +480,9 @@ public class BattleController {
             if (unit != null) {
                 int shield = unit.getShield() + unit.getDefend();
                 String shieldStr = (shield > 0) ? "[CYAN]+" + String.format("%,d", shield) + "[WHITE]" : "";
-                StringBuilder text = new StringBuilder(unit.getUnitType().getName() + "\n" + lang.get("hp") + ": " + String.format("%,d", unit.getStatsCur().getHp()) + shieldStr + "/" + String.format("%,d", unit.getStatsDefault().getHp()) + "\n" + lang.get("sp") + ": " + String.format("%,d", unit.getSp()) + "/" + String.format("%,d", 1000) +
+                String spStr = (!unit.isInfiniteSp()) ? String.format("%,d", unit.getSp()) + "/" + String.format("%,d", 1000) : "∞";
+                StringBuilder text = new StringBuilder(unit.getUnitType().getName() + "\n" + lang.get("hp") + ": " + String.format("%,d", unit.getStatsCur().getHp()) +
+                    shieldStr + "/" + String.format("%,d", unit.getStatsDefault().getHp()) + "\n" + lang.get("sp") + ": " + spStr +
                     //"\nStr: " + unit.getStrWithStage() + "/" + unit.getStatsDefault().getStr() + "\nMag:" + unit.getMagWithStage() + "/" + unit.getStatsDefault().getMag() +
                     //"\nAmr: " + unit.getAmrWithStage() + "/" + unit.getStatsDefault().getAmr() + "\nRes: " + unit.getResWithStage() + "/" + unit.getStatsDefault().getRes() +
                     "\n");

@@ -113,7 +113,7 @@ public class Main extends ApplicationAdapter {
         // Debug
         Debug.enableDebugHotkeys = true;
         Debug.showDebugInfo = true;
-        Debug.swapFaceButtons = true;
+        Debug.alwaysUseNintendoLayout = true;
         //Debug.selectOpponentMoves = true;
 
         debug = new TextraLabel("", FontType.KORURI.getSize20());
@@ -123,6 +123,8 @@ public class Main extends ApplicationAdapter {
         // Setup main menu
         menuType = MenuType.MAIN;
         createMenuMain();
+
+        // todo if using SteamInput, initial warning popup abt incorrect glyphs recommending using ingame remapping instead
     }
 
     @Override

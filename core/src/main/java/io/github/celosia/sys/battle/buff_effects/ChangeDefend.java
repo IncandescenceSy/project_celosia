@@ -23,14 +23,14 @@ public class ChangeDefend implements BuffEffect {
         self.setDefend(defendNew);
         return new String[]{formatPossessive(self.getUnitType().getName()) + " " + lang.get("shield") + " " + String.format("%,d", (self.getShield() + defendOld)) + " -> " + String.format("%,d", (self.getShield() + defendNew)) +
             "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", ((self.getShield() + defendNew) - (self.getShield() + defendOld))) + ")",
-            ((self.getEffectBlock() <= 0 && self.getShield() == 0 && defendOld == 0) ? self.getUnitType().getName() + " " + lang.get("log.is_now") + " " + lang.get("log.effect_block") : "")};
+            ((self.isEffectBlock() && self.getShield() == 0 && defendOld == 0) ? self.getUnitType().getName() + " " + lang.get("log.is_now") + " " + lang.get("log.effect_block") : "")};
     }
 
     @Override
     public String[] onRemove(Unit self, int stacks) {
         int defendOld = self.getDefend();
         self.setDefend(0);
-        String msgEffBlock = ((self.getEffectBlock() <= 0 && self.getShield() == 0) ? self.getUnitType().getName() + " " + lang.get("log.is_no_longer") + " " + lang.get("log.effect_block") : "");
+        String msgEffBlock = ((self.isEffectBlock() && self.getShield() == 0) ? self.getUnitType().getName() + " " + lang.get("log.is_no_longer") + " " + lang.get("log.effect_block") : "");
         if(self.getShield() > 0) return new String[]{formatPossessive(self.getUnitType().getName()) + " " + lang.get("shield") + " " + String.format("%,d", (self.getShield() + defendOld)) + " -> " + String.format("%,d", self.getShield()) + "/" +
             String.format("%,d", self.getStatsDefault().getHp()) + " (" + String.format("%,d", (self.getShield() - (self.getShield() + defendOld))) + ")", msgEffBlock};
         else return new String[]{self.getUnitType().getName() + " " + lang.get("log.loses") + " " + String.format("%,d", defendOld) + " " + lang.get("shield"), msgEffBlock};

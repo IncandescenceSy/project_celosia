@@ -2,7 +2,6 @@ package io.github.celosia.sys.battle;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static io.github.celosia.sys.menu.TextLib.formatPossessive;
 import static io.github.celosia.sys.settings.Lang.lang;
@@ -72,7 +71,7 @@ public class Unit {
     private int multFollowUpDmgDealt;
     private int multFollowUpDmgTaken;
 
-    // For exclusively DoT damage (negative ChangeHP)
+    // For exclusively DoT damage (negative ChangeHp)
     private int multDoTDmgTaken;
 
     // For healing and shield
@@ -93,8 +92,11 @@ public class Unit {
     // Extra actions
     private int extraActions;
 
-    // Secondary effect block; >=1 means blocks secondary effects the same as Barrier
+    // Secondary effect block; >= 1 means blocks secondary effects the same as Barrier
     private int effectBlock;
+
+    // >= 1 means SP is infinite
+    private int infiniteSp;
 
     // Buff/debuff duration modifiers
     private int durationModBuffDealt;
@@ -158,6 +160,7 @@ public class Unit {
         defend = 0;
         extraActions = 0;
         effectBlock = 0;
+        infiniteSp = 0;
         durationModBuffDealt = 0;
         durationModBuffTaken = 0;
         durationModDebuffDealt = 0;
@@ -765,6 +768,22 @@ public class Unit {
         return effectBlock;
     }
 
+    public boolean isEffectBlock() {
+        return effectBlock > 0;
+    }
+
+    public void setInfiniteSp(int infiniteSp) {
+        this.infiniteSp = infiniteSp;
+    }
+
+    public int getInfiniteSp() {
+        return infiniteSp;
+    }
+
+    public boolean isInfiniteSp() {
+        return infiniteSp > 0;
+    }
+
     public void setDurationModBuffDealt(int durationModBuffDealt) {
         this.durationModBuffDealt = durationModBuffDealt;
     }
@@ -832,7 +851,7 @@ public class Unit {
     }
 
     public boolean isProtected() {
-        return multDmgTaken <= -50000;
+        return multDmgTaken <= -50_000;
     }
 
     public boolean isWeakTo(Element element) {
@@ -865,6 +884,11 @@ public class Unit {
             if(buffInstance.getBuff() == buff) return buffInstance;
         }
         return null;
+    }
+
+    // Returns the Unit's Side
+    public Side getSide() {
+        return (pos < 4) ? Side.ALLY : Side.OPPONENT;
     }
 
     public List<String> decrementTurns() {
@@ -937,7 +961,7 @@ public class Unit {
                 if (defend > dmg) { // Only hit Defend
                     defend -= dmg;
                     return new Result(ResultType.HIT_SHIELD, name_s + lang.get("shield") + " " + String.format("%,d", (defendOld + shield)) + " -> "
-                        + String.format("%,d", (defend + shield)) + "/" + String.format("%,d", this.getStatsDefault().getHp()) + " (-" + String.format("%,d", dmgFull) + ")");
+                        + String.format("%,d", (defend + shield)) + "/" + String.format("%,d", statsDefault.getHp()) + " (-" + String.format("%,d", dmgFull) + ")");
                 } else { // Destroy Defend and proceed to Shield
                     dmg -= defend;
                     defend = 0;
@@ -950,9 +974,9 @@ public class Unit {
                     int shieldOld = shield;
                     shield -= dmg;
                     return new Result(ResultType.HIT_SHIELD, name_s + lang.get("shield") + " " + String.format("%,d", (defendOld + shieldOld)) + " -> "
-                        + String.format("%,d", shield) + "/" + String.format("%,d", this.getStatsDefault().getHp()) + " (-" + String.format("%,d", dmgFull) + ")");
+                        + String.format("%,d", shield) + "/" + String.format("%,d", statsDefault.getHp()) + " (-" + String.format("%,d", dmgFull) + ")");
                 } else { // Destroy Shield and proceed to HP
-                    msg.add(name_s + lang.get("shield") + " " + String.format("%,d", (defendOld + shield)) + " -> " + 0 + "/" + this.getStatsDefault().getHp() +
+                    msg.add(name_s + lang.get("shield") + " " + String.format("%,d", (defendOld + shield)) + " -> " + 0 + "/" + statsDefault.getHp() +
                         " (-" + String.format("%,d", (defendOld + shield)) + ")");
                     dmg -= shield;
                     shield = 0;
@@ -963,10 +987,10 @@ public class Unit {
         }
 
         // Lower HP
-        int hpOld = this.getStatsCur().getHp();
-        int hpNew = Math.clamp(hpOld - dmg, 0, this.getStatsDefault().getHp());
+        int hpOld = statsCur.getHp();
+        int hpNew = Math.clamp(hpOld - dmg, 0, statsDefault.getHp());
         msg.add(name_s + lang.get("hp") + " " + String.format("%,d", hpOld) + " -> " + String.format("%,d", hpNew) + " (-" + String.format("%,d", dmg) + ")");
-        this.getStatsCur().setHp(hpNew);
+        statsCur.setHp(hpNew);
 
         if (effectBlock > 0) { // todo should this be a separate result from hitting shield
             return new Result(ResultType.HIT_SHIELD, msg);

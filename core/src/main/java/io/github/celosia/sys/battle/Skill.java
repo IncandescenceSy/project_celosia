@@ -131,4 +131,9 @@ public class Skill {
     public List<SkillRole> getSkillRoles() {
         return skillRoles;
     }
+
+    // Returns true if the skill can only target Self
+    public boolean isRangeSelf() {
+        return range == Ranges.SELF || range == Ranges.SELF_UP_DOWN;
+    }
 }

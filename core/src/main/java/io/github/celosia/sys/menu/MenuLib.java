@@ -12,7 +12,7 @@ import io.github.celosia.sys.settings.Keybind;
 
 import java.util.List;
 
-import static io.github.celosia.sys.battle.PosLib.*;
+import static io.github.celosia.sys.battle.PosLib.getRelativeSide;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class MenuLib {
@@ -58,8 +58,10 @@ public class MenuLib {
             return Math.min(++logScroll, lines - 8);
         } else if(InputLib.checkInput(true, Keybind.PAGE_R1)) { // Down
             return Math.max(--logScroll, 0);
-        } else if(InputLib.checkInput(false, Keybind.PAGE_R2)) { // To bottom, if at bottom, to top
-            return (logScroll != lines - 8) ? lines - 8 : 0;
+        } else if(InputLib.checkInput(false, Keybind.PAGE_L2)) { // To top
+            return lines - 8;
+        } else if(InputLib.checkInput(false, Keybind.PAGE_R2)) { // To bottom
+            return 0;
         } else return logScroll;
     }
 

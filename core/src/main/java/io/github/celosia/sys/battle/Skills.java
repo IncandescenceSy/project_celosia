@@ -10,11 +10,11 @@ public class Skills {
     // Basic skills
     static Skill NOTHING = new Skill.Builder(lang.get("skill.nothing"), lang.get("skill.nothing.desc"), Element.VIS, Ranges.SELF, 0).build();
     static Skill DEFEND = new Skill.Builder(lang.get("skill.defend"), lang.get("skill.defend.desc"), Element.VIS, Ranges.SELF, 0)
-        .prio(3).effects(new GiveBuff.Builder(Buffs.DEFEND, 1).build(), new ChangeSP.Builder(70).giveToSelf().build()).build();
+        .prio(3).effects(new GiveBuff.Builder(Buffs.DEFEND, 1).build(), new ChangeSp.Builder(70).giveToSelf().build()).build();
     static Skill PROTECT = new Skill.Builder(lang.get("skill.protect"), lang.get("skill.protect.desc"), Element.VIS, Ranges.SELF, 40)
         .prio(3).effect(new GiveBuff.Builder(Buffs.PROTECT, 1).notInstant().build()).build(); // todo cooldown
     static Skill BLOSSOM = new Skill.Builder(lang.get("skill.blossom"), lang.get("skill.blossom.desc"), Element.VIS, Ranges.SELF, 300)
-        .build(); // todo
+        .effects(new ChangeBloom.Builder(300).notInstant().build()).build();
 
     // Stage changers
     static Skill ATTACK_UP = new Skill.Builder(lang.get("skill.atk_up"), lang.get("skill.atk_up.desc"), Element.VIS, Ranges.OTHER_2R_OR_SELF, 50)
@@ -105,18 +105,14 @@ public class Skills {
     // Mag
     // todo a way to build multihits that's less repetitive?
     // Ref: Terraria
-    static Skill DEMON_SCYTHE = new Skill.Builder(lang.get("skill.demon_scythe"), lang.get("skill.demon_scythe.desc"), Element.MALUM, Ranges.OTHER_2R, 110)
-        .effects(new Damage.Builder(SkillType.MAG, Element.MALUM, 35).build(), new GiveBuff.Builder(Buffs.CURSE, 2).build(),
-            new Damage.Builder(SkillType.MAG, Element.MALUM, 35).build(), new GiveBuff.Builder(Buffs.CURSE, 2).build()).build();
+    static Skill DEMON_SCYTHE = new Skill.Builder(lang.get("skill.demon_scythe"), lang.get("skill.demon_scythe.desc"), Element.MALUM, Ranges.OTHER_2R, 120)
+        .effects(new Damage.Builder(SkillType.MAG, Element.MALUM, 50).build(), new GiveBuff.Builder(Buffs.CURSE, 2).build(),
+            new Damage.Builder(SkillType.MAG, Element.MALUM, 50).build(), new GiveBuff.Builder(Buffs.CURSE, 2).build()).build();
 
     // Unique skills
 
     // Bloom skills
     // Stages
-
-    // Resists
-
-    // Breaks
 
     // Heals
 

@@ -14,15 +14,15 @@ public class Buffs {
 
     // todo: affinity should convey immunity to these
     // Elemental debuffs
-    static Buff BURN = new Buff(lang.get("buff.burn"), lang.get("buff.burn.desc"), BuffType.DEBUFF, 5, new ChangeHP(-0.02), new ChangeStat(Stat.STR, -0.05));
-    static Buff FROSTBITE = new Buff(lang.get("buff.frostbite"), lang.get("buff.frostbite.desc"), BuffType.DEBUFF, 5, new ChangeHP(-0.02), new ChangeStat(Stat.MAG, -0.05));
-    static Buff SHOCK = new Buff(lang.get("buff.shock"), lang.get("buff.shock.desc"), BuffType.DEBUFF, 5, new ChangeHP(-0.02), new ChangeStat(Stat.AGI, -0.05));
+    static Buff BURN = new Buff(lang.get("buff.burn"), lang.get("buff.burn.desc"), BuffType.DEBUFF, 5, new ChangeHp.Builder(-0.02).build(), new ChangeStat(Stat.STR, -0.05));
+    static Buff FROSTBITE = new Buff(lang.get("buff.frostbite"), lang.get("buff.frostbite.desc"), BuffType.DEBUFF, 5, new ChangeHp.Builder(-0.02).build(), new ChangeStat(Stat.MAG, -0.05));
+    static Buff SHOCK = new Buff(lang.get("buff.shock"), lang.get("buff.shock.desc"), BuffType.DEBUFF, 5, new ChangeHp.Builder(-0.02).build(), new ChangeStat(Stat.AGI, -0.05));
     static Buff WINDSWEPT = new Buff(lang.get("buff.windswept"), lang.get("buff.windswept.desc"), BuffType.DEBUFF, 5, new ChangeMult(Mult.SP_GAIN, -5), new ChangeStat(Stat.RES, -0.05));
     static Buff TREMOR = new Buff(lang.get("buff.tremor"), lang.get("buff.tremor.desc"), BuffType.DEBUFF, 5, new ChangeMult(Mult.SP_GAIN, -5), new ChangeStat(Stat.AMR, -0.05));
     static Buff DAZZLED = new Buff(lang.get("buff.dazzled"), lang.get("buff.dazzled.desc"), BuffType.DEBUFF, 5, new ChangeMult(Mult.SP_GAIN, -5), new ChangeStat(Stat.FTH, -0.05));
-    static Buff CURSE = new Buff(lang.get("buff.curse"), lang.get("buff.curse.desc"),  BuffType.DEBUFF, 5, new ChangeHP(-0.025), new ChangeStat(Stat.FTH, -0.05));
-    static Buff POISON = new Buff(lang.get("buff.poison"), lang.get("buff.poison.desc"), BuffType.DEBUFF, 5, new ChangeHP(-0.025), new ChangeMult(Mult.HEALING_TAKEN, -5));
-    static Buff RADIATION = new Buff(lang.get("buff.radiation"), lang.get("buff.radiation.desc"), BuffType.DEBUFF, 5, new ChangeHP(-0.03), new ChangeMult(Mult.DMG_TAKEN, 5));
+    static Buff CURSE = new Buff(lang.get("buff.curse"), lang.get("buff.curse.desc"),  BuffType.DEBUFF, 5, new ChangeHp.Builder(-0.025).build(), new ChangeStat(Stat.FTH, -0.05));
+    static Buff POISON = new Buff(lang.get("buff.poison"), lang.get("buff.poison.desc"), BuffType.DEBUFF, 5, new ChangeHp.Builder(-0.025).build(), new ChangeMult(Mult.HEALING_TAKEN, -5));
+    static Buff RADIATION = new Buff(lang.get("buff.radiation"), lang.get("buff.radiation.desc"), BuffType.DEBUFF, 5, new ChangeHp.Builder(-0.03).build(), new ChangeMult(Mult.DMG_TAKEN, 5));
 
     // Superior elemental debuffs
     static Buff BURNT_OUT = new Buff(lang.get("buff.burnt_out"), lang.get("buff.burnt_out.desc"), BuffType.DEBUFF, 1, new ChangeMult(Mult.IGNIS_DMG_TAKEN, 20), new ChangeStat(Stat.STR, -0.1));

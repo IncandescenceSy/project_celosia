@@ -1,8 +1,8 @@
 package io.github.celosia.sys.battle.buff_effects;
 
 import io.github.celosia.sys.battle.BuffEffect;
-import io.github.celosia.sys.battle.Unit;
 import io.github.celosia.sys.battle.Stat;
+import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.menu.TextLib.formatPossessive;
 

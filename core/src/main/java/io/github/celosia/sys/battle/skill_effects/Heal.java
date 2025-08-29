@@ -1,6 +1,9 @@
 package io.github.celosia.sys.battle.skill_effects;
 
-import io.github.celosia.sys.battle.*;
+import io.github.celosia.sys.battle.Result;
+import io.github.celosia.sys.battle.ResultType;
+import io.github.celosia.sys.battle.SkillEffect;
+import io.github.celosia.sys.battle.Unit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +78,7 @@ public class Heal implements SkillEffect {
                 }
 
                 // Effect block message
-                if(shieldCur == 0 && shieldNew > 0 && target.getEffectBlock() <= 0 && target.getDefend() == 0) {
+                if(shieldCur == 0 && shieldNew > 0 && target.isEffectBlock() && target.getDefend() == 0) {
                     msg.add(self.getUnitType().getName() + " " + lang.get("log.is_now") + " " + lang.get("log.effect_block"));
                 }
 
