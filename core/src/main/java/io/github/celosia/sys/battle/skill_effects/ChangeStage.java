@@ -7,7 +7,7 @@ import java.util.List;
 
 import static io.github.celosia.sys.battle.BattleLib.getStageBuffType;
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnChangeStage;
-import static io.github.celosia.sys.menu.TextLib.formatPossessive;
+import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeStage implements SkillEffect {
@@ -86,7 +86,7 @@ public class ChangeStage implements SkillEffect {
 
             if (stageNew != stageOld) {
                 unit.setStage(stageType, stageNew);
-                str = formatPossessive(unit.getUnitType().getName()) + " " + stageType.getName() + " " + lang.get("stage") + " " + stageOld + " -> " + stageNew;
+                str = formatName(unit.getUnitType().getName(), self.getPos()) + " " + stageType.getName() + " " + lang.get("stage") + " " + stageOld + " -> " + stageNew;
             }
 
             if ((stageOld >= 0 && stacks >= 0) || (stageOld <= 0 && stacks <= 0)) { // Refresh turns
@@ -96,7 +96,7 @@ public class ChangeStage implements SkillEffect {
                     if (stageNew != stageOld)
                         msg.add(str + ", " + lang.get("turns") + " " + turnsOld + " -> " + turnsMod);
                     else
-                        msg.add(formatPossessive(unit.getUnitType().getName()) + " " + stageType.getName() + " " + lang.get("stage") + " " + lang.get("turns") + " " + turnsOld + " -> " + turnsMod);
+                        msg.add(formatName(unit.getUnitType().getName(), self.getPos()) + " " + stageType.getName() + " " + lang.get("stage") + " " + lang.get("turns") + " " + turnsOld + " -> " + turnsMod);
                 }
             } else msg.add(str);
 

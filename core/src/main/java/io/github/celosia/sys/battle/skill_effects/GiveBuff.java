@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnGiveBuff;
-import static io.github.celosia.sys.menu.TextLib.formatPossessive;
+import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class GiveBuff implements SkillEffect {
@@ -95,7 +95,7 @@ public class GiveBuff implements SkillEffect {
                 int turnsOld = buffInstance.getTurns();
                 if(turnsMod > turnsOld) {
                     buffInstance.setTurns(turnsMod);
-                    str = formatPossessive(unit.getUnitType().getName()) + " " + buff.getName() + " " + lang.format("turn_s", turnsMod) + " " + turnsOld + " -> " + turnsMod;
+                    str = formatName(unit.getUnitType().getName(), self.getPos()) + " " + buff.getName() + " " + lang.format("turn_s", turnsMod) + " " + turnsOld + " -> " + turnsMod;
                 }
 
                 // Add stacks
@@ -104,7 +104,7 @@ public class GiveBuff implements SkillEffect {
                 if(stacksNew != stacksOld) {
                     buffInstance.setStacks(stacksNew);
                     if(turnsMod > turnsOld) msg.add(str + ", " + lang.format("stack_s", stacksNew) + " " + stacksOld + " -> " + stacksNew);
-                    else msg.add(formatPossessive(unit.getUnitType().getName()) + " " + buff.getName() + " " + lang.get("stacks") + " " + stacksOld + " -> " + stacksNew);
+                    else msg.add(formatName(unit.getUnitType().getName(), unit.getPos()) + " " + buff.getName() + " " + lang.get("stacks") + " " + stacksOld + " -> " + stacksNew);
                 }
 
                 // Apply once for each newly added stack
@@ -116,7 +116,7 @@ public class GiveBuff implements SkillEffect {
 
                 return new Result(ResultType.SUCCESS, msg);
             } else { // Doesn't have buff
-                msg.add(unit.getUnitType().getName() + " " + lang.get("log.gains") + " " + buff.getName() + " " + lang.get("log.with") + " " + ((buff.getMaxStacks() > 1) ?
+                msg.add(formatName(unit.getUnitType().getName(), unit.getPos()) + " " + lang.get("log.gains") + " " + buff.getName() + " " + lang.get("log.with") + " " + ((buff.getMaxStacks() > 1) ?
                     (stacks + " " + lang.format("stack_s", stacks) + " " + lang.get("log.and")) + " " : "") + turnsMod + " " + lang.format("turn_s", turnsMod));
                 unit.addBuffInstance(new BuffInstance(buff, turnsMod, stacks));
                 buffInstance = buffInstances.getLast();

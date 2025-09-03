@@ -124,16 +124,25 @@ public class Skill {
         return isBloom;
     }
 
-    public List<SkillEffect> getSkillEffects() {
-        return skillEffects;
-    }
-
     public List<SkillRole> getSkillRoles() {
         return skillRoles;
+    }
+
+    public boolean hasRole(SkillRole skillRole) {
+        return skillRoles.contains(skillRole);
+    }
+
+    public List<SkillEffect> getSkillEffects() {
+        return skillEffects;
     }
 
     // Returns true if the skill can only target Self
     public boolean isRangeSelf() {
         return range == Ranges.SELF || range == Ranges.SELF_UP_DOWN;
+    }
+
+    // Returns whether this skill would be expected to target the opponent
+    public boolean shouldTargetOpponent() {
+        return range.getSide() == Side.OPPONENT || this.hasRole(SkillRole.ATTACK) || this.hasRole(SkillRole.DEBUFF_DEFENSIVE) || this.hasRole(SkillRole.DEBUFF_OFFENSIVE);
     }
 }

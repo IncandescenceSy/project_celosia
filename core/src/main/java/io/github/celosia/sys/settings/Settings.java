@@ -15,7 +15,7 @@ public class Settings {
     // Whether to show story scenes
     public static boolean showStory = true;
 
-    // Whether to show a warning and the option to skip before showing story scenes that reference or depict self-harm or suicide
+    // Whether to show a warning and the option to skip before showing story scenes that reference or depict self-harm, suicide, or drugs
     // Skipping these scenes will remove large parts of the game's story, and it will no longer make sense
     public static boolean showStoryWarning = false;
 
@@ -36,6 +36,9 @@ public class Settings {
     // Whether to use the monitor's refresh rate + 1 as Target FPS
     // Hidden from the user. User is instead presented with 1 "Target FPS" option with choices of 60, 120, 144, 165, 240, and Auto (and maybe some other options idk what people have)
     public static boolean useMonitor = true;
+
+    // Whether to show an FPS counter
+    public static boolean showFpsCounter = false;
 
     // Audio settings
     // Music volume (0-1)

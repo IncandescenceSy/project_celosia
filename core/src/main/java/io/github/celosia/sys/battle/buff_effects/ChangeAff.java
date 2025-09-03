@@ -4,7 +4,7 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Element;
 import io.github.celosia.sys.battle.Unit;
 
-import static io.github.celosia.sys.menu.TextLib.formatPossessive;
+import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeAff implements BuffEffect {
@@ -22,7 +22,7 @@ public class ChangeAff implements BuffEffect {
         int affOld = self.getAff(element);
         int affNew = affOld + (change * stacks);
         self.setAff(element, affNew);
-        return new String[]{formatPossessive(self.getUnitType().getName()) + " " + element.getName() + " " + lang.get("affinity") + " " + Math.clamp(affOld, -5, 5) + " -> " + Math.clamp(affNew, -5, 5)};
+        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + element.getName() + " " + lang.get("affinity") + " " + Math.clamp(affOld, -5, 5) + " -> " + Math.clamp(affNew, -5, 5)};
     }
 
     @Override
@@ -30,6 +30,6 @@ public class ChangeAff implements BuffEffect {
         int affOld = self.getAff(element);
         int affNew = affOld - (change * stacks);
         self.setAff(element, affNew);
-        return new String[]{formatPossessive(self.getUnitType().getName()) + " " + element.getName() + " " + lang.get("affinity") + " " + Math.clamp(affOld, -5, 5) + " -> " + Math.clamp(affNew, -5, 5)};
+        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + element.getName() + " " + lang.get("affinity") + " " + Math.clamp(affOld, -5, 5) + " -> " + Math.clamp(affNew, -5, 5)};
     }
 }

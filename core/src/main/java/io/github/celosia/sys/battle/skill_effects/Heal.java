@@ -10,7 +10,7 @@ import java.util.List;
 
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnGiveShield;
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnHeal;
-import static io.github.celosia.sys.menu.TextLib.formatPossessive;
+import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class Heal implements SkillEffect {
@@ -65,7 +65,7 @@ public class Heal implements SkillEffect {
 
                 if (shieldNew > shieldCur) {
                     target.setShield(shieldNew);
-                    str = formatPossessive(target.getUnitType().getName()) + " " + lang.get("shield") + " " + String.format("%,d", (shieldCur + target.getDefend())) + " -> " + String.format("%,d", (shieldNew +
+                    str = formatName(target.getUnitType().getName(), self.getPos()) + " " + lang.get("shield") + " " + String.format("%,d", (shieldCur + target.getDefend())) + " -> " + String.format("%,d", (shieldNew +
                         target.getDefend())) + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", (shieldNew - shieldCur)) + ")";
                 }
 
@@ -74,7 +74,7 @@ public class Heal implements SkillEffect {
                     if (shieldNew > shieldCur)
                         msg.add(str + ", " + lang.get("turns") + " " + turnsCur + " -> " + turnsMod);
                     else
-                        msg.add(formatPossessive(target.getUnitType().getName()) + " " + lang.get("shield") + " " + lang.get("turns") + " " + turnsCur + " -> " + turnsMod);
+                        msg.add(formatName(target.getUnitType().getName(), self.getPos()) + " " + lang.get("shield") + " " + lang.get("turns") + " " + turnsCur + " -> " + turnsMod);
                 }
 
                 // Effect block message
@@ -93,7 +93,7 @@ public class Heal implements SkillEffect {
 
                 if (hpNew > hpCur) {
                     target.getStatsCur().setHp(hpNew);
-                    msg.add(formatPossessive(target.getUnitType().getName()) + " " + lang.get("hp") + " " + String.format("%,d", hpCur) + " -> " + String.format("%,d", hpNew)
+                    msg.add(formatName(target.getUnitType().getName(), self.getPos()) + " " + lang.get("hp") + " " + String.format("%,d", hpCur) + " -> " + String.format("%,d", hpNew)
                         + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", (hpNew - hpCur)) + ")");
                     return new Result(ResultType.SUCCESS, msg);
                 } else return new Result(ResultType.SUCCESS, msg);

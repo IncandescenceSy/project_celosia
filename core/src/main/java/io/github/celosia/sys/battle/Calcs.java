@@ -1,6 +1,6 @@
 package io.github.celosia.sys.battle;
 
-import static io.github.celosia.sys.menu.TextLib.formatPossessive;
+import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class Calcs {
@@ -10,7 +10,7 @@ public class Calcs {
 
         if (spNew != spOld) {
             unit.setSp(spNew);
-            return formatPossessive(unit.getUnitType().getName()) + " " + lang.get("sp") + " " + String.format("%,d", spOld) + " -> " + String.format("%,d", spNew);
+            return formatName(unit.getUnitType().getName(), unit.getPos()) + " " + lang.get("sp") + " " + String.format("%,d", spOld) + " -> " + String.format("%,d", spNew);
         } else
             return "";
     }
@@ -21,7 +21,7 @@ public class Calcs {
 
         if (bloomNew != bloomOld) {
             team.setBloom(bloomNew);
-            return formatPossessive((side == Side.ALLY) ? lang.get("player_team") : lang.get("opponent_team")) + " " + lang.get("bloom") + " " + String.format("%,d", bloomOld) + " -> " + String.format("%,d", bloomNew);
+            return formatName((side == Side.ALLY) ? lang.get("player_team") : lang.get("opponent_team"), (side == Side.ALLY) ? 0 : 3) + " " + lang.get("bloom") + " " + String.format("%,d", bloomOld) + " -> " + String.format("%,d", bloomNew);
         } else
            return "";
     }

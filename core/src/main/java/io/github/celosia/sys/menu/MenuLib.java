@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Align;
 import com.github.tommyettinger.textra.Font;
 import com.github.tommyettinger.textra.TypingLabel;
+import io.github.celosia.Main;
 import io.github.celosia.sys.battle.Range;
 import io.github.celosia.sys.battle.Ranges;
 import io.github.celosia.sys.battle.Side;
@@ -12,6 +13,7 @@ import io.github.celosia.sys.settings.Keybind;
 
 import java.util.List;
 
+import static io.github.celosia.Main.menuList;
 import static io.github.celosia.sys.battle.PosLib.getRelativeSide;
 import static io.github.celosia.sys.settings.Lang.lang;
 
@@ -105,9 +107,9 @@ public class MenuLib {
     }
 
     // Creates Labels and adds them to a Stage and a List
-    public static void createOpts(MenuType menuType, List<TypingLabel> labels, Font font, Stage stage) {
-        for(int i = 0; i < menuType.getOptCount(); i++) {
-            MenuOpt opt = menuType.getOpt(i);
+    public static void createOpts(List<TypingLabel> labels, Font font, Stage stage) {
+        for(int i = 0; i < menuList.getLast().getOptCount(); i++) {
+            MenuOpt opt = menuList.getLast().getOpt(i);
             TypingLabel label = new TypingLabel(opt.getText(), font);
             labels.add(label);
             label.setPosition(opt.getPosX(), opt.getPosY(), Align.left);
@@ -115,10 +117,10 @@ public class MenuLib {
         }
     }
 
-    // Removes Labels from a Stage
-    public static void removeOpts(List<TypingLabel> labels, Stage stage) {
+    // Removes Labels
+    public static void removeOpts(List<TypingLabel> labels) {
         for(TypingLabel label : labels) {
-            stage.getRoot().removeActor(label);
+            Main.stage2.getRoot().removeActor(label);
         }
     }
 
@@ -130,14 +132,15 @@ public class MenuLib {
     // todo fix magic numbers
     public enum MenuType {
         NONE(),
-        WIP(),
+        POPUP(),
         MAIN(new MenuOpt(MenuOptType.START, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.start"), 1900 + 80, 230 + 400),
             new MenuOpt(MenuOptType.MANUAL, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.manual"), 1900 + 60, 230 + 300),
             new MenuOpt(MenuOptType.OPTIONS, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.options"), 1900 + 40, 230 + 200),
             new MenuOpt(MenuOptType.CREDITS, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.credits"), 1900 + 20, 230 + 100),
             new MenuOpt(MenuOptType.QUIT, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.quit"), 1900, 230)),
         BATTLE(),
-        TARGETING();
+        TARGETING(),
+        LOG();
 
         private MenuOpt[] opts = new MenuOpt[]{new MenuOpt(MenuOptType.NONE, "", 0, 0)};
 

@@ -4,5 +4,6 @@ public enum CoolRects {
     MENU_MAIN,
     POPUP_CENTERED,
     CURSOR_1,
-    CURSOR_2
+    CURSOR_2,
+    COVER_LEFT;
 }

@@ -3,7 +3,7 @@ package io.github.celosia.sys.battle;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.celosia.sys.menu.TextLib.formatPossessive;
+import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 // Species and current stats
@@ -896,26 +896,26 @@ public class Unit {
 
         // Stages
         if (stageAtk != 0 && --stageAtkTurns <= 0) {
-            msg.add(unitType.getName() + " " + lang.get("log.loses") + " " + stageAtk + lang.format("stage_s", stageAtk) + " " + StageType.ATK.getName());
+            msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + stageAtk + lang.format("stage_s", stageAtk) + " " + StageType.ATK.getName());
             stageAtk = 0; // Remove stages
         }
         if (stageDef != 0 && --stageDefTurns <= 0) {
-            msg.add(unitType.getName() + " " + lang.get("log.loses") + " " + stageDef + lang.format("stage_s", stageDef) + " " + StageType.DEF.getName());
+            msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + stageDef + lang.format("stage_s", stageDef) + " " + StageType.DEF.getName());
             stageDef = 0;
         }
         if (stageFth != 0 && --stageFthTurns <= 0) {
-            msg.add(unitType.getName() + " " + lang.get("log.loses") + " " + stageFth + lang.format("stage_s", stageFth) + " " + StageType.FTH.getName());
+            msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + stageFth + lang.format("stage_s", stageFth) + " " + StageType.FTH.getName());
             stageFth = 0;
         }
         if (stageAgi != 0 && --stageAgiTurns <= 0) {
-            msg.add(unitType.getName() + " " + lang.get("log.loses") + " " + stageAgi + lang.format("stage_s", stageAgi) + " " + StageType.AGI.getName());
+            msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + stageAgi + lang.format("stage_s", stageAgi) + " " + StageType.AGI.getName());
             stageAgi = 0;
         }
 
         // Shield
         if (shield != 0 && --shieldTurns <= 0) {
-            if(defend == 0) msg.add(unitType.getName() + " " + lang.get("log.loses") + " " + String.format("%,d", shield) + " " + lang.get("shield"));
-            else msg.add(formatPossessive(unitType.getName()) + " " + lang.get("shield") + " " + String.format("%,d", (shield + defend)) + " -> " + String.format("%,d", defend));
+            if(defend == 0) msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + String.format("%,d", shield) + " " + lang.get("shield"));
+            else msg.add(formatName(unitType.getName(), pos) + " " + lang.get("shield") + " " + String.format("%,d", (shield + defend)) + " -> " + String.format("%,d", defend));
             shield = 0;
         }
 
@@ -928,7 +928,7 @@ public class Unit {
             } else {
                 StringBuilder str = new StringBuilder();
                 int maxStacks = buffInstance.getBuff().getMaxStacks();
-                str.append(unitType.getName()).append(" ").append(lang.get("log.loses")).append(" ");
+                str.append(formatName(unitType.getName(), pos, false)).append(" ").append(lang.get("log.loses")).append(" ");
                 if(maxStacks > 1) str.append(buffInstance.getStacks()).append(" ");
                 str.append(buffInstance.getBuff().getName());
                 if(maxStacks > 1) str.append(" ").append(lang.get("stacks"));
@@ -953,8 +953,8 @@ public class Unit {
 
         List<String> msg = new ArrayList<>();
 
-        String name = (useName) ? unitType.getName() + " " : "";
-        String name_s = (useName) ? formatPossessive(unitType.getName()) + " " : "";
+        String name = (useName) ? formatName(unitType.getName(), pos, false) + " " : "";
+        String name_s = (useName) ? formatName(unitType.getName(), pos) + " " : "";
 
         if (!pierce) { // Pierce skips Defend and Shield
             if (defend > 0 && dmg > 0) { // There's Defend and dmg
@@ -996,7 +996,7 @@ public class Unit {
             return new Result(ResultType.HIT_SHIELD, msg);
         } else if (dmg > 0) { // Did damage
             return new Result(ResultType.SUCCESS, msg);
-        } else return new Result(ResultType.FAIL, lang.get("log.no_effect") + " " + lang.get("log.on") + " " + unitType.getName()); // Did no damage
+        } else return new Result(ResultType.FAIL, lang.get("log.no_effect") + " " + lang.get("log.on") + " " + formatName(unitType.getName(), pos, false)); // Did no damage
     }
 
     public Result damage(int dmg, boolean pierce) {

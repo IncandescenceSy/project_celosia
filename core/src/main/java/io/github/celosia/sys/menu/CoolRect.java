@@ -13,29 +13,76 @@ public class CoolRect {
     private Color color; // Core color
     private boolean hasOutline; // Whether to draw an outline
     private float speed; // Speed multiplier. 1f = animation completes in 1s. Speed is doubled when closing
+    private int angL;
+    private int angR;
 
-    public CoolRect(int l, int t, int r, int b, int dir, Color color, boolean hasOutline, float prog, float speed) {
-        this.l = l;
-        this.t = t;
-        this.r = r;
-        this.b = b;
-        this.dir = dir;
-        this.color = color;
-        this.hasOutline = hasOutline;
-        this.prog = prog;
-        this.speed = speed;
+    public CoolRect(Builder builder) {
+        l = builder.l;
+        t = builder.t;
+        r = builder.r;
+        b = builder.b;
+        dir = builder.dir;
+        color = builder.color;
+        hasOutline = builder.hasOutline;
+        prog = 0;
+        speed = builder.speed;
+        angL = builder.angL;
+        angR = builder.angR;
     }
 
-    public CoolRect(int l, int t, int r, int b, int dir) {
-        this(l, t, r, b, dir, Color.BLACK, true, 0f, 2f);
-    }
+    public static class Builder {
+        private final int l; // Left
+        private final int t; // Top
+        private final int r; // Right
+        private final int b; // Bottom
+        private int dir = -1; // 1 = unfolding; -1 = collapsing
+        private Color color = Color.BLACK; // Core color
+        private boolean hasOutline = false; // Whether to draw an outline
+        private float speed = 2; // Speed multiplier. 1f = animation completes in 1s. Speed is doubled when closing
+        private int angL = 15;
+        private int angR = 15;
 
-    public CoolRect(int l, int t, int r, int b) {
-        this(l, t, r, b, -1, Color.BLACK, true, 0f, 2f);
-    }
+        public Builder(int l, int t, int r, int b) {
+            this.l = l;
+            this.t = t;
+            this.r = r;
+            this.b = b;
+        }
 
-    public CoolRect(int dir, Color color, boolean hasOutline) {
-        this(0, 0, 0, 0, dir, color, hasOutline, 0f, 2f);
+        public Builder dir(int dir) {
+            if(dir == -1 || dir == 1) this.dir = dir;
+            else this.dir = -1;
+            return this;
+        }
+
+        public Builder color(Color color) {
+            this.color = color;
+            return this;
+        }
+
+        public Builder hasOutline() {
+            hasOutline = true;
+            return this;
+        }
+
+        public Builder speed(float speed) {
+            this.speed = speed;
+            return this;
+        }
+
+        public Builder angL(int angL) {
+            this.angL = angL;
+            return this;
+        }
+
+        public Builder angR(int angR) {
+            this.angR = angR;
+            return this;
+        }
+
+        public CoolRect build() {
+            return new CoolRect(this);
+        }
     }
 
     public void setL(int l) {
@@ -68,6 +115,13 @@ public class CoolRect {
 
     public int getB() {
         return b;
+    }
+
+    public void setPos(int l, int t, int r, int b) {
+        this.l = l;
+        this.t = t;
+        this.r = r;
+        this.b = b;
     }
 
     // Returns this so it can be chained for convenience
@@ -110,5 +164,21 @@ public class CoolRect {
 
     public float getSpeed() {
         return speed;
+    }
+
+    public void setAngL(int angL) {
+        this.angL = angL;
+    }
+
+    public int getAngL() {
+        return angL;
+    }
+
+    public void setAngR(int angR) {
+        this.angR = angR;
+    }
+
+    public int getAngR() {
+        return angR;
     }
 }

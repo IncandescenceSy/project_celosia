@@ -3,7 +3,7 @@ package io.github.celosia.sys.battle.buff_effects;
 import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Unit;
 
-import static io.github.celosia.sys.menu.TextLib.formatPossessive;
+import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeExtraActions implements BuffEffect {
@@ -19,7 +19,7 @@ public class ChangeExtraActions implements BuffEffect {
         int exAOld = self.getExtraActions();
         int exANew = exAOld + (change * stacks);
         self.setExtraActions(exANew);
-        return new String[]{formatPossessive(self.getUnitType().getName()) + " " + lang.get("extra_actions") + " " + Math.max(exAOld, 0) + " -> " + Math.max(exANew, 0)};
+        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + lang.get("extra_actions") + " " + Math.max(exAOld, 0) + " -> " + Math.max(exANew, 0)};
     }
 
     @Override
@@ -27,6 +27,6 @@ public class ChangeExtraActions implements BuffEffect {
         int exAOld = self.getExtraActions();
         int exANew = exAOld - (change * stacks);
         self.setExtraActions(exANew);
-        return new String[]{formatPossessive(self.getUnitType().getName()) + " " + lang.get("extra_actions") + " " + Math.max(exAOld, 0) + " -> " + Math.max(exANew, 0)};
+        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + lang.get("extra_actions") + " " + Math.max(exAOld, 0) + " -> " + Math.max(exANew, 0)};
     }
 }

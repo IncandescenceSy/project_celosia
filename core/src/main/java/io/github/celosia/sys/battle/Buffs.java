@@ -8,8 +8,8 @@ public class Buffs {
     // Basic
     static Buff DEFEND = new Buff(lang.get("skill.defend"), lang.get("buff.defend.desc"), BuffType.BUFF, 1, new ChangeDefend(0.2), new ChangeMult(Mult.DMG_TAKEN, -20));
 
-    // Decreases multDef by way more than necessary to be absolutely certain this minimizes it
-    // todo: is it fine that having less multDef makes this proportionately worse?
+    // Decreases multDmgTaken by way more than necessary to be absolutely certain this minimizes it
+    // todo: is it fine that having less multDmgTaken makes this proportionately worse?
     static Buff PROTECT = new Buff(lang.get("buff.protect"), lang.get("buff.protect.desc"), BuffType.BUFF, 1, new ChangeMult(Mult.DMG_TAKEN, -100000), new ChangeEffectBlock(1));
 
     // todo: affinity should convey immunity to these
@@ -36,6 +36,6 @@ public class Buffs {
     static Buff DECAY = new Buff(lang.get("buff.decay"), lang.get("buff.decay.desc"), BuffType.DEBUFF, 1, new ChangeMult(Mult.IGNIS_DMG_TAKEN, 15), new ChangeMult(Mult.DOT_DMG_TAKEN, 15), new ChangeMult(Mult.HEALING_TAKEN, -10));
 
     // Other
-    // todo regen
+    static Buff REGENERATION = new Buff(lang.get("buff.regeneration"), lang.get("buff.regeneration.desc"), BuffType.BUFF, 5, new ChangeHp.Builder(0.05).build());
     static Buff EXTRA_ACTION = new Buff(lang.get("buff.extra_action"), lang.get("buff.extra_action.desc"), BuffType.BUFF, 1, new ChangeExtraActions(1));
 }

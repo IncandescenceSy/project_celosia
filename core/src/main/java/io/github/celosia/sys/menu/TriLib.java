@@ -33,12 +33,15 @@ public class TriLib {
 
             float height = rect.getT() - rect.getB();
 
+            float angLOff = (rect.getAngL() > 0) ? (height / (90f / rect.getAngL())) : 0;
+            float angROff = (rect.getAngR() > 0) ? (height / (90f / rect.getAngR())) : 0;
+
             // Top left
-            float tlx = (rect.getL() + (height / 6)) * Settings.scale;
+            float tlx = (rect.getL() + angLOff) * Settings.scale;
             float tly = rect.getT() * Settings.scale;
 
             // Top right
-            float trx = i.apply(tlx, (rect.getR() + (height / 6)) * Settings.scale, prog);
+            float trx = i.apply(tlx, (rect.getR() + angROff) * Settings.scale, prog);
             float try_ = rect.getT() * Settings.scale;
 
             // Bottom left
@@ -71,16 +74,56 @@ public class TriLib {
                 drawer.setColor(1, 1, 1, 1);
 
                 Array<Vector2> points = new Array<>(false, 4);
-                points.add(new Vector2(tlx, tly));
-                points.add(new Vector2(blx, bly));
-                points.add(new Vector2(brx, bry));
-                points.add(new Vector2(trx, try_));
+                points.addAll(new Vector2(tlx, tly), new Vector2(blx, bly), new Vector2(brx, bry), new Vector2(trx, try_));
                 drawer.path(points,
                     // Change line thickness near the start/end of the animation to make its appearance/disappearance smoother
                     i.apply(0, 10 * Settings.scale, Math.min(1f, prog * 3.5f)), JoinType.POINTY, false);
             }
 
         }
+
+        batch.end();
+    }
+
+    public static void drawPaths(PolygonSpriteBatch batch, ShapeDrawer drawer, List<Path> paths) {
+        batch.begin();
+
+        float delta = Gdx.graphics.getDeltaTime();
+
+        Interpolation i = Interpolation.smooth2;
+
+        for(Path path : paths) {
+            Array<Vector2> points = path.getPoints();
+            if(points != null && !points.isEmpty()) {
+                int dir = path.getDir();
+                float prog = Math.clamp(path.getProg() + (delta * dir * path.getSpeed() * (dir == -1 ? 2 : 1)), 0f, 1f);
+                path.setProg(prog);
+
+                // Skip the rest if the width is to be near 0
+                // todo better fix for the inexplicable tallness
+                if (prog <= 0.02f) continue;
+
+                Color color = path.getColor();
+                drawer.setColor(color.r, color.g, color.b, 1);
+
+                drawer.path(points,
+                    // Change line thickness near the start/end of the animation to make its appearance/disappearance smoother
+                    i.apply(0, 10 * Settings.scale, Math.min(1f, prog)), JoinType.POINTY, false);
+            }
+        }
+
+        batch.end();
+    }
+
+    // Draws a regular triangle
+    public static void drawTri(PolygonSpriteBatch batch, ShapeDrawer drawer, int tlx, int tly, int blx, int bly, int trx, int try_) {
+        batch.begin();
+
+        drawer.filledTriangle(
+            tlx * Settings.scale, tly * Settings.scale,
+            blx * Settings.scale, bly * Settings.scale,
+            trx * Settings.scale, try_ * Settings.scale
+        );
 
         batch.end();
     }

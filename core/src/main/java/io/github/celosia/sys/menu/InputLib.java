@@ -10,7 +10,7 @@ import io.github.celosia.sys.settings.Settings;
 
 public class InputLib {
     // How long each keybind has been held down for
-    private static final float[] held = new float[12];
+    private static final double[] held = new double[12];
 
     // Sets up button mappings based on the current controller's mapping
     // todo make sure nothing breaks if a controller is missing buttons
