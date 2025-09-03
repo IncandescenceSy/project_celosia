@@ -102,7 +102,6 @@ public class InputLib {
     // Tries to determine if a controller is a Nintendo controller via its name
     public static boolean isNintendoController(Controller controller) {
         String name = controller.getName().toLowerCase();
-
         return name.contains("nintendo") || name.contains("switch");
     }
 }

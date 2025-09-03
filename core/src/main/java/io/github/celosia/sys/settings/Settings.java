@@ -19,6 +19,7 @@ public class Settings {
     // Skipping these scenes will remove large parts of the game's story, and it will no longer make sense
     public static boolean showStoryWarning = false;
 
+
     // Display settings
     // Resolution relative to 2560x1440
     // Todo pull resolution options from easy-to-modify txt file
@@ -27,11 +28,11 @@ public class Settings {
     // Whether the application is in fullscreen
     public static boolean isFullscreen = false;
 
-    // Whether to use VSync. If true, targetFPS setting is ignored
+    // Whether to use VSync. If true, Target FPS setting is ignored
     public static boolean useVsync = true;
 
     // Target FPS. Only used if Vsync is disabled
-    public static int targetFPS = 61;
+    public static int targetFPS = 60;
 
     // Whether to use the monitor's refresh rate + 1 as Target FPS
     // Hidden from the user. User is instead presented with 1 "Target FPS" option with choices of 60, 120, 144, 165, 240, and Auto (and maybe some other options idk what people have)

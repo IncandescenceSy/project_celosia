@@ -95,7 +95,7 @@ public class GiveBuff implements SkillEffect {
                 int turnsOld = buffInstance.getTurns();
                 if(turnsMod > turnsOld) {
                     buffInstance.setTurns(turnsMod);
-                    str = formatName(unit.getUnitType().getName(), self.getPos()) + " " + c_buff + buff.getName() + "[WHITE] " + lang.format("turn_s", turnsMod) + " " + c_num + turnsOld + "[WHITE] → " + c_num + turnsMod;
+                    str = formatName(unit.getUnitType().getName(), unit.getPos()) + " " + c_buff + buff.getName() + "[WHITE] " + lang.format("turn_s", turnsMod) + " " + c_num + turnsOld + "[WHITE] → " + c_num + turnsMod;
                 }
 
                 // Add stacks

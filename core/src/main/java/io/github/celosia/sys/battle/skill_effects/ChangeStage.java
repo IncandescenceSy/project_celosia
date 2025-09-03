@@ -86,7 +86,7 @@ public class ChangeStage implements SkillEffect {
 
             if (stageNew != stageOld) {
                 unit.setStage(stageType, stageNew);
-                str = formatName(unit.getUnitType().getName(), self.getPos()) + " " + c_buff + stageType.getName() + "[WHITE] " + lang.get("stage") + " " + getColor(stageOld) + stageOld + "[WHITE] → " + getColor(stageNew) + stageNew;
+                str = formatName(unit.getUnitType().getName(), unit.getPos()) + " " + c_buff + stageType.getName() + "[WHITE] " + lang.get("stage") + " " + getColor(stageOld) + stageOld + "[WHITE] → " + getColor(stageNew) + stageNew;
             }
 
             if ((stageOld >= 0 && stacks >= 0) || (stageOld <= 0 && stacks <= 0)) { // Refresh turns
@@ -96,7 +96,7 @@ public class ChangeStage implements SkillEffect {
                     if (stageNew != stageOld)
                         msg.add(str + "[WHITE], " + lang.get("turns") + " " + c_num + turnsOld + "[WHITE] → " + c_num + turnsMod);
                     else
-                        msg.add(formatName(unit.getUnitType().getName(), self.getPos()) + " " + c_buff + stageType.getName() + "[WHITE] " + lang.get("stage") + " " + lang.get("turns") + " " + c_num + turnsOld + "[WHITE] → " + c_num + turnsMod);
+                        msg.add(formatName(unit.getUnitType().getName(), unit.getPos()) + " " + c_buff + stageType.getName() + "[WHITE] " + lang.get("stage") + " " + lang.get("turns") + " " + c_num + turnsOld + "[WHITE] → " + c_num + turnsMod);
                 }
             } else msg.add(str);
 

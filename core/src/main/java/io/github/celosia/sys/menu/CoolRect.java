@@ -15,6 +15,7 @@ public class CoolRect {
     private float speed; // Speed multiplier. 1f = animation completes in 1s. Speed is doubled when closing
     private int angL;
     private int angR;
+    private int prio; // Rendering order priority. Bigger number = higher layer
 
     public CoolRect(Builder builder) {
         l = builder.l;
@@ -28,6 +29,7 @@ public class CoolRect {
         speed = builder.speed;
         angL = builder.angL;
         angR = builder.angR;
+        prio = builder.prio;
     }
 
     public static class Builder {
@@ -41,6 +43,7 @@ public class CoolRect {
         private float speed = 2; // Speed multiplier. 1f = animation completes in 1s. Speed is doubled when closing
         private int angL = 15;
         private int angR = 15;
+        private int prio = 0;
 
         public Builder(int l, int t, int r, int b) {
             this.l = l;
@@ -77,6 +80,11 @@ public class CoolRect {
 
         public Builder angR(int angR) {
             this.angR = angR;
+            return this;
+        }
+
+        public Builder prio(int prio) {
+            this.prio = prio;
             return this;
         }
 
@@ -180,5 +188,13 @@ public class CoolRect {
 
     public int getAngR() {
         return angR;
+    }
+
+    public void setPrio(int prio) {
+        this.prio = prio;
+    }
+
+    public int getPrio() {
+        return prio;
     }
 }

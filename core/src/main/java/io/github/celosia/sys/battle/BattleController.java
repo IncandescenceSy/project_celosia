@@ -3,7 +3,6 @@ package io.github.celosia.sys.battle;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
@@ -113,21 +112,21 @@ public class BattleController {
 
         // Turn display
         turn.setPosition(World.WIDTH_2, World.HEIGHT - 60, Align.center);
-        stage1.addActor(turn);
+        stage2.addActor(turn);
 
         for(int i = 0; i < 2; i++) {
             // Bloom displays for both teams
             TypingLabel bloom = new TypingLabel(c_stat + lang.get("bloom") + "[WHITE]: " + c_bloom + "100[WHITE]/" + c_bloom + "1,000", FontType.KORURI.getSize40());
             bloomL.add(bloom);
             bloom.setY(World.HEIGHT - 90);
-            stage1.addActor(bloom);
+            stage2.addActor(bloom);
         }
 
         // Queue (move order) display
-        stage1.addActor(queue);
+        stage2.addActor(queue);
 
         // Log
-        stage2.addActor(battleLog);
+        stage3.addActor(battleLog);
 
         for(int i = 0; i < 8; i++) {
             int y = (i >= 4) ? World.HEIGHT - 300 - 300 * (i - 4) : World.HEIGHT - 300 - 300 * i;
@@ -136,20 +135,20 @@ public class BattleController {
             TypingLabel stats = new TypingLabel("", FontType.KORURI.getSize30());
             statsL.add(stats);
             stats.setPosition((i >= 4) ? World.WIDTH - 350 : 50, y);
-            stage1.addActor(stats);
+            stage2.addActor(stats);
 
             // Move selection displays
             TypingLabel moves = new TypingLabel("", FontType.KORURI.getSize30());
             movesL.add(moves);
             moves.setPosition((i >= 4) ? World.WIDTH - 550 : 400, y);
-            stage1.addActor(moves);
+            stage2.addActor(moves);
         }
 
         // Skill menu display
         // todo support arbitrary size
         for(int i = 0; i < 6; i++) {
             skillsL.add(new TypingLabel("", FontType.KORURI.getSize30()));
-            stage1.addActor(skillsL.get(i));
+            stage2.addActor(skillsL.get(i));
         }
 
         // Notify Passives onGive
@@ -170,8 +169,8 @@ public class BattleController {
     public static void input() {
         // Debug
         if(Debug.enableDebugHotkeys) {
-            if(Gdx.input.isKeyJustPressed(Input.Keys.Q)) Gdx.app.log("", String.join("\n", logText));
-            if(Debug.enableDebugHotkeys && Gdx.input.isKeyJustPressed(Input.Keys.W)) createPopup("among", "ussss");
+            if(Gdx.input.isKeyJustPressed(Input.Keys.Q)) Gdx.app.log("Battle Log", String.join("\n", logText).replaceAll("\\[.*?]", ""));
+            if(Gdx.input.isKeyJustPressed(Input.Keys.W)) createPopup("among", "ussss");
         }
 
         // Log
@@ -242,6 +241,8 @@ public class BattleController {
                         if(!unit.isInfiniteSp()) unit.setSp(Math.min((int) (unit.getSp() + (100 * (Math.max(unit.getMultSpGain(), 10) / 100d))), 1000));
 
                         // Apply turn end BuffEffects
+                        // this is the reason why this stuff returns String[] instead of directly calling appendToLog()
+                        // todo make everything except onTurnEnd void
                         for (Passive passive : unit.getPassives()) {
                             StringBuilder turnEnd1 = new StringBuilder();
                             turnEnd1.append(formatName(unit.getUnitType().getName(), unit.getPos())).append(" ").append(c_passive).append(passive.getName()).append("[WHITE]: ");
@@ -269,7 +270,7 @@ public class BattleController {
                             }
                         }
 
-                        // Decrement stage1/shield/buff turns and remove expired stage1s/shields/buffs
+                        // Decrement stage/shield/buff turns and remove expired stages/shields/buffs
                         List<String> decrement = unit.decrementTurns();
                         if(!decrement.isEmpty()) appendAllToLog(decrement);
                     }
@@ -281,8 +282,6 @@ public class BattleController {
                     // Increase bloom
                     battle.getPlayerTeam().setBloom(Math.min(battle.getPlayerTeam().getBloom() + 100, 1000));
                     battle.getOpponentTeam().setBloom(Math.min(battle.getOpponentTeam().getBloom() + 100, 1000));
-
-                    // todo check if battle is over
 
                     return;
                 }
@@ -313,7 +312,8 @@ public class BattleController {
                         int cost = (self.isInfiniteSp() && !skill.isBloom()) ? 0 : skill.getCost();
                         // Make sure cost doesn't go below 1 unless the skill has a base 0 SP cost
                         int costMod = (cost > 0) ? (int) Math.max(Math.ceil((cost * getAffMultSpCost(self.getAff(element)))), 1) : 0;
-                        newSp = ((skill.isBloom()) ? team.getBloom() - costMod : (int) (self.getSp() - (costMod * (Math.max(self.getMultSpUse(), 10) / 100d))));
+                        int change = skill.isBloom() ? costMod : (int) (costMod * (Math.max(self.getMultSpUse(), 10) / 100d));
+                        newSp = skill.isBloom() ? team.getBloom() - change : self.getSp() - change;
 
                         StringBuilder builder = new StringBuilder();
                         if(newSp >= 0) {
@@ -323,12 +323,14 @@ public class BattleController {
 
                             if (skill.isBloom()) {
                                 builder.append(" (").append((isPlayerTeam) ? lang.get("log.team_player") : lang.get("log.team_opponent")).append(" ").append(c_stat).append(lang.get("bloom")).append(" ")
-                                    .append(c_bloom).append(String.format("%,d", team.getBloom())).append("[WHITE] → ").append(c_bloom).append(String.format("%,d", newSp)).append("[WHITE])");
+                                    .append(c_bloom).append(String.format("%,d", team.getBloom())).append("[WHITE] → ").append(c_bloom).append(String.format("%,d", newSp));
                                 team.setBloom(newSp);
                             } else if (newSp != self.getSp()) { // Use SP
-                                builder.append(" (").append(c_stat).append(lang.get("sp")).append(" ").append(c_sp).append(String.format("%,d", self.getSp())).append("[WHITE] → ").append(c_sp).append(String.format("%,d", newSp)).append("[WHITE])");
+                                builder.append(" (").append(c_stat).append(lang.get("sp")).append(" ").append(c_sp).append(String.format("%,d", self.getSp())).append("[WHITE] → ").append(c_sp).append(String.format("%,d", newSp));
                                 self.setSp(newSp);
                             }
+
+                            if(change != 0) builder.append("[WHITE] (").append(getColor(change * -1)).append((change < 0) ? "+" : "").append(change * -1).append("[WHITE]))");
 
                             appendToLog(builder.toString());
 

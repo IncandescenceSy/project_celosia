@@ -118,9 +118,9 @@ public class MenuLib {
     }
 
     // Removes Labels
-    public static void removeOpts(List<TypingLabel> labels) {
+    public static void removeOpts(List<TypingLabel> labels, Stage stage) {
         for(TypingLabel label : labels) {
-            Main.stage2.getRoot().removeActor(label);
+            stage.getRoot().removeActor(label);
         }
     }
 

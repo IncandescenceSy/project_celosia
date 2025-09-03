@@ -10,7 +10,8 @@ public class Calcs {
 
         if (spNew != spOld) {
             unit.setSp(spNew);
-            return formatName(unit.getUnitType().getName(), unit.getPos()) + " " + c_stat + lang.get("sp") + " " + c_sp + String.format("%,d", spOld) + "[WHITE] → " + c_sp + String.format("%,d", spNew);
+            return formatName(unit.getUnitType().getName(), unit.getPos()) + " " + c_stat + lang.get("sp") + " " + c_sp + String.format("%,d", spOld) + "[WHITE] → " + c_sp + String.format("%,d", spNew)
+                + "[WHITE] (" + getColor(change) + ((change > 0) ? "+" : "") + (spNew - spOld) + "[WHITE])";
         } else
             return "";
     }
