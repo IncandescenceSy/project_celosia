@@ -27,8 +27,8 @@ public class Fonts {
         // Katakana
         //for(char c = 0x30a0; c <= 0x30ff; c++) builder.append(c);
 
-        // Infinity symbol ∞
-        builder.append("∞");
+        // Additional symbols
+        builder.append("∞").append("→");
 
         parameter.characters += builder;
 

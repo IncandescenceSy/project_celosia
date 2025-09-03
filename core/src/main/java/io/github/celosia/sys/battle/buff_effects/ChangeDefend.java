@@ -3,7 +3,7 @@ package io.github.celosia.sys.battle.buff_effects;
 import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Unit;
 
-import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.*;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeDefend implements BuffEffect {
@@ -21,18 +21,20 @@ public class ChangeDefend implements BuffEffect {
         int defendOld = self.getDefend();
         int defendNew = (self.getShield() + defendOld + ((change * hpMax) * stacks) > hpMax) ? hpMax - self.getShield() : (int) ((change * hpMax) * stacks);
         self.setDefend(defendNew);
-        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + lang.get("shield") + " " + String.format("%,d", (self.getShield() + defendOld)) + " -> " + String.format("%,d", (self.getShield() + defendNew)) +
-            "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", ((self.getShield() + defendNew) - (self.getShield() + defendOld))) + ")",
-            ((self.isEffectBlock() && self.getShield() == 0 && defendOld == 0) ? self.getUnitType().getName() + " " + lang.get("log.is_now") + " " + lang.get("log.effect_block") : "")};
+        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + c_buff + lang.get("shield") + " " + c_shield + String.format("%,d", (self.getShield() + defendOld))
+            + "[WHITE]" + " → " + c_shield + String.format("%,d", (self.getShield() + defendNew)) + "[WHITE]/" + c_shield +
+            String.format("%,d", hpMax) + " (" + c_pos + "+" + String.format("%,d", ((self.getShield() + defendNew) - (self.getShield() + defendOld))) + "[WHITE])",
+            ((self.isEffectBlock() && self.getShield() == 0 && defendOld == 0) ? self.getUnitType().getName() + " " + lang.get("log.is_now") + " " + c_stat + lang.get("log.effect_block") : "")};
     }
 
     @Override
     public String[] onRemove(Unit self, int stacks) {
         int defendOld = self.getDefend();
         self.setDefend(0);
-        String msgEffBlock = ((self.isEffectBlock() && self.getShield() == 0) ? self.getUnitType().getName() + " " + lang.get("log.is_no_longer") + " " + lang.get("log.effect_block") : "");
-        if(self.getShield() > 0) return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + lang.get("shield") + " " + String.format("%,d", (self.getShield() + defendOld)) + " -> " + String.format("%,d", self.getShield()) + "/" +
-            String.format("%,d", self.getStatsDefault().getHp()) + " (" + String.format("%,d", (self.getShield() - (self.getShield() + defendOld))) + ")", msgEffBlock};
-        else return new String[]{formatName(self.getUnitType().getName(), self.getPos(), false) + " " + lang.get("log.loses") + " " + String.format("%,d", defendOld) + " " + lang.get("shield"), msgEffBlock};
+        String msgEffBlock = ((self.isEffectBlock() && self.getShield() == 0) ? self.getUnitType().getName() + " " + lang.get("log.is_no_longer") + " " + c_stat + lang.get("log.effect_block") : "");
+        if(self.getShield() > 0) return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + c_buff + lang.get("shield") + " " + c_shield + String.format("%,d", (self.getShield() + defendOld))
+            + "[WHITE]" + " → " + c_shield + String.format("%,d", self.getShield()) + "[WHITE]/" + c_shield +
+            String.format("%,d", self.getStatsDefault().getHp()) + " (" + c_neg + String.format("%,d", (self.getShield() - (self.getShield() + defendOld))) + "[WHITE])", msgEffBlock};
+        else return new String[]{formatName(self.getUnitType().getName(), self.getPos(), false) + " " + lang.get("log.loses") + " " + c_shield + String.format("%,d", defendOld) + "[WHITE] " + c_buff + lang.get("shield"), msgEffBlock};
     }
 }

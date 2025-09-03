@@ -10,7 +10,7 @@ import java.util.List;
 
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnGiveShield;
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnHeal;
-import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.*;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class Heal implements SkillEffect {
@@ -65,21 +65,21 @@ public class Heal implements SkillEffect {
 
                 if (shieldNew > shieldCur) {
                     target.setShield(shieldNew);
-                    str = formatName(target.getUnitType().getName(), self.getPos()) + " " + lang.get("shield") + " " + String.format("%,d", (shieldCur + target.getDefend())) + " -> " + String.format("%,d", (shieldNew +
-                        target.getDefend())) + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", (shieldNew - shieldCur)) + ")";
+                    str = formatName(target.getUnitType().getName(), self.getPos()) + " " + c_buff + lang.get("shield") + " " + c_shield + String.format("%,d", (shieldCur + target.getDefend())) + "[WHITE] → " + c_shield + String.format("%,d", (shieldNew +
+                        target.getDefend())) + "[WHITE]/" + c_shield + String.format("%,d", hpMax) + getColor(shieldNew - shieldCur) + " (+" + String.format("%,d", (shieldNew - shieldCur)) + ")";
                 }
 
                 if (turnsMod > turnsCur) {
                     target.setShieldTurns(turnsMod);
                     if (shieldNew > shieldCur)
-                        msg.add(str + ", " + lang.get("turns") + " " + turnsCur + " -> " + turnsMod);
+                        msg.add(str + "[WHITE], " + lang.get("turns") + " " + c_num + turnsCur + "[WHITE] → " + c_num + turnsMod);
                     else
-                        msg.add(formatName(target.getUnitType().getName(), self.getPos()) + " " + lang.get("shield") + " " + lang.get("turns") + " " + turnsCur + " -> " + turnsMod);
+                        msg.add(formatName(target.getUnitType().getName(), self.getPos()) + " " + lang.get("shield") + " " + lang.get("turns") + " " + c_num + turnsCur + "[WHITE] → " + c_num + turnsMod);
                 }
 
                 // Effect block message
                 if(shieldCur == 0 && shieldNew > 0 && target.isEffectBlock() && target.getDefend() == 0) {
-                    msg.add(self.getUnitType().getName() + " " + lang.get("log.is_now") + " " + lang.get("log.effect_block"));
+                    msg.add(self.getUnitType().getName() + " " + lang.get("log.is_now") + " " + c_buff + lang.get("log.effect_block"));
                 }
 
                 return new Result(ResultType.SUCCESS, msg);
@@ -93,8 +93,8 @@ public class Heal implements SkillEffect {
 
                 if (hpNew > hpCur) {
                     target.getStatsCur().setHp(hpNew);
-                    msg.add(formatName(target.getUnitType().getName(), self.getPos()) + " " + lang.get("hp") + " " + String.format("%,d", hpCur) + " -> " + String.format("%,d", hpNew)
-                        + "/" + String.format("%,d", hpMax) + " (+" + String.format("%,d", (hpNew - hpCur)) + ")");
+                    msg.add(formatName(target.getUnitType().getName(), self.getPos()) + " " + lang.get("hp") + " " + c_hp + String.format("%,d", hpCur) + "[WHITE] → " + c_hp + String.format("%,d", hpNew)
+                        + "[WHITE]/" + c_hp + String.format("%,d", hpMax) + getColor(hpNew - hpCur) + " (+" + String.format("%,d", (hpNew - hpCur)) + ")");
                     return new Result(ResultType.SUCCESS, msg);
                 } else return new Result(ResultType.SUCCESS, msg);
             }

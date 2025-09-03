@@ -3,6 +3,7 @@ package io.github.celosia.sys.battle;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
@@ -56,7 +57,7 @@ public class BattleController {
 
     // Display
     // Turn display
-    static TypingLabel turn = new TypingLabel("{SPEED=0.1}{FADE}{SLIDE}" + lang.get("turn") + " 1", FontType.KORURI.getSize60());
+    static TypingLabel turn = new TypingLabel("{SPEED=0.1}{FADE}{SLIDE}" + c_turn + lang.get("turn") + " 1", FontType.KORURI.getSize60());
 
     // Bloom displays for both teams
     static List<TypingLabel> bloomL = new ArrayList<>();
@@ -116,7 +117,7 @@ public class BattleController {
 
         for(int i = 0; i < 2; i++) {
             // Bloom displays for both teams
-            TypingLabel bloom = new TypingLabel(lang.get("bloom") + ": 100/1,000", FontType.KORURI.getSize40());
+            TypingLabel bloom = new TypingLabel(c_stat + lang.get("bloom") + "[WHITE]: " + c_bloom + "100[WHITE]/" + c_bloom + "1,000", FontType.KORURI.getSize40());
             bloomL.add(bloom);
             bloom.setY(World.HEIGHT - 90);
             stage1.addActor(bloom);
@@ -213,7 +214,7 @@ public class BattleController {
                         //Skill selectedSkill = skills2[MathUtils.random(skills.length - 1)];
                         Skill selectedSkill = Skills.NOTHING;
                         Unit target = battle.getPlayerTeam().getUnits()[MathUtils.random(battle.getPlayerTeam().getUnits().length - 1)];
-                        setTextIfChanged(movesL.get(selectingMove), selectedSkill.getName() + " -> " + target.getUnitType().getName()); // todo support ExtraActions
+                        setTextIfChanged(movesL.get(selectingMove), selectedSkill.getName() + " → " + target.getUnitType().getName()); // todo support ExtraActions
                         moves.add(new Move(selectedSkill, battle.getOpponentTeam().getUnits()[selectingMove - 4], target.getPos())); // todo AI
                         selectingMove++;
                     } else selectingMove = 100; // Jump to move execution
@@ -243,7 +244,7 @@ public class BattleController {
                         // Apply turn end BuffEffects
                         for (Passive passive : unit.getPassives()) {
                             StringBuilder turnEnd1 = new StringBuilder();
-                            turnEnd1.append(formatName(unit.getUnitType().getName(), unit.getPos())).append(" ").append(passive.getName()).append(": ");
+                            turnEnd1.append(formatName(unit.getUnitType().getName(), unit.getPos())).append(" ").append(c_passive).append(passive.getName()).append("[WHITE]: ");
 
                             for (BuffEffect buffEffect : passive.getBuffEffects()) {
                                 StringBuilder turnEnd2 = new StringBuilder();
@@ -257,7 +258,7 @@ public class BattleController {
 
                         for(BuffInstance buffInstance : unit.getBuffInstances()) {
                             StringBuilder turnEnd1 = new StringBuilder();
-                            turnEnd1.append(formatName(unit.getUnitType().getName(), unit.getPos())).append(" ").append(buffInstance.getBuff().getName()).append(": ");
+                            turnEnd1.append(formatName(unit.getUnitType().getName(), unit.getPos())).append(" ").append(c_buff).append(buffInstance.getBuff().getName()).append("[WHITE]: ");
 
                             for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
                                 StringBuilder turnEnd2 = new StringBuilder();
@@ -317,15 +318,15 @@ public class BattleController {
                         StringBuilder builder = new StringBuilder();
                         if(newSp >= 0) {
                             Unit target = battle.getUnitAtPos(move.getTargetPos());
-                            builder.append(formatName(self.getUnitType().getName(), self.getPos(), false)).append(" ").append(lang.get("log.uses")).append(" ").append(skill.getName());
+                            builder.append(formatName(self.getUnitType().getName(), self.getPos(), false)).append(" ").append(lang.get("log.uses")).append(" ").append(c_skill).append(skill.getName()).append("[WHITE]");
                             if(!skill.isRangeSelf()) builder.append(" ").append(lang.get("log.on")).append(" ").append(formatName(target.getUnitType().getName(), move.getTargetPos(), false));
 
                             if (skill.isBloom()) {
-                                builder.append(" (").append((isPlayerTeam) ? lang.get("log.team_player") : lang.get("log.team_opponent")).append(" ").append(lang.get("bloom")).append(" ")
-                                    .append(String.format("%,d", team.getBloom())).append(" -> ").append(String.format("%,d", newSp)).append(")");
+                                builder.append(" (").append((isPlayerTeam) ? lang.get("log.team_player") : lang.get("log.team_opponent")).append(" ").append(c_stat).append(lang.get("bloom")).append(" ")
+                                    .append(c_bloom).append(String.format("%,d", team.getBloom())).append("[WHITE] → ").append(c_bloom).append(String.format("%,d", newSp)).append("[WHITE])");
                                 team.setBloom(newSp);
                             } else if (newSp != self.getSp()) { // Use SP
-                                builder.append(" (").append(lang.get("sp")).append(" ").append(String.format("%,d", self.getSp())).append(" -> ").append(String.format("%,d", newSp)).append(")");
+                                builder.append(" (").append(c_stat).append(lang.get("sp")).append(" ").append(c_sp).append(String.format("%,d", self.getSp())).append("[WHITE] → ").append(c_sp).append(String.format("%,d", newSp)).append("[WHITE])");
                                 self.setSp(newSp);
                             }
 
@@ -344,9 +345,9 @@ public class BattleController {
 
                             prevResults = new HashMap<>();
                         } else {
-                            String msg = formatName(self.getUnitType().getName(), self.getPos(), false) + " " + lang.get("log.tries_to_use") + " " + skill.getName();
-                            if(!skill.isRangeSelf()) msg += " " + lang.get("log.on") + " " + formatName(battle.getUnitAtPos(move.getTargetPos()).getUnitType().getName(), move.getTargetPos(), false);
-                            msg += ", " + lang.get("log.but_doesnt_have_enough") + " " + (skill.isBloom() ? lang.get("bloom") : lang.get("sp"));
+                            String msg = formatName(self.getUnitType().getName(), self.getPos(), false) + " " + lang.get("log.tries_to_use") + " " + c_skill + skill.getName();
+                            if(!skill.isRangeSelf()) msg += "[WHITE] " + lang.get("log.on") + " " + formatName(battle.getUnitAtPos(move.getTargetPos()).getUnitType().getName(), move.getTargetPos(), false);
+                            msg += ", " + lang.get("log.but_doesnt_have_enough") + " " + c_stat + (skill.isBloom() ? lang.get("bloom") : lang.get("sp"));
                             appendToLog(msg);
                         }
                     } else newSp = 0; // SP shouldn't change
@@ -409,7 +410,7 @@ public class BattleController {
                     // todo delete killed units
                 } else {
                     appendToLog(formatName(move.getSelf().getUnitType().getName(), move.getSelf().getPos(), false) + " " +
-                        lang.get("log.tries_to_use") + " " + move.getSkill().getName() + " " + lang.get("log.on") + " " +
+                        lang.get("log.tries_to_use") + " " + c_skill + move.getSkill().getName() + "[WHITE] " + lang.get("log.on") + " " +
                         formatName(battle.getUnitAtPos(move.getTargetPos()).getUnitType().getName(), move.getTargetPos(), false) + ", " + lang.get("log.but_cant_reach"));
                     endMove();
                 }
@@ -436,7 +437,7 @@ public class BattleController {
                 Unit self = battle.getPlayerTeam().getUnits()[selectingMove];
                 Unit target = (indexTarget < 4) ? battle.getPlayerTeam().getUnits()[indexTarget] : battle.getOpponentTeam().getUnits()[indexTarget - 4];
                 moves.add(new Move(selectedSkill, self, target.getPos()));
-                setTextIfChanged(movesL.get(selectingMove), movesL.get(selectingMove).getOriginalText() + " -> " + target.getUnitType().getName()); // todo support ExtraActions
+                setTextIfChanged(movesL.get(selectingMove), movesL.get(selectingMove).getOriginalText() + " → " + target.getUnitType().getName()); // todo support ExtraActions
 
                 // Reset for next time
                 for(TypingLabel stat : statsL) stat.setColor(Color.WHITE);
@@ -459,6 +460,10 @@ public class BattleController {
     public static void updateStatDisplay() {
         // Bloom displays
         for(int i = 0; i < 2; i++) {
+            // todo colors
+            // it seems [] and {} tags cant be mixed
+            //setTextIfChanged(bloomL.get(i), "{SPEED=0.1}{FADE}{SLIDE}" + c_stat + lang.get("bloom") + "[WHITE]: " + c_bloom + String.format("%,d", battle.getTeam(i).getBloom()) + "[WHITE]/" + c_bloom + String.format("%,d", 1000));
+            //            bloomL.get(i).skipToTheEnd();
             setTextIfChanged(bloomL.get(i), "{SPEED=0.1}{FADE}{SLIDE}" + lang.get("bloom") + ": " + String.format("%,d", battle.getTeam(i).getBloom()) + "/" + String.format("%,d", 1000));
             if (i == 0) bloomL.get(i).setX(bloomL.get(i).getWidth() / 3, Align.left);
             else bloomL.get(i).setX(World.WIDTH - bloomL.get(i).getWidth() / 3, Align.right);
@@ -504,6 +509,14 @@ public class BattleController {
             Unit unit = (i >= 4) ? battle.getOpponentTeam().getUnits()[i - 4] : battle.getPlayerTeam().getUnits()[i]; // todo can use battle.getAllUnits
             if (unit != null) {
                 int shield = unit.getShield() + unit.getDefend();
+                // todo colors
+                // String shieldStr = (shield > 0) ? c_shield + "+" + String.format("%,d", shield) : "";
+                //                String spStr = (!unit.isInfiniteSp()) ? String.format("%,d", unit.getSp()) + "[WHITE]/" + c_sp + String.format("%,d", 1000) : "∞";
+                //                StringBuilder text = new StringBuilder(unit.getUnitType().getName() + "\n" + c_stat + lang.get("hp") + "[WHITE]: " + c_hp + String.format("%,d", unit.getStatsCur().getHp()) +
+                //                    shieldStr + "[WHITE]/" + c_hp + String.format("%,d", unit.getStatsDefault().getHp()) + "\n" + c_stat + lang.get("sp") + "[WHITE]: " + c_sp + spStr +
+                //                    //"\nStr: " + unit.getStrWithStage() + "/" + unit.getStatsDefault().getStr() + "\nMag:" + unit.getMagWithStage() + "/" + unit.getStatsDefault().getMag() +
+                //                    //"\nAmr: " + unit.getAmrWithStage() + "/" + unit.getStatsDefault().getAmr() + "\nRes: " + unit.getResWithStage() + "/" + unit.getStatsDefault().getRes() +
+                //                    "\n");
                 String shieldStr = (shield > 0) ? "[CYAN]+" + String.format("%,d", shield) + "[WHITE]" : "";
                 String spStr = (!unit.isInfiniteSp()) ? String.format("%,d", unit.getSp()) + "/" + String.format("%,d", 1000) : "∞";
                 StringBuilder text = new StringBuilder(unit.getUnitType().getName() + "\n" + lang.get("hp") + ": " + String.format("%,d", unit.getStatsCur().getHp()) +
@@ -512,11 +525,11 @@ public class BattleController {
                     //"\nAmr: " + unit.getAmrWithStage() + "/" + unit.getStatsDefault().getAmr() + "\nRes: " + unit.getResWithStage() + "/" + unit.getStatsDefault().getRes() +
                     "\n");
 
-                // List stage1 changes
-                for(StageType stage1Type : StageType.values()) {
-                    int stage1 = unit.getStage(stage1Type);
-                    if (stage1 != 0) {
-                        text.append(stage1Type.getName()).append((stage1 >= 1) ? "+" : "").append(stage1).append("(").append(unit.getStageTurns(stage1Type)).append(") ");
+                // List stage changes
+                for(StageType stageType : StageType.values()) {
+                    int stage = unit.getStage(stageType);
+                    if (stage != 0) {
+                        text.append(stageType.getName()).append((stage >= 1) ? "+" : "").append(stage).append("(").append(unit.getStageTurns(stageType)).append(") ");
                     }
                 }
 
@@ -585,13 +598,10 @@ public class BattleController {
 
             // 1 = bottom; 0 = top
             float pos = 1 - (float) Math.min(logText.size() - 48, logScroll) / logText.size();
-            //float pos = 1 - (float) Math.max(Math.min(logText.size() - 48, logScroll) / logText.size(), 0);
 
-            // (World.WIDTH_4 + 115) - (height / 6), World.HEIGHT_2 + (height / 2), World.WIDTH_4 + 125  - (height / 6), World.HEIGHT_2 - (height / 2)
-            //0, World.HEIGHT + 100, World.WIDTH_4 + 150, -100
-            // todo: fix problems:
-            //      bar only goes about halfway up
-            //      bar's x position isnt static
+            // 1 = top; 0 = bottom
+            float pos2 = (float) Math.min(logText.size() - 48, logScroll) / logText.size();
+
             // Start (bottom)
             int sx = (int) (World.WIDTH_4 + 265 - ((range * pos) / 6f));
             int sy = (int) (World.HEIGHT - (height / 2f) - (range * pos));
@@ -599,6 +609,11 @@ public class BattleController {
             // End (top)
             int ex = (int) (World.WIDTH_4 + 265 + (height / 6f) - ((range * pos) / 6f));
             int ey = (int) (World.HEIGHT + (height / 2f) - (range * pos));
+
+            //Interpolation i = Interpolation.smooth2;
+
+            //int ex = sx; //(int) i.apply(sx, sx, pos);
+            //int ey = (int) i.apply(sy, World.HEIGHT - 25, pos2);
 
             Array<Vector2> points = new Array<>(false, 2);
             points.addAll(new Vector2(sx, sy), new Vector2(ex, ey));

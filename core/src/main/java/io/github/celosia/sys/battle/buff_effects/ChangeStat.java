@@ -4,7 +4,7 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Stat;
 import io.github.celosia.sys.battle.Unit;
 
-import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.*;
 
 public class ChangeStat implements BuffEffect {
 
@@ -22,8 +22,9 @@ public class ChangeStat implements BuffEffect {
         int statNew = (int) Math.floor(statOld + ((change * self.getStatsDefault().getStat(stat)) * stacks));
         self.getStatsCur().setStat(stat, statNew);
         // todo condense lines when giving/removing multiple stacks at once
-        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + stat.getName() + " " + String.format("%,d", statOld) + " -> " + String.format("%,d", statNew) + "/" +
-            String.format("%,d", self.getStatsDefault().getStat(stat)) + ((change >= 0f) ? " (+" : " (") + String.format("%,d", (statNew - statOld)) + ")"};
+        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + stat.getName() + " " + getStatColor(statOld, self.getStatsDefault().getStat(stat))
+            + String.format("%,d", statOld) + "[WHITE] → " + getStatColor(statNew, self.getStatsDefault().getStat(stat)) + String.format("%,d", statNew) + "[WHITE]/" +
+            c_num + String.format("%,d", self.getStatsDefault().getStat(stat)) + "[WHITE] (" + getColor((int) change) + ((change >= 0f) ? "+" : "") + String.format("%,d", (statNew - statOld)) + "[WHITE])"};
     }
 
     @Override
@@ -31,7 +32,8 @@ public class ChangeStat implements BuffEffect {
         int statOld = self.getStatsCur().getStat(stat);
         int statNew = (int) Math.ceil(statOld - ((change * self.getStatsDefault().getStat(stat)) * stacks));
         self.getStatsCur().setStat(stat, statNew);
-        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + stat.getName() + " " + String.format("%,d", statOld) + " -> " + String.format("%,d", statNew) + "/" +
-            String.format("%,d", self.getStatsDefault().getStat(stat)) + ((change <= 0f) ? " (+" : " (") + String.format("%,d", (statNew - statOld)) + ")"};
+        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + stat.getName() + " " + getStatColor(statOld, self.getStatsDefault().getStat(stat))
+            + String.format("%,d", statOld) + "[WHITE] → " + getStatColor(statNew, self.getStatsDefault().getStat(stat)) + String.format("%,d", statNew) + "[WHITE]/" +
+            c_num + String.format("%,d", self.getStatsDefault().getStat(stat)) + "[WHITE] (" + getColor((int) change) + ((change <= 0f) ? "+" : "") + String.format("%,d", (statNew - statOld)) + "[WHITE])"};
     }
 }

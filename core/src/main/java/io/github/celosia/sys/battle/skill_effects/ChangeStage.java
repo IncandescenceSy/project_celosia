@@ -7,7 +7,7 @@ import java.util.List;
 
 import static io.github.celosia.sys.battle.BattleLib.getStageBuffType;
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnChangeStage;
-import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.*;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeStage implements SkillEffect {
@@ -86,7 +86,7 @@ public class ChangeStage implements SkillEffect {
 
             if (stageNew != stageOld) {
                 unit.setStage(stageType, stageNew);
-                str = formatName(unit.getUnitType().getName(), self.getPos()) + " " + stageType.getName() + " " + lang.get("stage") + " " + stageOld + " -> " + stageNew;
+                str = formatName(unit.getUnitType().getName(), self.getPos()) + " " + c_buff + stageType.getName() + "[WHITE] " + lang.get("stage") + " " + getColor(stageOld) + stageOld + "[WHITE] → " + getColor(stageNew) + stageNew;
             }
 
             if ((stageOld >= 0 && stacks >= 0) || (stageOld <= 0 && stacks <= 0)) { // Refresh turns
@@ -94,9 +94,9 @@ public class ChangeStage implements SkillEffect {
                 if (turnsMod > turnsOld) {
                     unit.setStageTurns(stageType, turnsMod);
                     if (stageNew != stageOld)
-                        msg.add(str + ", " + lang.get("turns") + " " + turnsOld + " -> " + turnsMod);
+                        msg.add(str + "[WHITE], " + lang.get("turns") + " " + c_num + turnsOld + "[WHITE] → " + c_num + turnsMod);
                     else
-                        msg.add(formatName(unit.getUnitType().getName(), self.getPos()) + " " + stageType.getName() + " " + lang.get("stage") + " " + lang.get("turns") + " " + turnsOld + " -> " + turnsMod);
+                        msg.add(formatName(unit.getUnitType().getName(), self.getPos()) + " " + c_buff + stageType.getName() + "[WHITE] " + lang.get("stage") + " " + lang.get("turns") + " " + c_num + turnsOld + "[WHITE] → " + c_num + turnsMod);
                 }
             } else msg.add(str);
 

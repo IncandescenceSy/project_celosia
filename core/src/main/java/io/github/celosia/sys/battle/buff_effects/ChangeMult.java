@@ -4,7 +4,7 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Mult;
 import io.github.celosia.sys.battle.Unit;
 
-import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.*;
 
 public class ChangeMult implements BuffEffect {
 
@@ -22,7 +22,8 @@ public class ChangeMult implements BuffEffect {
         int changeFull = change * stacks;
         self.setMult(mult, multOld + changeFull);
         int changeDisplay = Math.max(multOld + changeFull, 10) - Math.max(multOld, 10);
-        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + mult.getName() + " " + Math.max(multOld, 10) + "% -> " + Math.max(multOld + changeFull, 10) + ((changeFull > 0) ? "% (+" : "% (") + changeDisplay + "%)"};
+        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + mult.getName() + " " + getMultColor(multOld, mult) + Math.max(multOld, 10) + "%[WHITE] → " +
+            getMultColor(multOld + changeFull, mult) + (Math.max(multOld + changeFull, 10)) + "% [WHITE](" + getMultChangeColor(changeFull, mult) + ((changeFull < 0) ? "+" : "") + (changeDisplay * -1) + "%[WHITE])"};
     }
 
     @Override
@@ -31,6 +32,7 @@ public class ChangeMult implements BuffEffect {
         int changeFull = change * stacks;
         self.setMult(mult, multOld - changeFull);
         int changeDisplay = Math.max(multOld + changeFull, 10) - Math.max(multOld, 10);
-        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + mult.getName() + " " + Math.max(multOld, 10) + "% -> " + (Math.max(multOld - changeFull, 10)) + ((changeFull < 0) ? "% (+" : "% (") + (changeDisplay * -1) + "%)"};
+        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + mult.getName() + " " + getMultColor(multOld, mult) + Math.max(multOld, 10) + "%[WHITE] → " +
+            getMultColor(multOld - changeFull, mult) + (Math.max(multOld - changeFull, 10)) + "% [WHITE](" + getMultChangeColor(changeFull, mult) + ((changeFull < 0) ? "+" : "") + (changeDisplay * -1) + "%[WHITE])"};
     }
 }

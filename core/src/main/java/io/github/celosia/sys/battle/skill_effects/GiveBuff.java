@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnGiveBuff;
-import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.*;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class GiveBuff implements SkillEffect {
@@ -95,7 +95,7 @@ public class GiveBuff implements SkillEffect {
                 int turnsOld = buffInstance.getTurns();
                 if(turnsMod > turnsOld) {
                     buffInstance.setTurns(turnsMod);
-                    str = formatName(unit.getUnitType().getName(), self.getPos()) + " " + buff.getName() + " " + lang.format("turn_s", turnsMod) + " " + turnsOld + " -> " + turnsMod;
+                    str = formatName(unit.getUnitType().getName(), self.getPos()) + " " + c_buff + buff.getName() + "[WHITE] " + lang.format("turn_s", turnsMod) + " " + c_num + turnsOld + "[WHITE] → " + c_num + turnsMod;
                 }
 
                 // Add stacks
@@ -103,11 +103,11 @@ public class GiveBuff implements SkillEffect {
                 int stacksNew = Math.min(buffInstance.getBuff().getMaxStacks(), stacksOld + stacks);
                 if(stacksNew != stacksOld) {
                     buffInstance.setStacks(stacksNew);
-                    if(turnsMod > turnsOld) msg.add(str + ", " + lang.format("stack_s", stacksNew) + " " + stacksOld + " -> " + stacksNew);
-                    else msg.add(formatName(unit.getUnitType().getName(), unit.getPos()) + " " + buff.getName() + " " + lang.get("stacks") + " " + stacksOld + " -> " + stacksNew);
+                    if(turnsMod > turnsOld) msg.add(str + "[WHITE], " + lang.format("stack_s", stacksNew) + " " + c_num + stacksOld + "[WHITE] → " + c_num + stacksNew);
+                    else msg.add(formatName(unit.getUnitType().getName(), unit.getPos()) + " " + c_buff + buff.getName() + " " + lang.get("stacks") + " " + c_num + stacksOld + "[WHITE] → " + c_num + stacksNew);
                 }
 
-                // Apply once for each newly added stack
+                // Apply newly added stacks
                 int stacksAdded = stacksNew - stacksOld;
                 for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
                     String[] effectMsgs = buffEffect.onGive(unit, stacksAdded);
@@ -116,8 +116,8 @@ public class GiveBuff implements SkillEffect {
 
                 return new Result(ResultType.SUCCESS, msg);
             } else { // Doesn't have buff
-                msg.add(formatName(unit.getUnitType().getName(), unit.getPos()) + " " + lang.get("log.gains") + " " + buff.getName() + " " + lang.get("log.with") + " " + ((buff.getMaxStacks() > 1) ?
-                    (stacks + " " + lang.format("stack_s", stacks) + " " + lang.get("log.and")) + " " : "") + turnsMod + " " + lang.format("turn_s", turnsMod));
+                msg.add(formatName(unit.getUnitType().getName(), unit.getPos(), false) + " " + lang.get("log.gains") + " " + c_buff + buff.getName() + "[WHITE] " + lang.get("log.with") + " " + ((buff.getMaxStacks() > 1) ?
+                    (c_num + stacks + " [WHITE]" + lang.format("stack_s", stacks) + " " + lang.get("log.and")) + " " : "") + c_num + turnsMod + "[WHITE] " + lang.format("turn_s", turnsMod));
                 unit.addBuffInstance(new BuffInstance(buff, turnsMod, stacks));
                 buffInstance = buffInstances.getLast();
 

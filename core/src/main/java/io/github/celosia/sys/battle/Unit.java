@@ -3,7 +3,7 @@ package io.github.celosia.sys.battle;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.*;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 // Species and current stats
@@ -896,26 +896,27 @@ public class Unit {
 
         // Stages
         if (stageAtk != 0 && --stageAtkTurns <= 0) {
-            msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + stageAtk + lang.format("stage_s", stageAtk) + " " + StageType.ATK.getName());
+            msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageAtk) + stageAtk + "[WHITE]" + lang.format("stage_s", stageAtk) + " " + c_buff + StageType.ATK.getName());
             stageAtk = 0; // Remove stages
         }
         if (stageDef != 0 && --stageDefTurns <= 0) {
-            msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + stageDef + lang.format("stage_s", stageDef) + " " + StageType.DEF.getName());
+            msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageDef) + stageDef + "[WHITE]" + lang.format("stage_s", stageDef) + " " + c_buff + StageType.DEF.getName());
             stageDef = 0;
         }
         if (stageFth != 0 && --stageFthTurns <= 0) {
-            msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + stageFth + lang.format("stage_s", stageFth) + " " + StageType.FTH.getName());
+            msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageFth) + stageFth + "[WHITE]" + lang.format("stage_s", stageFth) + " " + c_buff + StageType.FTH.getName());
             stageFth = 0;
         }
         if (stageAgi != 0 && --stageAgiTurns <= 0) {
-            msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + stageAgi + lang.format("stage_s", stageAgi) + " " + StageType.AGI.getName());
+            msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageAgi) + stageAgi + "[WHITE]" + lang.format("stage_s", stageAgi) + " " + c_buff + StageType.AGI.getName());
             stageAgi = 0;
         }
 
         // Shield
         if (shield != 0 && --shieldTurns <= 0) {
-            if(defend == 0) msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + String.format("%,d", shield) + " " + lang.get("shield"));
-            else msg.add(formatName(unitType.getName(), pos) + " " + lang.get("shield") + " " + String.format("%,d", (shield + defend)) + " -> " + String.format("%,d", defend));
+            if(defend == 0) msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + c_shield + String.format("%,d", shield) + " " + c_buff + lang.get("shield"));
+            else msg.add(formatName(unitType.getName(), pos) + " " + c_buff + lang.get("shield") + " " + c_shield + String.format("%,d", (shield + defend)) + "[WHITE] → " +
+                c_shield + String.format("%,d", defend) + "[WHITE]/" + c_shield + String.format("%,d", statsDefault.getHp()) + c_neg + " (" + String.format("%,d", shield) + ")");
             shield = 0;
         }
 
@@ -929,9 +930,9 @@ public class Unit {
                 StringBuilder str = new StringBuilder();
                 int maxStacks = buffInstance.getBuff().getMaxStacks();
                 str.append(formatName(unitType.getName(), pos, false)).append(" ").append(lang.get("log.loses")).append(" ");
-                if(maxStacks > 1) str.append(buffInstance.getStacks()).append(" ");
-                str.append(buffInstance.getBuff().getName());
-                if(maxStacks > 1) str.append(" ").append(lang.get("stacks"));
+                if(maxStacks > 1) str.append(c_num).append(buffInstance.getStacks()).append(" ");
+                str.append(c_buff).append(buffInstance.getBuff().getName());
+                if(maxStacks > 1) str.append("[WHITE] ").append(lang.format("stack_s", buffInstance.getStacks()));
                 msg.add(str.toString());
 
                 // Remove effects
@@ -960,12 +961,12 @@ public class Unit {
             if (defend > 0 && dmg > 0) { // There's Defend and dmg
                 if (defend > dmg) { // Only hit Defend
                     defend -= dmg;
-                    return new Result(ResultType.HIT_SHIELD, name_s + lang.get("shield") + " " + String.format("%,d", (defendOld + shield)) + " -> "
-                        + String.format("%,d", (defend + shield)) + "/" + String.format("%,d", statsDefault.getHp()) + " (-" + String.format("%,d", dmgFull) + ")");
+                    return new Result(ResultType.HIT_SHIELD, name_s + lang.get("shield") + " " + c_shield + String.format("%,d", (defendOld + shield)) + "[WHITE] → "
+                        + c_shield + String.format("%,d", (defend + shield)) + "[WHITE]/" + c_shield + String.format("%,d", statsDefault.getHp()) + "[WHITE] (" + c_neg + "-" + String.format("%,d", dmgFull) + "[WHITE])");
                 } else { // Destroy Defend and proceed to Shield
                     dmg -= defend;
                     defend = 0;
-                    if(shield == 0 && effectBlock <= 0) msg.add(name + lang.get("log.is_no_longer") + " " + lang.get("log.effect_block"));
+                    if(shield == 0 && effectBlock <= 0) msg.add(name + lang.get("log.is_no_longer") + " " + c_buff + lang.get("log.effect_block")); // todo this should come after the dmg message
                 }
             }
 
@@ -973,15 +974,15 @@ public class Unit {
                 if (shield > dmg) { // Only hit Shield
                     int shieldOld = shield;
                     shield -= dmg;
-                    return new Result(ResultType.HIT_SHIELD, name_s + lang.get("shield") + " " + String.format("%,d", (defendOld + shieldOld)) + " -> "
-                        + String.format("%,d", shield) + "/" + String.format("%,d", statsDefault.getHp()) + " (-" + String.format("%,d", dmgFull) + ")");
+                    return new Result(ResultType.HIT_SHIELD, name_s + lang.get("shield") + " " + c_shield + String.format("%,d", (defendOld + shieldOld)) + "[WHITE] → "
+                        + c_shield + String.format("%,d", shield) + "[WHITE]/" + c_shield + String.format("%,d", statsDefault.getHp()) + " (" + c_neg + "-" + String.format("%,d", dmgFull) + "[WHITE])");
                 } else { // Destroy Shield and proceed to HP
-                    msg.add(name_s + lang.get("shield") + " " + String.format("%,d", (defendOld + shield)) + " -> " + 0 + "/" + statsDefault.getHp() +
-                        " (-" + String.format("%,d", (defendOld + shield)) + ")");
+                    msg.add(name_s + lang.get("shield") + " " + c_shield + String.format("%,d", (defendOld + shield)) + "[WHITE] → " + c_num + 0 + "[WHITE]/" + c_shield + statsDefault.getHp() +
+                        "[WHITE] (" + c_neg + "-" + String.format("%,d", (defendOld + shield)) + "[WHITE])");
                     dmg -= shield;
                     shield = 0;
                     shieldTurns = 0;
-                    if(effectBlock <= 0) msg.add(name+ lang.get("log.is_no_longer") + " " + lang.get("log.effect_block"));
+                    if(effectBlock <= 0) msg.add(name+ lang.get("log.is_no_longer") + " " + c_stat + lang.get("log.effect_block"));
                 }
             }
         }
@@ -989,19 +990,20 @@ public class Unit {
         // Lower HP
         int hpOld = statsCur.getHp();
         int hpNew = Math.clamp(hpOld - dmg, 0, statsDefault.getHp());
-        msg.add(name_s + lang.get("hp") + " " + String.format("%,d", hpOld) + " -> " + String.format("%,d", hpNew) + " (-" + String.format("%,d", dmg) + ")");
+        msg.add(name_s + c_stat + lang.get("hp") + " " + c_hp + String.format("%,d", hpOld) + "[WHITE] → " + c_hp + String.format("%,d", hpNew) + "[WHITE] (" + c_neg + "-" + String.format("%,d", dmg) + "[WHITE])");
         statsCur.setHp(hpNew);
 
         if (effectBlock > 0) { // todo should this be a separate result from hitting shield
             return new Result(ResultType.HIT_SHIELD, msg);
         } else if (dmg > 0) { // Did damage
             return new Result(ResultType.SUCCESS, msg);
-        } else return new Result(ResultType.FAIL, lang.get("log.no_effect") + " " + lang.get("log.on") + " " + formatName(unitType.getName(), pos, false)); // Did no damage
+        } else return new Result(ResultType.FAIL, c_neg + lang.get("log.no_effect") + "[WHITE] " + lang.get("log.on") + " " + formatName(unitType.getName(), pos, false)); // Did no damage
     }
 
     public Result damage(int dmg, boolean pierce) {
         return this.damage(dmg, pierce, true);
     }
+
     public Result damage(int dmg) {
         return this.damage(dmg, false, true);
     }

@@ -4,7 +4,7 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.BuffType;
 import io.github.celosia.sys.battle.Unit;
 
-import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.*;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeDurationModBuffTypeDealt implements BuffEffect {
@@ -22,8 +22,8 @@ public class ChangeDurationModBuffTypeDealt implements BuffEffect {
         int durOld = self.getDurationModBuffTypeDealt(buffType);
         int durNew = durOld + (change * stacks);
         self.setDurationModBuffTypeDealt(buffType, durNew);
-        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + ((buffType == BuffType.BUFF) ? lang.get("duration_mod_buff_dealt") : lang.get("duration_mod_debuff_dealt"))
-            + ((durOld > 0) ? " +" : " ") + durOld + ((durNew > 0) ? " -> +" : " -> ") + durNew};
+        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + ((buffType == BuffType.BUFF) ? lang.get("duration_mod_buff_dealt") : lang.get("duration_mod_debuff_dealt"))
+            + getColor(durOld) + ((durOld > 0) ? " +" : " ") + durOld + "[WHITE] → " + getColor(durNew) + ((durNew > 0) ? "+" : "") + durNew};
     }
 
     @Override
@@ -31,7 +31,7 @@ public class ChangeDurationModBuffTypeDealt implements BuffEffect {
         int durOld = self.getDurationModBuffTypeDealt(buffType);
         int durNew = durOld - (change * stacks);
         self.setDurationModBuffTypeDealt(buffType, durNew);
-        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + ((buffType == BuffType.BUFF) ? lang.get("duration_mod_buff_dealt") : lang.get("duration_mod_debuff_dealt"))
-            + ((durOld > 0) ? " +" : " ") + durOld + ((durNew > 0) ? " -> +" : " -> ") + durNew};
+        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + ((buffType == BuffType.BUFF) ? lang.get("duration_mod_buff_dealt") : lang.get("duration_mod_debuff_dealt"))
+            + getColor(durOld) + ((durOld > 0) ? " +" : " ") + durOld + "[WHITE] → " + getColor(durNew) + ((durNew > 0) ? "+" : "") + durNew};
     }
 }

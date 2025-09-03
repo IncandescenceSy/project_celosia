@@ -4,6 +4,8 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Result;
 import io.github.celosia.sys.battle.Unit;
 
+import static io.github.celosia.sys.menu.TextLib.c_hp;
+import static io.github.celosia.sys.menu.TextLib.c_pos;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 // todo protect bosses against %-based damage
@@ -77,7 +79,7 @@ public class ChangeHp implements BuffEffect {
             int hpNew = Math.max(hpOld, Math.min(hpOld + heal, hpMax));
             if (hpNew > hpOld) {
                 self.getStatsCur().setHp(hpNew);
-                return new String[]{lang.get("hp") + " " + String.format("%,d", hpOld) + " -> " + String.format("%,d", hpNew) + " (+" + String.format("%,d", Math.max(hpNew - hpOld, 0)) + ")"};
+                return new String[]{lang.get("hp") + " " + c_hp + String.format("%,d", hpOld) + "[WHITE] → " + c_hp + String.format("%,d", hpNew) + c_pos + " (+" + String.format("%,d", Math.max(hpNew - hpOld, 0)) + ")"};
             } else return new String[]{""};
         }
     }
