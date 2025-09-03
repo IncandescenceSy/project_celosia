@@ -4,6 +4,7 @@ import io.github.celosia.sys.battle.*;
 
 import static io.github.celosia.sys.battle.AffLib.getAffMultDmgDealt;
 import static io.github.celosia.sys.battle.AffLib.getAffMultDmgTaken;
+import static io.github.celosia.sys.battle.BattleController.appendAllToLog;
 
 public class Damage implements SkillEffect {
 
@@ -74,7 +75,7 @@ public class Damage implements SkillEffect {
     }
 
     @Override
-    public Result apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
+    public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
         // Multi-hit attacks should continue unless they hit an immunity
         if (resultPrev.ordinal() >= minResult.ordinal() && (!mainTargetOnly || isMainTarget)) {
             double atk = -1;
@@ -114,10 +115,12 @@ public class Damage implements SkillEffect {
             if(isFollowUp) dmg = dmg * (Math.max(self.getMultFollowUpDmgDealt(), 10) / 100d) * (Math.max(target.getMultFollowUpDmgTaken(), 10) / 100d);
 
             // Deal damage
-            return target.damage((int) dmg, isPierce);
+            Result result = target.damage((int) dmg, isPierce);
+            appendAllToLog(result.getMessages());
+            return result.getResultType();
         } else {
             // If the previous hit failed entirely, this one wouldn't have been reached. If this return statement is ever reached, it's under special circumstances, so let the attack continue just to be safe
-            return new Result(ResultType.SUCCESS, "");
+            return ResultType.SUCCESS;
         }
     }
 

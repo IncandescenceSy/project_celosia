@@ -3,6 +3,7 @@ package io.github.celosia.sys.battle;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.menu.TextLib.*;
 import static io.github.celosia.sys.settings.Lang.lang;
 
@@ -891,31 +892,29 @@ public class Unit {
         return (pos < 4) ? Side.ALLY : Side.OPPONENT;
     }
 
-    public List<String> decrementTurns() {
-        List<String> msg = new ArrayList<>();
-
+    public void decrementTurns() {
         // Stages
         if (stageAtk != 0 && --stageAtkTurns <= 0) {
-            msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageAtk) + stageAtk + "[WHITE]" + lang.format("stage_s", stageAtk) + " " + c_buff + StageType.ATK.getName());
+            appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageAtk) + stageAtk + "[WHITE]" + lang.format("stage_s", stageAtk) + " " + c_buff + StageType.ATK.getName());
             stageAtk = 0; // Remove stages
         }
         if (stageDef != 0 && --stageDefTurns <= 0) {
-            msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageDef) + stageDef + "[WHITE]" + lang.format("stage_s", stageDef) + " " + c_buff + StageType.DEF.getName());
+            appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageDef) + stageDef + "[WHITE]" + lang.format("stage_s", stageDef) + " " + c_buff + StageType.DEF.getName());
             stageDef = 0;
         }
         if (stageFth != 0 && --stageFthTurns <= 0) {
-            msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageFth) + stageFth + "[WHITE]" + lang.format("stage_s", stageFth) + " " + c_buff + StageType.FTH.getName());
+            appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageFth) + stageFth + "[WHITE]" + lang.format("stage_s", stageFth) + " " + c_buff + StageType.FTH.getName());
             stageFth = 0;
         }
         if (stageAgi != 0 && --stageAgiTurns <= 0) {
-            msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageAgi) + stageAgi + "[WHITE]" + lang.format("stage_s", stageAgi) + " " + c_buff + StageType.AGI.getName());
+            appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageAgi) + stageAgi + "[WHITE]" + lang.format("stage_s", stageAgi) + " " + c_buff + StageType.AGI.getName());
             stageAgi = 0;
         }
 
         // Shield
         if (shield != 0 && --shieldTurns <= 0) {
-            if(defend == 0) msg.add(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + c_shield + String.format("%,d", shield) + " " + c_buff + lang.get("shield"));
-            else msg.add(formatName(unitType.getName(), pos) + " " + c_buff + lang.get("shield") + " " + c_shield + String.format("%,d", (shield + defend)) + "[WHITE] → " +
+            if(defend == 0) appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + c_shield + String.format("%,d", shield) + " " + c_buff + lang.get("shield"));
+            else appendToLog(formatName(unitType.getName(), pos) + " " + c_buff + lang.get("shield") + " " + c_shield + String.format("%,d", (shield + defend)) + "[WHITE] → " +
                 c_shield + String.format("%,d", defend) + "[WHITE]/" + c_shield + String.format("%,d", statsDefault.getHp()) + c_neg + " (" + String.format("%,d", shield) + ")");
             shield = 0;
         }
@@ -933,21 +932,16 @@ public class Unit {
                 if(maxStacks > 1) str.append(c_num).append(buffInstance.getStacks()).append(" ");
                 str.append(c_buff).append(buffInstance.getBuff().getName());
                 if(maxStacks > 1) str.append("[WHITE] ").append(lang.format("stack_s", buffInstance.getStacks()));
-                msg.add(str.toString());
+                appendToLog(str.toString());
 
                 // Remove effects
-                for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
-                    String[] effectMsgs = buffEffect.onRemove(this, buffInstance.getStacks());
-                    for(String effectMsg : effectMsgs) if(!effectMsg.isEmpty()) msg.add(effectMsg);
-                }
+                for(BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) buffEffect.onRemove(this, buffInstance.getStacks());
                 buffInstances.remove(buffInstance);
             }
         }
-
-        return msg;
     }
 
-    // Damage Unit, taking into account Defend and Shield. Returns false if HP was lowered
+    // Damage Unit, taking into account Defend and Shield
     public Result damage(int dmg, boolean pierce, boolean useName) {
         int dmgFull = dmg;
         int defendOld = defend;

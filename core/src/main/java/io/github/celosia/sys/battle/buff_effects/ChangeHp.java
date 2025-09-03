@@ -4,6 +4,7 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Result;
 import io.github.celosia.sys.battle.Unit;
 
+import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.menu.TextLib.c_hp;
 import static io.github.celosia.sys.menu.TextLib.c_pos;
 import static io.github.celosia.sys.settings.Lang.lang;
@@ -53,10 +54,8 @@ public class ChangeHp implements BuffEffect {
     }
 
     @Override
-    public String[] onGive(Unit self, int stacks) {
-        if(isImmediate) {
-            return calc(self, stacks);
-        } else return new String[]{""};
+    public void onGive(Unit self, int stacks) {
+        if(isImmediate) appendToLog(calc(self, stacks));
     }
 
     @Override

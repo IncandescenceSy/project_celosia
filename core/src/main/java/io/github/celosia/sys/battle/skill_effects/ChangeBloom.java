@@ -2,6 +2,7 @@ package io.github.celosia.sys.battle.skill_effects;
 
 import io.github.celosia.sys.battle.*;
 
+import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.battle.BattleController.battle;
 
 public class ChangeBloom implements SkillEffect {
@@ -48,13 +49,14 @@ public class ChangeBloom implements SkillEffect {
     }
 
     @Override
-    public Result apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
+    public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
         if(!mainTargetOnly || isMainTarget) {
             Unit unit = (giveToSelf) ? self : target;
             Team team = battle.getTeamAtPos(unit.getPos());
 
-            return new Result(ResultType.SUCCESS, Calcs.changeBloom(team, unit.getSide(), change));
-        } else return new Result(ResultType.SUCCESS, "");
+            appendToLog(Calcs.changeBloom(team, unit.getSide(), change));
+        }
+        return ResultType.SUCCESS;
     }
 
     @Override

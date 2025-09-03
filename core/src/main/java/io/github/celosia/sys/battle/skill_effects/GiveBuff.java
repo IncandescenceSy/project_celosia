@@ -5,6 +5,7 @@ import io.github.celosia.sys.battle.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.github.celosia.sys.battle.BattleController.appendAllToLog;
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnGiveBuff;
 import static io.github.celosia.sys.menu.TextLib.*;
 import static io.github.celosia.sys.settings.Lang.lang;
@@ -74,7 +75,7 @@ public class GiveBuff implements SkillEffect {
     }
 
     @Override
-    public Result apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
+    public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
         // Most attacks don't apply buffs if the previous hit was blocked by Shield or immunity
         if (resultPrev.ordinal() >= minResult.ordinal() && (!mainTargetOnly || isMainTarget)) {
             List<String> msg = new ArrayList<>();
@@ -107,33 +108,29 @@ public class GiveBuff implements SkillEffect {
                     else msg.add(formatName(unit.getUnitType().getName(), unit.getPos()) + " " + c_buff + buff.getName() + " " + lang.get("stacks") + " " + c_num + stacksOld + "[WHITE] → " + c_num + stacksNew);
                 }
 
+                appendAllToLog(msg);
+
                 // Apply newly added stacks
                 int stacksAdded = stacksNew - stacksOld;
-                for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
-                    String[] effectMsgs = buffEffect.onGive(unit, stacksAdded);
-                    for(String effectMsg : effectMsgs) if(!effectMsg.isEmpty()) msg.add(effectMsg);
-                }
+                for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) buffEffect.onGive(unit, stacksAdded);
 
-                return new Result(ResultType.SUCCESS, msg);
             } else { // Doesn't have buff
                 msg.add(formatName(unit.getUnitType().getName(), unit.getPos(), false) + " " + lang.get("log.gains") + " " + c_buff + buff.getName() + "[WHITE] " + lang.get("log.with") + " " + ((buff.getMaxStacks() > 1) ?
                     (c_num + stacks + " [WHITE]" + lang.format("stack_s", stacks) + " " + lang.get("log.and")) + " " : "") + c_num + turnsMod + "[WHITE] " + lang.format("turn_s", turnsMod));
                 unit.addBuffInstance(new BuffInstance(buff, turnsMod, stacks));
                 buffInstance = buffInstances.getLast();
 
+                appendAllToLog(msg);
+
                 // Apply
                 BuffEffect[] buffEffects = buffInstance.getBuff().getBuffEffects();
-                for (BuffEffect buffEffect : buffEffects) {
-                    String[] effectMsgs = buffEffect.onGive(unit, buffInstance.getStacks());
-                    for (String effectMsg : effectMsgs) if (!effectMsg.isEmpty()) msg.add(effectMsg);
-                }
+                for (BuffEffect buffEffect : buffEffects) buffEffect.onGive(unit, buffInstance.getStacks());
 
-                return new Result(ResultType.SUCCESS, msg);
             }
         }
 
         // Returns success even if nothing happened because failure to apply a buff as a secondary effect shouldn't fail the entire skill
-        return new Result(ResultType.SUCCESS, "");
+        return ResultType.SUCCESS;
     }
 
     @Override

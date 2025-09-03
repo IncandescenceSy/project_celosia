@@ -5,6 +5,7 @@ import io.github.celosia.sys.battle.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.github.celosia.sys.battle.BattleController.appendAllToLog;
 import static io.github.celosia.sys.battle.BattleLib.getStageBuffType;
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnChangeStage;
 import static io.github.celosia.sys.menu.TextLib.*;
@@ -65,7 +66,7 @@ public class ChangeStage implements SkillEffect {
     }
 
     @Override
-    public Result apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
+    public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
         if(!mainTargetOnly || isMainTarget) {
             List<String> msg = new ArrayList<>();
             String str = "";
@@ -100,8 +101,11 @@ public class ChangeStage implements SkillEffect {
                 }
             } else msg.add(str);
 
-            return new Result(ResultType.SUCCESS, msg);
-        } else return new Result(ResultType.SUCCESS, "");
+            appendAllToLog(msg);
+
+        }
+
+        return ResultType.SUCCESS;
     }
 
     @Override

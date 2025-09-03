@@ -2,6 +2,8 @@ package io.github.celosia.sys.battle.skill_effects;
 
 import io.github.celosia.sys.battle.*;
 
+import static io.github.celosia.sys.battle.BattleController.appendToLog;
+
 public class ChangeSp implements SkillEffect {
 
     private final int change;
@@ -47,10 +49,9 @@ public class ChangeSp implements SkillEffect {
     }
 
     @Override
-    public Result apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
-        if(!mainTargetOnly || isMainTarget) {
-            return new Result(ResultType.SUCCESS, Calcs.changeSp((giveToSelf) ? self : target, change));
-        } else return new Result(ResultType.SUCCESS, "");
+    public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
+        if(!mainTargetOnly || isMainTarget) appendToLog(Calcs.changeSp((giveToSelf) ? self : target, change));
+        return ResultType.SUCCESS;
     }
 
     @Override

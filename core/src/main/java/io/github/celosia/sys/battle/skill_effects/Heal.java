@@ -8,6 +8,7 @@ import io.github.celosia.sys.battle.Unit;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.github.celosia.sys.battle.BattleController.appendAllToLog;
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnGiveShield;
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnHeal;
 import static io.github.celosia.sys.menu.TextLib.*;
@@ -42,7 +43,7 @@ public class Heal implements SkillEffect {
     }
 
     @Override
-    public Result apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
+    public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
         if(!mainTargetOnly || isMainTarget) {
             List<String> msg = new ArrayList<>();
 
@@ -82,7 +83,6 @@ public class Heal implements SkillEffect {
                     msg.add(self.getUnitType().getName() + " " + lang.get("log.is_now") + " " + c_buff + lang.get("log.effect_block"));
                 }
 
-                return new Result(ResultType.SUCCESS, msg);
             } else { // Heals
                 notifyOnHeal(self, target, heal, overHeal);
 
@@ -95,10 +95,13 @@ public class Heal implements SkillEffect {
                     target.getStatsCur().setHp(hpNew);
                     msg.add(formatName(target.getUnitType().getName(), self.getPos()) + " " + lang.get("hp") + " " + c_hp + String.format("%,d", hpCur) + "[WHITE] → " + c_hp + String.format("%,d", hpNew)
                         + "[WHITE]/" + c_hp + String.format("%,d", hpMax) + getColor(hpNew - hpCur) + " (+" + String.format("%,d", (hpNew - hpCur)) + ")");
-                    return new Result(ResultType.SUCCESS, msg);
-                } else return new Result(ResultType.SUCCESS, msg);
+                }
             }
-        } else return new Result(ResultType.SUCCESS, "");
+
+            appendAllToLog(msg);
+        }
+
+        return ResultType.SUCCESS;
     }
 
     @Override

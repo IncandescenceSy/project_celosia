@@ -154,10 +154,7 @@ public class BattleController {
         // Notify Passives onGive
         for(Unit unit : battle.getAllUnits()) {
             for (Passive passive : unit.getPassives()) {
-                for (BuffEffect buffEffect : passive.getBuffEffects()) {
-                    String[] effectMsgs = buffEffect.onGive(unit, 1);
-                    for (String effectMsg : effectMsgs) if (!effectMsg.isEmpty()) appendToLog(effectMsg);
-                }
+                for (BuffEffect buffEffect : passive.getBuffEffects()) buffEffect.onGive(unit, 1);
             }
         }
 
@@ -189,12 +186,8 @@ public class BattleController {
                 updateLog();
                 coolRects.get(CoolRects.COVER_LEFT.ordinal()).setDir(-1);
                 paths.get(Paths.SCROLLBAR.ordinal()).setDir(-1);
-                return;
             }
-
-        } else if (InputLib.checkInput(Keybind.MENU)) {
-            createFullLog();
-        }
+        } else if (InputLib.checkInput(Keybind.MENU)) createFullLog();
         else if (menuList.getLast() == MenuType.BATTLE) { // Selecting moves
             if (selectingMove <= 3) { // Player's turn
                 if (selectingMove < battle.getPlayerTeam().getUnits().length) { // if there are more allies yet to act
@@ -241,8 +234,6 @@ public class BattleController {
                         if(!unit.isInfiniteSp()) unit.setSp(Math.min((int) (unit.getSp() + (100 * (Math.max(unit.getMultSpGain(), 10) / 100d))), 1000));
 
                         // Apply turn end BuffEffects
-                        // this is the reason why this stuff returns String[] instead of directly calling appendToLog()
-                        // todo make everything except onTurnEnd void
                         for (Passive passive : unit.getPassives()) {
                             StringBuilder turnEnd1 = new StringBuilder();
                             turnEnd1.append(formatName(unit.getUnitType().getName(), unit.getPos())).append(" ").append(c_passive).append(passive.getName()).append("[WHITE]: ");
@@ -271,8 +262,7 @@ public class BattleController {
                         }
 
                         // Decrement stage/shield/buff turns and remove expired stages/shields/buffs
-                        List<String> decrement = unit.decrementTurns();
-                        if(!decrement.isEmpty()) appendAllToLog(decrement);
+                        unit.decrementTurns();
                     }
 
                     // Log
@@ -375,12 +365,7 @@ public class BattleController {
 
                                             // Apply onTargetedBySkill BuffEffects
                                             for (BuffInstance buffInstance : targetCur.getBuffInstances()) {
-                                                for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
-                                                    String[] effectMsgs = buffEffect.onTargetedBySkill(targetCur, buffInstance.getStacks());
-                                                    for (String effectMsg : effectMsgs)
-                                                        if (!effectMsg.isEmpty())
-                                                            appendToLog(effectMsg);
-                                                }
+                                                for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) buffEffect.onTargetedBySkill(targetCur, buffInstance.getStacks());
                                             }
                                         }
 
@@ -390,15 +375,15 @@ public class BattleController {
                                             nonFails++;
 
                                             // Apply effect and track result
-                                            Result result = skillEffects.get(applyingEffect).apply(move.getSelf(), targetCur, targetCur == targetMain, prevResults.get(targetPos));
-                                            prevResults.put(targetPos, result.getResultType());
+                                            ResultType resultType = skillEffects.get(applyingEffect).apply(move.getSelf(), targetCur, targetCur == targetMain, prevResults.get(targetPos));
+                                            prevResults.put(targetPos, resultType);
 
                                             // Log message
-                                            List<String> msgs = result.getMessages();
+                                            /*List<String> msgs = result.getMessages();
                                             for (String msg : msgs)
                                                 if (msg != null && !msg.isEmpty()) {
                                                     appendToLog(msg); // Add to log
-                                                }
+                                                }*/
                                         }
                                     }
                                 }
@@ -557,19 +542,21 @@ public class BattleController {
         }
     }
 
-    public static void appendToLog(String entry) {
+    public static void appendToLog(String... entries) {
         // If logSize exceeds 2500, remove ~500 lines (so this doesn't have to get called again soon)
         // logSize will be less than the exact amount of lines (by ~20% or less if I had to guess), but it'll be close enough
         // todo test if this actually works + figure out a good size limit
         if(logText.size() > 2500) logText.subList(0, 500).clear();
 
-        if(!entry.isEmpty()) {
-            logText.add(entry);
+        for(String entry : entries) {
+            if (!entry.isEmpty()) {
+                logText.add(entry);
 
-            // Reset scroll to bottom
-            logScroll = 0;
+                // Reset scroll to bottom
+                logScroll = 0;
 
-            updateLog();
+                updateLog();
+            }
         }
     }
 

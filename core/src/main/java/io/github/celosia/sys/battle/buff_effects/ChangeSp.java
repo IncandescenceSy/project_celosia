@@ -4,6 +4,8 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Calcs;
 import io.github.celosia.sys.battle.Unit;
 
+import static io.github.celosia.sys.battle.BattleController.appendToLog;
+
 // Todo heavily limit %-based damage on bosses
 public class ChangeSp implements BuffEffect {
     private final int change; // Amount to change SP by
@@ -19,16 +21,13 @@ public class ChangeSp implements BuffEffect {
     }
 
     @Override
-    public String[] onGive(Unit self, int stacks) {
-        if(isImmediate) {
-            return new String[] {Calcs.changeSp(self, change * stacks)};
-        } else return new String[]{""};
+    public void onGive(Unit self, int stacks) {
+        if(isImmediate) appendToLog(Calcs.changeSp(self, change * stacks));
     }
 
     @Override
     public String[] onTurnEnd(Unit self, int stacks) {
-        if(!isImmediate) {
-            return new String[] {Calcs.changeSp(self, change * stacks)};
-        } else return new String[]{""};
+        if(!isImmediate) return new String[] {Calcs.changeSp(self, change * stacks)};
+        else return new String[]{""};
     }
 }

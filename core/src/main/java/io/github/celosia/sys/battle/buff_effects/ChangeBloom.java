@@ -5,6 +5,7 @@ import io.github.celosia.sys.battle.Calcs;
 import io.github.celosia.sys.battle.Team;
 import io.github.celosia.sys.battle.Unit;
 
+import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.battle.BattleController.battle;
 
 // Todo heavily limit %-based damage on bosses
@@ -22,18 +23,13 @@ public class ChangeBloom implements BuffEffect {
     }
 
     @Override
-    public String[] onGive(Unit self, int stacks) {
-        if(isImmediate) {
-            Team team = battle.getTeamAtPos(self.getPos());
-            return new String[] {Calcs.changeBloom(team, self.getSide(), change)};
-        } else return new String[]{""};
+    public void onGive(Unit self, int stacks) {
+        if(isImmediate) appendToLog(Calcs.changeBloom(battle.getTeamAtPos(self.getPos()), self.getSide(), change));
     }
 
     @Override
     public String[] onTurnEnd(Unit self, int stacks) {
-        if(!isImmediate) {
-            Team team = battle.getTeamAtPos(self.getPos());
-            return new String[] {Calcs.changeBloom(team, self.getSide(), change)};
-        } else return new String[]{""};
+        if(isImmediate) return new String[]{Calcs.changeBloom(battle.getTeamAtPos(self.getPos()), self.getSide(), change)};
+        else return new String[]{""};
     }
 }

@@ -3,6 +3,7 @@ package io.github.celosia.sys.battle.buff_effects;
 import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Unit;
 
+import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.menu.TextLib.*;
 import static io.github.celosia.sys.settings.Lang.lang;
 
@@ -15,20 +16,20 @@ public class ChangeExtraActions implements BuffEffect {
     }
 
     @Override
-    public String[] onGive(Unit self, int stacks) {
+    public void onGive(Unit self, int stacks) {
         int exAOld = self.getExtraActions();
         int exANew = exAOld + (change * stacks);
         self.setExtraActions(exANew);
-        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + lang.get("extra_actions") + " " +
-            getColor(exAOld) + Math.max(exAOld, 0) + "[WHITE] → " + getColor(exANew) + Math.max(exANew, 0)};
+        appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + lang.get("extra_actions") + " " +
+            getColor(exAOld) + Math.max(exAOld, 0) + "[WHITE] → " + getColor(exANew) + Math.max(exANew, 0));
     }
 
     @Override
-    public String[] onRemove(Unit self, int stacks) {
+    public void onRemove(Unit self, int stacks) {
         int exAOld = self.getExtraActions();
         int exANew = exAOld - (change * stacks);
         self.setExtraActions(exANew);
-        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + lang.get("extra_actions") + " " +
-            getColor(exAOld) + Math.max(exAOld, 0) + "[WHITE] → " + getColor(exANew) + Math.max(exANew, 0)};
+        appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + lang.get("extra_actions") + " " +
+            getColor(exAOld) + Math.max(exAOld, 0) + "[WHITE] → " + getColor(exANew) + Math.max(exANew, 0));
     }
 }

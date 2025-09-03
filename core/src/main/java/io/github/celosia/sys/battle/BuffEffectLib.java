@@ -5,20 +5,10 @@ import static io.github.celosia.sys.battle.BattleController.appendToLog;
 public class BuffEffectLib {
     private static void notifyBuffEffects(Unit self, Unit target, BuffEffectNotifier notifier, Object... args) {
         // Handle Passives
-        for (Passive passive : self.getPassives()) {
-            for (BuffEffect buffEffect : passive.getBuffEffects()) {
-                String[] effectMsgs = notifier.notify(buffEffect, self, target, 1, args);
-                for (String effectMsg : effectMsgs) if (!effectMsg.isEmpty()) appendToLog(effectMsg);
-            }
-        }
+        for (Passive passive : self.getPassives()) for (BuffEffect buffEffect : passive.getBuffEffects()) notifier.notify(buffEffect, self, target, 1, args);
 
         // Handle Buffs
-        for (BuffInstance buffInstance : self.getBuffInstances()) {
-            for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
-                String[] effectMsgs = notifier.notify(buffEffect, self, target, buffInstance.getStacks(), args);
-                for (String effectMsg : effectMsgs) if (!effectMsg.isEmpty()) appendToLog(effectMsg);
-            }
-        }
+        for (BuffInstance buffInstance : self.getBuffInstances()) for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) notifier.notify(buffEffect, self, target, buffInstance.getStacks(), args);
     }
 
     public static void notifyOnUseSkill(Unit self, Unit target, Skill skill) {

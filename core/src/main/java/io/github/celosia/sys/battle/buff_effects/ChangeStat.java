@@ -4,6 +4,7 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Stat;
 import io.github.celosia.sys.battle.Unit;
 
+import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.menu.TextLib.*;
 
 public class ChangeStat implements BuffEffect {
@@ -17,23 +18,23 @@ public class ChangeStat implements BuffEffect {
     }
 
     @Override
-    public String[] onGive(Unit self, int stacks) {
-        int statOld = self.getStatsCur().getStat(stat);
+    public void onGive(Unit self, int stacks) {
+        int statOld = self.getStatWithStage(stat);
         int statNew = (int) Math.floor(statOld + ((change * self.getStatsDefault().getStat(stat)) * stacks));
         self.getStatsCur().setStat(stat, statNew);
         // todo condense lines when giving/removing multiple stacks at once
-        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + stat.getName() + " " + getStatColor(statOld, self.getStatsDefault().getStat(stat))
+        appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + stat.getName() + " " + getStatColor(statOld, self.getStatsDefault().getStat(stat))
             + String.format("%,d", statOld) + "[WHITE] → " + getStatColor(statNew, self.getStatsDefault().getStat(stat)) + String.format("%,d", statNew) + "[WHITE]/" +
-            c_num + String.format("%,d", self.getStatsDefault().getStat(stat)) + "[WHITE] (" + getColor((int) change) + ((change >= 0f) ? "+" : "") + String.format("%,d", (statNew - statOld)) + "[WHITE])"};
+            c_num + String.format("%,d", self.getStatsDefault().getStat(stat)) + "[WHITE] (" + getColor(change) + ((change >= 0f) ? "+" : "") + String.format("%,d", (statNew - statOld)) + "[WHITE])");
     }
 
     @Override
-    public String[] onRemove(Unit self, int stacks) {
-        int statOld = self.getStatsCur().getStat(stat);
+    public void onRemove(Unit self, int stacks) {
+        int statOld = self.getStatWithStage(stat);
         int statNew = (int) Math.ceil(statOld - ((change * self.getStatsDefault().getStat(stat)) * stacks));
         self.getStatsCur().setStat(stat, statNew);
-        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + stat.getName() + " " + getStatColor(statOld, self.getStatsDefault().getStat(stat))
+        appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + stat.getName() + " " + getStatColor(statOld, self.getStatsDefault().getStat(stat))
             + String.format("%,d", statOld) + "[WHITE] → " + getStatColor(statNew, self.getStatsDefault().getStat(stat)) + String.format("%,d", statNew) + "[WHITE]/" +
-            c_num + String.format("%,d", self.getStatsDefault().getStat(stat)) + "[WHITE] (" + getColor((int) change) + ((change <= 0f) ? "+" : "") + String.format("%,d", (statNew - statOld)) + "[WHITE])"};
+            c_num + String.format("%,d", self.getStatsDefault().getStat(stat)) + "[WHITE] (" + getColor(change * -1) + ((change <= 0f) ? "+" : "") + String.format("%,d", (statNew - statOld)) + "[WHITE])");
     }
 }

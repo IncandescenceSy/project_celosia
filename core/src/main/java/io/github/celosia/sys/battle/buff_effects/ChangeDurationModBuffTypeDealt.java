@@ -4,6 +4,7 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.BuffType;
 import io.github.celosia.sys.battle.Unit;
 
+import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.menu.TextLib.*;
 import static io.github.celosia.sys.settings.Lang.lang;
 
@@ -18,20 +19,20 @@ public class ChangeDurationModBuffTypeDealt implements BuffEffect {
     }
 
     @Override
-    public String[] onGive(Unit self, int stacks) {
+    public void onGive(Unit self, int stacks) {
         int durOld = self.getDurationModBuffTypeDealt(buffType);
         int durNew = durOld + (change * stacks);
         self.setDurationModBuffTypeDealt(buffType, durNew);
-        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + ((buffType == BuffType.BUFF) ? lang.get("duration_mod_buff_dealt") : lang.get("duration_mod_debuff_dealt"))
-            + getColor(durOld) + ((durOld > 0) ? " +" : " ") + durOld + "[WHITE] → " + getColor(durNew) + ((durNew > 0) ? "+" : "") + durNew};
+        appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + ((buffType == BuffType.BUFF) ? lang.get("duration_mod_buff_dealt") : lang.get("duration_mod_debuff_dealt"))
+            + getColor(durOld) + ((durOld > 0) ? " +" : " ") + durOld + "[WHITE] → " + getColor(durNew) + ((durNew > 0) ? "+" : "") + durNew);
     }
 
     @Override
-    public String[] onRemove(Unit self, int stacks) {
+    public void onRemove(Unit self, int stacks) {
         int durOld = self.getDurationModBuffTypeDealt(buffType);
         int durNew = durOld - (change * stacks);
         self.setDurationModBuffTypeDealt(buffType, durNew);
-        return new String[]{formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + ((buffType == BuffType.BUFF) ? lang.get("duration_mod_buff_dealt") : lang.get("duration_mod_debuff_dealt"))
-            + getColor(durOld) + ((durOld > 0) ? " +" : " ") + durOld + "[WHITE] → " + getColor(durNew) + ((durNew > 0) ? "+" : "") + durNew};
+        appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + ((buffType == BuffType.BUFF) ? lang.get("duration_mod_buff_dealt") : lang.get("duration_mod_debuff_dealt"))
+            + getColor(durOld) + ((durOld > 0) ? " +" : " ") + durOld + "[WHITE] → " + getColor(durNew) + ((durNew > 0) ? "+" : "") + durNew);
     }
 }

@@ -40,7 +40,7 @@ public class TextLib {
     }
 
     // Returns the color a number should be displayed based on if it's positive or negative
-    public static String getColor(int num) {
+    public static String getColor(double num) {
         return (num > 0) ? c_pos : (num < 0) ? c_neg : c_num;
     }
 
