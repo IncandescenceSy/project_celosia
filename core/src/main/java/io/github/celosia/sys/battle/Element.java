@@ -4,23 +4,18 @@ import static io.github.celosia.sys.settings.Lang.lang;
 
 // Elements that skills can have
 public enum Element {
-    VIS(lang.get("element.vis")),
-    IGNIS(lang.get("element.ignis")),
-    GLACIES(lang.get("element.glacies")),
-    FULGUR(lang.get("element.fulgur")),
-    VENTUS(lang.get("element.ventus")),
-    TERRA(lang.get("element.terra")),
-    LUX(lang.get("element.lux")),
-    MALUM(lang.get("element.malum"));
-    //FULGUR_MALUM(lang.get("element.fulgur") + "/" + lang.get("element.malum"));
+	VIS(lang.get("element.vis")), IGNIS(lang.get("element.ignis")), GLACIES(lang.get("element.glacies")), FULGUR(
+			lang.get("element.fulgur")), VENTUS(lang.get("element.ventus")), TERRA(
+					lang.get("element.terra")), LUX(lang.get("element.lux")), MALUM(lang.get("element.malum"));
+	// FULGUR_MALUM(lang.get("element.fulgur") + "/" + lang.get("element.malum"));
 
-    private final String name;
+	private final String name;
 
-    Element(String name) {
-        this.name = name;
-    }
+	Element(String name) {
+		this.name = name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 }

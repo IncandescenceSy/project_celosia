@@ -11,79 +11,88 @@ import static io.github.celosia.sys.settings.Lang.lang;
 
 // todo protect bosses against %-based damage
 public class ChangeHp implements BuffEffect {
-    private final int change; // Amount to change HP by. If isPercentage, 10000 = +100%
-    private final boolean isImmediate; // If true, happens onGive. If false, happens onTurnEnd
-    private final boolean isPercentage; // If false, uses the raw number of change instead
-    private final boolean isPierce;
+	private final int change; // Amount to change HP by. If isPercentage, 10000 = +100%
+	private final boolean isImmediate; // If true, happens onGive. If false, happens onTurnEnd
+	private final boolean isPercentage; // If false, uses the raw number of change instead
+	private final boolean isPierce;
 
-    public ChangeHp(Builder builder) {
-        change = builder.change;
-        isImmediate = builder.isImmediate;
-        isPercentage = builder.isPercentage;
-        isPierce = builder.isPierce;
-    }
+	public ChangeHp(Builder builder) {
+		change = builder.change;
+		isImmediate = builder.isImmediate;
+		isPercentage = builder.isPercentage;
+		isPierce = builder.isPierce;
+	}
 
-    public static class Builder {
-        private final int change;
-        private boolean isImmediate = false;
-        private boolean isPercentage = true;
-        private boolean isPierce = false;
+	public static class Builder {
+		private final int change;
+		private boolean isImmediate = false;
+		private boolean isPercentage = true;
+		private boolean isPierce = false;
 
-        public Builder(int change) {
-            this.change = change;
-        }
+		public Builder(int change) {
+			this.change = change;
+		}
 
-        public Builder immediate() {
-            this.isImmediate = true;
-            return this;
-        }
+		public Builder immediate() {
+			this.isImmediate = true;
+			return this;
+		}
 
-        public Builder notPercentage() {
-            this.isPercentage = false;
-            return this;
-        }
+		public Builder notPercentage() {
+			this.isPercentage = false;
+			return this;
+		}
 
-        public Builder pierce() {
-            this.isPierce = true;
-            return this;
-        }
+		public Builder pierce() {
+			this.isPierce = true;
+			return this;
+		}
 
-        public ChangeHp build() {
-            return new ChangeHp(this);
-        }
-    }
+		public ChangeHp build() {
+			return new ChangeHp(this);
+		}
+	}
 
-    @Override
-    public void onGive(Unit self, int stacks) {
-        if(isImmediate) appendToLog(calc(self, stacks));
-    }
+	@Override
+	public void onGive(Unit self, int stacks) {
+		if (isImmediate)
+			appendToLog(calc(self, stacks));
+	}
 
-    @Override
-    public String[] onTurnEnd(Unit self, int stacks) {
-        if(!isImmediate) {
-            return calc(self, stacks);
-        } else return new String[]{""};
-    }
+	@Override
+	public String[] onTurnEnd(Unit self, int stacks) {
+		if (!isImmediate) {
+			return calc(self, stacks);
+		} else
+			return new String[]{""};
+	}
 
-    private String[] calc(Unit self, int stacks) {
-        if (change < 0) { // Damage
-            double multDoTDmgTaken = ((isImmediate) ? 1 : (Math.max(self.getMultDoTDmgTaken(), 1000) / 10000d));
-            int dmg = (isPercentage) ? (int) Math.abs(((self.getStatsDefault().getHp() * (change / 10000d)) * stacks) * (Math.max(self.getMultDmgTaken(), 1000) / 10000d) * multDoTDmgTaken) : (int) (change * (Math.max(self.getMultDmgTaken(), 1000) / 10000d) * multDoTDmgTaken);
-            Result result = self.damage(dmg, isPierce, false);
-            return result.getMessages().toArray(String[]::new);
-        } else { // Healing
-            int hpOld = self.getStatsCur().getHp();
-            int hpMax = self.getStatsDefault().getHp();
-            int heal = (int) (change * ((isPercentage) ? hpMax : 1) * stacks * (Math.max(self.getMultHealingTaken(), 1000) / 10000d));
-            int hpNew = Math.max(hpOld, Math.min(hpOld + heal, hpMax));
-            if (hpNew > hpOld) {
-                self.getStatsCur().setHp(hpNew);
+	private String[] calc(Unit self, int stacks) {
+		if (change < 0) { // Damage
+			double multDoTDmgTaken = ((isImmediate) ? 1 : (Math.max(self.getMultDoTDmgTaken(), 1000) / 10000d));
+			int dmg = (isPercentage)
+					? (int) Math.abs(((self.getStatsDefault().getHp() * (change / 10000d)) * stacks)
+							* (Math.max(self.getMultDmgTaken(), 1000) / 10000d) * multDoTDmgTaken)
+					: (int) (change * (Math.max(self.getMultDmgTaken(), 1000) / 10000d) * multDoTDmgTaken);
+			Result result = self.damage(dmg, isPierce, false);
+			return result.getMessages().toArray(String[]::new);
+		} else { // Healing
+			int hpOld = self.getStatsCur().getHp();
+			int hpMax = self.getStatsDefault().getHp();
+			int heal = (int) (change * ((isPercentage) ? hpMax : 1) * stacks
+					* (Math.max(self.getMultHealingTaken(), 1000) / 10000d));
+			int hpNew = Math.max(hpOld, Math.min(hpOld + heal, hpMax));
+			if (hpNew > hpOld) {
+				self.getStatsCur().setHp(hpNew);
 
-                int hpOldDisp = self.getStatsCur().getDisplayHp();
-                int hpMaxDisp = self.getStatsDefault().getDisplayHp();
-                int hpNewDisp = self.getStatsCur().getDisplayHp();
-                return new String[]{lang.get("hp") + " " + c_hp + String.format("%,d", hpOldDisp) + "[WHITE] → " + c_hp + String.format("%,d", hpNewDisp) + "[WHITE]/" + c_hp + String.format("%,d", hpMaxDisp) + c_pos + " (+" + String.format("%,d", Math.max(hpNewDisp - hpOldDisp, 0)) + ")"};
-            } else return new String[]{""};
-        }
-    }
+				int hpOldDisp = self.getStatsCur().getDisplayHp();
+				int hpMaxDisp = self.getStatsDefault().getDisplayHp();
+				int hpNewDisp = self.getStatsCur().getDisplayHp();
+				return new String[]{lang.get("hp") + " " + c_hp + String.format("%,d", hpOldDisp) + "[WHITE] → " + c_hp
+						+ String.format("%,d", hpNewDisp) + "[WHITE]/" + c_hp + String.format("%,d", hpMaxDisp) + c_pos
+						+ " (+" + String.format("%,d", Math.max(hpNewDisp - hpOldDisp, 0)) + ")"};
+			} else
+				return new String[]{""};
+		}
+	}
 }

@@ -12,29 +12,37 @@ import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeDurationModBuffTypeDealt implements BuffEffect {
 
-    private final BuffType buffType; // Type of buff to apply to
-    private final int change; // Amount to change by
+	private final BuffType buffType; // Type of buff to apply to
+	private final int change; // Amount to change by
 
-    public ChangeDurationModBuffTypeDealt(BuffType buffType, int change) {
-        this.buffType = buffType;
-        this.change = change;
-    }
+	public ChangeDurationModBuffTypeDealt(BuffType buffType, int change) {
+		this.buffType = buffType;
+		this.change = change;
+	}
 
-    @Override
-    public void onGive(Unit self, int stacks) {
-        int durOld = self.getDurationModBuffTypeDealt(buffType);
-        int durNew = durOld + (change * stacks);
-        self.setDurationModBuffTypeDealt(buffType, durNew);
-        appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + ((buffType == BuffType.BUFF) ? lang.get("duration_mod_buff_dealt") : lang.get("duration_mod_debuff_dealt"))
-            + getColor(durOld) + ((durOld > 0) ? " +" : " ") + durOld + "[WHITE] → " + getColor(durNew) + ((durNew > 0) ? "+" : "") + durNew);
-    }
+	@Override
+	public void onGive(Unit self, int stacks) {
+		int durOld = self.getDurationModBuffTypeDealt(buffType);
+		int durNew = durOld + (change * stacks);
+		self.setDurationModBuffTypeDealt(buffType, durNew);
+		appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat
+				+ ((buffType == BuffType.BUFF)
+						? lang.get("duration_mod_buff_dealt")
+						: lang.get("duration_mod_debuff_dealt"))
+				+ getColor(durOld) + ((durOld > 0) ? " +" : " ") + durOld + "[WHITE] → " + getColor(durNew)
+				+ ((durNew > 0) ? "+" : "") + durNew);
+	}
 
-    @Override
-    public void onRemove(Unit self, int stacks) {
-        int durOld = self.getDurationModBuffTypeDealt(buffType);
-        int durNew = durOld - (change * stacks);
-        self.setDurationModBuffTypeDealt(buffType, durNew);
-        appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + ((buffType == BuffType.BUFF) ? lang.get("duration_mod_buff_dealt") : lang.get("duration_mod_debuff_dealt"))
-            + getColor(durOld) + ((durOld > 0) ? " +" : " ") + durOld + "[WHITE] → " + getColor(durNew) + ((durNew > 0) ? "+" : "") + durNew);
-    }
+	@Override
+	public void onRemove(Unit self, int stacks) {
+		int durOld = self.getDurationModBuffTypeDealt(buffType);
+		int durNew = durOld - (change * stacks);
+		self.setDurationModBuffTypeDealt(buffType, durNew);
+		appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat
+				+ ((buffType == BuffType.BUFF)
+						? lang.get("duration_mod_buff_dealt")
+						: lang.get("duration_mod_debuff_dealt"))
+				+ getColor(durOld) + ((durOld > 0) ? " +" : " ") + durOld + "[WHITE] → " + getColor(durNew)
+				+ ((durNew > 0) ? "+" : "") + durNew);
+	}
 }

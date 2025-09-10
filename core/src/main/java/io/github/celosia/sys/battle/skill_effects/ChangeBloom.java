@@ -10,61 +10,61 @@ import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.battle.BattleController.battle;
 
 public class ChangeBloom implements SkillEffect {
-    private final int change;
-    private final boolean isInstant;
-    private final boolean giveToSelf;
-    private final boolean mainTargetOnly;
+	private final int change;
+	private final boolean isInstant;
+	private final boolean giveToSelf;
+	private final boolean mainTargetOnly;
 
-    public ChangeBloom(Builder builder) {
-        change = builder.change;
-        isInstant = builder.isInstant;
-        giveToSelf = builder.giveToSelf;
-        mainTargetOnly = builder.mainTargetOnly;
-    }
+	public ChangeBloom(Builder builder) {
+		change = builder.change;
+		isInstant = builder.isInstant;
+		giveToSelf = builder.giveToSelf;
+		mainTargetOnly = builder.mainTargetOnly;
+	}
 
-    public static class Builder {
-        private final int change;
-        private boolean isInstant = true;
-        private boolean giveToSelf = true;
-        private boolean mainTargetOnly = false;
+	public static class Builder {
+		private final int change;
+		private boolean isInstant = true;
+		private boolean giveToSelf = true;
+		private boolean mainTargetOnly = false;
 
-        public Builder(int change) {
-            this.change = change;
-        }
+		public Builder(int change) {
+			this.change = change;
+		}
 
-        public Builder notInstant() {
-            this.isInstant = false;
-            return this;
-        }
+		public Builder notInstant() {
+			this.isInstant = false;
+			return this;
+		}
 
-        public Builder giveToTarget() {
-            this.giveToSelf = false;
-            return this;
-        }
+		public Builder giveToTarget() {
+			this.giveToSelf = false;
+			return this;
+		}
 
-        public Builder mainTargetOnly() {
-            this.mainTargetOnly = true;
-            return this;
-        }
+		public Builder mainTargetOnly() {
+			this.mainTargetOnly = true;
+			return this;
+		}
 
-        public ChangeBloom build() {
-            return new ChangeBloom(this);
-        }
-    }
+		public ChangeBloom build() {
+			return new ChangeBloom(this);
+		}
+	}
 
-    @Override
-    public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
-        if(!mainTargetOnly || isMainTarget) {
-            Unit unit = (giveToSelf) ? self : target;
-            Team team = battle.getTeamAtPos(unit.getPos());
+	@Override
+	public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
+		if (!mainTargetOnly || isMainTarget) {
+			Unit unit = (giveToSelf) ? self : target;
+			Team team = battle.getTeamAtPos(unit.getPos());
 
-            appendToLog(Calcs.changeBloom(team, unit.getSide(), change));
-        }
-        return ResultType.SUCCESS;
-    }
+			appendToLog(Calcs.changeBloom(team, unit.getSide(), change));
+		}
+		return ResultType.SUCCESS;
+	}
 
-    @Override
-    public boolean isInstant() {
-        return isInstant;
-    }
+	@Override
+	public boolean isInstant() {
+		return isInstant;
+	}
 }

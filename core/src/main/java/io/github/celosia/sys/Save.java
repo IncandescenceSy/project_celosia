@@ -2,39 +2,39 @@ package io.github.celosia.sys;
 
 // save data (todo)
 public class Save {
-    // Save file Name
-    public static String name = "";
+	// Save file Name
+	public static String name = "";
 
-    // Route
-    public static int route = 0;
+	// Route
+	public static int route = 0;
 
-    // Difficulty
-    public static int difficulty = 0;
+	// Difficulty
+	public static int difficulty = 0;
 
-    // Level
-    public static int level = 0;
+	// Level
+	public static int level = 0;
 
-    // Story progress
+	// Story progress
 
-    // Unlocked monsters
+	// Unlocked monsters
 
-    // Unlocked weapons
+	// Unlocked weapons
 
-    // Unlocked accessories
+	// Unlocked accessories
 
-    // Stat upgrades
+	// Stat upgrades
 
-    // Trial records
+	// Trial records
 
-    // Defeated enemies
+	// Defeated enemies
 
-    // Opened chests
+	// Opened chests
 
-    // Purchased items
+	// Purchased items
 
-    // Inventory
+	// Inventory
 
-    // Current party
+	// Current party
 
-    // Saved teams
+	// Saved teams
 }

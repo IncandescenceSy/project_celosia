@@ -10,25 +10,29 @@ import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeEffectBlock implements BuffEffect {
 
-    private final int change; // Amount to add
+	private final int change; // Amount to add
 
-    public ChangeEffectBlock(int change) {
-        this.change = change;
-    }
+	public ChangeEffectBlock(int change) {
+		this.change = change;
+	}
 
-    @Override
-    public void onGive(Unit self, int stacks) {
-        int effectBlockOld = self.getEffectBlock();
-        int effectBlockNew = effectBlockOld + (change * stacks);
-        self.setEffectBlock(effectBlockNew);
-        if(effectBlockNew > 0 && self.getShield() == 0 && self.getDefend() == 0) appendToLog(formatName(self.getUnitType().getName(), self.getPos(), false) + " " + lang.get("log.is_now") + " " + c_stat + lang.get("log.effect_block"));
-    }
+	@Override
+	public void onGive(Unit self, int stacks) {
+		int effectBlockOld = self.getEffectBlock();
+		int effectBlockNew = effectBlockOld + (change * stacks);
+		self.setEffectBlock(effectBlockNew);
+		if (effectBlockNew > 0 && self.getShield() == 0 && self.getDefend() == 0)
+			appendToLog(formatName(self.getUnitType().getName(), self.getPos(), false) + " " + lang.get("log.is_now")
+					+ " " + c_stat + lang.get("log.effect_block"));
+	}
 
-    @Override
-    public void onRemove(Unit self, int stacks) {
-        int effectBlockOld = self.getEffectBlock();
-        int effectBlockNew = effectBlockOld - (change * stacks);
-        self.setEffectBlock(effectBlockNew);
-        if(effectBlockNew <= 0 && self.getShield() == 0 && self.getDefend() == 0) appendToLog(formatName(self.getUnitType().getName(), self.getPos(), false) + " " + lang.get("log.is_no_longer") + " " + c_stat + lang.get("log.effect_block"));
-    }
+	@Override
+	public void onRemove(Unit self, int stacks) {
+		int effectBlockOld = self.getEffectBlock();
+		int effectBlockNew = effectBlockOld - (change * stacks);
+		self.setEffectBlock(effectBlockNew);
+		if (effectBlockNew <= 0 && self.getShield() == 0 && self.getDefend() == 0)
+			appendToLog(formatName(self.getUnitType().getName(), self.getPos(), false) + " "
+					+ lang.get("log.is_no_longer") + " " + c_stat + lang.get("log.effect_block"));
+	}
 }
