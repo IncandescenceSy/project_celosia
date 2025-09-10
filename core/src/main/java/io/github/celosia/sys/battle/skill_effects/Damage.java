@@ -4,7 +4,8 @@ import io.github.celosia.sys.battle.*;
 
 import static io.github.celosia.sys.battle.AffLib.getAffMultDmgDealt;
 import static io.github.celosia.sys.battle.AffLib.getAffMultDmgTaken;
-import static io.github.celosia.sys.battle.BattleController.appendAllToLog;
+import static io.github.celosia.sys.battle.BattleController.appendToLog;
+import static io.github.celosia.sys.battle.BattleLib.STAT_FACTOR;
 
 public class Damage implements SkillEffect {
 
@@ -78,8 +79,8 @@ public class Damage implements SkillEffect {
     public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
         // Multi-hit attacks should continue unless they hit an immunity
         if (resultPrev.ordinal() >= minResult.ordinal() && (!mainTargetOnly || isMainTarget)) {
-            double atk = -1;
-            double def = -1;
+            int atk = -1;
+            int def = -1;
 
             if (type == SkillType.STR) {
                 atk = Math.max(1, self.getStrWithStage());
@@ -89,15 +90,15 @@ public class Damage implements SkillEffect {
                 def = Math.max(1, target.getResWithStage());
             }
 
-            double affMultDmgDealt;
-            double affMultDmgTaken;
+            int affMultDmgDealt;
+            int affMultDmgTaken;
 
             int multWeakDmgDealt = 100;
             int multWeakDmgTaken = 100;
 
             if (element == Element.VIS) {
-                affMultDmgDealt = 1f;
-                affMultDmgTaken = 1f;
+                affMultDmgDealt = 10000;
+                affMultDmgTaken = 10000;
             } else {
                 affMultDmgDealt = getAffMultDmgDealt(self.getAff(element));
                 affMultDmgTaken = getAffMultDmgTaken(target.getAff(element));
@@ -108,15 +109,13 @@ public class Damage implements SkillEffect {
                 }
             }
 
-            double dmg = (atk / def) * (pow * 10) * affMultDmgDealt * affMultDmgTaken * (Math.max(self.getMultDmgDealt(), 10) / 100d) *
-                (Math.max(target.getMultDmgTaken(), 10) / 100d) * (Math.max(self.getMultElementDmgDealt(element), 10) / 100d) *
-                (Math.max(target.getMultElementDmgTaken(element), 10) / 100d) * (Math.max(multWeakDmgDealt, 10) / 100d) * (Math.max(multWeakDmgTaken, 10) / 100d);
+            int dmg = (int) (STAT_FACTOR * ((double) atk / def) * (pow * 10) * (affMultDmgDealt / 10000d) * (affMultDmgTaken / 10000d) * (Math.max(self.getMultDmgDealt(), 1000) / 10000d) * (Math.max(target.getMultDmgTaken(), 1000) / 10000d) * (Math.max(self.getMultElementDmgDealt(element), 1000) / 10000d) * (Math.max(target.getMultElementDmgTaken(element), 1000) / 10000d) * (Math.max(multWeakDmgDealt, 1000) / 10000d) * (Math.max(multWeakDmgTaken, 1000) / 10000d));
 
-            if(isFollowUp) dmg = dmg * (Math.max(self.getMultFollowUpDmgDealt(), 10) / 100d) * (Math.max(target.getMultFollowUpDmgTaken(), 10) / 100d);
+            if(isFollowUp) dmg = (int) (dmg * (Math.max(self.getMultFollowUpDmgDealt(), 1000) / 10000d) * (Math.max(target.getMultFollowUpDmgTaken(), 1000) / 10000d));
 
             // Deal damage
-            Result result = target.damage((int) dmg, isPierce);
-            appendAllToLog(result.getMessages());
+            Result result = target.damage(dmg, isPierce);
+            appendToLog(result.getMessages());
             return result.getResultType();
         } else {
             // If the previous hit failed entirely, this one wouldn't have been reached. If this return statement is ever reached, it's under special circumstances, so let the attack continue just to be safe

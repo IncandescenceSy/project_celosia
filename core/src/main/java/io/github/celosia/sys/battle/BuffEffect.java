@@ -8,7 +8,6 @@ public interface BuffEffect {
 
     default void onUseSkill(Unit self, Unit target, int stacks, Skill skill) {}
 
-    // todo: What about non-primary targets? A separate onTakeDamage? Should that also be a thing?
     default void onTargetedBySkill(Unit self, int stacks) {}
 
     default String[] onTurnEnd(Unit self, int stacks) {

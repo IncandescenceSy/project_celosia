@@ -1,6 +1,9 @@
 package io.github.celosia.sys.battle.skill_effects;
 
-import io.github.celosia.sys.battle.*;
+import io.github.celosia.sys.battle.Calcs;
+import io.github.celosia.sys.battle.ResultType;
+import io.github.celosia.sys.battle.SkillEffect;
+import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleController.appendToLog;
 

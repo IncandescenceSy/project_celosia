@@ -74,14 +74,16 @@ public class BattleController {
     static List<TypingLabel> skillsL = new ArrayList<>();
 
     // temp
-    static Skill[] skills = new Skill[]{Skills.ATTACK_DOWN_GROUP, Skills.FIREBALL, Skills.GET_EXA, Skills.THUNDERBOLT, Skills.ICE_AGE, Skills.DEFEND};
-    static Skill[] skills2 = new Skill[]{Skills.ATTACK_UP_GROUP, Skills.GET_EXA, Skills.FIREBALL, Skills.SHIELD, Skills.ICE_AGE, Skills.DEFEND};
-    static Skill[] skills3 = new Skill[]{Skills.GET_EXA, Skills.SHIELD, Skills.HEAT_WAVE, Skills.PROTECT, Skills.ICE_AGE, Skills.DEFEND};
+    static Skill[] skills = new Skill[]{Skills.ATTACK_DOWN, Skills.FIREBALL, Skills.SHIELD, Skills.THUNDERBOLT, Skills.ICE_AGE, Skills.DEFEND};
+    static Skill[] skills2 = new Skill[]{Skills.ATTACK_DOWN, Skills.FIREBALL, Skills.ATTACK_UP_GROUP, Skills.SHIELD, Skills.ICE_AGE, Skills.DEFEND};
+    static Skill[] skills3 = new Skill[]{Skills.ATTACK_DOWN, Skills.FIREBALL, Skills.HEAT_WAVE, Skills.PROTECT, Skills.ICE_AGE, Skills.DEFEND};
 
     // Battle log
     // todo press L2(?) to bring up full log, better positioning
     static TextraLabel battleLog = new TextraLabel("", FontType.KORURI.getSize20());
     static List<String> logText = new ArrayList<>();
+
+    // Amount of lines scrolled upwards
     static int logScroll = 0;
 
     // battle mechanics todo: Passives, Follow-Ups, Accessories
@@ -170,13 +172,6 @@ public class BattleController {
             if(Gdx.input.isKeyJustPressed(Input.Keys.W)) createPopup("among", "ussss");
         }
 
-        // Log
-        int logScrollNew = MenuLib.checkLogScroll(logScroll, logText.size());
-        if(logScroll != logScrollNew) {
-            logScroll = logScrollNew;
-            updateLog();
-        }
-
         if (wait > 0f) {
             wait -= Gdx.graphics.getDeltaTime();
         } else if(menuList.getLast() == MenuType.LOG) { // Fullscreen log
@@ -186,6 +181,13 @@ public class BattleController {
                 updateLog();
                 coolRects.get(CoolRects.COVER_LEFT.ordinal()).setDir(-1);
                 paths.get(Paths.SCROLLBAR.ordinal()).setDir(-1);
+            }
+
+            // Scroll
+            int logScrollNew = MenuLib.checkLogScroll(logScroll, logText.size(), (menuList.getLast() == MenuType.LOG) ? 48 : 8);
+            if(logScroll != logScrollNew) {
+                logScroll = logScrollNew;
+                updateLog();
             }
         } else if (InputLib.checkInput(Keybind.MENU)) createFullLog();
         else if (menuList.getLast() == MenuType.BATTLE) { // Selecting moves
@@ -231,7 +233,7 @@ public class BattleController {
 
                     for (Unit unit : battle.getAllUnits()) {
                         // Increase SP
-                        if(!unit.isInfiniteSp()) unit.setSp(Math.min((int) (unit.getSp() + (100 * (Math.max(unit.getMultSpGain(), 10) / 100d))), 1000));
+                        if(!unit.isInfiniteSp()) unit.setSp(Math.min((int) (unit.getSp() + (100 * (Math.max(unit.getMultSpGain(), 1000) / 10000d))), 1000));
 
                         // Apply turn end BuffEffects
                         for (Passive passive : unit.getPassives()) {
@@ -301,8 +303,8 @@ public class BattleController {
                         Team team = (isPlayerTeam) ? battle.getPlayerTeam() : battle.getOpponentTeam();
                         int cost = (self.isInfiniteSp() && !skill.isBloom()) ? 0 : skill.getCost();
                         // Make sure cost doesn't go below 1 unless the skill has a base 0 SP cost
-                        int costMod = (cost > 0) ? (int) Math.max(Math.ceil((cost * getAffMultSpCost(self.getAff(element)))), 1) : 0;
-                        int change = skill.isBloom() ? costMod : (int) (costMod * (Math.max(self.getMultSpUse(), 10) / 100d));
+                        int costMod = (cost > 0) ? (int) Math.max(cost * (getAffMultSpCost(self.getAff(element)) / 10000d), 1) : 0;
+                        int change = skill.isBloom() ? costMod : (int) (costMod * (Math.max(self.getMultSpUse(), 1000) / 10000d));
                         newSp = skill.isBloom() ? team.getBloom() - change : self.getSp() - change;
 
                         StringBuilder builder = new StringBuilder();
@@ -495,7 +497,7 @@ public class BattleController {
         for (int i = 0; i < 8; i++) {
             Unit unit = (i >= 4) ? battle.getOpponentTeam().getUnits()[i - 4] : battle.getPlayerTeam().getUnits()[i]; // todo can use battle.getAllUnits
             if (unit != null) {
-                int shield = unit.getShield() + unit.getDefend();
+                int shield = unit.getDisplayShield() + unit.getDisplayDefend();
                 // todo colors
                 // String shieldStr = (shield > 0) ? c_shield + "+" + String.format("%,d", shield) : "";
                 //                String spStr = (!unit.isInfiniteSp()) ? String.format("%,d", unit.getSp()) + "[WHITE]/" + c_sp + String.format("%,d", 1000) : "∞";
@@ -506,8 +508,8 @@ public class BattleController {
                 //                    "\n");
                 String shieldStr = (shield > 0) ? "[CYAN]+" + String.format("%,d", shield) + "[WHITE]" : "";
                 String spStr = (!unit.isInfiniteSp()) ? String.format("%,d", unit.getSp()) + "/" + String.format("%,d", 1000) : "∞";
-                StringBuilder text = new StringBuilder(unit.getUnitType().getName() + "\n" + lang.get("hp") + ": " + String.format("%,d", unit.getStatsCur().getHp()) +
-                    shieldStr + "/" + String.format("%,d", unit.getStatsDefault().getHp()) + "\n" + lang.get("sp") + ": " + spStr +
+                StringBuilder text = new StringBuilder(unit.getUnitType().getName() + "\n" + lang.get("hp") + ": " + String.format("%,d", unit.getStatsCur().getDisplayHp()) +
+                    shieldStr + "/" + String.format("%,d", unit.getStatsDefault().getDisplayHp()) + "\n" + lang.get("sp") + ": " + spStr +
                     //"\nStr: " + unit.getStrWithStage() + "/" + unit.getStatsDefault().getStr() + "\nMag:" + unit.getMagWithStage() + "/" + unit.getStatsDefault().getMag() +
                     //"\nAmr: " + unit.getAmrWithStage() + "/" + unit.getStatsDefault().getAmr() + "\nRes: " + unit.getResWithStage() + "/" + unit.getStatsDefault().getRes() +
                     "\n");
@@ -521,7 +523,7 @@ public class BattleController {
                 }
 
                 // Shield
-                shield = unit.getShield();
+                shield = unit.getDisplayShield();
                 if (shield > 0) text.append(lang.get("shield")).append("x").append(String.format("%,d", shield)).append("(").append(unit.getShieldTurns()).append(") ");
 
                 // List buffs
@@ -529,7 +531,7 @@ public class BattleController {
                 if (!buffInstances.isEmpty()) {
                     for (BuffInstance buffInstance : buffInstances) {
                         if (buffInstance.getBuff() == Buffs.DEFEND) {
-                            text.append(buffInstance.getBuff().getName()).append("x").append(String.format("%,d", unit.getDefend())).append("(").append(buffInstance.getTurns()).append(") ");
+                            text.append(buffInstance.getBuff().getName()).append("x").append(String.format("%,d", unit.getDisplayDefend())).append("(").append(buffInstance.getTurns()).append(") ");
                         } else {
                             text.append(buffInstance.getBuff().getName());
                             if(buffInstance.getBuff().getMaxStacks() > 1) text.append("x").append(buffInstance.getStacks());
@@ -560,7 +562,7 @@ public class BattleController {
         }
     }
 
-    public static void appendAllToLog(List<String> entry) {
+    public static void appendToLog(List<String> entry) {
         if(logText.size() > 2500) logText.subList(0, 500).clear();
 
         logText.addAll(entry);
@@ -574,6 +576,7 @@ public class BattleController {
     public static void updateLog() {
         battleLog.setText(formatLog());
 
+        // Scrollbar
         if(menuList.getLast() == MenuType.LOG) {
             battleLog.setPosition(20, World.HEIGHT_2, Align.topLeft);
 
@@ -582,27 +585,23 @@ public class BattleController {
             // Portion of the log currently displayed
             float ratio = Math.min(48f / logText.size(), 1);
 
-            int range = World.HEIGHT - 50;
-            int height = (int) (range * ratio);
+            // Maximum range for the bar to move
+            int range = World.HEIGHT - 10;
 
-            // 1 = bottom; 0 = top
-            float pos = 1 - (float) Math.min(logText.size() - 48, logScroll) / logText.size();
+            float barLength = range * ratio;
 
-            // 1 = top; 0 = bottom
-            float pos2 = (float) Math.min(logText.size() - 48, logScroll) / logText.size();
+            range -= barLength;
+
+            // Amount of current scroll. 0 = bottom; 1 = top
+            float pos = (float) logScroll / Math.max(logText.size() - 48, 0);
 
             // Start (bottom)
-            int sx = (int) (World.WIDTH_4 + 265 - ((range * pos) / 6f));
-            int sy = (int) (World.HEIGHT - (height / 2f) - (range * pos));
+            float sx = (World.WIDTH_4 + 350) + (range * pos) / 6;
+            float sy = 5 + (range * pos);
 
             // End (top)
-            int ex = (int) (World.WIDTH_4 + 265 + (height / 6f) - ((range * pos) / 6f));
-            int ey = (int) (World.HEIGHT + (height / 2f) - (range * pos));
-
-            //Interpolation i = Interpolation.smooth2;
-
-            //int ex = sx; //(int) i.apply(sx, sx, pos);
-            //int ey = (int) i.apply(sy, World.HEIGHT - 25, pos2);
+            float ex = sx + (barLength / 6);
+            float ey = sy + barLength;
 
             Array<Vector2> points = new Array<>(false, 2);
             points.addAll(new Vector2(sx, sy), new Vector2(ex, ey));
@@ -613,8 +612,9 @@ public class BattleController {
 
     public static String formatLog() {
         int lines = (menuList.getLast() == MenuType.LOG) ? 48 : 8;
-        if (logText == null || logText.isEmpty() || logScroll < 0 || logScroll > logText.size()) return "";
-        int start = Math.max(0, logText.size() - lines - logScroll);
+        int scroll = (menuList.getLast() == MenuType.LOG) ? logScroll : 0;
+        if (logText == null || logText.isEmpty()) return "";
+        int start = Math.max(0, logText.size() - lines - scroll);
         int end = Math.min(start + lines, logText.size());
         List<String> subList = logText.subList(start, end);
         return String.join("\n", subList);
@@ -624,9 +624,7 @@ public class BattleController {
         menuList.add(MenuType.LOG);
         coolRects.get(CoolRects.COVER_LEFT.ordinal()).setDir(1);
         paths.get(Paths.SCROLLBAR.ordinal()).setDir(1);
-
         updateLog();
-
     }
 
     public static void selectMove() {

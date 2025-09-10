@@ -1,6 +1,5 @@
 package io.github.celosia.sys.battle.skill_effects;
 
-import io.github.celosia.sys.battle.Result;
 import io.github.celosia.sys.battle.ResultType;
 import io.github.celosia.sys.battle.SkillEffect;
 import io.github.celosia.sys.battle.Unit;
@@ -8,7 +7,7 @@ import io.github.celosia.sys.battle.Unit;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.celosia.sys.battle.BattleController.appendAllToLog;
+import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnGiveShield;
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnHeal;
 import static io.github.celosia.sys.menu.TextLib.*;
@@ -48,7 +47,7 @@ public class Heal implements SkillEffect {
             List<String> msg = new ArrayList<>();
 
             // Heals by pow% of user's Fth
-            int heal = (int) (self.getFthWithStage() * (pow / 100d) * (Math.max(self.getMultHealingDealt(), 10) / 100d) * (Math.max(target.getMultHealingTaken(), 10) / 100d));
+            int heal = (int) (self.getFthWithStage() * (pow / 100d) * (Math.max(self.getMultHealingDealt(), 1000) / 10000d) * (Math.max(target.getMultHealingTaken(), 1000) / 10000d));
 
             // Adds shield (shield + defend cannot exceed max HP)
             if (shieldTurns > 0) {
@@ -65,9 +64,14 @@ public class Heal implements SkillEffect {
                 int turnsCur = target.getShieldTurns();
 
                 if (shieldNew > shieldCur) {
+                    int shieldCurDisp = target.getDisplayShield();
+
                     target.setShield(shieldNew);
-                    str = formatName(target.getUnitType().getName(), self.getPos()) + " " + c_buff + lang.get("shield") + " " + c_shield + String.format("%,d", (shieldCur + target.getDefend())) + "[WHITE] → " + c_shield + String.format("%,d", (shieldNew +
-                        target.getDefend())) + "[WHITE]/" + c_shield + String.format("%,d", hpMax) + getColor(shieldNew - shieldCur) + " (+" + String.format("%,d", (shieldNew - shieldCur)) + ")";
+
+                    int hpMaxDisp = target.getStatsDefault().getDisplayHp();
+                    int shieldNewDisp = target.getDisplayShield();
+
+                    str = formatName(target.getUnitType().getName(), self.getPos()) + " " + c_buff + lang.get("shield") + " " + c_shield + String.format("%,d", (shieldCurDisp + target.getDisplayDefend())) + "[WHITE] → " + c_shield + String.format("%,d", (shieldNewDisp + target.getDisplayDefend())) + "[WHITE]/" + c_shield + String.format("%,d", hpMaxDisp) + getColor(shieldNewDisp - shieldCurDisp) + " (+" + String.format("%,d", (shieldNewDisp - shieldCurDisp)) + ")";
                 }
 
                 if (turnsMod > turnsCur) {
@@ -92,13 +96,18 @@ public class Heal implements SkillEffect {
                 int hpNew = (int) Math.max(hpCur, Math.min(hpCur + heal, hpMax * (1 + overHeal)));
 
                 if (hpNew > hpCur) {
+                    int hpCurDisp = target.getStatsCur().getDisplayHp();
+
                     target.getStatsCur().setHp(hpNew);
-                    msg.add(formatName(target.getUnitType().getName(), self.getPos()) + " " + lang.get("hp") + " " + c_hp + String.format("%,d", hpCur) + "[WHITE] → " + c_hp + String.format("%,d", hpNew)
-                        + "[WHITE]/" + c_hp + String.format("%,d", hpMax) + getColor(hpNew - hpCur) + " (+" + String.format("%,d", (hpNew - hpCur)) + ")");
+
+                    int hpNewDisp = target.getStatsCur().getDisplayHp();
+                    int hpMaxDisp = target.getStatsDefault().getDisplayHp();
+
+                    msg.add(formatName(target.getUnitType().getName(), self.getPos()) + " " + lang.get("hp") + " " + c_hp + String.format("%,d", hpCurDisp) + "[WHITE] → " + c_hp + String.format("%,d", hpNewDisp) + "[WHITE]/" + c_hp + String.format("%,d", hpMaxDisp) + getColor(hpNewDisp - hpCurDisp) + " (+" + String.format("%,d", (hpNewDisp - hpCurDisp)) + ")");
                 }
             }
 
-            appendAllToLog(msg);
+            appendToLog(msg);
         }
 
         return ResultType.SUCCESS;

@@ -12,6 +12,9 @@ public class InputLib {
     // How long each keybind has been held down for
     private static final double[] held = new double[12];
 
+    // Default holdDelay (time between triggers when holding keybind down)
+    private static final float HOLD_DELAY = 0.1f;
+
     // Sets up button mappings based on the current controller's mapping
     // todo make sure nothing breaks if a controller is missing buttons
     public static void setupController(Controller controller) {
@@ -46,16 +49,20 @@ public class InputLib {
     }
 
     // Checks for input between the keyboard and the currently in-use controller
-    public static boolean checkInput(boolean allowHold, Keybind... keybinds) {
-        for(Keybind keybind : keybinds) if (isKeybindPressed(keybind, allowHold)) return true;
+    public static boolean checkInput(boolean allowHold, float holdDelay, Keybind... keybinds) {
+        for(Keybind keybind : keybinds) if (isKeybindPressed(keybind, allowHold, holdDelay)) return true;
         return false;
     }
 
-    public static boolean checkInput(Keybind... keybinds) {
-        return checkInput(false, keybinds);
+    public static boolean checkInput(boolean allowHold, Keybind... keybinds) {
+        return checkInput(allowHold, HOLD_DELAY, keybinds);
     }
 
-    public static boolean isKeybindPressed(Keybind keybind, boolean allowHold) {
+    public static boolean checkInput(Keybind... keybinds) {
+        return checkInput(false, HOLD_DELAY, keybinds);
+    }
+
+    public static boolean isKeybindPressed(Keybind keybind, boolean allowHold, float holdDelay) {
         if (held[keybind.ordinal()] == 0f) { // Keybind wasn't pressed last frame or has been held
             if (checkKeybind(keybind)) { // Keybind is pressed now
                 held[keybind.ordinal()] += Gdx.graphics.getDeltaTime();
@@ -63,7 +70,7 @@ public class InputLib {
             }
         } else if (allowHold && held[keybind.ordinal()] >= 0.3f) { // Keybind has been held
             if (checkKeybind(keybind)) { // Keybind is pressed now
-                held[keybind.ordinal()] = 0.2f; // Make it take a moment
+                held[keybind.ordinal()] = 0.3f - holdDelay; // Make it take a moment
                 return true;
             }
          } else if (checkKeybind(keybind)) { // Keybind has been held, but not for long enough

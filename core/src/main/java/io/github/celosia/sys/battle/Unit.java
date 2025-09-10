@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.celosia.sys.battle.BattleController.appendToLog;
+import static io.github.celosia.sys.battle.BattleLib.STAT_FACTOR;
+import static io.github.celosia.sys.battle.LogLib.getStageStatString;
 import static io.github.celosia.sys.menu.TextLib.*;
 import static io.github.celosia.sys.settings.Lang.lang;
 
@@ -113,7 +115,7 @@ public class Unit {
         statsDefault = unitType.getStatsBase().getRealStats(lvl);
         statsCur = new Stats(statsDefault);
         this.skills = skills;
-        this.passives = List.of(unitType.getPassives());
+        passives = List.of(unitType.getPassives());
         sp = 200;
         this.pos = pos;
         stageAtk = 0;
@@ -131,31 +133,31 @@ public class Unit {
         affTerra = unitType.getAffTerra();
         affLux = unitType.getAffLux();
         affMalum = unitType.getAffMalum();
-        multDmgDealt = 100;
-        multDmgTaken = 100;
-        multIgnisDmgDealt = 100;
-        multIgnisDmgTaken = 100;
-        multGlaciesDmgDealt = 100;
-        multGlaciesDmgTaken = 100;
-        multFulgurDmgDealt = 100;
-        multFulgurDmgTaken = 100;
-        multVentusDmgDealt = 100;
-        multVentusDmgTaken = 100;
-        multTerraDmgDealt = 100;
-        multTerraDmgTaken = 100;
-        multLuxDmgDealt = 100;
-        multLuxDmgTaken = 100;
-        multMalumDmgDealt = 100;
-        multMalumDmgTaken = 100;
-        multWeakDmgDealt = 100;
-        multWeakDmgTaken = 100;
-        multFollowUpDmgDealt = 100;
-        multFollowUpDmgTaken = 100;
-        multDoTDmgTaken = 100;
-        multHealingDealt = 100;
-        multHealingTaken = 100;
-        multSpGain = 100;
-        multSpUse = 100;
+        multDmgDealt = 10000;
+        multDmgTaken = 10000;
+        multIgnisDmgDealt = 10000;
+        multIgnisDmgTaken = 10000;
+        multGlaciesDmgDealt = 10000;
+        multGlaciesDmgTaken = 10000;
+        multFulgurDmgDealt = 10000;
+        multFulgurDmgTaken = 10000;
+        multVentusDmgDealt = 10000;
+        multVentusDmgTaken = 10000;
+        multTerraDmgDealt = 10000;
+        multTerraDmgTaken = 10000;
+        multLuxDmgDealt = 10000;
+        multLuxDmgTaken = 10000;
+        multMalumDmgDealt = 10000;
+        multMalumDmgTaken = 10000;
+        multWeakDmgDealt = 10000;
+        multWeakDmgTaken = 10000;
+        multFollowUpDmgDealt = 10000;
+        multFollowUpDmgTaken = 10000;
+        multDoTDmgTaken = 10000;
+        multHealingDealt = 10000;
+        multHealingTaken = 10000;
+        multSpGain = 10000;
+        multSpUse = 10000;
         shield = 0;
         shieldTurns = 0;
         defend = 0;
@@ -321,37 +323,70 @@ public class Unit {
     }
 
     public int getStrWithStage() {
-        return this.getStatsCur().getStr() + (int) (this.getStatsDefault().getStr() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
+        return statsCur.getStr() + (int) (statsDefault.getStr() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
     }
 
     public int getMagWithStage() {
-        return this.getStatsCur().getMag() + (int) (this.getStatsDefault().getMag() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
+        return statsCur.getMag() + (int) (statsDefault.getMag() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
     }
 
     public int getFthWithStage() {
-        return this.getStatsCur().getFth() + (int) (this.getStatsDefault().getFth() * (((double) stageFth / 10) / ((stageFth < 0) ? 2 : 1)));
+        return statsCur.getFth() + (int) (statsDefault.getFth() * (((double) stageFth / 10) / ((stageFth < 0) ? 2 : 1)));
     }
 
     public int getAmrWithStage() {
-        return this.getStatsCur().getAmr() + (int) (this.getStatsDefault().getAmr() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
+        return statsCur.getAmr() + (int) (statsDefault.getAmr() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
     }
 
     public int getResWithStage() {
-        return this.getStatsCur().getRes() + (int) (this.getStatsDefault().getRes() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
+        return statsCur.getRes() + (int) (statsDefault.getRes() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
     }
 
     public int getAgiWithStage() {
-        return this.getStatsCur().getAgi() + (int) (this.getStatsDefault().getAgi() * (((double) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1)));
+        return statsCur.getAgi() + (int) (statsDefault.getAgi() * (((double) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1)));
     }
 
     public int getStatWithStage(Stat stat) {
         return switch (stat) {
-            case STR -> this.getStatsCur().getStr() + (int) (this.getStatsDefault().getStr() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
-            case MAG -> this.getStatsCur().getMag() + (int) (this.getStatsDefault().getMag() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
-            case FTH -> this.getStatsCur().getFth() + (int) (this.getStatsDefault().getFth() * (((double) stageFth / 10) / ((stageFth < 0) ? 2 : 1)));
-            case AMR -> this.getStatsCur().getAmr() + (int) (this.getStatsDefault().getAmr() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
-            case RES -> this.getStatsCur().getRes() + (int) (this.getStatsDefault().getRes() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
-            case AGI -> this.getStatsCur().getAgi() + (int) (this.getStatsDefault().getAgi() * (((double) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1)));
+            case STR -> statsCur.getStr() + (int) (statsDefault.getStr() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
+            case MAG -> statsCur.getMag() + (int) (statsDefault.getMag() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
+            case FTH -> statsCur.getFth() + (int) (statsDefault.getFth() * (((double) stageFth / 10) / ((stageFth < 0) ? 2 : 1)));
+            case AMR -> statsCur.getAmr() + (int) (statsDefault.getAmr() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
+            case RES -> statsCur.getRes() + (int) (statsDefault.getRes() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
+            case AGI -> statsCur.getAgi() + (int) (statsDefault.getAgi() * (((double) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1)));
+        };
+    }
+
+    public int getStatWithStage(Stat stat, int stage) {
+        return switch (stat) {
+            case STR -> statsCur.getStr() + (int) (statsDefault.getStr() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
+            case MAG -> statsCur.getMag() + (int) (statsDefault.getMag() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
+            case FTH -> statsCur.getFth() + (int) (statsDefault.getFth() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
+            case AMR -> statsCur.getAmr() + (int) (statsDefault.getAmr() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
+            case RES -> statsCur.getRes() + (int) (statsDefault.getRes() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
+            case AGI -> statsCur.getAgi() + (int) (statsDefault.getAgi() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
+        };
+    }
+
+    public int getDisplayStatWithStage(Stat stat) {
+        return switch (stat) {
+            case STR -> statsCur.getDisplayStr() + (int) (statsDefault.getDisplayStr() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
+            case MAG -> statsCur.getDisplayMag() + (int) (statsDefault.getDisplayMag() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
+            case FTH -> statsCur.getDisplayFth() + (int) (statsDefault.getDisplayFth() * (((double) stageFth / 10) / ((stageFth < 0) ? 2 : 1)));
+            case AMR -> statsCur.getDisplayAmr() + (int) (statsDefault.getDisplayAmr() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
+            case RES -> statsCur.getDisplayRes() + (int) (statsDefault.getDisplayRes() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
+            case AGI -> statsCur.getDisplayAgi() + (int) (statsDefault.getDisplayAgi() * (((double) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1)));
+        };
+    }
+
+    public int getDisplayStatWithStage(Stat stat, int stage) {
+        return switch (stat) {
+            case STR -> statsCur.getDisplayStr() + (int) (statsDefault.getDisplayStr() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
+            case MAG -> statsCur.getDisplayMag() + (int) (statsDefault.getDisplayMag() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
+            case FTH -> statsCur.getDisplayFth() + (int) (statsDefault.getDisplayFth() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
+            case AMR -> statsCur.getDisplayAmr() + (int) (statsDefault.getDisplayAmr() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
+            case RES -> statsCur.getDisplayRes() + (int) (statsDefault.getDisplayRes() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
+            case AGI -> statsCur.getDisplayAgi() + (int) (statsDefault.getDisplayAgi() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
         };
     }
 
@@ -737,6 +772,10 @@ public class Unit {
         return shield;
     }
 
+    public int getDisplayShield() {
+        return shield / 10000;
+    }
+
     public void setShieldTurns(int shieldTurns) {
         this.shieldTurns = shieldTurns;
     }
@@ -751,6 +790,10 @@ public class Unit {
 
     public int getDefend() {
         return defend;
+    }
+
+    public int getDisplayDefend() {
+        return defend / 10000;
     }
 
     public void setExtraActions(int extraActions) {
@@ -895,27 +938,27 @@ public class Unit {
     public void decrementTurns() {
         // Stages
         if (stageAtk != 0 && --stageAtkTurns <= 0) {
-            appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageAtk) + stageAtk + "[WHITE]" + lang.format("stage_s", stageAtk) + " " + c_buff + StageType.ATK.getName());
+            appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageAtk) + stageAtk + "[WHITE] " + lang.format("stage_s", stageAtk) + " " + c_buff + StageType.ATK.getName() + getStageStatString(this, StageType.ATK, 0));
             stageAtk = 0; // Remove stages
         }
         if (stageDef != 0 && --stageDefTurns <= 0) {
-            appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageDef) + stageDef + "[WHITE]" + lang.format("stage_s", stageDef) + " " + c_buff + StageType.DEF.getName());
+            appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageDef) + stageDef + "[WHITE] " + lang.format("stage_s", stageDef) + " " + c_buff + StageType.DEF.getName() + getStageStatString(this, StageType.DEF, 0));
             stageDef = 0;
         }
         if (stageFth != 0 && --stageFthTurns <= 0) {
-            appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageFth) + stageFth + "[WHITE]" + lang.format("stage_s", stageFth) + " " + c_buff + StageType.FTH.getName());
+            appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageFth) + stageFth + "[WHITE] " + lang.format("stage_s", stageFth) + " " + c_buff + StageType.FTH.getName() + getStageStatString(this, StageType.FTH, 0));
             stageFth = 0;
         }
         if (stageAgi != 0 && --stageAgiTurns <= 0) {
-            appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageAgi) + stageAgi + "[WHITE]" + lang.format("stage_s", stageAgi) + " " + c_buff + StageType.AGI.getName());
+            appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageAgi) + stageAgi + "[WHITE] " + lang.format("stage_s", stageAgi) + " " + c_buff + StageType.AGI.getName() + getStageStatString(this, StageType.AGI, 0));
             stageAgi = 0;
         }
 
         // Shield
         if (shield != 0 && --shieldTurns <= 0) {
-            if(defend == 0) appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + c_shield + String.format("%,d", shield) + " " + c_buff + lang.get("shield"));
-            else appendToLog(formatName(unitType.getName(), pos) + " " + c_buff + lang.get("shield") + " " + c_shield + String.format("%,d", (shield + defend)) + "[WHITE] → " +
-                c_shield + String.format("%,d", defend) + "[WHITE]/" + c_shield + String.format("%,d", statsDefault.getHp()) + c_neg + " (" + String.format("%,d", shield) + ")");
+            if(defend == 0) appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + c_shield + String.format("%,d", shield / STAT_FACTOR) + " " + c_buff + lang.get("shield"));
+            else appendToLog(formatName(unitType.getName(), pos) + " " + c_buff + lang.get("shield") + " " + c_shield + String.format("%,d", (shield + defend) / STAT_FACTOR) + "[WHITE] → " +
+                c_shield + String.format("%,d", defend / STAT_FACTOR) + "[WHITE]/" + c_shield + String.format("%,d", statsDefault.getHp()) + c_neg + " (" + String.format("%,d", shield / STAT_FACTOR) + ")");
             shield = 0;
         }
 
@@ -955,8 +998,7 @@ public class Unit {
             if (defend > 0 && dmg > 0) { // There's Defend and dmg
                 if (defend > dmg) { // Only hit Defend
                     defend -= dmg;
-                    return new Result(ResultType.HIT_SHIELD, name_s + lang.get("shield") + " " + c_shield + String.format("%,d", (defendOld + shield)) + "[WHITE] → "
-                        + c_shield + String.format("%,d", (defend + shield)) + "[WHITE]/" + c_shield + String.format("%,d", statsDefault.getHp()) + "[WHITE] (" + c_neg + "-" + String.format("%,d", dmgFull) + "[WHITE])");
+                    return new Result(ResultType.HIT_SHIELD, name_s + lang.get("shield") + " " + c_shield + String.format("%,d", (defendOld + shield) / STAT_FACTOR) + "[WHITE] → " + c_shield + String.format("%,d", (defend + shield) / STAT_FACTOR) + "[WHITE]/" + c_shield + String.format("%,d", statsDefault.getDisplayHp()) + "[WHITE] (" + c_neg + "-" + String.format("%,d", dmgFull / STAT_FACTOR) + "[WHITE])");
                 } else { // Destroy Defend and proceed to Shield
                     dmg -= defend;
                     defend = 0;
@@ -968,11 +1010,9 @@ public class Unit {
                 if (shield > dmg) { // Only hit Shield
                     int shieldOld = shield;
                     shield -= dmg;
-                    return new Result(ResultType.HIT_SHIELD, name_s + lang.get("shield") + " " + c_shield + String.format("%,d", (defendOld + shieldOld)) + "[WHITE] → "
-                        + c_shield + String.format("%,d", shield) + "[WHITE]/" + c_shield + String.format("%,d", statsDefault.getHp()) + " (" + c_neg + "-" + String.format("%,d", dmgFull) + "[WHITE])");
+                    return new Result(ResultType.HIT_SHIELD, name_s + lang.get("shield") + " " + c_shield + String.format("%,d", (defendOld + shieldOld) / STAT_FACTOR) + "[WHITE] → " + c_shield + String.format("%,d", shield / STAT_FACTOR) + "[WHITE]/" + c_shield + String.format("%,d", statsDefault.getDisplayHp()) + " (" + c_neg + "-" + String.format("%,d", dmgFull / STAT_FACTOR) + "[WHITE])");
                 } else { // Destroy Shield and proceed to HP
-                    msg.add(name_s + lang.get("shield") + " " + c_shield + String.format("%,d", (defendOld + shield)) + "[WHITE] → " + c_num + 0 + "[WHITE]/" + c_shield + statsDefault.getHp() +
-                        "[WHITE] (" + c_neg + "-" + String.format("%,d", (defendOld + shield)) + "[WHITE])");
+                    msg.add(name_s + lang.get("shield") + " " + c_shield + String.format("%,d", (defendOld + shield) / STAT_FACTOR) + "[WHITE] → " + c_num + 0 + "[WHITE]/" + c_shield + statsDefault.getDisplayHp() + "[WHITE] (" + c_neg + "-" + String.format("%,d", (defendOld + shield) / STAT_FACTOR) + "[WHITE])");
                     dmg -= shield;
                     shield = 0;
                     shieldTurns = 0;
@@ -983,9 +1023,11 @@ public class Unit {
 
         // Lower HP
         int hpOld = statsCur.getHp();
+        int hpOldDisp = statsCur.getDisplayHp();
         int hpNew = Math.clamp(hpOld - dmg, 0, statsDefault.getHp());
-        msg.add(name_s + c_stat + lang.get("hp") + " " + c_hp + String.format("%,d", hpOld) + "[WHITE] → " + c_hp + String.format("%,d", hpNew) + "[WHITE] (" + c_neg + "-" + String.format("%,d", dmg) + "[WHITE])");
         statsCur.setHp(hpNew);
+        int hpNewDisp = statsCur.getDisplayHp();
+        msg.add(name_s + c_stat + lang.get("hp") + " " + c_hp + String.format("%,d", hpOldDisp) + "[WHITE] → " + c_hp + String.format("%,d", hpNewDisp) + "[WHITE] (" + c_neg + "-" + String.format("%,d", (dmg / STAT_FACTOR)) + "[WHITE])");
 
         if (effectBlock > 0) { // todo should this be a separate result from hitting shield
             return new Result(ResultType.HIT_SHIELD, msg);

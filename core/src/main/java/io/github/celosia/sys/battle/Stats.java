@@ -1,5 +1,7 @@
 package io.github.celosia.sys.battle;
 
+import static io.github.celosia.sys.battle.BattleLib.STAT_FACTOR;
+
 // A set of stats
 public class Stats {
 
@@ -39,12 +41,20 @@ public class Stats {
         return hp;
     }
 
+    public int getDisplayHp() {
+        return hp / STAT_FACTOR;
+    }
+
     public void setStr(int str) {
         this.str = str;
     }
 
     public int getStr() {
         return str;
+    }
+
+    public int getDisplayStr() {
+        return str / STAT_FACTOR;
     }
 
     public void setMag(int mag) {
@@ -55,12 +65,20 @@ public class Stats {
         return mag;
     }
 
+    public int getDisplayMag() {
+        return mag / STAT_FACTOR;
+    }
+
     public void setFth(int fth) {
         this.fth = fth;
     }
 
     public int getFth() {
         return fth;
+    }
+
+    public int getDisplayFth() {
+        return fth / STAT_FACTOR;
     }
 
     public void setAmr(int amr) {
@@ -71,6 +89,10 @@ public class Stats {
         return amr;
     }
 
+    public int getDisplayAmr() {
+        return amr / STAT_FACTOR;
+    }
+
     public void setRes(int res) {
         this.res = res;
     }
@@ -79,12 +101,20 @@ public class Stats {
         return res;
     }
 
+    public int getDisplayRes() {
+        return res / STAT_FACTOR;
+    }
+
     public void setAgi(int agi) {
         this.agi = agi;
     }
 
     public int getAgi() {
         return agi;
+    }
+
+    public int getDisplayAgi() {
+        return agi / STAT_FACTOR;
     }
 
     public void setStat(Stat stat, int set) {
@@ -121,7 +151,18 @@ public class Stats {
         };
     }
 
+    public int getDisplayStat(Stat stat) {
+        return switch (stat) {
+            case STR -> str / STAT_FACTOR;
+            case MAG -> mag / STAT_FACTOR;
+            case FTH -> fth / STAT_FACTOR;
+            case AMR -> amr / STAT_FACTOR;
+            case RES -> res / STAT_FACTOR;
+            case AGI -> agi / STAT_FACTOR;
+        };
+    }
+
     public Stats getRealStats(int lvl) {
-        return new Stats((hp + (hp / 2) * lvl) * 5, str + (str / 2) * lvl, mag + (mag / 2) * lvl, fth + (fth / 2) * lvl, amr + (amr / 2) * lvl, res + (res / 2) * lvl, agi + (agi / 2) * lvl);
+        return new Stats((hp + (hp / 2) * lvl) * 5 * STAT_FACTOR, (str + (str / 2) * lvl) * STAT_FACTOR, (mag + (mag / 2) * lvl) * STAT_FACTOR, (fth + (fth / 2) * lvl) * STAT_FACTOR, (amr + (amr / 2) * lvl) * STAT_FACTOR, (res + (res / 2) * lvl) * STAT_FACTOR, (agi + (agi / 2) * lvl) * STAT_FACTOR);
     }
 }

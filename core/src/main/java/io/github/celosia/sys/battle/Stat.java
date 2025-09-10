@@ -12,7 +12,7 @@ public enum Stat {
     RES(lang.get("stat.res")),
     AGI(lang.get("stat.agi"));
 
-    private String name;
+    private final String name;
 
     Stat(String name) {
         this.name = name;
@@ -20,5 +20,14 @@ public enum Stat {
 
     public String getName() {
         return name;
+    }
+
+    public StageType getMatchingStageType() {
+        return switch(this) {
+            case STR, MAG -> StageType.ATK;
+            case FTH -> StageType.FTH;
+            case AMR, RES -> StageType.DEF;
+            case AGI -> StageType.AGI;
+        };
     }
 }

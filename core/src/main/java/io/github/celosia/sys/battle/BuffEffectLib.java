@@ -1,7 +1,5 @@
 package io.github.celosia.sys.battle;
 
-import static io.github.celosia.sys.battle.BattleController.appendToLog;
-
 public class BuffEffectLib {
     private static void notifyBuffEffects(Unit self, Unit target, BuffEffectNotifier notifier, Object... args) {
         // Handle Passives

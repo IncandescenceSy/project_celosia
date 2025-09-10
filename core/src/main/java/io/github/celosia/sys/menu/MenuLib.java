@@ -5,7 +5,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Align;
 import com.github.tommyettinger.textra.Font;
 import com.github.tommyettinger.textra.TypingLabel;
-import io.github.celosia.Main;
 import io.github.celosia.sys.battle.Range;
 import io.github.celosia.sys.battle.Ranges;
 import io.github.celosia.sys.battle.Side;
@@ -55,13 +54,13 @@ public class MenuLib {
     }
 
     // Check for scrolling the battle log
-    public static int checkLogScroll(int logScroll, int lines) {
-        if(InputLib.checkInput(true, Keybind.PAGE_L1)) { // Up
-            return Math.min(++logScroll, lines - 8);
-        } else if(InputLib.checkInput(true, Keybind.PAGE_R1)) { // Down
+    public static int checkLogScroll(int logScroll, int lines, int off) {
+        if(InputLib.checkInput(true, 0.0025f, Keybind.UP)) { // Up
+            return Math.min(++logScroll, Math.max(lines - off, 0));
+        } else if(InputLib.checkInput(true, 0.0025f, Keybind.DOWN)) { // Down
             return Math.max(--logScroll, 0);
         } else if(InputLib.checkInput(false, Keybind.PAGE_L2)) { // To top
-            return lines - 8;
+            return Math.max(lines - off, 0);
         } else if(InputLib.checkInput(false, Keybind.PAGE_R2)) { // To bottom
             return 0;
         } else return logScroll;

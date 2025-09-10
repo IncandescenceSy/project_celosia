@@ -2,19 +2,19 @@ package io.github.celosia.sys.battle;
 
 // Utilities for dealing with Affinity
 public class AffLib {
-    private static final double[] affMultDmgDealt = {0.3, 0.5, 0.65, 0.8, 0.9, 1, 1.1, 1.2, 1.35, 1.5, 1.7};
-    private static final double[] affMultDmgTaken = {2.5, 2, 1.7, 1.4, 1.2, 1, 0.9, 0.8, 0.65, 0.5, 0};
-    private static final double[] affMultSpCost = {1.7, 1.5, 1.3, 1.2, 1.1, 1, 0.95, 0.9, 0.85, 0.8, 0.75};
+    private static final int[] affMultDmgDealt = {3000, 5000, 6500, 8000, 9000, 10000, 11000, 12000, 13500, 15000, 17000};
+    private static final int[] affMultDmgTaken = {25000, 20000, 17000, 14000, 12000, 10000, 9000, 8000, 6500, 5000, 0};
+    private static final int[] affMultSpCost = {17000, 15000, 13000, 12000, 11000, 10000, 9500, 9000, 8500, 8000, 7500};
 
-    public static double getAffMultDmgDealt(int aff) {
+    public static int getAffMultDmgDealt(int aff) {
         return affMultDmgDealt[Math.clamp(aff, -5, 5) + 5];
     }
 
-    public static double getAffMultDmgTaken(int aff) {
+    public static int getAffMultDmgTaken(int aff) {
         return affMultDmgTaken[Math.clamp(aff, -5, 5) + 5];
     }
 
-    public static double getAffMultSpCost(int aff) {
+    public static int getAffMultSpCost(int aff) {
         return affMultSpCost[Math.clamp(aff, -5, 5) + 5];
     }
 }

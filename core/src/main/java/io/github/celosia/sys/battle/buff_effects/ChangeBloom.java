@@ -2,7 +2,6 @@ package io.github.celosia.sys.battle.buff_effects;
 
 import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Calcs;
-import io.github.celosia.sys.battle.Team;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleController.appendToLog;

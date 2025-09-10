@@ -1,7 +1,6 @@
 package io.github.celosia.sys;
 
 public class World {
-    // todo allow dynamic resolution
     public static final int WIDTH = 2560;
     public static final int HEIGHT = 1440;
     public static final int WIDTH_2 = 1280;

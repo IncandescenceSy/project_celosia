@@ -1,13 +1,17 @@
 package io.github.celosia.sys.battle.skill_effects;
 
-import io.github.celosia.sys.battle.*;
+import io.github.celosia.sys.battle.ResultType;
+import io.github.celosia.sys.battle.SkillEffect;
+import io.github.celosia.sys.battle.StageType;
+import io.github.celosia.sys.battle.Unit;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.celosia.sys.battle.BattleController.appendAllToLog;
+import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.battle.BattleLib.getStageBuffType;
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnChangeStage;
+import static io.github.celosia.sys.battle.LogLib.getStageStatString;
 import static io.github.celosia.sys.menu.TextLib.*;
 import static io.github.celosia.sys.settings.Lang.lang;
 
@@ -61,8 +65,6 @@ public class ChangeStage implements SkillEffect {
         public ChangeStage build() {
             return new ChangeStage(this);
         }
-
-
     }
 
     @Override
@@ -70,13 +72,13 @@ public class ChangeStage implements SkillEffect {
         if(!mainTargetOnly || isMainTarget) {
             List<String> msg = new ArrayList<>();
             String str = "";
+            String str2 = "";
 
             // Apply self's durationMod
             // Sometimes this is wrong about the BuffType, but it shouldn't really matter since it's only applied if it's correct
             // Unless some Passive has a weird interaction with it. Just keep it in mind
             // todo fix just in case
-            int turnsMod = turns + self.getDurationModBuffTypeDealt(getStageBuffType(target.getStage(stageType) + stacks)) +
-                target.getDurationModBuffTypeTaken(getStageBuffType(target.getStage(stageType) + stacks));
+            int turnsMod = turns + self.getDurationModBuffTypeDealt(getStageBuffType(target.getStage(stageType) + stacks)) + target.getDurationModBuffTypeTaken(getStageBuffType(target.getStage(stageType) + stacks));
 
             notifyOnChangeStage(self, target, stageType, turnsMod, stacks);
 
@@ -86,23 +88,28 @@ public class ChangeStage implements SkillEffect {
             Unit unit = (giveToSelf) ? self : target;
 
             if (stageNew != stageOld) {
+                String signOld = (stageOld > 0) ? "+" : "";
+                String signNew = (stageNew > 0) ? "+" : "";
+
+                str = formatName(unit.getUnitType().getName(), unit.getPos()) + " " + c_buff + stageType.getName() + "[WHITE] " + lang.get("stage") + " " + getColor(stageOld) + signOld + stageOld + "[WHITE] → " + getColor(stageNew) + signNew + stageNew;
+                str2 = getStageStatString(unit, stageType, stageNew);
+
                 unit.setStage(stageType, stageNew);
-                str = formatName(unit.getUnitType().getName(), unit.getPos()) + " " + c_buff + stageType.getName() + "[WHITE] " + lang.get("stage") + " " + getColor(stageOld) + stageOld + "[WHITE] → " + getColor(stageNew) + stageNew;
             }
 
-            if ((stageOld >= 0 && stacks >= 0) || (stageOld <= 0 && stacks <= 0)) { // Refresh turns
+            // Refresh turns
+            if ((stageOld >= 0 && stacks >= 0) || (stageOld <= 0 && stacks <= 0)) {
                 int turnsOld = unit.getStageTurns(stageType);
                 if (turnsMod > turnsOld) {
                     unit.setStageTurns(stageType, turnsMod);
                     if (stageNew != stageOld)
-                        msg.add(str + "[WHITE], " + lang.get("turns") + " " + c_num + turnsOld + "[WHITE] → " + c_num + turnsMod);
+                        msg.add(str + "[WHITE], " + lang.get("turns") + " " + c_num + turnsOld + "[WHITE] → " + c_num + turnsMod + str2);
                     else
                         msg.add(formatName(unit.getUnitType().getName(), unit.getPos()) + " " + c_buff + stageType.getName() + "[WHITE] " + lang.get("stage") + " " + lang.get("turns") + " " + c_num + turnsOld + "[WHITE] → " + c_num + turnsMod);
-                }
-            } else msg.add(str);
+                } else if (stageNew != stageOld) msg.add(str + str2);
+            } else if (stageNew != stageOld) msg.add(str + str2);
 
-            appendAllToLog(msg);
-
+            if(!msg.isEmpty()) appendToLog(msg);
         }
 
         return ResultType.SUCCESS;

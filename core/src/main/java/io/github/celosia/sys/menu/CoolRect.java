@@ -2,18 +2,21 @@ package io.github.celosia.sys.menu;
 
 import com.badlogic.gdx.graphics.Color;
 
+// Warning: bad code that I don't care enough to fix as long as it works
 public class CoolRect {
 
+    // Why not just store the actual corners instead of weird in between points? Don't think about it too hard
     private int l; // Left
     private int t; // Top
     private int r; // Right
     private int b; // Bottom
+
     private float prog; // Animation progress
     private int dir; // 1 = unfolding; -1 = collapsing
     private Color color; // Core color
     private boolean hasOutline; // Whether to draw an outline
     private float speed; // Speed multiplier. 1f = animation completes in 1s. Speed is doubled when closing
-    private int angL;
+    private int angL; // Not actually an angle. Don't worry about it
     private int angR;
     private int prio; // Rendering order priority. Bigger number = higher layer
 

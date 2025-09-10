@@ -14,7 +14,7 @@ import static io.github.celosia.Main.*;
 
 public class TriLib {
 
-    // Draws cool rectangles with a 15-degree angle rising skew and an optional outline
+    // Draws cool rectangles with optionally slanted sides and an optional outline
     public static void drawCoolRects(int prio) {
         polygonSpriteBatch.begin();
 

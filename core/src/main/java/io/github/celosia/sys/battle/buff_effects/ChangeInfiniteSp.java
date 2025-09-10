@@ -4,8 +4,7 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleController.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.c_stat;
-import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.*;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeInfiniteSp implements BuffEffect {
@@ -21,7 +20,7 @@ public class ChangeInfiniteSp implements BuffEffect {
         int infiniteSpOld = self.getInfiniteSp();
         int infiniteSpNew = infiniteSpOld + (change * stacks);
         self.setInfiniteSp(infiniteSpNew);
-        if(infiniteSpNew > 0 && self.getShield() == 0 && self.getDefend() == 0) appendToLog(formatName(self.getUnitType().getName(), self.getPos(), false) + " " + lang.get("log.now_has") + " " + c_stat + lang.get("log.infinite_sp"));
+        if(infiniteSpNew > 0 && self.getShield() == 0 && self.getDefend() == 0) appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + lang.get("sp") + " " + c_sp + String.format("%,d", self.getSp()) + "[WHITE] → " + c_sp + "∞");
     }
 
     @Override
@@ -29,6 +28,6 @@ public class ChangeInfiniteSp implements BuffEffect {
         int infiniteSpOld = self.getInfiniteSp();
         int infiniteSpNew = infiniteSpOld - (change * stacks);
         self.setInfiniteSp(infiniteSpNew);
-        if(infiniteSpNew <= 0 && self.getShield() == 0 && self.getDefend() == 0) appendToLog(formatName(self.getUnitType().getName(), self.getPos(), false) + " " + lang.get("log.no_longer_has") + " " + c_stat + lang.get("log.infinite_sp"));
+        if(infiniteSpNew <= 0 && self.getShield() == 0 && self.getDefend() == 0) appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + lang.get("sp") + c_sp + " ∞" + "[WHITE] → " + c_sp + String.format("%,d", self.getSp()));
     }
 }

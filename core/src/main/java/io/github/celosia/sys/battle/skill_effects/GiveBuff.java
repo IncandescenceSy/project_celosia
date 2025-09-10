@@ -5,7 +5,7 @@ import io.github.celosia.sys.battle.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.celosia.sys.battle.BattleController.appendAllToLog;
+import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnGiveBuff;
 import static io.github.celosia.sys.menu.TextLib.*;
 import static io.github.celosia.sys.settings.Lang.lang;
@@ -108,11 +108,11 @@ public class GiveBuff implements SkillEffect {
                     else msg.add(formatName(unit.getUnitType().getName(), unit.getPos()) + " " + c_buff + buff.getName() + " " + lang.get("stacks") + " " + c_num + stacksOld + "[WHITE] → " + c_num + stacksNew);
                 }
 
-                appendAllToLog(msg);
+                appendToLog(msg);
 
                 // Apply newly added stacks
                 int stacksAdded = stacksNew - stacksOld;
-                for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) buffEffect.onGive(unit, stacksAdded);
+                if(stacksAdded > 0) for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) buffEffect.onGive(unit, stacksAdded);
 
             } else { // Doesn't have buff
                 msg.add(formatName(unit.getUnitType().getName(), unit.getPos(), false) + " " + lang.get("log.gains") + " " + c_buff + buff.getName() + "[WHITE] " + lang.get("log.with") + " " + ((buff.getMaxStacks() > 1) ?
@@ -120,7 +120,7 @@ public class GiveBuff implements SkillEffect {
                 unit.addBuffInstance(new BuffInstance(buff, turnsMod, stacks));
                 buffInstance = buffInstances.getLast();
 
-                appendAllToLog(msg);
+                appendToLog(msg);
 
                 // Apply
                 BuffEffect[] buffEffects = buffInstance.getBuff().getBuffEffects();
