@@ -5,7 +5,10 @@ import io.github.celosia.sys.battle.Mult;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleController.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.*;
+import static io.github.celosia.sys.menu.TextLib.c_stat;
+import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.getMultChangeColor;
+import static io.github.celosia.sys.menu.TextLib.getMultColor;
 
 public class ChangeMult implements BuffEffect {
 

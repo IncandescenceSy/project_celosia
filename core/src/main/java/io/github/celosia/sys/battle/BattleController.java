@@ -11,21 +11,46 @@ import com.github.tommyettinger.textra.TextraLabel;
 import com.github.tommyettinger.textra.TypingLabel;
 import io.github.celosia.sys.Debug;
 import io.github.celosia.sys.World;
-import io.github.celosia.sys.menu.*;
+import io.github.celosia.sys.menu.CoolRects;
 import io.github.celosia.sys.menu.Fonts.FontType;
+import io.github.celosia.sys.menu.InputLib;
+import io.github.celosia.sys.menu.MenuLib;
 import io.github.celosia.sys.menu.MenuLib.MenuType;
+import io.github.celosia.sys.menu.Path;
+import io.github.celosia.sys.menu.Paths;
 import io.github.celosia.sys.settings.Keybind;
 import io.github.celosia.sys.settings.Settings;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static io.github.celosia.Main.*;
+import static io.github.celosia.Main.coolRects;
+import static io.github.celosia.Main.createPopup;
+import static io.github.celosia.Main.menuList;
+import static io.github.celosia.Main.paths;
+import static io.github.celosia.Main.stage2;
+import static io.github.celosia.Main.stage3;
 import static io.github.celosia.sys.battle.AffLib.getAffMultSpCost;
 import static io.github.celosia.sys.battle.BattleLib.getStartingIndex;
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnUseSkill;
 import static io.github.celosia.sys.battle.PosLib.getSide;
 import static io.github.celosia.sys.menu.MenuLib.setTextIfChanged;
-import static io.github.celosia.sys.menu.TextLib.*;
+import static io.github.celosia.sys.menu.TextLib.c_ally;
+import static io.github.celosia.sys.menu.TextLib.c_ally_l;
+import static io.github.celosia.sys.menu.TextLib.c_bloom;
+import static io.github.celosia.sys.menu.TextLib.c_buff;
+import static io.github.celosia.sys.menu.TextLib.c_opp;
+import static io.github.celosia.sys.menu.TextLib.c_opp_l;
+import static io.github.celosia.sys.menu.TextLib.c_passive;
+import static io.github.celosia.sys.menu.TextLib.c_skill;
+import static io.github.celosia.sys.menu.TextLib.c_sp;
+import static io.github.celosia.sys.menu.TextLib.c_stat;
+import static io.github.celosia.sys.menu.TextLib.c_turn;
+import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.getColor;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class BattleController {
@@ -596,7 +621,7 @@ public class BattleController {
             float pos = (float) logScroll / Math.max(logText.size() - 48, 0);
 
             // Start (bottom)
-            float sx = (World.WIDTH_4 + 350) + (range * pos) / 6;
+            float sx = (World.WIDTH_4 + 400) + (range * pos) / 6;
             float sy = 5 + (range * pos);
 
             // End (top)

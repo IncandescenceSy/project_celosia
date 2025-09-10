@@ -10,7 +10,10 @@ import io.github.celosia.sys.settings.Settings;
 import space.earlygrey.shapedrawer.JoinType;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
-import static io.github.celosia.Main.*;
+import static io.github.celosia.Main.coolRects;
+import static io.github.celosia.Main.drawer;
+import static io.github.celosia.Main.paths;
+import static io.github.celosia.Main.polygonSpriteBatch;
 
 public class TriLib {
 

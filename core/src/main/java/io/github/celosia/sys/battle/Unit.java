@@ -6,7 +6,14 @@ import java.util.List;
 import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.battle.BattleLib.STAT_FACTOR;
 import static io.github.celosia.sys.battle.LogLib.getStageStatString;
-import static io.github.celosia.sys.menu.TextLib.*;
+import static io.github.celosia.sys.menu.TextLib.c_buff;
+import static io.github.celosia.sys.menu.TextLib.c_hp;
+import static io.github.celosia.sys.menu.TextLib.c_neg;
+import static io.github.celosia.sys.menu.TextLib.c_num;
+import static io.github.celosia.sys.menu.TextLib.c_shield;
+import static io.github.celosia.sys.menu.TextLib.c_stat;
+import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.getColor;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 // Species and current stats
@@ -773,7 +780,7 @@ public class Unit {
     }
 
     public int getDisplayShield() {
-        return shield / 10000;
+        return shield / STAT_FACTOR;
     }
 
     public void setShieldTurns(int shieldTurns) {
@@ -793,7 +800,7 @@ public class Unit {
     }
 
     public int getDisplayDefend() {
-        return defend / 10000;
+        return defend / STAT_FACTOR;
     }
 
     public void setExtraActions(int extraActions) {
@@ -895,7 +902,7 @@ public class Unit {
     }
 
     public boolean isProtected() {
-        return multDmgTaken <= -50_000;
+        return multDmgTaken <= -5_000_000;
     }
 
     public boolean isWeakTo(Element element) {

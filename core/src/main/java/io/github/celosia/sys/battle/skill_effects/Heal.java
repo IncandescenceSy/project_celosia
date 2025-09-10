@@ -10,7 +10,12 @@ import java.util.List;
 import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnGiveShield;
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnHeal;
-import static io.github.celosia.sys.menu.TextLib.*;
+import static io.github.celosia.sys.menu.TextLib.c_buff;
+import static io.github.celosia.sys.menu.TextLib.c_hp;
+import static io.github.celosia.sys.menu.TextLib.c_num;
+import static io.github.celosia.sys.menu.TextLib.c_shield;
+import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.getColor;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class Heal implements SkillEffect {

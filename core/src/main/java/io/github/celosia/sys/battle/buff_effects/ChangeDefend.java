@@ -4,7 +4,12 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleController.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.*;
+import static io.github.celosia.sys.menu.TextLib.c_buff;
+import static io.github.celosia.sys.menu.TextLib.c_neg;
+import static io.github.celosia.sys.menu.TextLib.c_pos;
+import static io.github.celosia.sys.menu.TextLib.c_shield;
+import static io.github.celosia.sys.menu.TextLib.c_stat;
+import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeDefend implements BuffEffect {

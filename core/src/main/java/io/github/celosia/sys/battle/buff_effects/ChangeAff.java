@@ -5,7 +5,9 @@ import io.github.celosia.sys.battle.Element;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleController.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.*;
+import static io.github.celosia.sys.menu.TextLib.c_stat;
+import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.getColor;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeAff implements BuffEffect {

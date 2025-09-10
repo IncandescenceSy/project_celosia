@@ -6,12 +6,16 @@ import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.battle.Calcs.getDisplayStatWithStage;
-import static io.github.celosia.sys.menu.TextLib.*;
+import static io.github.celosia.sys.menu.TextLib.c_num;
+import static io.github.celosia.sys.menu.TextLib.c_stat;
+import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.getColor;
+import static io.github.celosia.sys.menu.TextLib.getStatColor;
 
 public class ChangeStat implements BuffEffect {
 
     private final Stat stat;
-    private final int change; // Change in hundredths of a %; 10,000 = +100%
+    private final int change; // Change in hundredths of a %; 10000 = +100%
 
     public ChangeStat(Stat stat, int change) {
         this.stat = stat;

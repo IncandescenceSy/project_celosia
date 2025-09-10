@@ -2,7 +2,9 @@ package io.github.celosia.sys.settings;
 
 public class Settings {
     // Gameplay settings
-    // Battle speed relative to 100%
+
+    // Speed of battle animations
+    // Duration of in-battle pauses relative to 100% (1 = 100%, 0.1 = 10%)
     public static float battleSpeed = 1f;
 
     // Whether to display a warning prompt before selecting an invalid move
@@ -21,6 +23,7 @@ public class Settings {
 
 
     // Display settings
+
     // Resolution relative to 2560x1440
     // Todo pull resolution options from easy-to-modify txt file
     public static float scale = 1f;
@@ -41,7 +44,9 @@ public class Settings {
     // Whether to show an FPS counter
     public static boolean showFpsCounter = false;
 
+
     // Audio settings
+
     // Music volume (0-1)
     public static float volMus = 0.75f;
 

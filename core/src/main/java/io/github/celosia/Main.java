@@ -21,10 +21,18 @@ import io.github.celosia.sys.Debug;
 import io.github.celosia.sys.InputHandler;
 import io.github.celosia.sys.World;
 import io.github.celosia.sys.battle.BattleController;
-import io.github.celosia.sys.menu.*;
+import io.github.celosia.sys.menu.CoolRect;
+import io.github.celosia.sys.menu.CoolRects;
+import io.github.celosia.sys.menu.Fonts;
 import io.github.celosia.sys.menu.Fonts.FontType;
+import io.github.celosia.sys.menu.InputLib;
+import io.github.celosia.sys.menu.LabelStyles;
+import io.github.celosia.sys.menu.MenuLib;
 import io.github.celosia.sys.menu.MenuLib.MenuOptType;
 import io.github.celosia.sys.menu.MenuLib.MenuType;
+import io.github.celosia.sys.menu.Path;
+import io.github.celosia.sys.menu.Paths;
+import io.github.celosia.sys.menu.TextLib;
 import io.github.celosia.sys.settings.Keybind;
 import io.github.celosia.sys.settings.Lang;
 import io.github.celosia.sys.settings.Settings;
@@ -91,7 +99,7 @@ public class Main extends ApplicationAdapter {
         coolRects.add(CoolRects.MENU_MAIN.ordinal(), new CoolRect.Builder(World.WIDTH - 700, 230 + 475 + 5, World.WIDTH - 175 - 92, 230 - 75 + 25).dir(1).hasOutline().prio(2).build()); // Main menu bg
         coolRects.add(CoolRects.CURSOR_1.ordinal(), new CoolRect.Builder(0, 0, 0, 0).dir(1).color(Color.PURPLE).prio(2).build()); // Menu cursor. X pos comes from 450 (y diff) / 6 (15-degree angle)
         coolRects.add(CoolRects.CURSOR_2.ordinal(), new CoolRect.Builder(0, 0, 0, 0).color(Color.PURPLE).prio(2).build()); // Disappearing menu cursor
-        coolRects.add(CoolRects.COVER_LEFT.ordinal(), new CoolRect.Builder(5, World.HEIGHT + 100, World.WIDTH_4 + 350, -100).hasOutline().speed(4).angL(0).prio(3).build()); // Triangle that covers most of the left half of the screen
+        coolRects.add(CoolRects.COVER_LEFT.ordinal(), new CoolRect.Builder(5, World.HEIGHT + 100, World.WIDTH_4 + 400, -100).hasOutline().speed(4).angL(0).prio(3).build()); // Triangle that covers most of the left half of the screen
         coolRects.add(CoolRects.POPUP_CENTERED.ordinal(), new CoolRect.Builder(World.WIDTH_2 - 440, World.HEIGHT_2 - 200, World.WIDTH_2 + 440, World.HEIGHT_2 + 200).hasOutline().prio(3).build()); // Centered popup bg
 
         // Paths
@@ -124,10 +132,13 @@ public class Main extends ApplicationAdapter {
         // Debug
         // Make sure the log can interpret special characters
         System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
+
         Debug.enableDebugHotkeys = true;
         Debug.showDebugInfo = true;
         Debug.alwaysUseNintendoLayout = true;
         //Debug.selectOpponentMoves = true;
+        //Debug.displayRealStats = true;
+
         Settings.showFpsCounter = true;
         Settings.battleSpeed = 0.1f;
 

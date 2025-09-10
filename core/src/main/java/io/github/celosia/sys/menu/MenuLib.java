@@ -55,9 +55,9 @@ public class MenuLib {
 
     // Check for scrolling the battle log
     public static int checkLogScroll(int logScroll, int lines, int off) {
-        if(InputLib.checkInput(true, 0.0025f, Keybind.UP)) { // Up
+        if(InputLib.checkInput(true, 0.005f, Keybind.UP)) { // Up
             return Math.min(++logScroll, Math.max(lines - off, 0));
-        } else if(InputLib.checkInput(true, 0.0025f, Keybind.DOWN)) { // Down
+        } else if(InputLib.checkInput(true, 0.005f, Keybind.DOWN)) { // Down
             return Math.max(--logScroll, 0);
         } else if(InputLib.checkInput(false, Keybind.PAGE_L2)) { // To top
             return Math.max(lines - off, 0);

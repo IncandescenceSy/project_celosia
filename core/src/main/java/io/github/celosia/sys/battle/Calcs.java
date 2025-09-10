@@ -1,6 +1,10 @@
 package io.github.celosia.sys.battle;
 
-import static io.github.celosia.sys.menu.TextLib.*;
+import static io.github.celosia.sys.menu.TextLib.c_bloom;
+import static io.github.celosia.sys.menu.TextLib.c_sp;
+import static io.github.celosia.sys.menu.TextLib.c_stat;
+import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.getColor;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class Calcs {

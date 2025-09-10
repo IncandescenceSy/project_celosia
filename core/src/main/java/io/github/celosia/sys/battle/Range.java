@@ -3,7 +3,9 @@ package io.github.celosia.sys.battle;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.celosia.sys.battle.PosLib.*;
+import static io.github.celosia.sys.battle.PosLib.getAcross;
+import static io.github.celosia.sys.battle.PosLib.getTeamWithout;
+import static io.github.celosia.sys.battle.PosLib.getUpDown;
 
 // Range that skills can have
 public class Range {

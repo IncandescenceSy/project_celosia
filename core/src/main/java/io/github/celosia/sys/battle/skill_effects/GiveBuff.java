@@ -1,13 +1,20 @@
 package io.github.celosia.sys.battle.skill_effects;
 
-import io.github.celosia.sys.battle.*;
+import io.github.celosia.sys.battle.Buff;
+import io.github.celosia.sys.battle.BuffEffect;
+import io.github.celosia.sys.battle.BuffInstance;
+import io.github.celosia.sys.battle.ResultType;
+import io.github.celosia.sys.battle.SkillEffect;
+import io.github.celosia.sys.battle.Unit;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnGiveBuff;
-import static io.github.celosia.sys.menu.TextLib.*;
+import static io.github.celosia.sys.menu.TextLib.c_buff;
+import static io.github.celosia.sys.menu.TextLib.c_num;
+import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class GiveBuff implements SkillEffect {

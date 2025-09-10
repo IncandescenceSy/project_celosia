@@ -1,6 +1,11 @@
 package io.github.celosia.sys.battle;
 
-import io.github.celosia.sys.battle.skill_effects.*;
+import io.github.celosia.sys.battle.skill_effects.ChangeBloom;
+import io.github.celosia.sys.battle.skill_effects.ChangeSp;
+import io.github.celosia.sys.battle.skill_effects.ChangeStage;
+import io.github.celosia.sys.battle.skill_effects.Damage;
+import io.github.celosia.sys.battle.skill_effects.GiveBuff;
+import io.github.celosia.sys.battle.skill_effects.Heal;
 
 import static io.github.celosia.sys.settings.Lang.lang;
 

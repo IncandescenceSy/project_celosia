@@ -1,6 +1,9 @@
 package io.github.celosia.sys.battle;
 
-import static io.github.celosia.sys.menu.TextLib.*;
+import static io.github.celosia.sys.menu.TextLib.c_num;
+import static io.github.celosia.sys.menu.TextLib.c_stat;
+import static io.github.celosia.sys.menu.TextLib.getColor;
+import static io.github.celosia.sys.menu.TextLib.getStatColor;
 
 public class LogLib {
     public static String getStageStatString(Unit unit, StageType stageType, int stageNew) {

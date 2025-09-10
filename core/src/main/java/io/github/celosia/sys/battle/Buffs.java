@@ -1,6 +1,11 @@
 package io.github.celosia.sys.battle;
 
-import io.github.celosia.sys.battle.buff_effects.*;
+import io.github.celosia.sys.battle.buff_effects.ChangeDefend;
+import io.github.celosia.sys.battle.buff_effects.ChangeEffectBlock;
+import io.github.celosia.sys.battle.buff_effects.ChangeExtraActions;
+import io.github.celosia.sys.battle.buff_effects.ChangeHp;
+import io.github.celosia.sys.battle.buff_effects.ChangeMult;
+import io.github.celosia.sys.battle.buff_effects.ChangeStat;
 
 import static io.github.celosia.sys.settings.Lang.lang;
 
