@@ -10,12 +10,12 @@ import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.menu.TextLib.getColor;
 import static io.github.celosia.sys.settings.Lang.lang;
 
-public class ChangeDurationModBuffTypeDealt implements BuffEffect {
+public class ChangeModDurationBuffTypeDealt implements BuffEffect {
 
 	private final BuffType buffType; // Type of buff to apply to
 	private final int change; // Amount to change by
 
-	public ChangeDurationModBuffTypeDealt(BuffType buffType, int change) {
+	public ChangeModDurationBuffTypeDealt(BuffType buffType, int change) {
 		this.buffType = buffType;
 		this.change = change;
 	}
@@ -27,8 +27,8 @@ public class ChangeDurationModBuffTypeDealt implements BuffEffect {
 		self.setDurationModBuffTypeDealt(buffType, durNew);
 		appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat
 				+ ((buffType == BuffType.BUFF)
-						? lang.get("duration_mod_buff_dealt")
-						: lang.get("duration_mod_debuff_dealt"))
+						? lang.get("mod_duration_buff_dealt")
+						: lang.get("mod_duration_debuff_dealt"))
 				+ getColor(durOld) + ((durOld > 0) ? " +" : " ") + durOld + "[WHITE] → " + getColor(durNew)
 				+ ((durNew > 0) ? "+" : "") + durNew);
 	}
@@ -40,8 +40,8 @@ public class ChangeDurationModBuffTypeDealt implements BuffEffect {
 		self.setDurationModBuffTypeDealt(buffType, durNew);
 		appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat
 				+ ((buffType == BuffType.BUFF)
-						? lang.get("duration_mod_buff_dealt")
-						: lang.get("duration_mod_debuff_dealt"))
+						? lang.get("mod_duration_buff_dealt")
+						: lang.get("mod_duration_debuff_dealt"))
 				+ getColor(durOld) + ((durOld > 0) ? " +" : " ") + durOld + "[WHITE] → " + getColor(durNew)
 				+ ((durNew > 0) ? "+" : "") + durNew);
 	}

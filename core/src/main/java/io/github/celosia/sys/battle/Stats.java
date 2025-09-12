@@ -1,17 +1,18 @@
 package io.github.celosia.sys.battle;
 
-import static io.github.celosia.sys.battle.BattleLib.STAT_FACTOR;
+import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_HIDDEN;
+import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_VISIBLE;
 
 // A set of stats
 public class Stats {
 
 	private int hp; // Health
-	private int str; // Strength
-	private int mag; // Magic
-	private int fth; // Faith
-	private int amr; // Armor
-	private int res; // Resilience
-	private int agi; // Agility
+	private int str; // Strength (physical attack)
+	private int mag; // Magic (magical attack)
+	private int fth; // Faith (healing/shielding power)
+	private int amr; // Armor (physical defense)
+	private int res; // Resilience (magical defense)
+	private int agi; // Agility (turn order)
 
 	public Stats(int hp, int str, int mag, int fth, int amr, int res, int agi) {
 		this.hp = hp;
@@ -42,7 +43,7 @@ public class Stats {
 	}
 
 	public int getDisplayHp() {
-		return hp / STAT_FACTOR;
+		return hp / STAT_MULT_HIDDEN;
 	}
 
 	public void setStr(int str) {
@@ -54,7 +55,7 @@ public class Stats {
 	}
 
 	public int getDisplayStr() {
-		return str / STAT_FACTOR;
+		return str / STAT_MULT_HIDDEN;
 	}
 
 	public void setMag(int mag) {
@@ -66,7 +67,7 @@ public class Stats {
 	}
 
 	public int getDisplayMag() {
-		return mag / STAT_FACTOR;
+		return mag / STAT_MULT_HIDDEN;
 	}
 
 	public void setFth(int fth) {
@@ -78,7 +79,7 @@ public class Stats {
 	}
 
 	public int getDisplayFth() {
-		return fth / STAT_FACTOR;
+		return fth / STAT_MULT_HIDDEN;
 	}
 
 	public void setAmr(int amr) {
@@ -90,7 +91,7 @@ public class Stats {
 	}
 
 	public int getDisplayAmr() {
-		return amr / STAT_FACTOR;
+		return amr / STAT_MULT_HIDDEN;
 	}
 
 	public void setRes(int res) {
@@ -102,7 +103,7 @@ public class Stats {
 	}
 
 	public int getDisplayRes() {
-		return res / STAT_FACTOR;
+		return res / STAT_MULT_HIDDEN;
 	}
 
 	public void setAgi(int agi) {
@@ -114,7 +115,7 @@ public class Stats {
 	}
 
 	public int getDisplayAgi() {
-		return agi / STAT_FACTOR;
+		return agi / STAT_MULT_HIDDEN;
 	}
 
 	public void setStat(Stat stat, int set) {
@@ -153,19 +154,19 @@ public class Stats {
 
 	public int getDisplayStat(Stat stat) {
 		return switch (stat) {
-			case STR -> str / STAT_FACTOR;
-			case MAG -> mag / STAT_FACTOR;
-			case FTH -> fth / STAT_FACTOR;
-			case AMR -> amr / STAT_FACTOR;
-			case RES -> res / STAT_FACTOR;
-			case AGI -> agi / STAT_FACTOR;
+			case STR -> str / STAT_MULT_HIDDEN;
+			case MAG -> mag / STAT_MULT_HIDDEN;
+			case FTH -> fth / STAT_MULT_HIDDEN;
+			case AMR -> amr / STAT_MULT_HIDDEN;
+			case RES -> res / STAT_MULT_HIDDEN;
+			case AGI -> agi / STAT_MULT_HIDDEN;
 		};
 	}
 
 	public Stats getRealStats(int lvl) {
-		return new Stats((hp + (hp / 2) * lvl) * 10 * STAT_FACTOR, (str + (str / 2) * lvl) * 10 * STAT_FACTOR,
-				(mag + (mag / 2) * lvl) * 10 * STAT_FACTOR, (fth + (fth / 2) * lvl) * 10 * STAT_FACTOR,
-				(amr + (amr / 2) * lvl) * 10 * STAT_FACTOR, (res + (res / 2) * lvl) * 10 * STAT_FACTOR,
-				(agi + (agi / 2) * lvl) * 10 * STAT_FACTOR);
+		return new Stats((hp + (hp / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN, (str + (str / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN,
+				(mag + (mag / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN, (fth + (fth / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN,
+				(amr + (amr / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN, (res + (res / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN,
+				(agi + (agi / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN);
 	}
 }

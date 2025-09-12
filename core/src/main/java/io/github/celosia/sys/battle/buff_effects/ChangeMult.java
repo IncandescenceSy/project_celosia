@@ -13,7 +13,7 @@ import static io.github.celosia.sys.menu.TextLib.getMultColor;
 public class ChangeMult implements BuffEffect {
 
 	private final Mult mult;
-	private final int change; // Amount to add in 100ths of a % (10000 = +100%)
+	private final int change; // Amount to add in 10ths of a % (1000 = +100%)
 
 	public ChangeMult(Mult mult, int change) {
 		this.mult = mult;
@@ -25,10 +25,10 @@ public class ChangeMult implements BuffEffect {
 		int multOld = self.getMult(mult);
 		int changeFull = change * stacks;
 		self.setMult(mult, multOld + changeFull);
-		int changeDisplay = (Math.max(multOld + changeFull, 1000) - Math.max(multOld, 1000)) / 100;
+		int changeDisplay = (Math.max(multOld + changeFull, 100) - Math.max(multOld, 100)) / 10;
 		appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + mult.getName() + " "
-				+ getMultColor(multOld, mult) + (Math.max(multOld, 1000) / 100) + "%[WHITE] → "
-				+ getMultColor(multOld + changeFull, mult) + (Math.max(multOld + changeFull, 1000) / 100) + "% [WHITE]("
+				+ getMultColor(multOld, mult) + (Math.max(multOld, 100) / 10) + "%[WHITE] → "
+				+ getMultColor(multOld + changeFull, mult) + (Math.max(multOld + changeFull, 100) / 10) + "% [WHITE]("
 				+ getMultChangeColor(changeFull, mult) + ((changeDisplay > 0) ? "+" : "") + changeDisplay
 				+ "%[WHITE])");
 	}
@@ -38,10 +38,10 @@ public class ChangeMult implements BuffEffect {
 		int multOld = self.getMult(mult);
 		int changeFull = (change * stacks) * -1;
 		self.setMult(mult, multOld + changeFull);
-		int changeDisplay = (Math.max(multOld + changeFull, 1000) - Math.max(multOld, 1000)) / 100;
+		int changeDisplay = (Math.max(multOld + changeFull, 100) - Math.max(multOld, 100)) / 10;
 		appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + mult.getName() + " "
-				+ getMultColor(multOld, mult) + (Math.max(multOld, 1000) / 100) + "%[WHITE] → "
-				+ getMultColor(multOld + changeFull, mult) + (Math.max(multOld + changeFull, 1000) / 100) + "% [WHITE]("
+				+ getMultColor(multOld, mult) + (Math.max(multOld, 100) / 10) + "%[WHITE] → "
+				+ getMultColor(multOld + changeFull, mult) + (Math.max(multOld + changeFull, 100) / 10) + "% [WHITE]("
 				+ getMultChangeColor(changeDisplay, mult) + ((changeDisplay > 0) ? "+" : "") + changeDisplay
 				+ "%[WHITE])");
 	}

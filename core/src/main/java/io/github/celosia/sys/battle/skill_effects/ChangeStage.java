@@ -82,16 +82,18 @@ public class ChangeStage implements SkillEffect {
 			// since it's only applied if it's correct
 			// Unless some Passive has a weird interaction with it. Just keep it in mind
 			// todo fix just in case
+            Unit unit = (giveToSelf) ? self : target;
+
 			int turnsMod = turns
 					+ self.getDurationModBuffTypeDealt(getStageBuffType(target.getStage(stageType) + stacks))
-					+ target.getDurationModBuffTypeTaken(getStageBuffType(target.getStage(stageType) + stacks));
+					+ unit.getDurationModBuffTypeTaken(getStageBuffType(target.getStage(stageType) + stacks));
 
-			notifyOnChangeStage(self, target, stageType, turnsMod, stacks);
+            int stacksMod = stacks + self.getStacksModBuffTypeDealt(getStageBuffType(unit.getStage(stageType) + stacks)) + unit.getStacksModBuffTypeTaken(getStageBuffType(unit.getStage(stageType) + stacks));
+
+			notifyOnChangeStage(self, target, stageType, turnsMod, stacksMod);
 
 			int stageOld = target.getStage(stageType);
-			int stageNew = Math.clamp(stageOld + stacks, -5, 5);
-
-			Unit unit = (giveToSelf) ? self : target;
+			int stageNew = Math.clamp(stageOld + stacksMod, -5, 5);
 
 			if (stageNew != stageOld) {
 				String signOld = (stageOld > 0) ? "+" : "";
@@ -106,7 +108,7 @@ public class ChangeStage implements SkillEffect {
 			}
 
 			// Refresh turns
-			if ((stageOld >= 0 && stacks >= 0) || (stageOld <= 0 && stacks <= 0)) {
+			if ((stageOld >= 0 && stacksMod >= 0) || (stageOld <= 0 && stacksMod <= 0)) {
 				int turnsOld = unit.getStageTurns(stageType);
 				if (turnsMod > turnsOld) {
 					unit.setStageTurns(stageType, turnsMod);

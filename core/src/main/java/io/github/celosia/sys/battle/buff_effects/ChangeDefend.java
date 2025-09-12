@@ -14,9 +14,9 @@ import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeDefend implements BuffEffect {
 
-	private final double change; // Defend to add in % of max HP
+	private final int change; // Defend to add in tenths of a % of max HP (1000 = +100%)
 
-	public ChangeDefend(double change) {
+	public ChangeDefend(int change) {
 		this.change = change;
 	}
 
@@ -25,9 +25,9 @@ public class ChangeDefend implements BuffEffect {
 		int hpMax = self.getStatsDefault().getHp();
 		// Add defend (shield + defend cannot exceed max HP)
 		int defendOld = self.getDefend();
-		int defendNew = (self.getShield() + defendOld + ((change * hpMax) * stacks) > hpMax)
+		int defendNew = (int) ((self.getShield() + defendOld + (((change / 1000d) * hpMax) * stacks) > hpMax)
 				? hpMax - self.getShield()
-				: (int) ((change * hpMax) * stacks);
+				: ((change / 1000d) * hpMax) * stacks);
 
 		int defendOldDisp = self.getDisplayDefend();
 		self.setDefend(defendNew);

@@ -87,17 +87,17 @@ public class Skills {
 
 	// Heals
 	static Skill HEAL = new Skill.Builder(lang.get("skill.heal"), lang.get("skill.heal.desc"), Element.VIS,
-			Ranges.OTHER_1R_OR_SELF, 80).role(SkillRole.HEAL).effect(new Heal(210)).build();
+			Ranges.OTHER_1R_OR_SELF, 80).role(SkillRole.HEAL).effect(new Heal(40)).build();
 	static Skill AMBROSIA = new Skill.Builder(lang.get("skill.ambrosia"), lang.get("skill.ambrosia.desc"), Element.VIS,
-			Ranges.OTHER_1R_OR_SELF, 125).role(SkillRole.HEAL).effect(new Heal(300)).build();
+			Ranges.OTHER_1R_OR_SELF, 125).role(SkillRole.HEAL).effect(new Heal(60)).build();
 	static Skill HEAL_GROUP = new Skill.Builder(lang.get("skill.heal_group"), lang.get("skill.heal_group.desc"),
-			Element.VIS, Ranges.COLUMN_OF_3_1R, 260).role(SkillRole.HEAL).effect(new Heal(210)).build();
+			Element.VIS, Ranges.COLUMN_OF_3_1R, 260).role(SkillRole.HEAL).effect(new Heal(40)).build();
 
 	// Shields
 	static Skill SHIELD = new Skill.Builder(lang.get("skill.shield"), lang.get("skill.shield.desc"), Element.VIS,
-			Ranges.OTHER_1R_OR_SELF, 140).role(SkillRole.SHIELD).effect(new Heal(300, 5)).build();
+			Ranges.OTHER_1R_OR_SELF, 140).role(SkillRole.SHIELD).effect(new Heal(60, 5)).build();
 	static Skill SHIELD_GROUP = new Skill.Builder(lang.get("skill.shield_group"), lang.get("skill.shield_group.desc"),
-			Element.VIS, Ranges.COLUMN_OF_3_1R, 450).role(SkillRole.SHIELD).effect(new Heal(300, 5)).build();
+			Element.VIS, Ranges.COLUMN_OF_3_1R, 450).role(SkillRole.SHIELD).effect(new Heal(60, 5)).build();
 
 	// Attacks
 	// Ignis

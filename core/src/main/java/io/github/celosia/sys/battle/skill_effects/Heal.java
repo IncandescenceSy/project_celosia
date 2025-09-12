@@ -52,16 +52,14 @@ public class Heal implements SkillEffect {
 			List<String> msg = new ArrayList<>();
 
 			// Heals by pow% of user's Fth
-			int heal = (int) (self.getFthWithStage() * (pow / 100d)
-					* (Math.max(self.getMultHealingDealt(), 1000) / 10000d)
-					* (Math.max(target.getMultHealingTaken(), 1000) / 10000d));
+			int heal = (int) (self.getFthWithStage() * (pow / 100d) * self.getMultWithExpHealingDealt() * target.getMultWithExpHealingTaken());
 
 			// Adds shield (shield + defend cannot exceed max HP)
 			if (shieldTurns > 0) {
 				String str = "";
 
 				// Apply self's durationMod
-				int turnsMod = shieldTurns + self.getDurationModBuffDealt() + target.getDurationModBuffTaken();
+				int turnsMod = shieldTurns + self.getModDurationBuffDealt() + target.getModDurationBuffTaken();
 
 				notifyOnGiveShield(self, target, turnsMod, heal);
 

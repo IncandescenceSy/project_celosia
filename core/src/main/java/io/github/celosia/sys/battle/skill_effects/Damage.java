@@ -10,7 +10,8 @@ import io.github.celosia.sys.battle.Unit;
 import static io.github.celosia.sys.battle.AffLib.getAffMultDmgDealt;
 import static io.github.celosia.sys.battle.AffLib.getAffMultDmgTaken;
 import static io.github.celosia.sys.battle.BattleController.appendToLog;
-import static io.github.celosia.sys.battle.BattleLib.STAT_FACTOR;
+import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_HIDDEN;
+import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_VISIBLE;
 
 public class Damage implements SkillEffect {
 
@@ -98,36 +99,31 @@ public class Damage implements SkillEffect {
 			int affMultDmgDealt;
 			int affMultDmgTaken;
 
-			int multWeakDmgDealt = 10000;
-			int multWeakDmgTaken = 10000;
+            double multWeakDmgDealt = 1;
+            double multWeakDmgTaken = 1;
 
 			if (element == Element.VIS) {
-				affMultDmgDealt = 10000;
-				affMultDmgTaken = 10000;
+				affMultDmgDealt = 1000;
+				affMultDmgTaken = 1000;
 			} else {
 				affMultDmgDealt = getAffMultDmgDealt(self.getAff(element));
 				affMultDmgTaken = getAffMultDmgTaken(target.getAff(element));
 
 				if (target.getAff(element) < 0) {
-					multWeakDmgDealt = Math.max(self.getMultWeakDmgDealt(), 1000);
-					multWeakDmgTaken = Math.max(target.getMultWeakDmgTaken(), 1000);
+					multWeakDmgDealt = self.getMultWithExpWeakDmgDealt();
+					multWeakDmgTaken = target.getMultWithExpWeakDmgTaken();
 				}
 			}
 
-			int multFollowUpDmgDealt = 10000;
-			int multFollowUpDmgTaken = 10000;
+			double multFollowUpDmgDealt = 1;
+            double multFollowUpDmgTaken = 1;
 
 			if (isFollowUp) {
-				multFollowUpDmgDealt = Math.max(self.getMultFollowUpDmgDealt(), 1000);
-				multFollowUpDmgTaken = Math.max(target.getMultFollowUpDmgTaken(), 1000);
+				multFollowUpDmgDealt = self.getMultWithExpFollowUpDmgDealt();
+				multFollowUpDmgTaken = target.getMultWithExpFollowUpDmgTaken();
 			}
 
-			int dmg = STAT_FACTOR * 10 * (int) (((double) atk / def) * pow * (affMultDmgDealt / 10000d)
-					* (affMultDmgTaken / 10000d) * (Math.max(self.getMultDmgDealt(), 1000) / 10000d)
-					* (Math.max(target.getMultDmgTaken(), 1000) / 10000d)
-					* (Math.max(self.getMultElementDmgDealt(element), 1000) / 10000d)
-					* (Math.max(target.getMultElementDmgTaken(element), 1000) / 10000d) * (multWeakDmgDealt / 10000d)
-					* (multWeakDmgTaken / 10000d) * (multFollowUpDmgDealt / 10000d) * (multFollowUpDmgTaken / 10000d));
+			int dmg = STAT_MULT_HIDDEN * STAT_MULT_VISIBLE * (int) (((double) atk / def) * pow * (affMultDmgDealt / 1000d) * (affMultDmgTaken / 1000d) * self.getMultWithExpDmgDealt() * Math.max(target.getMultWithExpDmgTaken(), 0.1) * self.getMultWithExpElementDmgDealt(element) * target.getMultWithExpElementDmgTaken(element) * multWeakDmgDealt * multWeakDmgTaken * multFollowUpDmgDealt * multFollowUpDmgTaken);
 
 			// Deal damage
 			Result result = target.damage(dmg, isPierce);

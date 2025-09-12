@@ -2,7 +2,10 @@ package io.github.celosia.sys.battle;
 
 // Misc stuff for battles
 public class BattleLib {
-	public static final int STAT_FACTOR = 10000;
+    // Basic stats are all multiplied by these numbers
+    // HIDDEN mult multiplies them in secret while displaying unmultiplied to the player
+	public static final int STAT_MULT_HIDDEN = 1;
+    public static final int STAT_MULT_VISIBLE = 100;
 
 	public static BuffType getStageBuffType(int stacks) {
 		return (stacks >= 0) ? BuffType.BUFF : BuffType.DEBUFF;

@@ -11,7 +11,7 @@ import static io.github.celosia.sys.settings.Lang.lang;
 
 // todo protect bosses against %-based damage
 public class ChangeHp implements BuffEffect {
-	private final int change; // Amount to change HP by. If isPercentage, 10000 = +100%
+	private final int change; // Amount to change HP by. If isPercentage, 1000 = +100%
 	private final boolean isImmediate; // If true, happens onGive. If false, happens onTurnEnd
 	private final boolean isPercentage; // If false, uses the raw number of change instead
 	private final boolean isPierce;
@@ -69,18 +69,18 @@ public class ChangeHp implements BuffEffect {
 
 	private String[] calc(Unit self, int stacks) {
 		if (change < 0) { // Damage
-			double multDoTDmgTaken = ((isImmediate) ? 1 : (Math.max(self.getMultDoTDmgTaken(), 1000) / 10000d));
+			double multDoTDmgTaken = ((isImmediate) ? 1 : self.getMultWithExpDoTDmgTaken());
 			int dmg = (isPercentage)
-					? (int) Math.abs(((self.getStatsDefault().getHp() * (change / 10000d)) * stacks)
-							* (Math.max(self.getMultDmgTaken(), 1000) / 10000d) * multDoTDmgTaken)
-					: (int) (change * (Math.max(self.getMultDmgTaken(), 1000) / 10000d) * multDoTDmgTaken);
+					? (int) Math.abs(((self.getStatsDefault().getHp() * (change / 1000d)) * stacks)
+							* self.getMultWithExpDmgTaken() * multDoTDmgTaken)
+					: (int) (change * self.getMultWithExpDmgTaken() * multDoTDmgTaken);
 			Result result = self.damage(dmg, isPierce, false);
 			return result.getMessages().toArray(String[]::new);
 		} else { // Healing
 			int hpOld = self.getStatsCur().getHp();
 			int hpMax = self.getStatsDefault().getHp();
 			int heal = (int) (change * ((isPercentage) ? hpMax : 1) * stacks
-					* (Math.max(self.getMultHealingTaken(), 1000) / 10000d));
+					* self.getMultWithExpHealingTaken());
 			int hpNew = Math.max(hpOld, Math.min(hpOld + heal, hpMax));
 			if (hpNew > hpOld) {
 				self.getStatsCur().setHp(hpNew);

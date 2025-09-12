@@ -15,7 +15,7 @@ import static io.github.celosia.sys.menu.TextLib.getStatColor;
 public class ChangeStat implements BuffEffect {
 
 	private final Stat stat;
-	private final int change; // Change in hundredths of a %; 10000 = +100%
+	private final int change; // Change in tenths of a %; 1000 = +100%
 
 	public ChangeStat(Stat stat, int change) {
 		this.stat = stat;
@@ -26,7 +26,7 @@ public class ChangeStat implements BuffEffect {
 	public void onGive(Unit self, int stacks) {
 		int statDefault = self.getStatsDefault().getStat(stat);
 		int statOld = self.getStatsCur().getStat(stat);
-		int statNew = (int) (statOld + (statDefault * ((long) change * stacks) / 10000));
+		int statNew = (int) (statOld + (statDefault * ((long) change * stacks) / 1000));
 		self.getStatsCur().setStat(stat, statNew);
 
 		int statDefaultDisp = self.getStatsDefault().getDisplayStat(stat);
@@ -47,7 +47,7 @@ public class ChangeStat implements BuffEffect {
 	public void onRemove(Unit self, int stacks) {
 		int statDefault = self.getStatsDefault().getStat(stat);
 		int statOld = self.getStatsCur().getStat(stat);
-		int statNew = (int) (statOld - (statDefault * ((long) change * stacks) / 10000));
+		int statNew = (int) (statOld - (statDefault * ((long) change * stacks) / 1000));
 		self.getStatsCur().setStat(stat, statNew);
 
 		int statDefaultDisp = self.getStatsDefault().getDisplayStat(stat);

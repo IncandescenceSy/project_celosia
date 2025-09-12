@@ -279,7 +279,7 @@ public class BattleController {
 						// Increase SP
 						if (!unit.isInfiniteSp())
 							unit.setSp(Math.min(
-									(int) (unit.getSp() + (100 * (Math.max(unit.getMultSpGain(), 1000) / 10000d))),
+									(int) (unit.getSp() + (100 * unit.getMultWithExpSpGain())),
 									1000));
 
 						// Apply turn end BuffEffects
@@ -358,11 +358,11 @@ public class BattleController {
 						int cost = (self.isInfiniteSp() && !skill.isBloom()) ? 0 : skill.getCost();
 						// Make sure cost doesn't go below 1 unless the skill has a base 0 SP cost
 						int costMod = (cost > 0)
-								? (int) Math.max(cost * (getAffMultSpCost(self.getAff(element)) / 10000d), 1)
+								? (int) Math.max(cost * (getAffMultSpCost(self.getAff(element)) / 1000d), 1)
 								: 0;
 						int change = skill.isBloom()
 								? costMod
-								: (int) (costMod * (Math.max(self.getMultSpUse(), 1000) / 10000d));
+								: (int) (costMod * self.getMultWithExpSpUse());
 						newSp = skill.isBloom() ? team.getBloom() - change : self.getSp() - change;
 
 						StringBuilder builder = new StringBuilder();
@@ -598,10 +598,8 @@ public class BattleController {
 		// Update combatant stat display
 		// todo disambiguation + system to display all status updates
 		for (int i = 0; i < 8; i++) {
-			Unit unit = (i >= 4) ? battle.getOpponentTeam().getUnits()[i - 4] : battle.getPlayerTeam().getUnits()[i]; // todo
-																														// can
-																														// use
-																														// battle.getAllUnits
+			// todo can use battle.getAlUnits
+			Unit unit = (i >= 4) ? battle.getOpponentTeam().getUnits()[i - 4] : battle.getPlayerTeam().getUnits()[i];
 			if (unit != null) {
 				int shield = unit.getDisplayShield() + unit.getDisplayDefend();
 				// todo colors
@@ -629,7 +627,7 @@ public class BattleController {
 						+ String.format("%,d", unit.getStatsCur().getDisplayHp()) + shieldStr + "/"
 						+ String.format("%,d", unit.getStatsDefault().getDisplayHp()) + "\n" + lang.get("sp") + ": "
 						+ spStr +
-						// "\nStr: " + unit.getStrWithStage() + "/" + unit.getStatsDefault().getStr() +
+						 "\nStr: " + unit.getStrWithStage() + "/" + unit.getStatsDefault().getStr() +
 						// "\nMag:" + unit.getMagWithStage() + "/" + unit.getStatsDefault().getMag() +
 						// "\nAmr: " + unit.getAmrWithStage() + "/" + unit.getStatsDefault().getAmr() +
 						// "\nRes: " + unit.getResWithStage() + "/" + unit.getStatsDefault().getRes() +
@@ -662,11 +660,11 @@ public class BattleController {
 							text.append(buffInstance.getBuff().getName());
 							if (buffInstance.getBuff().getMaxStacks() > 1)
 								text.append("x").append(buffInstance.getStacks());
-							if (buffInstance.getTurns() < 1000)
-								text.append("(").append(buffInstance.getTurns()).append(") "); // 1000+ turns =
-																								// infinite; todo place
-																								// infinity symbol in
-																								// place of turn count
+                            // 1000+ turns = infinite
+                            text.append("(");
+							if (buffInstance.getTurns() < 1000) text.append(buffInstance.getTurns());
+							else text.append("∞");
+							text.append(") ");
 						}
 					}
 				}

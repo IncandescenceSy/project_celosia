@@ -88,13 +88,16 @@ public class GiveBuff implements SkillEffect {
 		if (resultPrev.ordinal() >= minResult.ordinal() && (!mainTargetOnly || isMainTarget)) {
 			List<String> msg = new ArrayList<>();
 
+            Unit unit = (giveToSelf) ? self : target;
+
 			// Apply durationMod
 			int turnsMod = turns + self.getDurationModBuffTypeDealt(buff.getBuffType())
-					+ target.getDurationModBuffTypeTaken(buff.getBuffType());
+					+ unit.getDurationModBuffTypeTaken(buff.getBuffType());
 
-			notifyOnGiveBuff(self, target, buff, turnsMod, stacks);
+            int stacksMod = stacks + self.getStacksModBuffTypeDealt(buff.getBuffType()) + unit.getStacksModBuffTypeTaken(buff.getBuffType());
 
-			Unit unit = (giveToSelf) ? self : target;
+			notifyOnGiveBuff(self, target, buff, turnsMod, stacksMod);
+
 			List<BuffInstance> buffInstances = unit.getBuffInstances();
 			BuffInstance buffInstance = unit.findBuff(buff);
 
@@ -112,7 +115,7 @@ public class GiveBuff implements SkillEffect {
 
 				// Add stacks
 				int stacksOld = buffInstance.getStacks();
-				int stacksNew = Math.min(buffInstance.getBuff().getMaxStacks(), stacksOld + stacks);
+				int stacksNew = Math.min(buffInstance.getBuff().getMaxStacks(), stacksOld + stacksMod);
 				if (stacksNew != stacksOld) {
 					buffInstance.setStacks(stacksNew);
 					if (turnsMod > turnsOld)
@@ -136,11 +139,11 @@ public class GiveBuff implements SkillEffect {
 				msg.add(formatName(unit.getUnitType().getName(), unit.getPos(), false) + " " + lang.get("log.gains")
 						+ " " + c_buff + buff.getName() + "[WHITE] " + lang.get("log.with") + " "
 						+ ((buff.getMaxStacks() > 1)
-								? (c_num + stacks + " [WHITE]" + lang.format("stack_s", stacks) + " "
+								? (c_num + stacks + " [WHITE]" + lang.format("stack_s", stacksMod) + " "
 										+ lang.get("log.and")) + " "
 								: "")
 						+ c_num + turnsMod + "[WHITE] " + lang.format("turn_s", turnsMod));
-				unit.addBuffInstance(new BuffInstance(buff, turnsMod, stacks));
+				unit.addBuffInstance(new BuffInstance(buff, turnsMod, stacksMod));
 				buffInstance = buffInstances.getLast();
 
 				appendToLog(msg);

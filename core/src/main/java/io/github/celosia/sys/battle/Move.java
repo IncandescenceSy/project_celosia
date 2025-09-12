@@ -34,7 +34,7 @@ public class Move {
 			return false;
 
 		// Check if target is within vertical range
-		if (Math.abs(getHeight(self.getPos()) - getHeight(targetPos)) > skill.getRange().getRangeVertical())
+		if (Math.abs(getHeight(self.getPos()) - getHeight(targetPos)) > skill.getRange().getRangeVertical() + self.getModRange())
 			return false;
 
 		// Check if the targeted side is allowed

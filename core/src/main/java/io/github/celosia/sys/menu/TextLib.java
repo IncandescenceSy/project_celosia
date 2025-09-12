@@ -52,7 +52,7 @@ public class TextLib {
 		String c1 = multType.isPositive() ? c_pos : c_neg;
 		String c2 = multType.isPositive() ? c_neg : c_pos;
 
-		return (num > 10000) ? c1 : (num < 10000) ? c2 : c_num;
+		return (num > 1000) ? c1 : (num < 1000) ? c2 : c_num;
 	}
 
 	public static String getMultChangeColor(int num, Mult multType) {

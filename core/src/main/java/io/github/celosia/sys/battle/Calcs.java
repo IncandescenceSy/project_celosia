@@ -1,5 +1,6 @@
 package io.github.celosia.sys.battle;
 
+import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_HIDDEN;
 import static io.github.celosia.sys.menu.TextLib.c_bloom;
 import static io.github.celosia.sys.menu.TextLib.c_sp;
 import static io.github.celosia.sys.menu.TextLib.c_stat;
@@ -10,7 +11,7 @@ import static io.github.celosia.sys.settings.Lang.lang;
 public class Calcs {
 	public static String changeSp(Unit unit, int change) {
 		int spOld = unit.getSp();
-		int spNew = Math.clamp(spOld + (int) (change * (Math.max(unit.getMultSpGain(), 1000) / 10000d)), 0, 1000);
+		int spNew = Math.clamp(spOld + (int) (change * unit.getMultWithExpSpGain()), 0, 1000);
 
 		if (spNew != spOld) {
 			unit.setSp(spNew);
@@ -39,6 +40,6 @@ public class Calcs {
 	}
 
 	public static int getDisplayStatWithStage(int stat, int statDefault, int stage) {
-		return getStatWithStage(stat, statDefault, stage) / 10000;
+		return getStatWithStage(stat, statDefault, stage) / STAT_MULT_HIDDEN;
 	}
 }
