@@ -10,13 +10,17 @@ import io.github.celosia.sys.battle.buff_effects.ChangeStat;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class Buffs {
+	// Temp testing
+	static Buff STAR_RULER = new Buff("Star Ruler", "", BuffType.BUFF,
+			new ChangeMult(Mult.FOLLOW_UP_DMG_DEALT, 150, 50), new ChangeMult(Mult.TERRA_DMG_DEALT, 300));
+
 	// Basic
-	static Buff DEFEND = new Buff(lang.get("skill.defend"), lang.get("buff.defend.desc"), BuffType.BUFF, 1,
+	static Buff DEFEND = new Buff(lang.get("skill.defend"), lang.get("buff.defend.desc"), BuffType.BUFF,
 			new ChangeDefend(200), new ChangeMult(Mult.DMG_TAKEN, -200));
 
 	// Decreases multDmgTaken by way more than necessary to be absolutely certain
 	// this minimizes it
-	static Buff PROTECT = new Buff(lang.get("buff.protect"), lang.get("buff.protect.desc"), BuffType.BUFF, 1,
+	static Buff PROTECT = new Buff(lang.get("buff.protect"), lang.get("buff.protect.desc"), BuffType.BUFF,
 			new ChangeMult(Mult.DMG_TAKEN, -10_000_000), new ChangeEffectBlock(1));
 
 	// todo: affinity should convey immunity to these
@@ -41,23 +45,23 @@ public class Buffs {
 			new ChangeHp.Builder(-30).build(), new ChangeMult(Mult.DMG_TAKEN, 5));
 
 	// Superior elemental debuffs
-	static Buff BURNT_OUT = new Buff(lang.get("buff.burnt_out"), lang.get("buff.burnt_out.desc"), BuffType.DEBUFF, 1,
+	static Buff BURNT_OUT = new Buff(lang.get("buff.burnt_out"), lang.get("buff.burnt_out.desc"), BuffType.DEBUFF,
 			new ChangeMult(Mult.IGNIS_DMG_TAKEN, 200), new ChangeStat(Stat.STR, -100));
-	static Buff FROSTBOUND = new Buff(lang.get("buff.frostbound"), lang.get("buff.frostbound.desc"), BuffType.DEBUFF, 1,
+	static Buff FROSTBOUND = new Buff(lang.get("buff.frostbound"), lang.get("buff.frostbound.desc"), BuffType.DEBUFF,
 			new ChangeMult(Mult.GLACIES_DMG_TAKEN, 200), new ChangeStat(Stat.MAG, -100));
-	static Buff OVERLOADED = new Buff(lang.get("buff.overloaded"), lang.get("buff.overloaded.desc"), BuffType.DEBUFF, 1,
+	static Buff OVERLOADED = new Buff(lang.get("buff.overloaded"), lang.get("buff.overloaded.desc"), BuffType.DEBUFF,
 			new ChangeMult(Mult.FULGUR_DMG_TAKEN, 200), new ChangeStat(Stat.AGI, -100));
-	static Buff TEMPEST = new Buff(lang.get("buff.tempest"), lang.get("buff.tempest.desc"), BuffType.DEBUFF, 1,
+	static Buff TEMPEST = new Buff(lang.get("buff.tempest"), lang.get("buff.tempest.desc"), BuffType.DEBUFF,
 			new ChangeMult(Mult.VENTUS_DMG_TAKEN, 200), new ChangeStat(Stat.RES, -100));
-	static Buff SHATTERED = new Buff(lang.get("buff.shattered"), lang.get("buff.shattered.desc"), BuffType.DEBUFF, 1,
+	static Buff SHATTERED = new Buff(lang.get("buff.shattered"), lang.get("buff.shattered.desc"), BuffType.DEBUFF,
 			new ChangeMult(Mult.TERRA_DMG_TAKEN, 200), new ChangeStat(Stat.AMR, -100));
-	static Buff STARSTRUCK = new Buff(lang.get("buff.starstruck"), lang.get("buff.starstruck.desc"), BuffType.DEBUFF, 1,
+	static Buff STARSTRUCK = new Buff(lang.get("buff.starstruck"), lang.get("buff.starstruck.desc"), BuffType.DEBUFF,
 			new ChangeMult(Mult.LUX_DMG_TAKEN, 200), new ChangeStat(Stat.FTH, -100));
-	static Buff DOOMED = new Buff(lang.get("buff.doomed"), lang.get("buff.doomed.desc"), BuffType.DEBUFF, 1,
+	static Buff DOOMED = new Buff(lang.get("buff.doomed"), lang.get("buff.doomed.desc"), BuffType.DEBUFF,
 			new ChangeMult(Mult.MALUM_DMG_TAKEN, 200), new ChangeStat(Stat.FTH, -100));
-	static Buff BLIGHTED = new Buff(lang.get("buff.blighted"), lang.get("buff.blighted.desc"), BuffType.DEBUFF, 1,
+	static Buff BLIGHTED = new Buff(lang.get("buff.blighted"), lang.get("buff.blighted.desc"), BuffType.DEBUFF,
 			new ChangeMult(Mult.DOT_DMG_TAKEN, 200), new ChangeMult(Mult.HEALING_TAKEN, -100));
-	static Buff DECAY = new Buff(lang.get("buff.decay"), lang.get("buff.decay.desc"), BuffType.DEBUFF, 1,
+	static Buff DECAY = new Buff(lang.get("buff.decay"), lang.get("buff.decay.desc"), BuffType.DEBUFF,
 			new ChangeMult(Mult.IGNIS_DMG_TAKEN, 150), new ChangeMult(Mult.DOT_DMG_TAKEN, 150),
 			new ChangeMult(Mult.HEALING_TAKEN, -100));
 
@@ -65,5 +69,5 @@ public class Buffs {
 	static Buff REGENERATION = new Buff(lang.get("buff.regeneration"), lang.get("buff.regeneration.desc"),
 			BuffType.BUFF, 5, new ChangeHp.Builder(500).build());
 	static Buff EXTRA_ACTION = new Buff(lang.get("buff.extra_action"), lang.get("buff.extra_action.desc"),
-			BuffType.BUFF, 1, new ChangeExtraActions(1));
+			BuffType.BUFF, new ChangeExtraActions(1));
 }

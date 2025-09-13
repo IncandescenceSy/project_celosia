@@ -11,11 +11,11 @@ import java.util.List;
 import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.battle.BattleLib.getStageBuffType;
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnChangeStage;
-import static io.github.celosia.sys.menu.TextLib.getStageStatString;
 import static io.github.celosia.sys.menu.TextLib.c_buff;
 import static io.github.celosia.sys.menu.TextLib.c_num;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.menu.TextLib.getColor;
+import static io.github.celosia.sys.menu.TextLib.getStageStatString;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeStage implements SkillEffect {
@@ -82,13 +82,14 @@ public class ChangeStage implements SkillEffect {
 			// since it's only applied if it's correct
 			// Unless some Passive has a weird interaction with it. Just keep it in mind
 			// todo fix just in case
-            Unit unit = (giveToSelf) ? self : target;
+			Unit unit = (giveToSelf) ? self : target;
 
 			int turnsMod = turns
 					+ self.getDurationModBuffTypeDealt(getStageBuffType(target.getStage(stageType) + stacks))
 					+ unit.getDurationModBuffTypeTaken(getStageBuffType(target.getStage(stageType) + stacks));
 
-            int stacksMod = stacks + self.getStacksModBuffTypeDealt(getStageBuffType(unit.getStage(stageType) + stacks)) + unit.getStacksModBuffTypeTaken(getStageBuffType(unit.getStage(stageType) + stacks));
+			int stacksMod = stacks + self.getStacksModBuffTypeDealt(getStageBuffType(unit.getStage(stageType) + stacks))
+					+ unit.getStacksModBuffTypeTaken(getStageBuffType(unit.getStage(stageType) + stacks));
 
 			notifyOnChangeStage(self, target, stageType, turnsMod, stacksMod);
 

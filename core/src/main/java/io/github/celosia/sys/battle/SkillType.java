@@ -5,7 +5,12 @@ import static io.github.celosia.sys.settings.Lang.lang;
 // Types that skills can have
 // todo add full names
 public enum SkillType {
-	STR(lang.get("stat.str")), MAG(lang.get("stat.mag")), FTH(lang.get("stat.fth")), STAT(lang.get("skill_type.stat"));
+	// spotless:off
+	STR(lang.get("stat.str")),
+    MAG(lang.get("stat.mag")),
+    FTH(lang.get("stat.fth")),
+    STAT(lang.get("skill_type.stat"));
+    // spotless:on
 
 	private final String name;
 

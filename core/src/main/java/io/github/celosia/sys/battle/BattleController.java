@@ -101,11 +101,11 @@ public class BattleController {
 	static List<TypingLabel> skillsL = new ArrayList<>();
 
 	// temp
-	static Skill[] skills = new Skill[]{Skills.ATTACK_DOWN, Skills.FIREBALL, Skills.SHIELD, Skills.THUNDERBOLT,
+	static Skill[] skills = new Skill[]{Skills.STAR_RULER, Skills.FIREBALL, Skills.SHIELD, Skills.THUNDERBOLT,
 			Skills.ICE_AGE, Skills.DEFEND};
-	static Skill[] skills2 = new Skill[]{Skills.ATTACK_DOWN, Skills.FIREBALL, Skills.ATTACK_UP_GROUP, Skills.SHIELD,
+	static Skill[] skills2 = new Skill[]{Skills.ATTACK_UP, Skills.FIREBALL, Skills.ATTACK_UP_GROUP, Skills.SHIELD,
 			Skills.ICE_AGE, Skills.DEFEND};
-	static Skill[] skills3 = new Skill[]{Skills.ATTACK_DOWN, Skills.FIREBALL, Skills.HEAT_WAVE, Skills.PROTECT,
+	static Skill[] skills3 = new Skill[]{Skills.DEFENSE_DOWN, Skills.FIREBALL, Skills.HEAT_WAVE, Skills.PROTECT,
 			Skills.ICE_AGE, Skills.DEFEND};
 
 	// Battle log
@@ -278,9 +278,7 @@ public class BattleController {
 					for (Unit unit : battle.getAllUnits()) {
 						// Increase SP
 						if (!unit.isInfiniteSp())
-							unit.setSp(Math.min(
-									(int) (unit.getSp() + (100 * unit.getMultWithExpSpGain())),
-									1000));
+							unit.setSp(Math.min((int) (unit.getSp() + (100 * unit.getMultWithExpSpGain())), 1000));
 
 						// Apply turn end BuffEffects
 						for (Passive passive : unit.getPassives()) {
@@ -335,7 +333,7 @@ public class BattleController {
 
 				// Sort moves by Prio and then by Agi
 				moves.sort(Comparator.comparingInt((Move entry) -> entry.getSkill().getPrio())
-						.thenComparingInt(entry -> entry.getSelf().getAgiWithStage()).reversed());
+						.thenComparingLong(entry -> entry.getSelf().getAgiWithStage()).reversed());
 
 				// The next move plays out
 				Move move = moves.getFirst();
@@ -360,9 +358,7 @@ public class BattleController {
 						int costMod = (cost > 0)
 								? (int) Math.max(cost * (getAffMultSpCost(self.getAff(element)) / 1000d), 1)
 								: 0;
-						int change = skill.isBloom()
-								? costMod
-								: (int) (costMod * self.getMultWithExpSpUse());
+						int change = skill.isBloom() ? costMod : (int) (costMod * self.getMultWithExpSpUse());
 						newSp = skill.isBloom() ? team.getBloom() - change : self.getSp() - change;
 
 						StringBuilder builder = new StringBuilder();
@@ -562,7 +558,7 @@ public class BattleController {
 		// Queue
 		// Sort units by Agi
 		List<Unit> unitsAll = battle.getAllUnits();
-		unitsAll.sort((a, b) -> Integer.compare(b.getAgiWithStage(), a.getAgiWithStage()));
+		unitsAll.sort((a, b) -> Long.compare(b.getAgiWithStage(), a.getAgiWithStage()));
 
 		// Copy and sort moves
 		// Only copy if it hasn't started emptying yet
@@ -570,7 +566,7 @@ public class BattleController {
 			moves2 = new ArrayList<>(moves);
 		else if (selectingMove == 100) {
 			moves2.sort(Comparator.comparingInt((Move entry) -> entry.getSkill().getPrio())
-					.thenComparingInt(entry -> entry.getSelf().getAgiWithStage()).reversed());
+					.thenComparingLong(entry -> entry.getSelf().getAgiWithStage()).reversed());
 			// todo will thenComparingInt(pos.reversed) work
 		} else
 			moves2 = new ArrayList<>();
@@ -601,7 +597,7 @@ public class BattleController {
 			// todo can use battle.getAlUnits
 			Unit unit = (i >= 4) ? battle.getOpponentTeam().getUnits()[i - 4] : battle.getPlayerTeam().getUnits()[i];
 			if (unit != null) {
-				int shield = unit.getDisplayShield() + unit.getDisplayDefend();
+				long shield = unit.getDisplayShield() + unit.getDisplayDefend();
 				// todo colors
 				// String shieldStr = (shield > 0) ? c_shield + "+" + String.format("%,d",
 				// shield) : "";
@@ -626,8 +622,7 @@ public class BattleController {
 				StringBuilder text = new StringBuilder(unit.getUnitType().getName() + "\n" + lang.get("hp") + ": "
 						+ String.format("%,d", unit.getStatsCur().getDisplayHp()) + shieldStr + "/"
 						+ String.format("%,d", unit.getStatsDefault().getDisplayHp()) + "\n" + lang.get("sp") + ": "
-						+ spStr +
-						 "\nStr: " + unit.getStrWithStage() + "/" + unit.getStatsDefault().getStr() +
+						+ spStr + "\nStr: " + unit.getStrWithStage() + "/" + unit.getStatsDefault().getStr() +
 						// "\nMag:" + unit.getMagWithStage() + "/" + unit.getStatsDefault().getMag() +
 						// "\nAmr: " + unit.getAmrWithStage() + "/" + unit.getStatsDefault().getAmr() +
 						// "\nRes: " + unit.getResWithStage() + "/" + unit.getStatsDefault().getRes() +
@@ -660,10 +655,12 @@ public class BattleController {
 							text.append(buffInstance.getBuff().getName());
 							if (buffInstance.getBuff().getMaxStacks() > 1)
 								text.append("x").append(buffInstance.getStacks());
-                            // 1000+ turns = infinite
-                            text.append("(");
-							if (buffInstance.getTurns() < 1000) text.append(buffInstance.getTurns());
-							else text.append("∞");
+							// 1000+ turns = infinite
+							text.append("(");
+							if (buffInstance.getTurns() < 1000)
+								text.append(buffInstance.getTurns());
+							else
+								text.append("∞");
 							text.append(") ");
 						}
 					}
@@ -728,7 +725,7 @@ public class BattleController {
 			float pos = (float) logScroll / Math.max(logText.size() - 48, 0);
 
 			// Start (bottom)
-			float sx = (World.WIDTH_4 + 500) + (range * pos) / 6;
+			float sx = 1300 + (range * pos) / 6;
 			float sy = 5 + (range * pos);
 
 			// End (top)

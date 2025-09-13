@@ -24,15 +24,15 @@ public class ChangeStat implements BuffEffect {
 
 	@Override
 	public void onGive(Unit self, int stacks) {
-		int statDefault = self.getStatsDefault().getStat(stat);
-		int statOld = self.getStatsCur().getStat(stat);
+		long statDefault = self.getStatsDefault().getStat(stat);
+		long statOld = self.getStatsCur().getStat(stat);
 		int statNew = (int) (statOld + (statDefault * ((long) change * stacks) / 1000));
 		self.getStatsCur().setStat(stat, statNew);
 
-		int statDefaultDisp = self.getStatsDefault().getDisplayStat(stat);
-		int statOldDispWithStage = getDisplayStatWithStage(statOld, statDefault,
+		long statDefaultDisp = self.getStatsDefault().getDisplayStat(stat);
+		long statOldDispWithStage = getDisplayStatWithStage(statOld, statDefault,
 				self.getStage(stat.getMatchingStageType()));
-		int statNewDispWithStage = getDisplayStatWithStage(statNew, statDefault,
+		long statNewDispWithStage = getDisplayStatWithStage(statNew, statDefault,
 				self.getStage(stat.getMatchingStageType()));
 		appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + stat.getName() + " "
 				+ getStatColor(statOldDispWithStage, statDefaultDisp) + String.format("%,d", statOldDispWithStage)
@@ -45,15 +45,15 @@ public class ChangeStat implements BuffEffect {
 
 	@Override
 	public void onRemove(Unit self, int stacks) {
-		int statDefault = self.getStatsDefault().getStat(stat);
-		int statOld = self.getStatsCur().getStat(stat);
+		long statDefault = self.getStatsDefault().getStat(stat);
+		long statOld = self.getStatsCur().getStat(stat);
 		int statNew = (int) (statOld - (statDefault * ((long) change * stacks) / 1000));
 		self.getStatsCur().setStat(stat, statNew);
 
-		int statDefaultDisp = self.getStatsDefault().getDisplayStat(stat);
-		int statOldDispWithStage = getDisplayStatWithStage(statOld, statDefault,
+		long statDefaultDisp = self.getStatsDefault().getDisplayStat(stat);
+		long statOldDispWithStage = getDisplayStatWithStage(statOld, statDefault,
 				self.getStage(stat.getMatchingStageType()));
-		int statNewDispWithStage = getDisplayStatWithStage(statNew, statDefault,
+		long statNewDispWithStage = getDisplayStatWithStage(statNew, statDefault,
 				self.getStage(stat.getMatchingStageType()));
 		appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + stat.getName() + " "
 				+ getStatColor(statOldDispWithStage, statDefaultDisp) + String.format("%,d", statOldDispWithStage)

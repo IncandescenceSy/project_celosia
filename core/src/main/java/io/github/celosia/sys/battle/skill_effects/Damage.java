@@ -85,8 +85,8 @@ public class Damage implements SkillEffect {
 	public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
 		// Multi-hit attacks should continue unless they hit an immunity
 		if (resultPrev.ordinal() >= minResult.ordinal() && (!mainTargetOnly || isMainTarget)) {
-			int atk = -1;
-			int def = -1;
+			long atk = -1;
+			long def = -1;
 
 			if (type == SkillType.STR) {
 				atk = Math.max(1, self.getStrWithStage());
@@ -99,8 +99,8 @@ public class Damage implements SkillEffect {
 			int affMultDmgDealt;
 			int affMultDmgTaken;
 
-            double multWeakDmgDealt = 1;
-            double multWeakDmgTaken = 1;
+			double multWeakDmgDealt = 1;
+			double multWeakDmgTaken = 1;
 
 			if (element == Element.VIS) {
 				affMultDmgDealt = 1000;
@@ -116,14 +116,21 @@ public class Damage implements SkillEffect {
 			}
 
 			double multFollowUpDmgDealt = 1;
-            double multFollowUpDmgTaken = 1;
+			double multFollowUpDmgTaken = 1;
 
 			if (isFollowUp) {
 				multFollowUpDmgDealt = self.getMultWithExpFollowUpDmgDealt();
 				multFollowUpDmgTaken = target.getMultWithExpFollowUpDmgTaken();
 			}
 
-			int dmg = STAT_MULT_HIDDEN * STAT_MULT_VISIBLE * (int) (((double) atk / def) * pow * (affMultDmgDealt / 1000d) * (affMultDmgTaken / 1000d) * self.getMultWithExpDmgDealt() * Math.max(target.getMultWithExpDmgTaken(), 0.1) * self.getMultWithExpElementDmgDealt(element) * target.getMultWithExpElementDmgTaken(element) * multWeakDmgDealt * multWeakDmgTaken * multFollowUpDmgDealt * multFollowUpDmgTaken);
+			long dmg = Math.clamp(
+					STAT_MULT_HIDDEN * STAT_MULT_VISIBLE
+							* (long) (((double) atk / def) * pow * (affMultDmgDealt / 1000d) * (affMultDmgTaken / 1000d)
+									* self.getMultWithExpDmgDealt() * target.getMultWithExpDmgTaken()
+									* self.getMultWithExpElementDmgDealt(element)
+									* target.getMultWithExpElementDmgTaken(element) * multWeakDmgDealt
+									* multWeakDmgTaken * multFollowUpDmgDealt * multFollowUpDmgTaken),
+					1, Long.MAX_VALUE);
 
 			// Deal damage
 			Result result = target.damage(dmg, isPierce);
@@ -131,8 +138,8 @@ public class Damage implements SkillEffect {
 			return result.getResultType();
 		} else {
 			// If the previous hit failed entirely, this one wouldn't have been reached. If
-			// this return statement is ever reached, it's under special circumstances, so
-			// let the attack continue just to be safe
+			// this return statement is ever reached, it's under special circumstances (such
+			// as a main target only effect), so let the attack continue just to be safe
 			return ResultType.SUCCESS;
 		}
 	}

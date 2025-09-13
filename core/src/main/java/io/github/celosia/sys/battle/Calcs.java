@@ -35,11 +35,11 @@ public class Calcs {
 			return "";
 	}
 
-	public static int getStatWithStage(int stat, int statDefault, int stage) {
+	public static long getStatWithStage(long stat, long statDefault, int stage) {
 		return stat + (int) (statDefault * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
 	}
 
-	public static int getDisplayStatWithStage(int stat, int statDefault, int stage) {
+	public static long getDisplayStatWithStage(long stat, long statDefault, int stage) {
 		return getStatWithStage(stat, statDefault, stage) / STAT_MULT_HIDDEN;
 	}
 }

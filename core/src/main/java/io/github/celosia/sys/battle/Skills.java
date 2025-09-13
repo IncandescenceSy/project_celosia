@@ -13,6 +13,10 @@ public class Skills {
 	// Temp testing skills
 	static Skill GET_EXA = new Skill.Builder("Get ExA", "", Element.VIS, Ranges.OTHER_3R_OR_SELF, 1)
 			.effect(new GiveBuff.Builder(Buffs.EXTRA_ACTION, 3).build()).build();
+	static Skill STAR_RULER = new Skill.Builder("Star Ruler", "", Element.IGNIS, Ranges.OTHER_2R, 0).bloom()
+			.effects(new Damage.Builder(SkillType.STR, Element.IGNIS, 280).build(),
+					new GiveBuff.Builder(Buffs.STAR_RULER, 5).giveToSelf().build())
+			.build();
 
 	// Basic skills
 	static Skill NOTHING = new Skill.Builder(lang.get("skill.nothing"), lang.get("skill.nothing.desc"), Element.VIS,

@@ -3,7 +3,12 @@ package io.github.celosia.sys.battle;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public enum StageType {
-	ATK(lang.get("stage.atk")), DEF(lang.get("stage.def")), FTH(lang.get("stat.fth")), AGI(lang.get("stat.agi"));
+	// spotless:off
+	ATK(lang.get("stage.atk")),
+    DEF(lang.get("stage.def")),
+    FTH(lang.get("stat.fth")),
+    AGI(lang.get("stat.agi"));
+    // spotless:on
 
 	private final String name;
 

@@ -7,15 +7,19 @@ import static io.github.celosia.sys.settings.Lang.lang;
 
 // Todo: alternate keys, remapping
 public enum Keybind {
+	// spotless:off
 	CONFIRM(lang.get("key.confirm"), Input.Keys.Z, Button.A), // (Bottom button)
 	BACK(lang.get("key.back"), Input.Keys.X, Button.B), // (Right button)
 	MENU(lang.get("key.menu"), Input.Keys.C, Button.Y), // (Top button) Also Open Full Log
 	MAP(lang.get("key.map"), Input.Keys.V, Button.X), // (Left button) Also Inspect
-	PAGE_L1(lang.get("key.page_l1"), Input.Keys.F, Button.L1), PAGE_R1(lang.get("key.page_r1"), Input.Keys.G,
-			Button.R1), PAGE_L2(lang.get("key.page_l2"), Input.Keys.S, Button.L2), PAGE_R2(lang.get("key.page_r2"),
-					Input.Keys.D, Button.R2), LEFT(lang.get("key.left"), Input.Keys.LEFT, Button.DL), RIGHT(
-							lang.get("key.right"), Input.Keys.RIGHT, Button.DR), UP(lang.get("key.up"), Input.Keys.UP,
-									Button.DU), DOWN(lang.get("key.down"), Input.Keys.DOWN, Button.DD);
+	PAGE_L1(lang.get("key.page_l1"), Input.Keys.F, Button.L1), PAGE_R1(lang.get("key.page_r1"), Input.Keys.G, Button.R1),
+    PAGE_L2(lang.get("key.page_l2"), Input.Keys.S, Button.L2),
+    PAGE_R2(lang.get("key.page_r2"), Input.Keys.D, Button.R2),
+    LEFT(lang.get("key.left"), Input.Keys.LEFT, Button.DL),
+    RIGHT(lang.get("key.right"), Input.Keys.RIGHT, Button.DR),
+    UP(lang.get("key.up"), Input.Keys.UP, Button.DU),
+    DOWN(lang.get("key.down"), Input.Keys.DOWN, Button.DD);
+    // spotless:on
 
 	private final String name;
 	private int key;

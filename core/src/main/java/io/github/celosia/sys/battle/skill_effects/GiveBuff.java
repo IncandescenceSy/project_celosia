@@ -88,13 +88,14 @@ public class GiveBuff implements SkillEffect {
 		if (resultPrev.ordinal() >= minResult.ordinal() && (!mainTargetOnly || isMainTarget)) {
 			List<String> msg = new ArrayList<>();
 
-            Unit unit = (giveToSelf) ? self : target;
+			Unit unit = (giveToSelf) ? self : target;
 
 			// Apply durationMod
 			int turnsMod = turns + self.getDurationModBuffTypeDealt(buff.getBuffType())
 					+ unit.getDurationModBuffTypeTaken(buff.getBuffType());
 
-            int stacksMod = stacks + self.getStacksModBuffTypeDealt(buff.getBuffType()) + unit.getStacksModBuffTypeTaken(buff.getBuffType());
+			int stacksMod = stacks + self.getStacksModBuffTypeDealt(buff.getBuffType())
+					+ unit.getStacksModBuffTypeTaken(buff.getBuffType());
 
 			notifyOnGiveBuff(self, target, buff, turnsMod, stacksMod);
 
@@ -137,11 +138,11 @@ public class GiveBuff implements SkillEffect {
 
 			} else { // Doesn't have buff
 				msg.add(formatName(unit.getUnitType().getName(), unit.getPos(), false) + " " + lang.get("log.gains")
-						+ " " + c_buff + buff.getName() + "[WHITE] " + lang.get("log.with") + " "
+						+ " " + c_buff + buff.getName() + "[WHITE] "
 						+ ((buff.getMaxStacks() > 1)
-								? (c_num + stacks + " [WHITE]" + lang.format("stack_s", stacksMod) + " "
-										+ lang.get("log.and")) + " "
-								: "")
+								? (lang.get("log.with") + " " + c_num + stacks + " [WHITE]"
+										+ lang.format("stack_s", stacksMod) + " " + lang.get("log.and")) + " "
+								: lang.get("log.for") + " ")
 						+ c_num + turnsMod + "[WHITE] " + lang.format("turn_s", turnsMod));
 				unit.addBuffInstance(new BuffInstance(buff, turnsMod, stacksMod));
 				buffInstance = buffInstances.getLast();

@@ -16,7 +16,7 @@ public class Buff {
 	}
 
 	Buff(String name, String desc, BuffType buffType, BuffEffect... buffEffects) {
-		this(name, desc, buffType, 9, buffEffects);
+		this(name, desc, buffType, 1, buffEffects);
 	}
 
 	public String getName() {

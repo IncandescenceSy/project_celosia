@@ -70,24 +70,23 @@ public class ChangeHp implements BuffEffect {
 	private String[] calc(Unit self, int stacks) {
 		if (change < 0) { // Damage
 			double multDoTDmgTaken = ((isImmediate) ? 1 : self.getMultWithExpDoTDmgTaken());
-			int dmg = (isPercentage)
-					? (int) Math.abs(((self.getStatsDefault().getHp() * (change / 1000d)) * stacks)
+			long dmg = (isPercentage)
+					? (long) Math.abs(((self.getStatsDefault().getHp() * (change / 1000d)) * stacks)
 							* self.getMultWithExpDmgTaken() * multDoTDmgTaken)
-					: (int) (change * self.getMultWithExpDmgTaken() * multDoTDmgTaken);
+					: (long) (change * self.getMultWithExpDmgTaken() * multDoTDmgTaken);
 			Result result = self.damage(dmg, isPierce, false);
 			return result.getMessages().toArray(String[]::new);
 		} else { // Healing
-			int hpOld = self.getStatsCur().getHp();
-			int hpMax = self.getStatsDefault().getHp();
-			int heal = (int) (change * ((isPercentage) ? hpMax : 1) * stacks
-					* self.getMultWithExpHealingTaken());
-			int hpNew = Math.max(hpOld, Math.min(hpOld + heal, hpMax));
+			long hpOld = self.getStatsCur().getHp();
+			long hpMax = self.getStatsDefault().getHp();
+			long heal = (long) (change * ((isPercentage) ? hpMax : 1) * stacks * self.getMultWithExpHealingTaken());
+			long hpNew = Math.max(hpOld, Math.min(hpOld + heal, hpMax));
 			if (hpNew > hpOld) {
 				self.getStatsCur().setHp(hpNew);
 
-				int hpOldDisp = self.getStatsCur().getDisplayHp();
-				int hpMaxDisp = self.getStatsDefault().getDisplayHp();
-				int hpNewDisp = self.getStatsCur().getDisplayHp();
+				long hpOldDisp = self.getStatsCur().getDisplayHp();
+				long hpMaxDisp = self.getStatsDefault().getDisplayHp();
+				long hpNewDisp = self.getStatsCur().getDisplayHp();
 				return new String[]{lang.get("hp") + " " + c_hp + String.format("%,d", hpOldDisp) + "[WHITE] → " + c_hp
 						+ String.format("%,d", hpNewDisp) + "[WHITE]/" + c_hp + String.format("%,d", hpMaxDisp) + c_pos
 						+ " (+" + String.format("%,d", Math.max(hpNewDisp - hpOldDisp, 0)) + ")"};

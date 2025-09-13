@@ -100,23 +100,22 @@ public class Main extends ApplicationAdapter {
 		// CoolRects
 		// temp
 		// todo less magic numbers
+		// Main menu bg
 		coolRects.add(CoolRects.MENU_MAIN.ordinal(),
 				new CoolRect.Builder(World.WIDTH - 700, 230 + 475 + 5, World.WIDTH - 175 - 92, 230 - 75 + 25).dir(1)
-						.hasOutline().prio(2).build()); // Main menu bg
+						.hasOutline().prio(2).build());
+		// Menu cursor. X pos comes from 450 (y diff) / 6 (slant)
 		coolRects.add(CoolRects.CURSOR_1.ordinal(),
-				new CoolRect.Builder(0, 0, 0, 0).dir(1).color(Color.PURPLE).prio(2).build()); // Menu cursor. X pos
-																								// comes from 450 (y
-																								// diff) / 6 (15-degree
-																								// angle)
+				new CoolRect.Builder(0, 0, 0, 0).dir(1).color(Color.PURPLE).prio(2).build());
+		// Disappearing menu cursor
 		coolRects.add(CoolRects.CURSOR_2.ordinal(),
-				new CoolRect.Builder(0, 0, 0, 0).color(Color.PURPLE).prio(2).build()); // Disappearing menu cursor
+				new CoolRect.Builder(0, 0, 0, 0).color(Color.PURPLE).prio(2).build());
+		// Triangle that covers most of the left half of the screen
 		coolRects.add(CoolRects.COVER_LEFT.ordinal(),
-				new CoolRect.Builder(5, World.HEIGHT + 100, World.WIDTH_4 + 500, -100).hasOutline().speed(4).angL(0)
-						.prio(3).build()); // Triangle that covers most of the left half of the screen
+				new CoolRect.Builder(5, World.HEIGHT + 100, 1300, -100).hasOutline().speed(4).angL(0).prio(3).build());
+		// Centered popup bg
 		coolRects.add(CoolRects.POPUP_CENTERED.ordinal(), new CoolRect.Builder(World.WIDTH_2 - 440,
-				World.HEIGHT_2 - 200, World.WIDTH_2 + 440, World.HEIGHT_2 + 200).hasOutline().prio(3).build()); // Centered
-																												// popup
-																												// bg
+				World.HEIGHT_2 - 200, World.WIDTH_2 + 440, World.HEIGHT_2 + 200).hasOutline().prio(3).build());
 
 		// Paths
 		paths.add(Paths.SCROLLBAR.ordinal(), new Path(3));

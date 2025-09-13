@@ -1,10 +1,13 @@
 package io.github.celosia.sys.menu;
 
+import io.github.celosia.sys.battle.Mod;
 import io.github.celosia.sys.battle.Mult;
 import io.github.celosia.sys.battle.Side;
 import io.github.celosia.sys.battle.StageType;
 import io.github.celosia.sys.battle.Stat;
 import io.github.celosia.sys.battle.Unit;
+
+import java.text.DecimalFormat;
 
 import static io.github.celosia.sys.battle.PosLib.getSide;
 
@@ -31,6 +34,10 @@ public class TextLib {
 	public static String c_skill = "[#95c9ff]";
 	public static String c_passive = "[#c6a1ff]";
 	public static String c_stat = "[#deff81]";
+	public static String c_exp = "[#a034ff]"; // Calculated exponent parenthesis
+
+	// Decimal formatter with up to 2 decimal places
+	public static DecimalFormat df = new DecimalFormat("#.##");
 
 	public static String formatName(String name, int pos, boolean possessive) {
 		String suffix = (possessive) ? name.toLowerCase().endsWith("s") ? "'" : "'s" : "";
@@ -55,6 +62,13 @@ public class TextLib {
 		return (num > 1000) ? c1 : (num < 1000) ? c2 : c_num;
 	}
 
+	public static String getExpColor(int num, Mult multType) {
+		String c1 = multType.isPositive() ? c_pos : c_neg;
+		String c2 = multType.isPositive() ? c_neg : c_pos;
+
+		return (num > 100) ? c1 : (num < 100) ? c2 : c_num;
+	}
+
 	public static String getMultChangeColor(int num, Mult multType) {
 		String c1 = multType.isPositive() ? c_pos : c_neg;
 		String c2 = multType.isPositive() ? c_neg : c_pos;
@@ -62,7 +76,32 @@ public class TextLib {
 		return (num > 0) ? c1 : (num < 0) ? c2 : c_num;
 	}
 
-	public static String getStatColor(int num, int base) {
+	public static String getMultWithExpColor(double num, Mult multType) {
+		String c1 = multType.isPositive() ? c_pos : c_neg;
+		String c2 = multType.isPositive() ? c_neg : c_pos;
+
+		return (num > 1) ? c1 : (num < 1) ? c2 : c_num;
+	}
+
+	public static String getMultWithExpChangeColor(double num, Mult multType) {
+		String c1 = multType.isPositive() ? c_pos : c_neg;
+		String c2 = multType.isPositive() ? c_neg : c_pos;
+
+		return (num > 0) ? c1 : (num < 0) ? c2 : c_num;
+	}
+
+	public static String getModColor(int num, Mod modType) {
+		String c1 = modType.isPositive() ? c_pos : c_neg;
+		String c2 = modType.isPositive() ? c_neg : c_pos;
+
+		return (num > 0) ? c1 : (num < 0) ? c2 : c_num;
+	}
+
+	public static String formatMod(int num, Mod modType) {
+		return getModColor(num, modType) + ((num > 0) ? "+" : "") + num;
+	}
+
+	public static String getStatColor(long num, long base) {
 		return (num > base) ? c_pos : (num < base) ? c_neg : c_num;
 	}
 
@@ -73,10 +112,10 @@ public class TextLib {
 		int statCount = stageType.getStats().length;
 		for (int i = 0; i < statCount; i++) {
 			Stat stat = stageType.getStats()[i];
-			int statDefault = unit.getStatsDefault().getDisplayStat(stat);
-			int statOld = unit.getDisplayStatWithStage(stat);
-			int statNew = unit.getDisplayStatWithStage(stat, stageNew);
-			int change = statNew - statOld;
+			long statDefault = unit.getStatsDefault().getDisplayStat(stat);
+			long statOld = unit.getDisplayStatWithStage(stat);
+			long statNew = unit.getDisplayStatWithStage(stat, stageNew);
+			long change = statNew - statOld;
 			builder.append(c_stat).append(stat.getName()).append(" ").append(getStatColor(statOld, statDefault))
 					.append(String.format("%,d", statOld)).append("[WHITE] → ")
 					.append(getStatColor(statNew, statDefault)).append(String.format("%,d", statNew)).append("[WHITE]")

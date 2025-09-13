@@ -52,7 +52,8 @@ public class Heal implements SkillEffect {
 			List<String> msg = new ArrayList<>();
 
 			// Heals by pow% of user's Fth
-			int heal = (int) (self.getFthWithStage() * (pow / 100d) * self.getMultWithExpHealingDealt() * target.getMultWithExpHealingTaken());
+			int heal = (int) (self.getFthWithStage() * (pow / 100d) * self.getMultWithExpHealingDealt()
+					* target.getMultWithExpHealingTaken());
 
 			// Adds shield (shield + defend cannot exceed max HP)
 			if (shieldTurns > 0) {
@@ -63,20 +64,20 @@ public class Heal implements SkillEffect {
 
 				notifyOnGiveShield(self, target, turnsMod, heal);
 
-				int hpMax = target.getStatsDefault().getHp();
-				int shieldCur = target.getShield();
-				int shieldNew = (shieldCur + target.getDefend() + heal > hpMax)
+				long hpMax = target.getStatsDefault().getHp();
+				long shieldCur = target.getShield();
+				long shieldNew = (shieldCur + target.getDefend() + heal > hpMax)
 						? hpMax - target.getDefend()
 						: shieldCur + heal;
 				int turnsCur = target.getShieldTurns();
 
 				if (shieldNew > shieldCur) {
-					int shieldCurDisp = target.getDisplayShield();
+					long shieldCurDisp = target.getDisplayShield();
 
 					target.setShield(shieldNew);
 
-					int hpMaxDisp = target.getStatsDefault().getDisplayHp();
-					int shieldNewDisp = target.getDisplayShield();
+					long hpMaxDisp = target.getStatsDefault().getDisplayHp();
+					long shieldNewDisp = target.getDisplayShield();
 
 					str = formatName(target.getUnitType().getName(), self.getPos()) + " " + c_buff + lang.get("shield")
 							+ " " + c_shield + String.format("%,d", (shieldCurDisp + target.getDisplayDefend()))
@@ -105,19 +106,19 @@ public class Heal implements SkillEffect {
 			} else { // Heals
 				notifyOnHeal(self, target, heal, overHeal);
 
-				int hpCur = target.getStatsCur().getHp();
-				int hpMax = target.getStatsDefault().getHp();
+				long hpCur = target.getStatsCur().getHp();
+				long hpMax = target.getStatsDefault().getHp();
 				// Picks the lower of (current HP + heal amount) and (maximum allowed overHeal
 				// of this skill), and then the higher between that and current HP
 				int hpNew = (int) Math.max(hpCur, Math.min(hpCur + heal, hpMax * (1 + overHeal)));
 
 				if (hpNew > hpCur) {
-					int hpCurDisp = target.getStatsCur().getDisplayHp();
+					long hpCurDisp = target.getStatsCur().getDisplayHp();
 
 					target.getStatsCur().setHp(hpNew);
 
-					int hpNewDisp = target.getStatsCur().getDisplayHp();
-					int hpMaxDisp = target.getStatsDefault().getDisplayHp();
+					long hpNewDisp = target.getStatsCur().getDisplayHp();
+					long hpMaxDisp = target.getStatsDefault().getDisplayHp();
 
 					msg.add(formatName(target.getUnitType().getName(), self.getPos()) + " " + lang.get("hp") + " "
 							+ c_hp + String.format("%,d", hpCurDisp) + "[WHITE] → " + c_hp

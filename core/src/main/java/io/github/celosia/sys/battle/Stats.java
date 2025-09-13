@@ -6,15 +6,15 @@ import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_VISIBLE;
 // A set of stats
 public class Stats {
 
-	private int hp; // Health
-	private int str; // Strength (physical attack)
-	private int mag; // Magic (magical attack)
-	private int fth; // Faith (healing/shielding power)
-	private int amr; // Armor (physical defense)
-	private int res; // Resilience (magical defense)
-	private int agi; // Agility (turn order)
+	private long hp; // Health
+	private long str; // Strength (physical attack)
+	private long mag; // Magic (magical attack)
+	private long fth; // Faith (healing/shielding power)
+	private long amr; // Armor (physical defense)
+	private long res; // Resilience (magical defense)
+	private long agi; // Agility (turn order)
 
-	public Stats(int hp, int str, int mag, int fth, int amr, int res, int agi) {
+	public Stats(long hp, long str, long mag, long fth, long amr, long res, long agi) {
 		this.hp = hp;
 		this.str = str;
 		this.mag = mag;
@@ -34,91 +34,91 @@ public class Stats {
 		this.agi = stats.getAgi();
 	}
 
-	public void setHp(int hp) {
+	public void setHp(long hp) {
 		this.hp = hp;
 	}
 
-	public int getHp() {
+	public long getHp() {
 		return hp;
 	}
 
-	public int getDisplayHp() {
+	public long getDisplayHp() {
 		return hp / STAT_MULT_HIDDEN;
 	}
 
-	public void setStr(int str) {
+	public void setStr(long str) {
 		this.str = str;
 	}
 
-	public int getStr() {
+	public long getStr() {
 		return str;
 	}
 
-	public int getDisplayStr() {
+	public long getDisplayStr() {
 		return str / STAT_MULT_HIDDEN;
 	}
 
-	public void setMag(int mag) {
+	public void setMag(long mag) {
 		this.mag = mag;
 	}
 
-	public int getMag() {
+	public long getMag() {
 		return mag;
 	}
 
-	public int getDisplayMag() {
+	public long getDisplayMag() {
 		return mag / STAT_MULT_HIDDEN;
 	}
 
-	public void setFth(int fth) {
+	public void setFth(long fth) {
 		this.fth = fth;
 	}
 
-	public int getFth() {
+	public long getFth() {
 		return fth;
 	}
 
-	public int getDisplayFth() {
+	public long getDisplayFth() {
 		return fth / STAT_MULT_HIDDEN;
 	}
 
-	public void setAmr(int amr) {
+	public void setAmr(long amr) {
 		this.amr = amr;
 	}
 
-	public int getAmr() {
+	public long getAmr() {
 		return amr;
 	}
 
-	public int getDisplayAmr() {
+	public long getDisplayAmr() {
 		return amr / STAT_MULT_HIDDEN;
 	}
 
-	public void setRes(int res) {
+	public void setRes(long res) {
 		this.res = res;
 	}
 
-	public int getRes() {
+	public long getRes() {
 		return res;
 	}
 
-	public int getDisplayRes() {
+	public long getDisplayRes() {
 		return res / STAT_MULT_HIDDEN;
 	}
 
-	public void setAgi(int agi) {
+	public void setAgi(long agi) {
 		this.agi = agi;
 	}
 
-	public int getAgi() {
+	public long getAgi() {
 		return agi;
 	}
 
-	public int getDisplayAgi() {
+	public long getDisplayAgi() {
 		return agi / STAT_MULT_HIDDEN;
 	}
 
-	public void setStat(Stat stat, int set) {
+	public void setStat(Stat stat, long set) {
 		switch (stat) {
 			case STR :
 				this.str = set;
@@ -141,7 +141,7 @@ public class Stats {
 		}
 	}
 
-	public int getStat(Stat stat) {
+	public long getStat(Stat stat) {
 		return switch (stat) {
 			case STR -> str;
 			case MAG -> mag;
@@ -152,7 +152,7 @@ public class Stats {
 		};
 	}
 
-	public int getDisplayStat(Stat stat) {
+	public long getDisplayStat(Stat stat) {
 		return switch (stat) {
 			case STR -> str / STAT_MULT_HIDDEN;
 			case MAG -> mag / STAT_MULT_HIDDEN;
@@ -164,9 +164,12 @@ public class Stats {
 	}
 
 	public Stats getRealStats(int lvl) {
-		return new Stats((hp + (hp / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN, (str + (str / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN,
-				(mag + (mag / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN, (fth + (fth / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN,
-				(amr + (amr / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN, (res + (res / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN,
+		return new Stats((hp + (hp / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN,
+				(str + (str / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN,
+				(mag + (mag / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN,
+				(fth + (fth / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN,
+				(amr + (amr / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN,
+				(res + (res / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN,
 				(agi + (agi / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN);
 	}
 }

@@ -22,18 +22,18 @@ public class ChangeDefend implements BuffEffect {
 
 	@Override
 	public void onGive(Unit self, int stacks) {
-		int hpMax = self.getStatsDefault().getHp();
+		long hpMax = self.getStatsDefault().getHp();
 		// Add defend (shield + defend cannot exceed max HP)
-		int defendOld = self.getDefend();
+		long defendOld = self.getDefend();
 		int defendNew = (int) ((self.getShield() + defendOld + (((change / 1000d) * hpMax) * stacks) > hpMax)
 				? hpMax - self.getShield()
 				: ((change / 1000d) * hpMax) * stacks);
 
-		int defendOldDisp = self.getDisplayDefend();
+		long defendOldDisp = self.getDisplayDefend();
 		self.setDefend(defendNew);
-		int defendNewDisp = self.getDisplayDefend();
+		long defendNewDisp = self.getDisplayDefend();
 
-		int shieldDisp = self.getDisplayShield();
+		long shieldDisp = self.getDisplayShield();
 
 		appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_buff + lang.get("shield") + " "
 				+ c_shield + String.format("%,d", (shieldDisp + defendOldDisp)) + "[WHITE]" + " → " + c_shield
@@ -47,9 +47,9 @@ public class ChangeDefend implements BuffEffect {
 
 	@Override
 	public void onRemove(Unit self, int stacks) {
-		int defendOldDisp = self.getDisplayDefend();
+		long defendOldDisp = self.getDisplayDefend();
 		self.setDefend(0);
-		int shieldDisp = self.getDisplayShield();
+		long shieldDisp = self.getDisplayShield();
 
 		if (self.getShield() > 0)
 			appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_buff + lang.get("shield")

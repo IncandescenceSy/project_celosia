@@ -3,7 +3,10 @@ package io.github.celosia.sys.battle;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public enum BuffType {
-	BUFF(lang.get("buff")), DEBUFF(lang.get("debuff"));
+	// spotless:off
+	BUFF(lang.get("buff")),
+    DEBUFF(lang.get("debuff"));
+    // spotless:on
 
 	private final String name;
 
