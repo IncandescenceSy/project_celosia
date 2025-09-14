@@ -8,7 +8,6 @@ import io.github.celosia.sys.battle.Unit;
 import static io.github.celosia.sys.battle.BattleController.appendToLog;
 
 public class ChangeSp implements SkillEffect {
-
 	private final int change;
 	private final boolean isInstant;
 	private final boolean giveToSelf;

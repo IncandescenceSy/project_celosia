@@ -7,14 +7,13 @@ import io.github.celosia.sys.battle.SkillEffect;
 import io.github.celosia.sys.battle.SkillType;
 import io.github.celosia.sys.battle.Unit;
 
-import static io.github.celosia.sys.battle.AffLib.getAffMultDmgDealt;
-import static io.github.celosia.sys.battle.AffLib.getAffMultDmgTaken;
+import static io.github.celosia.sys.battle.AffLib.affDmgDealt;
+import static io.github.celosia.sys.battle.AffLib.affDmgTaken;
 import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_HIDDEN;
 import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_VISIBLE;
 
 public class Damage implements SkillEffect {
-
 	private final SkillType type;
 	private final Element element;
 	private final int pow;
@@ -85,15 +84,15 @@ public class Damage implements SkillEffect {
 	public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
 		// Multi-hit attacks should continue unless they hit an immunity
 		if (resultPrev.ordinal() >= minResult.ordinal() && (!mainTargetOnly || isMainTarget)) {
-			long atk = -1;
-			long def = -1;
+			long atk = 1;
+			long def = 1;
 
 			if (type == SkillType.STR) {
-				atk = Math.max(1, self.getStrWithStage());
-				def = Math.max(1, target.getAmrWithStage());
+				atk = self.getStrWithStage();
+				def = target.getAmrWithStage();
 			} else if (type == SkillType.MAG) {
-				atk = Math.max(1, self.getMagWithStage());
-				def = Math.max(1, target.getResWithStage());
+				atk = self.getMagWithStage();
+				def = target.getResWithStage();
 			}
 
 			int affMultDmgDealt;
@@ -106,10 +105,10 @@ public class Damage implements SkillEffect {
 				affMultDmgDealt = 1000;
 				affMultDmgTaken = 1000;
 			} else {
-				affMultDmgDealt = getAffMultDmgDealt(self.getAff(element));
-				affMultDmgTaken = getAffMultDmgTaken(target.getAff(element));
+				affMultDmgDealt = affDmgDealt.get(self.getAffsCur().getAff(element));
+				affMultDmgTaken = affDmgTaken.get(target.getAffsCur().getAff(element));
 
-				if (target.getAff(element) < 0) {
+				if (target.isWeakTo(element)) {
 					multWeakDmgDealt = self.getMultWithExpWeakDmgDealt();
 					multWeakDmgTaken = target.getMultWithExpWeakDmgTaken();
 				}
@@ -123,14 +122,27 @@ public class Damage implements SkillEffect {
 				multFollowUpDmgTaken = target.getMultWithExpFollowUpDmgTaken();
 			}
 
-			long dmg = Math.clamp(
-					STAT_MULT_HIDDEN * STAT_MULT_VISIBLE
-							* (long) (((double) atk / def) * pow * (affMultDmgDealt / 1000d) * (affMultDmgTaken / 1000d)
-									* self.getMultWithExpDmgDealt() * target.getMultWithExpDmgTaken()
-									* self.getMultWithExpElementDmgDealt(element)
-									* target.getMultWithExpElementDmgTaken(element) * multWeakDmgDealt
-									* multWeakDmgTaken * multFollowUpDmgDealt * multFollowUpDmgTaken),
-					1, Long.MAX_VALUE);
+			long dmg;
+
+			// No damage on affinity immunity
+			if (affMultDmgTaken == 0) {
+				dmg = 0;
+			} else {
+				dmg = STAT_MULT_HIDDEN * STAT_MULT_VISIBLE
+						* (long) (((double) atk / def) * pow * (affMultDmgDealt / 1000d) * (affMultDmgTaken / 1000d)
+								* self.getMultWithExpDmgDealt() * target.getMultWithExpDmgTaken()
+								* self.getMultWithExpElementDmgDealt(element)
+								* target.getMultWithExpElementDmgTaken(element) * multWeakDmgDealt * multWeakDmgTaken
+								* multFollowUpDmgDealt * multFollowUpDmgTaken);
+
+				// Only way for dmg to be negative is if an overflow happened, so set it to max
+				// long just to be safe
+				if (dmg < 0) {
+					dmg = Long.MAX_VALUE;
+				} else if (dmg == 0) {
+					dmg = 1;
+				}
+			}
 
 			// Deal damage
 			Result result = target.damage(dmg, isPierce);

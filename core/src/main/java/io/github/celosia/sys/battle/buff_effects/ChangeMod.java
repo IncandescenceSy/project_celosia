@@ -10,7 +10,6 @@ import static io.github.celosia.sys.menu.TextLib.formatMod;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 
 public class ChangeMod implements BuffEffect {
-
 	private final Mod mod;
 	private final int change;
 
@@ -35,7 +34,7 @@ public class ChangeMod implements BuffEffect {
 
 		self.setMod(mod, modNew);
 
-		appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + mod.getName() + " "
+		appendToLog(formatName(self.getUnitType().name(), self.getPos()) + " " + c_stat + mod.getName() + " "
 				+ formatMod(modOld, mod) + "[WHITE] → " + formatMod(modNew, mod));
 	}
 }

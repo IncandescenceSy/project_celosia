@@ -18,7 +18,6 @@ import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class GiveBuff implements SkillEffect {
-
 	private final Buff buff;
 	private final int turns;
 	private final int stacks;
@@ -109,7 +108,7 @@ public class GiveBuff implements SkillEffect {
 				int turnsOld = buffInstance.getTurns();
 				if (turnsMod > turnsOld) {
 					buffInstance.setTurns(turnsMod);
-					str = formatName(unit.getUnitType().getName(), unit.getPos()) + " " + c_buff + buff.getName()
+					str = formatName(unit.getUnitType().name(), unit.getPos()) + " " + c_buff + buff.getName()
 							+ "[WHITE] " + lang.format("turn_s", turnsMod) + " " + c_num + turnsOld + "[WHITE] → "
 							+ c_num + turnsMod;
 				}
@@ -123,7 +122,7 @@ public class GiveBuff implements SkillEffect {
 						msg.add(str + "[WHITE], " + lang.format("stack_s", stacksNew) + " " + c_num + stacksOld
 								+ "[WHITE] → " + c_num + stacksNew);
 					else
-						msg.add(formatName(unit.getUnitType().getName(), unit.getPos()) + " " + c_buff + buff.getName()
+						msg.add(formatName(unit.getUnitType().name(), unit.getPos()) + " " + c_buff + buff.getName()
 								+ " " + lang.get("stacks") + " " + c_num + stacksOld + "[WHITE] → " + c_num
 								+ stacksNew);
 				} else
@@ -138,8 +137,8 @@ public class GiveBuff implements SkillEffect {
 						buffEffect.onGive(unit, stacksAdded);
 
 			} else { // Doesn't have buff
-				msg.add(formatName(unit.getUnitType().getName(), unit.getPos(), false) + " " + lang.get("log.gains")
-						+ " " + c_buff + buff.getName() + "[WHITE] "
+				msg.add(formatName(unit.getUnitType().name(), unit.getPos(), false) + " " + lang.get("log.gains") + " "
+						+ c_buff + buff.getName() + "[WHITE] "
 						+ ((buff.getMaxStacks() > 1)
 								? (lang.get("log.with") + " " + c_num + stacks + " [WHITE]"
 										+ lang.format("stack_s", stacksMod) + " " + lang.get("log.and")) + " "

@@ -4,7 +4,7 @@ public class BuffEffectLib {
 	private static void notifyBuffEffects(Unit self, Unit target, BuffEffectNotifier notifier, Object... args) {
 		// Handle Passives
 		for (Passive passive : self.getPassives())
-			for (BuffEffect buffEffect : passive.getBuffEffects())
+			for (BuffEffect buffEffect : passive.buffEffects())
 				notifier.notify(buffEffect, self, target, 1, args);
 
 		// Handle Buffs
@@ -29,9 +29,9 @@ public class BuffEffectLib {
 				(StageType) args[0], (int) args[1], (int) args[2]), stageType, turnsMod, stacksChange);
 	}
 
-	public static void notifyOnHeal(Unit self, Unit target, long heal, double overHeal) {
+	public static void notifyOnHeal(Unit self, Unit target, long heal, int overHeal) {
 		notifyBuffEffects(self, target,
-				(effect, s, t, stacks, args) -> effect.onHeal(s, t, stacks, (long) args[0], (double) args[1]), heal,
+				(effect, s, t, stacks, args) -> effect.onHeal(s, t, stacks, (long) args[0], (int) args[1]), heal,
 				overHeal);
 	}
 

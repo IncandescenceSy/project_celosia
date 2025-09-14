@@ -9,7 +9,6 @@ import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeEffectBlock implements BuffEffect {
-
 	private final int change; // Amount to add
 
 	public ChangeEffectBlock(int change) {
@@ -22,8 +21,8 @@ public class ChangeEffectBlock implements BuffEffect {
 		int effectBlockNew = effectBlockOld + (change * stacks);
 		self.setEffectBlock(effectBlockNew);
 		if (effectBlockNew > 0 && self.getShield() == 0 && self.getDefend() == 0)
-			appendToLog(formatName(self.getUnitType().getName(), self.getPos(), false) + " " + lang.get("log.is_now")
-					+ " " + c_stat + lang.get("log.effect_block"));
+			appendToLog(formatName(self.getUnitType().name(), self.getPos(), false) + " " + lang.get("log.is_now") + " "
+					+ c_stat + lang.get("log.effect_block"));
 	}
 
 	@Override
@@ -32,7 +31,7 @@ public class ChangeEffectBlock implements BuffEffect {
 		int effectBlockNew = effectBlockOld - (change * stacks);
 		self.setEffectBlock(effectBlockNew);
 		if (effectBlockNew <= 0 && self.getShield() == 0 && self.getDefend() == 0)
-			appendToLog(formatName(self.getUnitType().getName(), self.getPos(), false) + " "
-					+ lang.get("log.is_no_longer") + " " + c_stat + lang.get("log.effect_block"));
+			appendToLog(formatName(self.getUnitType().name(), self.getPos(), false) + " " + lang.get("log.is_no_longer")
+					+ " " + c_stat + lang.get("log.effect_block"));
 	}
 }

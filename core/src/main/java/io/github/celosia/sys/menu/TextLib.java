@@ -41,31 +41,35 @@ public class TextLib {
 	// Decimal formatter with up to 2 decimal places
 	public static DecimalFormat df = new DecimalFormat("#.##");
 
-    // Decimal formatter for scientific notation
-    public static DecimalFormat sf = new DecimalFormat("0.###E0");
+	// Decimal formatter for scientific notation
+	public static DecimalFormat sf = new DecimalFormat("0.###E0");
 
-    // Regional number formatter with up to 2 decimal places (set elsewhere)
-    // todo use language setting
-    public static NumberFormat rf = NumberFormat.getInstance(Locale.getDefault());
+	// Regional number formatter with up to 2 decimal places (set elsewhere)
+	// todo use language setting
+	public static NumberFormat rf = NumberFormat.getInstance(Locale.getDefault());
 
-    public static String formatNum(long num) {
-        int digitCount = String.valueOf(Math.abs(num)).length();
+	public static String formatNum(long num) {
+		int digitCount = String.valueOf(Math.abs(num)).length();
 
-        // Use scientific notation
-        // todo is this a good threshold?
-        if(digitCount >= 9) return sf.format(num);
-        else return rf.format(num);
-    }
+		// Use scientific notation
+		// todo is this a good threshold?
+		if (digitCount >= 9)
+			return sf.format(num);
+		else
+			return rf.format(num);
+	}
 
-    public static String formatNum(double num) {
-        int digitCount = String.valueOf(Math.abs(num)).length();
+	public static String formatNum(double num) {
+		int digitCount = String.valueOf(Math.abs(num)).length();
 
-        // Use scientific notation
-        if(digitCount >= 9) return sf.format(num);
-        else return rf.format(num);
-    }
+		// Use scientific notation
+		if (digitCount >= 9)
+			return sf.format(num);
+		else
+			return rf.format(num);
+	}
 
-    // todo other language support
+	// todo other language support
 	public static String formatName(String name, int pos, boolean possessive) {
 		String suffix = (possessive) ? name.toLowerCase().endsWith("s") ? "'" : "'s" : "";
 		String color = (getSide(pos) == Side.ALLY) ? c_ally : c_opp;
@@ -159,21 +163,24 @@ public class TextLib {
 		}
 
 		if (mult > 1000) {
-			if (expChange > 0)
+			if (expChange > 0) {
 				return c1;
-			else if (expChange < 0)
+			} else if (expChange < 0) {
 				return c2;
-			else
+			} else {
 				return c_num;
+			}
 		} else if (mult < 1000) {
-			if (expChange > 0)
+			if (expChange > 0) {
 				return c2;
-			else if (expChange < 0)
+			} else if (expChange < 0) {
 				return c1;
-			else
+			} else {
 				return c_num;
-		} else
+			}
+		} else {
 			return c_num;
+		}
 	}
 
 	public static String getMultWithExpColor(double multWithExp, Mult multType) {
@@ -241,11 +248,10 @@ public class TextLib {
 			long statNew = unit.getDisplayStatWithStage(stat, stageNew);
 			long change = statNew - statOld;
 			builder.append(c_stat).append(stat.getName()).append(" ").append(getStatColor(statOld, statDefault))
-					.append(formatNum(statOld)).append("[WHITE] → ")
-					.append(getStatColor(statNew, statDefault)).append(formatNum(statNew)).append("[WHITE]")
-					.append("/").append(c_num).append(formatNum(statDefault)).append("[WHITE] (")
-					.append(getColor(change)).append((change >= 0) ? "+" : "")
-					.append(formatNum((statNew - statOld))).append("[WHITE])");
+					.append(formatNum(statOld)).append("[WHITE] → ").append(getStatColor(statNew, statDefault))
+					.append(formatNum(statNew)).append("[WHITE]").append("/").append(c_num)
+					.append(formatNum(statDefault)).append("[WHITE] (").append(getColor(change))
+					.append((change >= 0) ? "+" : "").append(formatNum((statNew - statOld))).append("[WHITE])");
 
 			if (i == statCount - 1)
 				builder.append(")");

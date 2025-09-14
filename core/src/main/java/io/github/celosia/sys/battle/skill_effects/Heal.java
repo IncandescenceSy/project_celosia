@@ -20,31 +20,54 @@ import static io.github.celosia.sys.menu.TextLib.getColor;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class Heal implements SkillEffect {
-
 	private final int pow;
-	private final double overHeal; // Amount to heal over max HP. 1f = 100%
+	private final int overHeal; // Amount to heal over max HP in 10ths of a % (1000 = 100%)
 	private final int shieldTurns;
 	private final boolean isInstant;
 	private final boolean mainTargetOnly;
 
-	public Heal(int pow, double overHeal, int shieldTurns, boolean isInstant, boolean mainTargetOnly) {
-		this.pow = pow;
-		this.overHeal = overHeal;
-		this.shieldTurns = shieldTurns;
-		this.isInstant = isInstant;
-		this.mainTargetOnly = mainTargetOnly;
+	public Heal(Builder builder) {
+		pow = builder.pow;
+		overHeal = builder.overHeal;
+		shieldTurns = builder.shieldTurns;
+		isInstant = builder.isInstant;
+		mainTargetOnly = builder.mainTargetOnly;
 	}
 
-	public Heal(int pow, int shieldTurns) {
-		this(pow, 0, shieldTurns, false, false);
-	}
+	public static class Builder {
+		private final int pow;
+		private int overHeal = 0;
+		private int shieldTurns = 0;
+		private boolean isInstant = false;
+		private boolean mainTargetOnly = false;
 
-	public Heal(int pow, double overHeal) {
-		this(pow, overHeal, 0, false, false);
-	}
+		public Builder(int pow) {
+			this.pow = pow;
+		}
 
-	public Heal(int pow) {
-		this(pow, 0, 0, false, false);
+		public Builder overHeal(int overHeal) {
+			this.overHeal = overHeal;
+			return this;
+		}
+
+		public Builder shieldTurns(int shieldTurns) {
+			this.shieldTurns = shieldTurns;
+			return this;
+		}
+
+		public Builder instant() {
+			this.isInstant = true;
+			return this;
+		}
+
+		public Builder mainTargetOnly() {
+			this.mainTargetOnly = true;
+			return this;
+		}
+
+		public Heal build() {
+			return new Heal(this);
+		}
 	}
 
 	@Override
@@ -80,12 +103,11 @@ public class Heal implements SkillEffect {
 					long hpMaxDisp = target.getStatsDefault().getDisplayHp();
 					long shieldNewDisp = target.getDisplayShield();
 
-					str = formatName(target.getUnitType().getName(), target.getPos()) + " " + c_buff
-							+ lang.get("shield") + " " + c_shield
-							+ formatNum((shieldCurDisp + target.getDisplayDefend())) + "[WHITE] → "
-							+ c_shield + formatNum((shieldNewDisp + target.getDisplayDefend())) + "[WHITE]/"
-							+ c_shield + formatNum(hpMaxDisp) + "[WHITE] (" + getColor(shieldNewDisp - shieldCurDisp)
-							+ "+" + formatNum((shieldNewDisp - shieldCurDisp)) + "[WHITE])";
+					str = formatName(target.getUnitType().name(), target.getPos()) + " " + c_buff + lang.get("shield")
+							+ " " + c_shield + formatNum((shieldCurDisp + target.getDisplayDefend())) + "[WHITE] → "
+							+ c_shield + formatNum((shieldNewDisp + target.getDisplayDefend())) + "[WHITE]/" + c_shield
+							+ formatNum(hpMaxDisp) + "[WHITE] (" + getColor(shieldNewDisp - shieldCurDisp) + "+"
+							+ formatNum((shieldNewDisp - shieldCurDisp)) + "[WHITE])";
 				}
 
 				if (turnsMod > turnsCur) {
@@ -94,13 +116,13 @@ public class Heal implements SkillEffect {
 						msg.add(str + "[WHITE], " + lang.get("turns") + " " + c_num + turnsCur + "[WHITE] → " + c_num
 								+ turnsMod);
 					else
-						msg.add(formatName(target.getUnitType().getName(), target.getPos()) + " " + lang.get("shield")
+						msg.add(formatName(target.getUnitType().name(), target.getPos()) + " " + lang.get("shield")
 								+ " " + lang.get("turns") + " " + c_num + turnsCur + "[WHITE] → " + c_num + turnsMod);
 				}
 
 				// Effect block message
 				if (shieldCur == 0 && shieldNew > 0 && !target.isEffectBlock() && target.getDefend() == 0) {
-					msg.add(formatName(target.getUnitType().getName(), target.getPos(), false) + " "
+					msg.add(formatName(target.getUnitType().name(), target.getPos(), false) + " "
 							+ lang.get("log.is_now") + " " + c_buff + lang.get("log.effect_block"));
 				}
 
@@ -111,7 +133,7 @@ public class Heal implements SkillEffect {
 				long hpMax = target.getStatsDefault().getHp();
 				// Picks the lower of (current HP + heal amount) and (maximum allowed overHeal
 				// of this skill), and then the higher between that and current HP
-				int hpNew = (int) Math.max(hpCur, Math.min(hpCur + heal, hpMax * (1 + overHeal)));
+				long hpNew = Math.max(hpCur, Math.min(hpCur + heal, (long) (hpMax * (1 + (overHeal / 1000d)))));
 
 				if (hpNew > hpCur) {
 					long hpCurDisp = target.getStatsCur().getDisplayHp();
@@ -121,11 +143,10 @@ public class Heal implements SkillEffect {
 					long hpNewDisp = target.getStatsCur().getDisplayHp();
 					long hpMaxDisp = target.getStatsDefault().getDisplayHp();
 
-					msg.add(formatName(target.getUnitType().getName(), self.getPos()) + " " + lang.get("hp") + " "
-							+ c_hp + formatNum(hpCurDisp) + "[WHITE] → " + c_hp
-							+ formatNum(hpNewDisp) + "[WHITE]/" + c_hp + formatNum(hpMaxDisp)
-							+ getColor(hpNewDisp - hpCurDisp) + " (+" + formatNum((hpNewDisp - hpCurDisp))
-							+ ")");
+					msg.add(formatName(target.getUnitType().name(), self.getPos()) + " " + lang.get("hp") + " " + c_hp
+							+ formatNum(hpCurDisp) + "[WHITE] → " + c_hp + formatNum(hpNewDisp) + "[WHITE]/" + c_hp
+							+ formatNum(hpMaxDisp) + getColor(hpNewDisp - hpCurDisp) + " (+"
+							+ formatNum((hpNewDisp - hpCurDisp)) + ")");
 				}
 			}
 

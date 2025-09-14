@@ -25,13 +25,13 @@ public class Stats {
 	}
 
 	public Stats(Stats stats) {
-		this.hp = stats.getHp();
-		this.str = stats.getStr();
-		this.mag = stats.getMag();
-		this.fth = stats.getFth();
-		this.amr = stats.getAmr();
-		this.res = stats.getRes();
-		this.agi = stats.getAgi();
+		this.hp = stats.hp;
+		this.str = stats.str;
+		this.mag = stats.mag;
+		this.fth = stats.fth;
+		this.amr = stats.amr;
+		this.res = stats.res;
+		this.agi = stats.agi;
 	}
 
 	public void setHp(long hp) {

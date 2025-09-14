@@ -33,7 +33,7 @@ import static io.github.celosia.Main.menuList;
 import static io.github.celosia.Main.paths;
 import static io.github.celosia.Main.stage2;
 import static io.github.celosia.Main.stage3;
-import static io.github.celosia.sys.battle.AffLib.getAffMultSpCost;
+import static io.github.celosia.sys.battle.AffLib.affSpCost;
 import static io.github.celosia.sys.battle.BattleLib.getStartingIndex;
 import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnUseSkill;
 import static io.github.celosia.sys.battle.PosLib.getSide;
@@ -110,34 +110,40 @@ public class BattleController {
 			Skills.ICE_AGE, Skills.DEFEND};
 
 	// Battle log
-	// todo press L2(?) to bring up full log, better positioning
+	// todo fix positioning
 	static TextraLabel battleLog = new TextraLabel("", FontType.KORURI.getSize20());
 	static List<String> logText = new ArrayList<>();
 
 	// Amount of lines scrolled upwards
 	static int logScroll = 0;
 
-	// battle mechanics todo: Passives, Follow-Ups, Accessories
+	// Initialize battle
 	public static void create() {
 		// Setup teams (temp)
 		Stats johnyStats = new Stats(100, 100, 100, 100, 100, 100, 100);
-		UnitType johny = new UnitType("Johny", johnyStats, 4, -4, 0, 0, 0, 0, 0, Passives.DEBUFF_DURATION_UP,
-				Passives.RESTORATION);
+		UnitType johny = new UnitType("Johny", johnyStats, new Affinities(4, -4, 0, 0, 0, 0, 0),
+				Passives.DEBUFF_DURATION_UP, Passives.RESTORATION);
 		Stats jerryStats = new Stats(100, 100, 100, 100, 100, 100, 115);
-		UnitType jerry = new UnitType("Jerry", jerryStats, 5, -4, 0, 5, 0, 0, 0, Passives.DEBUFF_DURATION_UP);
-		UnitType james = new UnitType("James", jerryStats, -4, 5, 0, 0, 0, 0, 0, Passives.DEBUFF_DURATION_UP,
-				Passives.ETERNAL_WELLSPRING);
-		UnitType jacob = new UnitType("Jacob", johnyStats, 0, 0, 5, -4, 0, 0, 0, Passives.DEBUFF_DURATION_UP);
-		UnitType julia = new UnitType("Julia", johnyStats, 0, 0, -4, 5, 0, 0, 0, Passives.DEBUFF_DURATION_UP);
-		UnitType jude = new UnitType("Jude", jerryStats, 0, 0, -3, -3, 5, 0, 0, Passives.DEBUFF_DURATION_UP);
-		UnitType josephine = new UnitType("Josephine", jerryStats, 0, 0, 0, 0, 0, 5, -4, Passives.DEBUFF_DURATION_UP);
-		UnitType julian = new UnitType("Julian", johnyStats, 0, 0, 0, 0, 0, -4, 5, Passives.DEBUFF_DURATION_UP);
+		UnitType jerry = new UnitType("Jerry", jerryStats, new Affinities(5, -4, 0, 5, 0, 0, 0),
+				Passives.DEBUFF_DURATION_UP);
+		UnitType james = new UnitType("James", jerryStats, new Affinities(-4, 5, 0, 0, 0, 0, 0),
+				Passives.DEBUFF_DURATION_UP, Passives.ETERNAL_WELLSPRING);
+		UnitType jacob = new UnitType("Jacob", johnyStats, new Affinities(0, 0, 5, -4, 0, 0, 0),
+				Passives.DEBUFF_DURATION_UP);
+		UnitType julia = new UnitType("Julia", johnyStats, new Affinities(0, 0, -4, 5, 0, 0, 0),
+				Passives.DEBUFF_DURATION_UP);
+		UnitType jude = new UnitType("Jude", jerryStats, new Affinities(0, 0, -3, -3, 5, 0, 0),
+				Passives.DEBUFF_DURATION_UP);
+		UnitType josephine = new UnitType("Josephine", jerryStats, new Affinities(0, 0, 0, 0, 0, 5, -4),
+				Passives.DEBUFF_DURATION_UP);
+		UnitType julian = new UnitType("Julian", johnyStats, new Affinities(0, 0, 0, 0, 0, -4, 5),
+				Passives.DEBUFF_DURATION_UP);
 
-		Team player = new Team(new Unit[]{new Unit(johny, 19, skills, 0), new Unit(james, (long) 5E15, skills2, 1),
+		Team player = new Team(new Unit[]{new Unit(johny, 19, skills, 0), new Unit(james, 19, skills2, 1),
 				new Unit(julia, 19, skills3, 2), new Unit(josephine, 19, skills, 3)});
 
 		Team opponent = new Team(new Unit[]{new Unit(jerry, 19, skills2, 4), new Unit(jacob, 19, skills2, 5),
-				new Unit(jude, 19, skills2, 6), new Unit(julian, 19, skills2, 7)});
+				new Unit(jude, (long) 1E15, skills2, 6), new Unit(julian, 19, skills2, 7)});
 
 		battle = new Battle(player, opponent);
 
@@ -187,7 +193,7 @@ public class BattleController {
 		// Notify Passives onGive
 		for (Unit unit : battle.getAllUnits()) {
 			for (Passive passive : unit.getPassives()) {
-				for (BuffEffect buffEffect : passive.getBuffEffects())
+				for (BuffEffect buffEffect : passive.buffEffects())
 					buffEffect.onGive(unit, 1);
 			}
 		}
@@ -233,10 +239,9 @@ public class BattleController {
 					// todo support arbitrary size
 					for (int i = 0; i < 6; i++) {
 						skillsL.get(i).setPosition(600, (World.HEIGHT - 400 - 250 * selectingMove) - ((i - 2) * 35));
+						// todo support ExA
 						setTextIfChanged(skillsL.get(i),
-								battle.getPlayerTeam().getUnits()[selectingMove].getSkills()[i].getName()); // todo
-																											// support
-																											// ExtraActions
+								battle.getPlayerTeam().getUnits()[selectingMove].getSkills()[i].getName());
 					}
 
 					selectMove();
@@ -249,9 +254,9 @@ public class BattleController {
 						Skill selectedSkill = Skills.NOTHING;
 						Unit target = battle.getPlayerTeam().getUnits()[MathUtils
 								.random(battle.getPlayerTeam().getUnits().length - 1)];
+						// todo support ExA
 						setTextIfChanged(movesL.get(selectingMove),
-								selectedSkill.getName() + " → " + target.getUnitType().getName()); // todo support
-																									// ExtraActions
+								selectedSkill.getName() + " → " + target.getUnitType().name());
 						moves.add(new Move(selectedSkill, battle.getOpponentTeam().getUnits()[selectingMove - 4],
 								target.getPos())); // todo AI
 						selectingMove++;
@@ -284,10 +289,10 @@ public class BattleController {
 						// Apply turn end BuffEffects
 						for (Passive passive : unit.getPassives()) {
 							StringBuilder turnEnd1 = new StringBuilder();
-							turnEnd1.append(formatName(unit.getUnitType().getName(), unit.getPos())).append(" ")
-									.append(c_passive).append(passive.getName()).append("[WHITE]: ");
+							turnEnd1.append(formatName(unit.getUnitType().name(), unit.getPos())).append(" ")
+									.append(c_passive).append(passive.name()).append("[WHITE]: ");
 
-							for (BuffEffect buffEffect : passive.getBuffEffects()) {
+							for (BuffEffect buffEffect : passive.buffEffects()) {
 								StringBuilder turnEnd2 = new StringBuilder();
 								String[] effectMsgs = buffEffect.onTurnEnd(unit, 1);
 								for (String effectMsg : effectMsgs)
@@ -302,7 +307,7 @@ public class BattleController {
 
 						for (BuffInstance buffInstance : unit.getBuffInstances()) {
 							StringBuilder turnEnd1 = new StringBuilder();
-							turnEnd1.append(formatName(unit.getUnitType().getName(), unit.getPos())).append(" ")
+							turnEnd1.append(formatName(unit.getUnitType().name(), unit.getPos())).append(" ")
 									.append(c_buff).append(buffInstance.getBuff().getName()).append("[WHITE]: ");
 
 							for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
@@ -333,8 +338,8 @@ public class BattleController {
 				}
 
 				// Sort moves by Prio and then by Agi
-				moves.sort(Comparator.comparingInt((Move entry) -> entry.getSkill().getPrio())
-						.thenComparingLong(entry -> entry.getSelf().getAgiWithStage()).reversed());
+				moves.sort(Comparator.comparingInt((Move entry) -> entry.skill().getPrio())
+						.thenComparingLong(entry -> entry.self().getAgiWithStage()).reversed());
 
 				// The next move plays out
 				Move move = moves.getFirst();
@@ -348,8 +353,8 @@ public class BattleController {
 					if (applyingEffect == 0) {
 
 						// Set newSp
-						Unit self = move.getSelf();
-						Skill skill = move.getSkill();
+						Unit self = move.self();
+						Skill skill = move.skill();
 
 						Element element = skill.getElement();
 						boolean isPlayerTeam = self.getPos() < 4;
@@ -357,27 +362,27 @@ public class BattleController {
 						int cost = (self.isInfiniteSp() && !skill.isBloom()) ? 0 : skill.getCost();
 						// Make sure cost doesn't go below 1 unless the skill has a base 0 SP cost
 						int costMod = (cost > 0)
-								? (int) Math.max(cost * (getAffMultSpCost(self.getAff(element)) / 1000d), 1)
+								? (int) Math.max(cost * (affSpCost.get(self.getAffsCur().getAff(element)) / 1000d), 1)
 								: 0;
 						int change = skill.isBloom() ? costMod : (int) (costMod * self.getMultWithExpSpUse());
 						newSp = skill.isBloom() ? team.getBloom() - change : self.getSp() - change;
 
 						StringBuilder builder = new StringBuilder();
 						if (newSp >= 0) {
-							Unit target = battle.getUnitAtPos(move.getTargetPos());
-							builder.append(formatName(self.getUnitType().getName(), self.getPos(), false)).append(" ")
+							Unit target = battle.getUnitAtPos(move.targetPos());
+							builder.append(formatName(self.getUnitType().name(), self.getPos(), false)).append(" ")
 									.append(lang.get("log.uses")).append(" ").append(c_skill).append(skill.getName())
 									.append("[WHITE]");
 							if (!skill.isRangeSelf())
 								builder.append(" ").append(lang.get("log.on")).append(" ")
-										.append(formatName(target.getUnitType().getName(), move.getTargetPos(), false));
+										.append(formatName(target.getUnitType().name(), move.targetPos(), false));
 
 							if (skill.isBloom() && newSp != team.getBloom()) { // Use bloom
 								builder.append(" (").append(
 										(isPlayerTeam) ? lang.get("log.team_player") : lang.get("log.team_opponent"))
 										.append(" ").append(c_stat).append(lang.get("bloom")).append(" ")
-										.append(c_bloom).append(formatNum(team.getBloom()))
-										.append("[WHITE] → ").append(c_bloom).append(formatNum(newSp));
+										.append(c_bloom).append(formatNum(team.getBloom())).append("[WHITE] → ")
+										.append(c_bloom).append(formatNum(newSp));
 								team.setBloom(newSp);
 							} else if (!skill.isBloom() && newSp != self.getSp()) { // Use SP
 								builder.append(" (").append(c_stat).append(lang.get("sp")).append(" ").append(c_sp)
@@ -407,12 +412,12 @@ public class BattleController {
 
 							prevResults = new HashMap<>();
 						} else {
-							String msg = formatName(self.getUnitType().getName(), self.getPos(), false) + " "
+							String msg = formatName(self.getUnitType().name(), self.getPos(), false) + " "
 									+ lang.get("log.tries_to_use") + " " + c_skill + skill.getName();
 							if (!skill.isRangeSelf())
 								msg += "[WHITE] " + lang.get("log.on") + " "
-										+ formatName(battle.getUnitAtPos(move.getTargetPos()).getUnitType().getName(),
-												move.getTargetPos(), false);
+										+ formatName(battle.getUnitAtPos(move.targetPos()).getUnitType().name(),
+												move.targetPos(), false);
 							msg += ", " + lang.get("log.but_doesnt_have_enough") + " " + c_stat
 									+ (skill.isBloom() ? lang.get("bloom") : lang.get("sp"));
 							appendToLog(msg);
@@ -423,17 +428,17 @@ public class BattleController {
 					// Make sure newSp is valid
 					if (newSp >= 0) {
 						// Apply all SkillEffects over a period of time
-						List<SkillEffect> skillEffects = move.getSkill().getSkillEffects();
+						List<SkillEffect> skillEffects = move.skill().getSkillEffects();
 
-						Unit targetMain = battle.getUnitAtPos(move.getTargetPos());
+						Unit targetMain = battle.getUnitAtPos(move.targetPos());
 
 						// Apply SkillEffects one at a time
 						if (applyingEffect < skillEffects.size()) {
 							// Looking for at least 1 non-fail to continue the skill after the first effect
 							if (nonFails > 0 || applyingEffect == 0) {
 								// Apply to all targets
-								for (int targetPos : move.getSkill().getRange()
-										.getTargetPositions(move.getSelf().getPos(), move.getTargetPos())) {
+								for (int targetPos : move.skill().getRange().getTargetPositions(move.self().getPos(),
+										move.targetPos())) {
 									if (targetPos != -1) { // Target's position is valid
 										Unit targetCur = battle.getUnitAtPos(targetPos);
 										if (applyingEffect == 0) { // First effect
@@ -453,16 +458,9 @@ public class BattleController {
 											nonFails++;
 
 											// Apply effect and track result
-											ResultType resultType = skillEffects.get(applyingEffect).apply(
-													move.getSelf(), targetCur, targetCur == targetMain,
-													prevResults.get(targetPos));
+											ResultType resultType = skillEffects.get(applyingEffect).apply(move.self(),
+													targetCur, targetCur == targetMain, prevResults.get(targetPos));
 											prevResults.put(targetPos, resultType);
-
-											// Log message
-											/*
-											 * List<String> msgs = result.getMessages(); for (String msg : msgs) if (msg
-											 * != null && !msg.isEmpty()) { appendToLog(msg); // Add to log }
-											 */
 										}
 									}
 								}
@@ -479,11 +477,11 @@ public class BattleController {
 
 					// todo delete killed units
 				} else {
-					appendToLog(formatName(move.getSelf().getUnitType().getName(), move.getSelf().getPos(), false) + " "
-							+ lang.get("log.tries_to_use") + " " + c_skill + move.getSkill().getName() + "[WHITE] "
+					appendToLog(formatName(move.self().getUnitType().name(), move.self().getPos(), false) + " "
+							+ lang.get("log.tries_to_use") + " " + c_skill + move.skill().getName() + "[WHITE] "
 							+ lang.get("log.on") + " "
-							+ formatName(battle.getUnitAtPos(move.getTargetPos()).getUnitType().getName(),
-									move.getTargetPos(), false)
+							+ formatName(battle.getUnitAtPos(move.targetPos()).getUnitType().name(), move.targetPos(),
+									false)
 							+ ", " + lang.get("log.but_cant_reach"));
 					endMove();
 				}
@@ -513,10 +511,9 @@ public class BattleController {
 						? battle.getPlayerTeam().getUnits()[indexTarget]
 						: battle.getOpponentTeam().getUnits()[indexTarget - 4];
 				moves.add(new Move(selectedSkill, self, target.getPos()));
+				// todo support ExA
 				setTextIfChanged(movesL.get(selectingMove),
-						movesL.get(selectingMove).getOriginalText() + " → " + target.getUnitType().getName()); // todo
-																												// support
-																												// ExtraActions
+						movesL.get(selectingMove).getOriginalText() + " → " + target.getUnitType().name());
 
 				// Reset for next time
 				for (TypingLabel stat : statsL)
@@ -566,8 +563,8 @@ public class BattleController {
 		if (selectingMove == 8)
 			moves2 = new ArrayList<>(moves);
 		else if (selectingMove == 100) {
-			moves2.sort(Comparator.comparingInt((Move entry) -> entry.getSkill().getPrio())
-					.thenComparingLong(entry -> entry.getSelf().getAgiWithStage()).reversed());
+			moves2.sort(Comparator.comparingInt((Move entry) -> entry.skill().getPrio())
+					.thenComparingLong(entry -> entry.self().getAgiWithStage()).reversed());
 			// todo will thenComparingInt(pos.reversed) work
 		} else
 			moves2 = new ArrayList<>();
@@ -578,11 +575,11 @@ public class BattleController {
 			int pos = unitsAll.get(i).getPos();
 			boolean active = pos == selectingMove;
 			if (!active && usingMove > 0 && moves2.size() >= unitsAll.size())
-				active = (moves2.get(usingMove - 1).getSelf() == unitsAll.get(i));
+				active = (moves2.get(usingMove - 1).self() == unitsAll.get(i));
 			queueText.append((getSide(pos) == Side.ALLY) ? c_ally : c_opp);
 			if (active)
 				queueText.append((getSide(pos) == Side.ALLY) ? c_ally_l : c_opp_l).append("[[");
-			queueText.append(unitsAll.get(i).getUnitType().getName());
+			queueText.append(unitsAll.get(i).getUnitType().name());
 			if (active)
 				queueText.append("][WHITE]");
 			if (i != unitsAll.size() - 1)
@@ -617,13 +614,12 @@ public class BattleController {
 				// +
 				// "\n");
 				String shieldStr = (shield > 0) ? "[CYAN]+" + formatNum(shield) + "[WHITE]" : "";
-				String spStr = (!unit.isInfiniteSp())
-						? formatNum(unit.getSp()) + "/" + formatNum(1000)
-						: "∞";
-				StringBuilder text = new StringBuilder(unit.getUnitType().getName() + "\n" + lang.get("hp") + ": "
+				String spStr = (!unit.isInfiniteSp()) ? formatNum(unit.getSp()) + "/" + formatNum(1000) : "∞";
+				StringBuilder text = new StringBuilder(unit.getUnitType().name() + "\n" + lang.get("hp") + ": "
 						+ formatNum(unit.getStatsCur().getDisplayHp()) + shieldStr + "/"
-						+ formatNum(unit.getStatsDefault().getDisplayHp()) + "\n" + lang.get("sp") + ": "
-						+ spStr + "\nStr: " + formatNum(unit.getStrWithStage()) + "/" + formatNum(unit.getStatsDefault().getStr()) +
+						+ formatNum(unit.getStatsDefault().getDisplayHp()) + "\n" + lang.get("sp") + ": " + spStr
+						+ "\nStr: " + formatNum(unit.getStrWithStage()) + "/"
+						+ formatNum(unit.getStatsDefault().getStr()) +
 						// "\nMag:" + unit.getMagWithStage() + "/" + unit.getStatsDefault().getMag() +
 						// "\nAmr: " + unit.getAmrWithStage() + "/" + unit.getStatsDefault().getAmr() +
 						// "\nRes: " + unit.getResWithStage() + "/" + unit.getStatsDefault().getRes() +

@@ -19,7 +19,6 @@ import static io.github.celosia.sys.menu.TextLib.getStageStatString;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeStage implements SkillEffect {
-
 	private final StageType stageType; // Stage to change
 	private final int turns; // How many turns to change it for
 	private final int stacks; // How much to change it by
@@ -100,7 +99,7 @@ public class ChangeStage implements SkillEffect {
 				String signOld = (stageOld > 0) ? "+" : "";
 				String signNew = (stageNew > 0) ? "+" : "";
 
-				str = formatName(unit.getUnitType().getName(), unit.getPos()) + " " + c_buff + stageType.getName()
+				str = formatName(unit.getUnitType().name(), unit.getPos()) + " " + c_buff + stageType.getName()
 						+ "[WHITE] " + lang.get("stage") + " " + getColor(stageOld) + signOld + stageOld + "[WHITE] → "
 						+ getColor(stageNew) + signNew + stageNew;
 				str2 = getStageStatString(unit, stageType, stageNew);
@@ -117,7 +116,7 @@ public class ChangeStage implements SkillEffect {
 						msg.add(str + "[WHITE], " + lang.get("turns") + " " + c_num + turnsOld + "[WHITE] → " + c_num
 								+ turnsMod + str2);
 					else
-						msg.add(formatName(unit.getUnitType().getName(), unit.getPos()) + " " + c_buff
+						msg.add(formatName(unit.getUnitType().name(), unit.getPos()) + " " + c_buff
 								+ stageType.getName() + "[WHITE] " + lang.get("stage") + " " + lang.get("turns") + " "
 								+ c_num + turnsOld + "[WHITE] → " + c_num + turnsMod);
 				} else if (stageNew != stageOld)

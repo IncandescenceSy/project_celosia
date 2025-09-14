@@ -11,7 +11,6 @@ import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeInfiniteSp implements BuffEffect {
-
 	private final int change; // Amount to add
 
 	public ChangeInfiniteSp(int change) {
@@ -24,7 +23,7 @@ public class ChangeInfiniteSp implements BuffEffect {
 		int infiniteSpNew = infiniteSpOld + (change * stacks);
 		self.setInfiniteSp(infiniteSpNew);
 		if (infiniteSpNew > 0 && self.getShield() == 0 && self.getDefend() == 0)
-			appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + lang.get("sp") + " "
+			appendToLog(formatName(self.getUnitType().name(), self.getPos()) + " " + c_stat + lang.get("sp") + " "
 					+ c_sp + formatNum(self.getSp()) + "[WHITE] → " + c_sp + "∞");
 	}
 
@@ -34,7 +33,7 @@ public class ChangeInfiniteSp implements BuffEffect {
 		int infiniteSpNew = infiniteSpOld - (change * stacks);
 		self.setInfiniteSp(infiniteSpNew);
 		if (infiniteSpNew <= 0 && self.getShield() == 0 && self.getDefend() == 0)
-			appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + lang.get("sp") + c_sp
+			appendToLog(formatName(self.getUnitType().name(), self.getPos()) + " " + c_stat + lang.get("sp") + c_sp
 					+ " ∞" + "[WHITE] → " + c_sp + formatNum(self.getSp()));
 	}
 }

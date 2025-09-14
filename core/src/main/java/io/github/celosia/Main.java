@@ -145,9 +145,9 @@ public class Main extends ApplicationAdapter {
 		Lang.createBundle();
 		// Lang.createBundle(new Locale("ja", "JP"))
 
-        // Setup formatters
-        rf.setMaximumFractionDigits(2);
-        rf.setMinimumFractionDigits(0);
+		// Setup formatters
+		rf.setMaximumFractionDigits(2);
+		rf.setMinimumFractionDigits(0);
 
 		// Debug
 		// Make sure the log can interpret special characters

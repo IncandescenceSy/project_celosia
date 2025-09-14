@@ -11,7 +11,6 @@ import static io.github.celosia.sys.menu.TextLib.getColor;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeAff implements BuffEffect {
-
 	private final Element element;
 	private final int change; // Amount to add
 
@@ -22,20 +21,20 @@ public class ChangeAff implements BuffEffect {
 
 	@Override
 	public void onGive(Unit self, int stacks) {
-		int affOld = self.getAff(element);
+		int affOld = self.getAffsCur().getAff(element);
 		int affNew = affOld + (change * stacks);
-		self.setAff(element, affNew);
-		appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + element.getName() + " "
+		self.getAffsCur().setAff(element, affNew);
+		appendToLog(formatName(self.getUnitType().name(), self.getPos()) + " " + c_stat + element.getName() + " "
 				+ lang.get("affinity") + " " + getColor(affOld) + Math.clamp(affOld, -5, 5) + "[WHITE]" + " → "
 				+ getColor(affNew) + Math.clamp(affNew, -5, 5));
 	}
 
 	@Override
 	public void onRemove(Unit self, int stacks) {
-		int affOld = self.getAff(element);
+		int affOld = self.getAffsCur().getAff(element);
 		int affNew = affOld - (change * stacks);
-		self.setAff(element, affNew);
-		appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + element.getName() + " "
+		self.getAffsCur().setAff(element, affNew);
+		appendToLog(formatName(self.getUnitType().name(), self.getPos()) + " " + c_stat + element.getName() + " "
 				+ lang.get("affinity") + " " + getColor(affOld) + Math.clamp(affOld, -5, 5) + "[WHITE]" + " → "
 				+ getColor(affNew) + Math.clamp(affNew, -5, 5));
 	}

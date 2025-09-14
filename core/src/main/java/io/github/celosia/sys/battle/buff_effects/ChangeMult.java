@@ -17,7 +17,6 @@ import static io.github.celosia.sys.menu.TextLib.getMultWithExpChangeColor;
 import static io.github.celosia.sys.menu.TextLib.getMultWithExpColor;
 
 public class ChangeMult implements BuffEffect {
-
 	private final Mult mult;
 	private final int changeMult; // Amount to add to mult in 10ths of a % (1000 = +100%)
 	private final int changeExp; // Amount to add to exp in 100ths (100 = +1)
@@ -82,10 +81,10 @@ public class ChangeMult implements BuffEffect {
 					+ "%[WHITE]" + c_exp + ")[WHITE]";
 		}
 
-		appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + mult.getName() + " "
+		appendToLog(formatName(self.getUnitType().name(), self.getPos()) + " " + c_stat + mult.getName() + " "
 				+ getMultColor(multOld, mult) + formatNum(Math.max(multOld, 100) / 10) + "%" + calcedOld + "[WHITE] → "
 				+ getMultColor(multNew, mult) + formatNum(Math.max(multNew, 100) / 10) + "%" + calcedNew + "[WHITE] ("
-				+ getMultChangeColor(changeMultFull, mult) + ((changeMultDisplay > 0) ? "+" : "") + formatNum(changeMultDisplay)
-				+ "%" + calcedChange);
+				+ getMultChangeColor(changeMultFull, mult) + ((changeMultDisplay > 0) ? "+" : "")
+				+ formatNum(changeMultDisplay) + "%" + calcedChange);
 	}
 }

@@ -16,9 +16,9 @@ public class Calcs {
 
 		if (spNew != spOld) {
 			unit.setSp(spNew);
-			return formatName(unit.getUnitType().getName(), unit.getPos()) + " " + c_stat + lang.get("sp") + " " + c_sp
-					+ formatNum(spOld) + "[WHITE] → " + c_sp + formatNum(spNew) + "[WHITE] ("
-					+ getColor(change) + ((change > 0) ? "+" : "") + (spNew - spOld) + "[WHITE])";
+			return formatName(unit.getUnitType().name(), unit.getPos()) + " " + c_stat + lang.get("sp") + " " + c_sp
+					+ formatNum(spOld) + "[WHITE] → " + c_sp + formatNum(spNew) + "[WHITE] (" + getColor(change)
+					+ ((change > 0) ? "+" : "") + (spNew - spOld) + "[WHITE])";
 		} else
 			return "";
 	}

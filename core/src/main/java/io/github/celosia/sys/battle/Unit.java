@@ -22,7 +22,7 @@ public class Unit {
 	private final UnitType unitType;
 	private final long lvl; // Level
 
-	// Current stats
+	// Current and default stats
 	// HP, Str, Mag, Amr, Res, and Agi
 	private final Stats statsDefault;
 	private final Stats statsCur;
@@ -48,16 +48,11 @@ public class Unit {
 	private int stageAgi;
 	private int stageAgiTurns;
 
-	// Current affinities
+	// Current and default affinities
 	// Multiplies the damage dealt, damage taken, and SP cost for their
 	// corresponding element
-	private int affIgnis;
-	private int affGlacies;
-	private int affFulgur;
-	private int affVentus;
-	private int affTerra;
-	private int affLux;
-	private int affMalum;
+	private final Affinities affsDefault;
+	private final Affinities affsCur;
 
 	/// Multipliers
 	// Multiplies the corresponding numbers
@@ -169,10 +164,10 @@ public class Unit {
 	public Unit(UnitType unitType, long lvl, Skill[] skills, int pos) {
 		this.unitType = unitType;
 		this.lvl = lvl;
-		statsDefault = unitType.getStatsBase().getRealStats(lvl);
+		statsDefault = unitType.statsBase().getRealStats(lvl);
 		statsCur = new Stats(statsDefault);
 		this.skills = skills;
-		passives = List.of(unitType.getPassives());
+		passives = List.of(unitType.passives());
 		sp = 200;
 		this.pos = pos;
 		stageAtk = 0;
@@ -183,13 +178,8 @@ public class Unit {
 		stageFthTurns = 0;
 		stageAgi = 0;
 		stageAgiTurns = 0;
-		affIgnis = unitType.getAffIgnis();
-		affGlacies = unitType.getAffGlacies();
-		affFulgur = unitType.getAffFulgur();
-		affVentus = unitType.getAffVentus();
-		affTerra = unitType.getAffTerra();
-		affLux = unitType.getAffLux();
-		affMalum = unitType.getAffMalum();
+		affsDefault = unitType.affsBase();
+		affsCur = new Affinities(affsDefault);
 		multDmgDealt = 1000;
 		multDmgTaken = 1000;
 		multIgnisDmgDealt = 1000;
@@ -410,187 +400,133 @@ public class Unit {
 	}
 
 	public long getStrWithStage() {
-		return statsCur.getStr()
-				+ (long) (statsDefault.getStr() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
+		return Math.max(statsCur.getStr()
+				+ (long) (statsDefault.getStr() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1))), 1);
 	}
 
 	public long getMagWithStage() {
-		return statsCur.getMag()
-				+ (long) (statsDefault.getMag() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
+		return Math.max(statsCur.getMag()
+				+ (long) (statsDefault.getMag() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1))), 1);
 	}
 
 	public long getFthWithStage() {
-		return statsCur.getFth()
-				+ (long) (statsDefault.getFth() * (((double) stageFth / 10) / ((stageFth < 0) ? 2 : 1)));
+		return Math.max(statsCur.getFth()
+				+ (long) (statsDefault.getFth() * (((double) stageFth / 10) / ((stageFth < 0) ? 2 : 1))), 1);
 	}
 
 	public long getAmrWithStage() {
-		return statsCur.getAmr()
-				+ (long) (statsDefault.getAmr() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
+		return Math.max(statsCur.getAmr()
+				+ (long) (statsDefault.getAmr() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1))), 1);
 	}
 
 	public long getResWithStage() {
-		return statsCur.getRes()
-				+ (long) (statsDefault.getRes() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
+		return Math.max(statsCur.getRes()
+				+ (long) (statsDefault.getRes() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1))), 1);
 	}
 
 	public long getAgiWithStage() {
-		return statsCur.getAgi()
-				+ (long) (statsDefault.getAgi() * (((double) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1)));
+		return Math.max(statsCur.getAgi()
+				+ (long) (statsDefault.getAgi() * (((double) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1))), 1);
 	}
 
 	public long getStatWithStage(Stat stat) {
 		return switch (stat) {
-			case STR -> statsCur.getStr()
-					+ (long) (statsDefault.getStr() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
-			case MAG -> statsCur.getMag()
-					+ (long) (statsDefault.getMag() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
-			case FTH -> statsCur.getFth()
-					+ (long) (statsDefault.getFth() * (((double) stageFth / 10) / ((stageFth < 0) ? 2 : 1)));
-			case AMR -> statsCur.getAmr()
-					+ (long) (statsDefault.getAmr() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
-			case RES -> statsCur.getRes()
-					+ (long) (statsDefault.getRes() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
-			case AGI -> statsCur.getAgi()
-					+ (long) (statsDefault.getAgi() * (((double) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1)));
+			case STR -> Math.max(
+					statsCur.getStr()
+							+ (long) (statsDefault.getStr() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1))),
+					1);
+			case MAG -> Math.max(
+					statsCur.getMag()
+							+ (long) (statsDefault.getMag() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1))),
+					1);
+			case FTH -> Math.max(
+					statsCur.getFth()
+							+ (long) (statsDefault.getFth() * (((double) stageFth / 10) / ((stageFth < 0) ? 2 : 1))),
+					1);
+			case AMR -> Math.max(
+					statsCur.getAmr()
+							+ (long) (statsDefault.getAmr() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1))),
+					1);
+			case RES -> Math.max(
+					statsCur.getRes()
+							+ (long) (statsDefault.getRes() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1))),
+					1);
+			case AGI -> Math.max(
+					statsCur.getAgi()
+							+ (long) (statsDefault.getAgi() * (((double) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1))),
+					1);
 		};
 	}
 
 	public long getStatWithStage(Stat stat, int stage) {
 		return switch (stat) {
-			case STR -> statsCur.getStr()
-					+ (long) (statsDefault.getStr() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
-			case MAG -> statsCur.getMag()
-					+ (long) (statsDefault.getMag() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
-			case FTH -> statsCur.getFth()
-					+ (long) (statsDefault.getFth() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
-			case AMR -> statsCur.getAmr()
-					+ (long) (statsDefault.getAmr() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
-			case RES -> statsCur.getRes()
-					+ (long) (statsDefault.getRes() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
-			case AGI -> statsCur.getAgi()
-					+ (long) (statsDefault.getAgi() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
+			case STR -> Math.max(statsCur.getStr()
+					+ (long) (statsDefault.getStr() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))), 1);
+			case MAG -> Math.max(statsCur.getMag()
+					+ (long) (statsDefault.getMag() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))), 1);
+			case FTH -> Math.max(statsCur.getFth()
+					+ (long) (statsDefault.getFth() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))), 1);
+			case AMR -> Math.max(statsCur.getAmr()
+					+ (long) (statsDefault.getAmr() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))), 1);
+			case RES -> Math.max(statsCur.getRes()
+					+ (long) (statsDefault.getRes() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))), 1);
+			case AGI -> Math.max(statsCur.getAgi()
+					+ (long) (statsDefault.getAgi() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))), 1);
 		};
 	}
 
 	public long getDisplayStatWithStage(Stat stat) {
 		return switch (stat) {
-			case STR -> statsCur.getDisplayStr()
-					+ (long) (statsDefault.getDisplayStr() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
-			case MAG -> statsCur.getDisplayMag()
-					+ (long) (statsDefault.getDisplayMag() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1)));
-			case FTH -> statsCur.getDisplayFth()
-					+ (long) (statsDefault.getDisplayFth() * (((double) stageFth / 10) / ((stageFth < 0) ? 2 : 1)));
-			case AMR -> statsCur.getDisplayAmr()
-					+ (long) (statsDefault.getDisplayAmr() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
-			case RES -> statsCur.getDisplayRes()
-					+ (long) (statsDefault.getDisplayRes() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1)));
-			case AGI -> statsCur.getDisplayAgi()
-					+ (long) (statsDefault.getDisplayAgi() * (((double) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1)));
+			case STR -> Math.max(statsCur.getDisplayStr()
+					+ (long) (statsDefault.getDisplayStr() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1))), 1);
+			case MAG -> Math.max(statsCur.getDisplayMag()
+					+ (long) (statsDefault.getDisplayMag() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1))), 1);
+			case FTH -> Math.max(statsCur.getDisplayFth()
+					+ (long) (statsDefault.getDisplayFth() * (((double) stageFth / 10) / ((stageFth < 0) ? 2 : 1))), 1);
+			case AMR -> Math.max(statsCur.getDisplayAmr()
+					+ (long) (statsDefault.getDisplayAmr() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1))), 1);
+			case RES -> Math.max(statsCur.getDisplayRes()
+					+ (long) (statsDefault.getDisplayRes() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1))), 1);
+			case AGI -> Math.max(statsCur.getDisplayAgi()
+					+ (long) (statsDefault.getDisplayAgi() * (((double) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1))), 1);
 		};
 	}
 
 	public long getDisplayStatWithStage(Stat stat, int stage) {
 		return switch (stat) {
-			case STR -> statsCur.getDisplayStr()
-					+ (long) (statsDefault.getDisplayStr() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
-			case MAG -> statsCur.getDisplayMag()
-					+ (long) (statsDefault.getDisplayMag() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
-			case FTH -> statsCur.getDisplayFth()
-					+ (long) (statsDefault.getDisplayFth() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
-			case AMR -> statsCur.getDisplayAmr()
-					+ (long) (statsDefault.getDisplayAmr() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
-			case RES -> statsCur.getDisplayRes()
-					+ (long) (statsDefault.getDisplayRes() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
-			case AGI -> statsCur.getDisplayAgi()
-					+ (long) (statsDefault.getDisplayAgi() * (((double) stage / 10) / ((stage < 0) ? 2 : 1)));
+			case STR -> Math.max(
+					statsCur.getDisplayStr()
+							+ (long) (statsDefault.getDisplayStr() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))),
+					1);
+			case MAG -> Math.max(
+					statsCur.getDisplayMag()
+							+ (long) (statsDefault.getDisplayMag() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))),
+					1);
+			case FTH -> Math.max(
+					statsCur.getDisplayFth()
+							+ (long) (statsDefault.getDisplayFth() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))),
+					1);
+			case AMR -> Math.max(
+					statsCur.getDisplayAmr()
+							+ (long) (statsDefault.getDisplayAmr() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))),
+					1);
+			case RES -> Math.max(
+					statsCur.getDisplayRes()
+							+ (long) (statsDefault.getDisplayRes() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))),
+					1);
+			case AGI -> Math.max(
+					statsCur.getDisplayAgi()
+							+ (long) (statsDefault.getDisplayAgi() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))),
+					1);
 		};
 	}
 
-	public void setAffIgnis(int affIgnis) {
-		this.affIgnis = affIgnis;
+	public Affinities getAffsDefault() {
+		return affsCur;
 	}
 
-	public int getAffIgnis() {
-		return affIgnis;
-	}
-
-	public void setAffGlacies(int affGlacies) {
-		this.affGlacies = affGlacies;
-	}
-
-	public int getAffGlacies() {
-		return affGlacies;
-	}
-
-	public void setAffFulgur(int affFulgur) {
-		this.affFulgur = affFulgur;
-	}
-
-	public int getAffFulgur() {
-		return affFulgur;
-	}
-
-	public void setAffVentus(int affVentus) {
-		this.affVentus = affVentus;
-	}
-
-	public int getAffVentus() {
-		return affVentus;
-	}
-
-	public void setAffTerra(int affTerra) {
-		this.affTerra = affTerra;
-	}
-
-	public int getAffTerra() {
-		return affTerra;
-	}
-
-	public void setAffLux(int affLux) {
-		this.affLux = affLux;
-	}
-
-	public int getAffLux() {
-		return affLux;
-	}
-
-	public void setAffMalum(int affMalum) {
-		this.affMalum = affMalum;
-	}
-
-	public int getAffMalum() {
-		return affMalum;
-	}
-
-	public int[] getAffs() {
-		return new int[]{affIgnis, affGlacies, affFulgur, affVentus, affTerra, affLux, affMalum};
-	}
-
-	public void setAff(Element element, int aff) {
-		switch (element) {
-			case IGNIS -> affIgnis = aff;
-			case GLACIES -> affGlacies = aff;
-			case FULGUR -> affFulgur = aff;
-			case VENTUS -> affVentus = aff;
-			case TERRA -> affTerra = aff;
-			case LUX -> affLux = aff;
-			case MALUM -> affMalum = aff;
-		}
-	}
-
-	public int getAff(Element element) {
-		return switch (element) {
-			case VIS -> 0;
-			case IGNIS -> affIgnis;
-			case GLACIES -> affGlacies;
-			case FULGUR -> affFulgur;
-			case VENTUS -> affVentus;
-			case TERRA -> affTerra;
-			case LUX -> affLux;
-			case MALUM -> affMalum;
-			// case FULGUR_MALUM -> affFulgur + affMalum;
-		};
+	public Affinities getAffsCur() {
+		return affsCur;
 	}
 
 	public void setMultDmgDealt(int multDmgDealt) {
@@ -1560,19 +1496,19 @@ public class Unit {
 	}
 
 	public boolean isWeakTo(Element element) {
-		return this.getAff(element) < 0;
+		return affsCur.getAff(element) < 0;
 	}
 
 	public boolean isResists(Element element) {
-		return this.getAff(element) > 0;
+		return affsCur.getAff(element) > 0;
 	}
 
 	public boolean isImmuneTo(Element element) {
-		return this.getAff(element) >= 5;
+		return affsCur.getAff(element) >= 5;
 	}
 
 	public boolean isNeutralTo(Element element) {
-		return this.getAff(element) == 0;
+		return affsCur.getAff(element) == 0;
 	}
 
 	// Returns if the requested Passive is present
@@ -1601,44 +1537,43 @@ public class Unit {
 	public void decrementTurns() {
 		// Stages
 		if (stageAtk != 0 && --stageAtkTurns <= 0) {
-			appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " "
-					+ getColor(stageAtk) + stageAtk + "[WHITE] " + lang.format("stage_s", stageAtk) + " " + c_buff
-					+ StageType.ATK.getName() + getStageStatString(this, StageType.ATK, 0));
+			appendToLog(formatName(unitType.name(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageAtk)
+					+ stageAtk + "[WHITE] " + lang.format("stage_s", stageAtk) + " " + c_buff + StageType.ATK.getName()
+					+ getStageStatString(this, StageType.ATK, 0));
 			stageAtk = 0; // Remove stages
 		}
 		if (stageDef != 0 && --stageDefTurns <= 0) {
-			appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " "
-					+ getColor(stageDef) + stageDef + "[WHITE] " + lang.format("stage_s", stageDef) + " " + c_buff
-					+ StageType.DEF.getName() + getStageStatString(this, StageType.DEF, 0));
+			appendToLog(formatName(unitType.name(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageDef)
+					+ stageDef + "[WHITE] " + lang.format("stage_s", stageDef) + " " + c_buff + StageType.DEF.getName()
+					+ getStageStatString(this, StageType.DEF, 0));
 			stageDef = 0;
 		}
 		if (stageFth != 0 && --stageFthTurns <= 0) {
-			appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " "
-					+ getColor(stageFth) + stageFth + "[WHITE] " + lang.format("stage_s", stageFth) + " " + c_buff
-					+ StageType.FTH.getName() + getStageStatString(this, StageType.FTH, 0));
+			appendToLog(formatName(unitType.name(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageFth)
+					+ stageFth + "[WHITE] " + lang.format("stage_s", stageFth) + " " + c_buff + StageType.FTH.getName()
+					+ getStageStatString(this, StageType.FTH, 0));
 			stageFth = 0;
 		}
 		if (stageAgi != 0 && --stageAgiTurns <= 0) {
-			appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " "
-					+ getColor(stageAgi) + stageAgi + "[WHITE] " + lang.format("stage_s", stageAgi) + " " + c_buff
-					+ StageType.AGI.getName() + getStageStatString(this, StageType.AGI, 0));
+			appendToLog(formatName(unitType.name(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageAgi)
+					+ stageAgi + "[WHITE] " + lang.format("stage_s", stageAgi) + " " + c_buff + StageType.AGI.getName()
+					+ getStageStatString(this, StageType.AGI, 0));
 			stageAgi = 0;
 		}
 
 		// Shield
 		if (shield != 0 && --shieldTurns <= 0) {
 			if (defend == 0) {
-				appendToLog(formatName(unitType.getName(), pos, false) + " " + lang.get("log.loses") + " " + c_shield
+				appendToLog(formatName(unitType.name(), pos, false) + " " + lang.get("log.loses") + " " + c_shield
 						+ formatNum(shield / STAT_MULT_HIDDEN) + " " + c_buff + lang.get("shield"));
 				if (effectBlock <= 0)
-					appendToLog(formatName(unitType.getName(), pos, false) + lang.get("log.is_no_longer") + " " + c_buff
+					appendToLog(formatName(unitType.name(), pos, false) + lang.get("log.is_no_longer") + " " + c_buff
 							+ lang.get("log.effect_block"));
 			} else {
-				appendToLog(formatName(unitType.getName(), pos) + " " + c_buff + lang.get("shield") + " " + c_shield
+				appendToLog(formatName(unitType.name(), pos) + " " + c_buff + lang.get("shield") + " " + c_shield
 						+ formatNum((shield + defend) / STAT_MULT_HIDDEN) + "[WHITE] → " + c_shield
-						+ formatNum(defend / STAT_MULT_HIDDEN) + "[WHITE]/" + c_shield
-						+ formatNum(statsDefault.getHp()) + "[WHITE] (" + c_neg + "-"
-						+ formatNum(shield / STAT_MULT_HIDDEN) + "[WHITE])");
+						+ formatNum(defend / STAT_MULT_HIDDEN) + "[WHITE]/" + c_shield + formatNum(statsDefault.getHp())
+						+ "[WHITE] (" + c_neg + "-" + formatNum(shield / STAT_MULT_HIDDEN) + "[WHITE])");
 			}
 			shield = 0;
 		}
@@ -1652,7 +1587,7 @@ public class Unit {
 			} else {
 				StringBuilder str = new StringBuilder();
 				int maxStacks = buffInstance.getBuff().getMaxStacks();
-				str.append(formatName(unitType.getName(), pos, false)).append(" ").append(lang.get("log.loses"))
+				str.append(formatName(unitType.name(), pos, false)).append(" ").append(lang.get("log.loses"))
 						.append(" ");
 				if (maxStacks > 1)
 					str.append(c_num).append(buffInstance.getStacks()).append(" ");
@@ -1676,8 +1611,8 @@ public class Unit {
 
 		List<String> msg = new ArrayList<>();
 
-		String name = (useName) ? formatName(unitType.getName(), pos, false) + " " : "";
-		String name_s = (useName) ? formatName(unitType.getName(), pos) + " " : "";
+		String name = (useName) ? formatName(unitType.name(), pos, false) + " " : "";
+		String name_s = (useName) ? formatName(unitType.name(), pos) + " " : "";
 
 		if (!pierce) { // Pierce skips Defend and Shield
 			if (defend > 0 && dmg > 0) { // There's Defend and dmg
@@ -1685,10 +1620,10 @@ public class Unit {
 					defend -= dmg;
 					return new Result(ResultType.HIT_SHIELD,
 							name_s + lang.get("shield") + " " + c_shield
-									+ formatNum((defendOld + shield) / STAT_MULT_HIDDEN) + "[WHITE] → "
-									+ c_shield + formatNum((defend + shield) / STAT_MULT_HIDDEN) + "[WHITE]/"
-									+ c_shield + formatNum(statsDefault.getDisplayHp()) + "[WHITE] (" + c_neg
-									+ "-" + formatNum(dmgFull / STAT_MULT_HIDDEN) + "[WHITE])");
+									+ formatNum((defendOld + shield) / STAT_MULT_HIDDEN) + "[WHITE] → " + c_shield
+									+ formatNum((defend + shield) / STAT_MULT_HIDDEN) + "[WHITE]/" + c_shield
+									+ formatNum(statsDefault.getDisplayHp()) + "[WHITE] (" + c_neg + "-"
+									+ formatNum(dmgFull / STAT_MULT_HIDDEN) + "[WHITE])");
 				} else { // Destroy Defend and proceed to Shield
 					dmg -= defend;
 					defend = 0;
@@ -1704,14 +1639,14 @@ public class Unit {
 					shield -= dmg;
 					return new Result(ResultType.HIT_SHIELD,
 							name_s + lang.get("shield") + " " + c_shield
-									+ formatNum((defendOld + shieldOld) / STAT_MULT_HIDDEN) + "[WHITE] → "
-									+ c_shield + formatNum(shield / STAT_MULT_HIDDEN) + "[WHITE]/" + c_shield
+									+ formatNum((defendOld + shieldOld) / STAT_MULT_HIDDEN) + "[WHITE] → " + c_shield
+									+ formatNum(shield / STAT_MULT_HIDDEN) + "[WHITE]/" + c_shield
 									+ formatNum(statsDefault.getDisplayHp()) + "[WHITE] (" + c_neg + "-"
 									+ formatNum(dmgFull / STAT_MULT_HIDDEN) + "[WHITE])");
 				} else { // Destroy Shield and proceed to HP
 					msg.add(name_s + lang.get("shield") + " " + c_shield
-							+ formatNum((defendOld + shield) / STAT_MULT_HIDDEN) + "[WHITE] → " + c_num + 0
-							+ "[WHITE]/" + c_shield + statsDefault.getDisplayHp() + "[WHITE] (" + c_neg + "-"
+							+ formatNum((defendOld + shield) / STAT_MULT_HIDDEN) + "[WHITE] → " + c_num + 0 + "[WHITE]/"
+							+ c_shield + statsDefault.getDisplayHp() + "[WHITE] (" + c_neg + "-"
 							+ formatNum((defendOld + shield) / STAT_MULT_HIDDEN) + "[WHITE])");
 					dmg -= shield;
 					shield = 0;
@@ -1729,8 +1664,8 @@ public class Unit {
 		statsCur.setHp(hpNew);
 		long hpNewDisp = statsCur.getDisplayHp();
 		msg.add(name_s + c_stat + lang.get("hp") + " " + c_hp + formatNum(hpOldDisp) + "[WHITE] → " + c_hp
-				+ formatNum(hpNewDisp) + "[WHITE] (" + c_neg + "-"
-				+ formatNum((dmg / STAT_MULT_HIDDEN)) + "[WHITE])");
+				+ formatNum(hpNewDisp) + "[WHITE]/" + c_hp + formatNum(statsDefault.getDisplayHp()) + "[WHITE] ("
+				+ c_neg + "-" + formatNum((dmg / STAT_MULT_HIDDEN)) + "[WHITE])");
 
 		if (effectBlock > 0) { // todo should this be a separate result from hitting shield
 			return new Result(ResultType.HIT_SHIELD, msg);
@@ -1738,7 +1673,7 @@ public class Unit {
 			return new Result(ResultType.SUCCESS, msg);
 		} else
 			return new Result(ResultType.FAIL, c_neg + lang.get("log.no_effect") + "[WHITE] " + lang.get("log.on") + " "
-					+ formatName(unitType.getName(), pos, false)); // Did no damage
+					+ formatName(unitType.name(), pos, false)); // Did no damage
 	}
 
 	public Result damage(long dmg, boolean pierce) {

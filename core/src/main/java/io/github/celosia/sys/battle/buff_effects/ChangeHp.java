@@ -89,8 +89,8 @@ public class ChangeHp implements BuffEffect {
 				long hpMaxDisp = self.getStatsDefault().getDisplayHp();
 				long hpNewDisp = self.getStatsCur().getDisplayHp();
 				return new String[]{lang.get("hp") + " " + c_hp + formatNum(hpOldDisp) + "[WHITE] → " + c_hp
-						+ formatNum(hpNewDisp) + "[WHITE]/" + c_hp + formatNum(hpMaxDisp) + "[WHITE] (" + c_pos
-						+ "+" + formatNum(Math.max(hpNewDisp - hpOldDisp, 0)) + "[WHITE])"};
+						+ formatNum(hpNewDisp) + "[WHITE]/" + c_hp + formatNum(hpMaxDisp) + "[WHITE] (" + c_pos + "+"
+						+ formatNum(Math.max(hpNewDisp - hpOldDisp, 0)) + "[WHITE])"};
 			} else
 				return new String[]{""};
 		}

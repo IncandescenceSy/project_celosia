@@ -4,29 +4,7 @@ import static io.github.celosia.sys.battle.PosLib.getHeight;
 import static io.github.celosia.sys.battle.PosLib.getRelativeSide;
 
 // A skill with self and target attached
-public class Move {
-
-	Skill skill;
-	Unit self;
-	int targetPos;
-
-	Move(Skill skill, Unit self, int targetPos) {
-		this.skill = skill;
-		this.self = self;
-		this.targetPos = targetPos;
-	}
-
-	public Skill getSkill() {
-		return skill;
-	}
-
-	public Unit getSelf() {
-		return self;
-	}
-
-	public int getTargetPos() {
-		return targetPos;
-	}
+public record Move(Skill skill, Unit self, int targetPos) {
 
 	public boolean isValid() {
 		// Check for disallowed self-targeting
@@ -42,4 +20,5 @@ public class Move {
 		return skill.getRange().getSide() == Side.BOTH
 				|| skill.getRange().getSide() == getRelativeSide(self.getPos(), targetPos);
 	}
+
 }
