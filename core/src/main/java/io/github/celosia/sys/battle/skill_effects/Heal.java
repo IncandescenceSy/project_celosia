@@ -15,6 +15,7 @@ import static io.github.celosia.sys.menu.TextLib.c_hp;
 import static io.github.celosia.sys.menu.TextLib.c_num;
 import static io.github.celosia.sys.menu.TextLib.c_shield;
 import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.menu.TextLib.getColor;
 import static io.github.celosia.sys.settings.Lang.lang;
 
@@ -52,7 +53,7 @@ public class Heal implements SkillEffect {
 			List<String> msg = new ArrayList<>();
 
 			// Heals by pow% of user's Fth
-			int heal = (int) (self.getFthWithStage() * (pow / 100d) * self.getMultWithExpHealingDealt()
+			long heal = (long) (self.getFthWithStage() * (pow / 100d) * self.getMultWithExpHealingDealt()
 					* target.getMultWithExpHealingTaken());
 
 			// Adds shield (shield + defend cannot exceed max HP)
@@ -79,12 +80,12 @@ public class Heal implements SkillEffect {
 					long hpMaxDisp = target.getStatsDefault().getDisplayHp();
 					long shieldNewDisp = target.getDisplayShield();
 
-					str = formatName(target.getUnitType().getName(), self.getPos()) + " " + c_buff + lang.get("shield")
-							+ " " + c_shield + String.format("%,d", (shieldCurDisp + target.getDisplayDefend()))
-							+ "[WHITE] → " + c_shield
-							+ String.format("%,d", (shieldNewDisp + target.getDisplayDefend())) + "[WHITE]/" + c_shield
-							+ String.format("%,d", hpMaxDisp) + getColor(shieldNewDisp - shieldCurDisp) + " (+"
-							+ String.format("%,d", (shieldNewDisp - shieldCurDisp)) + ")";
+					str = formatName(target.getUnitType().getName(), target.getPos()) + " " + c_buff
+							+ lang.get("shield") + " " + c_shield
+							+ formatNum((shieldCurDisp + target.getDisplayDefend())) + "[WHITE] → "
+							+ c_shield + formatNum((shieldNewDisp + target.getDisplayDefend())) + "[WHITE]/"
+							+ c_shield + formatNum(hpMaxDisp) + "[WHITE] (" + getColor(shieldNewDisp - shieldCurDisp)
+							+ "+" + formatNum((shieldNewDisp - shieldCurDisp)) + "[WHITE])";
 				}
 
 				if (turnsMod > turnsCur) {
@@ -93,14 +94,14 @@ public class Heal implements SkillEffect {
 						msg.add(str + "[WHITE], " + lang.get("turns") + " " + c_num + turnsCur + "[WHITE] → " + c_num
 								+ turnsMod);
 					else
-						msg.add(formatName(target.getUnitType().getName(), self.getPos()) + " " + lang.get("shield")
+						msg.add(formatName(target.getUnitType().getName(), target.getPos()) + " " + lang.get("shield")
 								+ " " + lang.get("turns") + " " + c_num + turnsCur + "[WHITE] → " + c_num + turnsMod);
 				}
 
 				// Effect block message
-				if (shieldCur == 0 && shieldNew > 0 && target.isEffectBlock() && target.getDefend() == 0) {
-					msg.add(self.getUnitType().getName() + " " + lang.get("log.is_now") + " " + c_buff
-							+ lang.get("log.effect_block"));
+				if (shieldCur == 0 && shieldNew > 0 && !target.isEffectBlock() && target.getDefend() == 0) {
+					msg.add(formatName(target.getUnitType().getName(), target.getPos(), false) + " "
+							+ lang.get("log.is_now") + " " + c_buff + lang.get("log.effect_block"));
 				}
 
 			} else { // Heals
@@ -121,9 +122,9 @@ public class Heal implements SkillEffect {
 					long hpMaxDisp = target.getStatsDefault().getDisplayHp();
 
 					msg.add(formatName(target.getUnitType().getName(), self.getPos()) + " " + lang.get("hp") + " "
-							+ c_hp + String.format("%,d", hpCurDisp) + "[WHITE] → " + c_hp
-							+ String.format("%,d", hpNewDisp) + "[WHITE]/" + c_hp + String.format("%,d", hpMaxDisp)
-							+ getColor(hpNewDisp - hpCurDisp) + " (+" + String.format("%,d", (hpNewDisp - hpCurDisp))
+							+ c_hp + formatNum(hpCurDisp) + "[WHITE] → " + c_hp
+							+ formatNum(hpNewDisp) + "[WHITE]/" + c_hp + formatNum(hpMaxDisp)
+							+ getColor(hpNewDisp - hpCurDisp) + " (+" + formatNum((hpNewDisp - hpCurDisp))
 							+ ")");
 				}
 			}

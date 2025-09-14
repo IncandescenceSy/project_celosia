@@ -7,6 +7,7 @@ import io.github.celosia.sys.battle.Unit;
 import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.menu.TextLib.c_hp;
 import static io.github.celosia.sys.menu.TextLib.c_pos;
+import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 // todo protect bosses against %-based damage
@@ -87,9 +88,9 @@ public class ChangeHp implements BuffEffect {
 				long hpOldDisp = self.getStatsCur().getDisplayHp();
 				long hpMaxDisp = self.getStatsDefault().getDisplayHp();
 				long hpNewDisp = self.getStatsCur().getDisplayHp();
-				return new String[]{lang.get("hp") + " " + c_hp + String.format("%,d", hpOldDisp) + "[WHITE] → " + c_hp
-						+ String.format("%,d", hpNewDisp) + "[WHITE]/" + c_hp + String.format("%,d", hpMaxDisp) + c_pos
-						+ " (+" + String.format("%,d", Math.max(hpNewDisp - hpOldDisp, 0)) + ")"};
+				return new String[]{lang.get("hp") + " " + c_hp + formatNum(hpOldDisp) + "[WHITE] → " + c_hp
+						+ formatNum(hpNewDisp) + "[WHITE]/" + c_hp + formatNum(hpMaxDisp) + "[WHITE] (" + c_pos
+						+ "+" + formatNum(Math.max(hpNewDisp - hpOldDisp, 0)) + "[WHITE])"};
 			} else
 				return new String[]{""};
 		}

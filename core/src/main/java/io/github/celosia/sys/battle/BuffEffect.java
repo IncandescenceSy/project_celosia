@@ -24,9 +24,9 @@ public interface BuffEffect {
 	default void onChangeStage(Unit self, Unit target, int stacks, StageType stageType, int turns, int stacksChange) {
 	}
 
-	default void onHeal(Unit self, Unit target, int stacks, int heal, double overHeal) {
+	default void onHeal(Unit self, Unit target, int stacks, long heal, double overHeal) {
 	}
 
-	default void onGiveShield(Unit self, Unit target, int stacks, int turns, int stacksChange) {
+	default void onGiveShield(Unit self, Unit target, int stacks, int turns, long heal) {
 	}
 }

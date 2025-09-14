@@ -50,6 +50,7 @@ import static io.github.celosia.sys.menu.TextLib.c_sp;
 import static io.github.celosia.sys.menu.TextLib.c_stat;
 import static io.github.celosia.sys.menu.TextLib.c_turn;
 import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.menu.TextLib.getColor;
 import static io.github.celosia.sys.settings.Lang.lang;
 
@@ -101,9 +102,9 @@ public class BattleController {
 	static List<TypingLabel> skillsL = new ArrayList<>();
 
 	// temp
-	static Skill[] skills = new Skill[]{Skills.STAR_RULER, Skills.FIREBALL, Skills.SHIELD, Skills.THUNDERBOLT,
+	static Skill[] skills = new Skill[]{Skills.STAR_RULER, Skills.ATTACK_UP, Skills.SHIELD, Skills.THUNDERBOLT,
 			Skills.ICE_AGE, Skills.DEFEND};
-	static Skill[] skills2 = new Skill[]{Skills.ATTACK_UP, Skills.FIREBALL, Skills.ATTACK_UP_GROUP, Skills.SHIELD,
+	static Skill[] skills2 = new Skill[]{Skills.STAR_RULER, Skills.FIREBALL, Skills.ATTACK_UP_GROUP, Skills.SHIELD,
 			Skills.ICE_AGE, Skills.DEFEND};
 	static Skill[] skills3 = new Skill[]{Skills.DEFENSE_DOWN, Skills.FIREBALL, Skills.HEAT_WAVE, Skills.PROTECT,
 			Skills.ICE_AGE, Skills.DEFEND};
@@ -132,7 +133,7 @@ public class BattleController {
 		UnitType josephine = new UnitType("Josephine", jerryStats, 0, 0, 0, 0, 0, 5, -4, Passives.DEBUFF_DURATION_UP);
 		UnitType julian = new UnitType("Julian", johnyStats, 0, 0, 0, 0, 0, -4, 5, Passives.DEBUFF_DURATION_UP);
 
-		Team player = new Team(new Unit[]{new Unit(johny, 19, skills, 0), new Unit(james, 19, skills2, 1),
+		Team player = new Team(new Unit[]{new Unit(johny, 19, skills, 0), new Unit(james, (long) 5E15, skills2, 1),
 				new Unit(julia, 19, skills3, 2), new Unit(josephine, 19, skills, 3)});
 
 		Team opponent = new Team(new Unit[]{new Unit(jerry, 19, skills2, 4), new Unit(jacob, 19, skills2, 5),
@@ -371,17 +372,17 @@ public class BattleController {
 								builder.append(" ").append(lang.get("log.on")).append(" ")
 										.append(formatName(target.getUnitType().getName(), move.getTargetPos(), false));
 
-							if (skill.isBloom()) {
+							if (skill.isBloom() && newSp != team.getBloom()) { // Use bloom
 								builder.append(" (").append(
 										(isPlayerTeam) ? lang.get("log.team_player") : lang.get("log.team_opponent"))
 										.append(" ").append(c_stat).append(lang.get("bloom")).append(" ")
-										.append(c_bloom).append(String.format("%,d", team.getBloom()))
-										.append("[WHITE] → ").append(c_bloom).append(String.format("%,d", newSp));
+										.append(c_bloom).append(formatNum(team.getBloom()))
+										.append("[WHITE] → ").append(c_bloom).append(formatNum(newSp));
 								team.setBloom(newSp);
-							} else if (newSp != self.getSp()) { // Use SP
+							} else if (!skill.isBloom() && newSp != self.getSp()) { // Use SP
 								builder.append(" (").append(c_stat).append(lang.get("sp")).append(" ").append(c_sp)
-										.append(String.format("%,d", self.getSp())).append("[WHITE] → ").append(c_sp)
-										.append(String.format("%,d", newSp));
+										.append(formatNum(self.getSp())).append("[WHITE] → ").append(c_sp)
+										.append(formatNum(newSp));
 								self.setSp(newSp);
 							}
 
@@ -548,7 +549,7 @@ public class BattleController {
 			// 1000));
 			// bloomL.get(i).skipToTheEnd();
 			setTextIfChanged(bloomL.get(i), "{SPEED=0.1}{FADE}{SLIDE}" + lang.get("bloom") + ": "
-					+ String.format("%,d", battle.getTeam(i).getBloom()) + "/" + String.format("%,d", 1000));
+					+ formatNum(battle.getTeam(i).getBloom()) + "/" + formatNum(1000));
 			if (i == 0)
 				bloomL.get(i).setX(bloomL.get(i).getWidth() / 3, Align.left);
 			else
@@ -601,8 +602,8 @@ public class BattleController {
 				// todo colors
 				// String shieldStr = (shield > 0) ? c_shield + "+" + String.format("%,d",
 				// shield) : "";
-				// String spStr = (!unit.isInfiniteSp()) ? String.format("%,d", unit.getSp()) +
-				// "[WHITE]/" + c_sp + String.format("%,d", 1000) : "∞";
+				// String spStr = (!unit.isInfiniteSp()) ? formatNum(unit.getSp()) +
+				// "[WHITE]/" + c_sp + formatNum(1000) : "∞";
 				// StringBuilder text = new StringBuilder(unit.getUnitType().getName() + "\n" +
 				// c_stat + lang.get("hp") + "[WHITE]: " + c_hp + String.format("%,d",
 				// unit.getStatsCur().getHp()) +
@@ -615,14 +616,14 @@ public class BattleController {
 				// + "\nRes: " + unit.getResWithStage() + "/" + unit.getStatsDefault().getRes()
 				// +
 				// "\n");
-				String shieldStr = (shield > 0) ? "[CYAN]+" + String.format("%,d", shield) + "[WHITE]" : "";
+				String shieldStr = (shield > 0) ? "[CYAN]+" + formatNum(shield) + "[WHITE]" : "";
 				String spStr = (!unit.isInfiniteSp())
-						? String.format("%,d", unit.getSp()) + "/" + String.format("%,d", 1000)
+						? formatNum(unit.getSp()) + "/" + formatNum(1000)
 						: "∞";
 				StringBuilder text = new StringBuilder(unit.getUnitType().getName() + "\n" + lang.get("hp") + ": "
-						+ String.format("%,d", unit.getStatsCur().getDisplayHp()) + shieldStr + "/"
-						+ String.format("%,d", unit.getStatsDefault().getDisplayHp()) + "\n" + lang.get("sp") + ": "
-						+ spStr + "\nStr: " + unit.getStrWithStage() + "/" + unit.getStatsDefault().getStr() +
+						+ formatNum(unit.getStatsCur().getDisplayHp()) + shieldStr + "/"
+						+ formatNum(unit.getStatsDefault().getDisplayHp()) + "\n" + lang.get("sp") + ": "
+						+ spStr + "\nStr: " + formatNum(unit.getStrWithStage()) + "/" + formatNum(unit.getStatsDefault().getStr()) +
 						// "\nMag:" + unit.getMagWithStage() + "/" + unit.getStatsDefault().getMag() +
 						// "\nAmr: " + unit.getAmrWithStage() + "/" + unit.getStatsDefault().getAmr() +
 						// "\nRes: " + unit.getResWithStage() + "/" + unit.getStatsDefault().getRes() +
@@ -640,7 +641,7 @@ public class BattleController {
 				// Shield
 				shield = unit.getDisplayShield();
 				if (shield > 0)
-					text.append(lang.get("shield")).append("x").append(String.format("%,d", shield)).append("(")
+					text.append(lang.get("shield")).append("x").append(formatNum(shield)).append("(")
 							.append(unit.getShieldTurns()).append(") ");
 
 				// List buffs
@@ -649,7 +650,7 @@ public class BattleController {
 					for (BuffInstance buffInstance : buffInstances) {
 						if (buffInstance.getBuff() == Buffs.DEFEND) {
 							text.append(buffInstance.getBuff().getName()).append("x")
-									.append(String.format("%,d", unit.getDisplayDefend())).append("(")
+									.append(formatNum(unit.getDisplayDefend())).append("(")
 									.append(buffInstance.getTurns()).append(") ");
 						} else {
 							text.append(buffInstance.getBuff().getName());

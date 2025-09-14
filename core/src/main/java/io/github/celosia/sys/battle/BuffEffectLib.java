@@ -29,15 +29,15 @@ public class BuffEffectLib {
 				(StageType) args[0], (int) args[1], (int) args[2]), stageType, turnsMod, stacksChange);
 	}
 
-	public static void notifyOnHeal(Unit self, Unit target, int heal, double overHeal) {
+	public static void notifyOnHeal(Unit self, Unit target, long heal, double overHeal) {
 		notifyBuffEffects(self, target,
-				(effect, s, t, stacks, args) -> effect.onHeal(s, t, stacks, (int) args[0], (double) args[1]), heal,
+				(effect, s, t, stacks, args) -> effect.onHeal(s, t, stacks, (long) args[0], (double) args[1]), heal,
 				overHeal);
 	}
 
-	public static void notifyOnGiveShield(Unit self, Unit target, int turns, int stacksChange) {
+	public static void notifyOnGiveShield(Unit self, Unit target, int turns, long heal) {
 		notifyBuffEffects(self, target,
-				(effect, s, t, stacks, args) -> effect.onGiveShield(s, t, stacks, (int) args[0], (int) args[1]), turns,
-				stacksChange);
+				(effect, s, t, stacks, args) -> effect.onGiveShield(s, t, stacks, (int) args[0], (long) args[1]), turns,
+				heal);
 	}
 }

@@ -43,6 +43,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.github.celosia.sys.menu.TextLib.rf;
 import static io.github.celosia.sys.menu.TriLib.drawCoolRects;
 import static io.github.celosia.sys.menu.TriLib.drawPaths;
 
@@ -143,6 +144,10 @@ public class Main extends ApplicationAdapter {
 		// Default (US English)
 		Lang.createBundle();
 		// Lang.createBundle(new Locale("ja", "JP"))
+
+        // Setup formatters
+        rf.setMaximumFractionDigits(2);
+        rf.setMinimumFractionDigits(0);
 
 		// Debug
 		// Make sure the log can interpret special characters

@@ -126,7 +126,8 @@ public class GiveBuff implements SkillEffect {
 						msg.add(formatName(unit.getUnitType().getName(), unit.getPos()) + " " + c_buff + buff.getName()
 								+ " " + lang.get("stacks") + " " + c_num + stacksOld + "[WHITE] → " + c_num
 								+ stacksNew);
-				}
+				} else
+					msg.add(str);
 
 				appendToLog(msg);
 

@@ -9,6 +9,7 @@ import static io.github.celosia.sys.battle.Calcs.getDisplayStatWithStage;
 import static io.github.celosia.sys.menu.TextLib.c_num;
 import static io.github.celosia.sys.menu.TextLib.c_stat;
 import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.menu.TextLib.getColor;
 import static io.github.celosia.sys.menu.TextLib.getStatColor;
 
@@ -26,7 +27,7 @@ public class ChangeStat implements BuffEffect {
 	public void onGive(Unit self, int stacks) {
 		long statDefault = self.getStatsDefault().getStat(stat);
 		long statOld = self.getStatsCur().getStat(stat);
-		int statNew = (int) (statOld + (statDefault * ((long) change * stacks) / 1000));
+        long statNew = (statOld + (statDefault * ((long) change * stacks) / 1000));
 		self.getStatsCur().setStat(stat, statNew);
 
 		long statDefaultDisp = self.getStatsDefault().getDisplayStat(stat);
@@ -35,11 +36,11 @@ public class ChangeStat implements BuffEffect {
 		long statNewDispWithStage = getDisplayStatWithStage(statNew, statDefault,
 				self.getStage(stat.getMatchingStageType()));
 		appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + stat.getName() + " "
-				+ getStatColor(statOldDispWithStage, statDefaultDisp) + String.format("%,d", statOldDispWithStage)
+				+ getStatColor(statOldDispWithStage, statDefaultDisp) + formatNum(statOldDispWithStage)
 				+ "[WHITE] → " + getStatColor(statNewDispWithStage, statDefaultDisp)
-				+ String.format("%,d", statNewDispWithStage) + "[WHITE]/" + c_num
-				+ String.format("%,d", self.getStatsDefault().getDisplayStat(stat)) + "[WHITE] (" + getColor(change)
-				+ ((change >= 0f) ? "+" : "") + String.format("%,d", statNewDispWithStage - statOldDispWithStage)
+				+ formatNum(statNewDispWithStage) + "[WHITE]/" + c_num
+				+ formatNum(self.getStatsDefault().getDisplayStat(stat)) + "[WHITE] (" + getColor(change)
+				+ ((change >= 0f) ? "+" : "") + formatNum(statNewDispWithStage - statOldDispWithStage)
 				+ "[WHITE])");
 	}
 
@@ -47,7 +48,7 @@ public class ChangeStat implements BuffEffect {
 	public void onRemove(Unit self, int stacks) {
 		long statDefault = self.getStatsDefault().getStat(stat);
 		long statOld = self.getStatsCur().getStat(stat);
-		int statNew = (int) (statOld - (statDefault * ((long) change * stacks) / 1000));
+		long statNew = (statOld - (statDefault * ((long) change * stacks) / 1000));
 		self.getStatsCur().setStat(stat, statNew);
 
 		long statDefaultDisp = self.getStatsDefault().getDisplayStat(stat);
@@ -56,11 +57,11 @@ public class ChangeStat implements BuffEffect {
 		long statNewDispWithStage = getDisplayStatWithStage(statNew, statDefault,
 				self.getStage(stat.getMatchingStageType()));
 		appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_stat + stat.getName() + " "
-				+ getStatColor(statOldDispWithStage, statDefaultDisp) + String.format("%,d", statOldDispWithStage)
+				+ getStatColor(statOldDispWithStage, statDefaultDisp) + formatNum(statOldDispWithStage)
 				+ "[WHITE] → " + getStatColor(statNewDispWithStage, statDefaultDisp)
-				+ String.format("%,d", statNewDispWithStage) + "[WHITE]/" + c_num
-				+ String.format("%,d", self.getStatsDefault().getDisplayStat(stat)) + "[WHITE] ("
+				+ formatNum(statNewDispWithStage) + "[WHITE]/" + c_num
+				+ formatNum(self.getStatsDefault().getDisplayStat(stat)) + "[WHITE] ("
 				+ getColor(change * -1) + ((change <= 0f) ? "+" : "")
-				+ String.format("%,d", statNewDispWithStage - statOldDispWithStage) + "[WHITE])");
+				+ formatNum(statNewDispWithStage - statOldDispWithStage) + "[WHITE])");
 	}
 }

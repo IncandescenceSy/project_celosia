@@ -5,6 +5,7 @@ import static io.github.celosia.sys.menu.TextLib.c_bloom;
 import static io.github.celosia.sys.menu.TextLib.c_sp;
 import static io.github.celosia.sys.menu.TextLib.c_stat;
 import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.menu.TextLib.getColor;
 import static io.github.celosia.sys.settings.Lang.lang;
 
@@ -16,7 +17,7 @@ public class Calcs {
 		if (spNew != spOld) {
 			unit.setSp(spNew);
 			return formatName(unit.getUnitType().getName(), unit.getPos()) + " " + c_stat + lang.get("sp") + " " + c_sp
-					+ String.format("%,d", spOld) + "[WHITE] → " + c_sp + String.format("%,d", spNew) + "[WHITE] ("
+					+ formatNum(spOld) + "[WHITE] → " + c_sp + formatNum(spNew) + "[WHITE] ("
 					+ getColor(change) + ((change > 0) ? "+" : "") + (spNew - spOld) + "[WHITE])";
 		} else
 			return "";
@@ -30,7 +31,7 @@ public class Calcs {
 			team.setBloom(bloomNew);
 			return formatName((side == Side.ALLY) ? lang.get("player_team") : lang.get("opponent_team"),
 					(side == Side.ALLY) ? 0 : 3) + " " + c_stat + lang.get("bloom") + " " + c_bloom
-					+ String.format("%,d", bloomOld) + "[WHITE] → " + c_bloom + String.format("%,d", bloomNew);
+					+ formatNum(bloomOld) + "[WHITE] → " + c_bloom + formatNum(bloomNew);
 		} else
 			return "";
 	}

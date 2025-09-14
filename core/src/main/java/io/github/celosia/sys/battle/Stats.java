@@ -163,7 +163,7 @@ public class Stats {
 		};
 	}
 
-	public Stats getRealStats(int lvl) {
+	public Stats getRealStats(long lvl) {
 		return new Stats((hp + (hp / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN,
 				(str + (str / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN,
 				(mag + (mag / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN,

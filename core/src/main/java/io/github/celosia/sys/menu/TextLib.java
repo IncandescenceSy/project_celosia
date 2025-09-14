@@ -8,6 +8,8 @@ import io.github.celosia.sys.battle.Stat;
 import io.github.celosia.sys.battle.Unit;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import static io.github.celosia.sys.battle.PosLib.getSide;
 
@@ -39,6 +41,31 @@ public class TextLib {
 	// Decimal formatter with up to 2 decimal places
 	public static DecimalFormat df = new DecimalFormat("#.##");
 
+    // Decimal formatter for scientific notation
+    public static DecimalFormat sf = new DecimalFormat("0.###E0");
+
+    // Regional number formatter with up to 2 decimal places (set elsewhere)
+    // todo use language setting
+    public static NumberFormat rf = NumberFormat.getInstance(Locale.getDefault());
+
+    public static String formatNum(long num) {
+        int digitCount = String.valueOf(Math.abs(num)).length();
+
+        // Use scientific notation
+        // todo is this a good threshold?
+        if(digitCount >= 9) return sf.format(num);
+        else return rf.format(num);
+    }
+
+    public static String formatNum(double num) {
+        int digitCount = String.valueOf(Math.abs(num)).length();
+
+        // Use scientific notation
+        if(digitCount >= 9) return sf.format(num);
+        else return rf.format(num);
+    }
+
+    // todo other language support
 	public static String formatName(String name, int pos, boolean possessive) {
 		String suffix = (possessive) ? name.toLowerCase().endsWith("s") ? "'" : "'s" : "";
 		String color = (getSide(pos) == Side.ALLY) ? c_ally : c_opp;
@@ -55,54 +82,151 @@ public class TextLib {
 		return (num > 0) ? c_pos : (num < 0) ? c_neg : c_num;
 	}
 
-	public static String getMultColor(int num, Mult multType) {
-		String c1 = multType.isPositive() ? c_pos : c_neg;
-		String c2 = multType.isPositive() ? c_neg : c_pos;
+	// Returns the color a mult should be based on its relation to 100% and whether
+	// higher is better
+	public static String getMultColor(int mult, Mult multType) {
+		String c1; // Increased
+		String c2; // Decreased
 
-		return (num > 1000) ? c1 : (num < 1000) ? c2 : c_num;
+		if (multType.isPositive()) {
+			c1 = c_pos;
+			c2 = c_neg;
+		} else {
+			c1 = c_neg;
+			c2 = c_pos;
+		}
+
+		return (mult > 1000) ? c1 : (mult < 1000) ? c2 : c_num;
 	}
 
-	public static String getExpColor(int num, Mult multType) {
-		String c1 = multType.isPositive() ? c_pos : c_neg;
-		String c2 = multType.isPositive() ? c_neg : c_pos;
+	// Returns the color a mult exponent should be based on its relation to 1,
+	// whether higher is better, and whether mult is above or below 100%
+	public static String getExpColor(int exp, int mult, Mult multType) {
+		String c1;
+		String c2;
 
-		return (num > 100) ? c1 : (num < 100) ? c2 : c_num;
+		if (multType.isPositive()) {
+			c1 = c_pos;
+			c2 = c_neg;
+		} else {
+			c1 = c_neg;
+			c2 = c_pos;
+		}
+
+		if (mult > 1000) {
+			if (exp > 100)
+				return c1;
+			else if (exp < 100)
+				return c2;
+			else
+				return c_num;
+		} else if (mult < 1000) {
+			if (exp > 100)
+				return c2;
+			else if (exp < 100)
+				return c1;
+			else
+				return c_num;
+		} else
+			return c_num;
 	}
 
-	public static String getMultChangeColor(int num, Mult multType) {
-		String c1 = multType.isPositive() ? c_pos : c_neg;
-		String c2 = multType.isPositive() ? c_neg : c_pos;
+	public static String getMultChangeColor(int multChange, Mult multType) {
+		String c1;
+		String c2;
 
-		return (num > 0) ? c1 : (num < 0) ? c2 : c_num;
+		if (multType.isPositive()) {
+			c1 = c_pos;
+			c2 = c_neg;
+		} else {
+			c1 = c_neg;
+			c2 = c_pos;
+		}
+
+		return (multChange > 0) ? c1 : (multChange < 0) ? c2 : c_num;
 	}
 
-	public static String getMultWithExpColor(double num, Mult multType) {
-		String c1 = multType.isPositive() ? c_pos : c_neg;
-		String c2 = multType.isPositive() ? c_neg : c_pos;
+	public static String getExpChangeColor(int expChange, int mult, Mult multType) {
+		String c1;
+		String c2;
 
-		return (num > 1) ? c1 : (num < 1) ? c2 : c_num;
+		if (multType.isPositive()) {
+			c1 = c_pos;
+			c2 = c_neg;
+		} else {
+			c1 = c_neg;
+			c2 = c_pos;
+		}
+
+		if (mult > 1000) {
+			if (expChange > 0)
+				return c1;
+			else if (expChange < 0)
+				return c2;
+			else
+				return c_num;
+		} else if (mult < 1000) {
+			if (expChange > 0)
+				return c2;
+			else if (expChange < 0)
+				return c1;
+			else
+				return c_num;
+		} else
+			return c_num;
 	}
 
-	public static String getMultWithExpChangeColor(double num, Mult multType) {
-		String c1 = multType.isPositive() ? c_pos : c_neg;
-		String c2 = multType.isPositive() ? c_neg : c_pos;
+	public static String getMultWithExpColor(double multWithExp, Mult multType) {
+		String c1;
+		String c2;
 
-		return (num > 0) ? c1 : (num < 0) ? c2 : c_num;
+		if (multType.isPositive()) {
+			c1 = c_pos;
+			c2 = c_neg;
+		} else {
+			c1 = c_neg;
+			c2 = c_pos;
+		}
+
+		return (multWithExp > 1) ? c1 : (multWithExp < 1) ? c2 : c_num;
 	}
 
-	public static String getModColor(int num, Mod modType) {
-		String c1 = modType.isPositive() ? c_pos : c_neg;
-		String c2 = modType.isPositive() ? c_neg : c_pos;
+	public static String getMultWithExpChangeColor(double multWithExpChange, Mult multType) {
+		String c1;
+		String c2;
 
-		return (num > 0) ? c1 : (num < 0) ? c2 : c_num;
+		if (multType.isPositive()) {
+			c1 = c_pos;
+			c2 = c_neg;
+		} else {
+			c1 = c_neg;
+			c2 = c_pos;
+		}
+
+		return (multWithExpChange > 0) ? c1 : (multWithExpChange < 0) ? c2 : c_num;
 	}
 
-	public static String formatMod(int num, Mod modType) {
-		return getModColor(num, modType) + ((num > 0) ? "+" : "") + num;
+	public static String getModColor(int mod, Mod modType) {
+		String c1;
+		String c2;
+
+		if (modType.isPositive()) {
+			c1 = c_pos;
+			c2 = c_neg;
+		} else {
+			c1 = c_neg;
+			c2 = c_pos;
+		}
+
+		return (mod > 0) ? c1 : (mod < 0) ? c2 : c_num;
 	}
 
-	public static String getStatColor(long num, long base) {
-		return (num > base) ? c_pos : (num < base) ? c_neg : c_num;
+	public static String formatMod(int mod, Mod modType) {
+		return getModColor(mod, modType) + ((mod > 0) ? "+" : "") + mod;
+	}
+
+	public static String getStatColor(long stat, long statBase) {
+		return (stat > statBase) ? c_pos : (stat < statBase) ? c_neg : c_num;
 	}
 
 	public static String getStageStatString(Unit unit, StageType stageType, int stageNew) {
@@ -117,11 +241,11 @@ public class TextLib {
 			long statNew = unit.getDisplayStatWithStage(stat, stageNew);
 			long change = statNew - statOld;
 			builder.append(c_stat).append(stat.getName()).append(" ").append(getStatColor(statOld, statDefault))
-					.append(String.format("%,d", statOld)).append("[WHITE] → ")
-					.append(getStatColor(statNew, statDefault)).append(String.format("%,d", statNew)).append("[WHITE]")
-					.append("/").append(c_num).append(String.format("%,d", statDefault)).append("[WHITE] (")
+					.append(formatNum(statOld)).append("[WHITE] → ")
+					.append(getStatColor(statNew, statDefault)).append(formatNum(statNew)).append("[WHITE]")
+					.append("/").append(c_num).append(formatNum(statDefault)).append("[WHITE] (")
 					.append(getColor(change)).append((change >= 0) ? "+" : "")
-					.append(String.format("%,d", (statNew - statOld))).append("[WHITE])");
+					.append(formatNum((statNew - statOld))).append("[WHITE])");
 
 			if (i == statCount - 1)
 				builder.append(")");

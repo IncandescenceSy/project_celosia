@@ -10,6 +10,7 @@ import static io.github.celosia.sys.menu.TextLib.c_pos;
 import static io.github.celosia.sys.menu.TextLib.c_shield;
 import static io.github.celosia.sys.menu.TextLib.c_stat;
 import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeDefend implements BuffEffect {
@@ -25,7 +26,7 @@ public class ChangeDefend implements BuffEffect {
 		long hpMax = self.getStatsDefault().getHp();
 		// Add defend (shield + defend cannot exceed max HP)
 		long defendOld = self.getDefend();
-		int defendNew = (int) ((self.getShield() + defendOld + (((change / 1000d) * hpMax) * stacks) > hpMax)
+		long defendNew = (long) ((self.getShield() + defendOld + (((change / 1000d) * hpMax) * stacks) > hpMax)
 				? hpMax - self.getShield()
 				: ((change / 1000d) * hpMax) * stacks);
 
@@ -36,11 +37,11 @@ public class ChangeDefend implements BuffEffect {
 		long shieldDisp = self.getDisplayShield();
 
 		appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_buff + lang.get("shield") + " "
-				+ c_shield + String.format("%,d", (shieldDisp + defendOldDisp)) + "[WHITE]" + " → " + c_shield
-				+ String.format("%,d", (shieldDisp + defendNewDisp)) + "[WHITE]/" + c_shield
-				+ String.format("%,d", self.getStatsDefault().getDisplayHp()) + "[WHITE] (" + c_pos + "+"
-				+ String.format("%,d", ((shieldDisp + defendNewDisp) - (shieldDisp + defendOldDisp))) + "[WHITE])");
-		if (self.isEffectBlock() && self.getShield() == 0 && defendOld == 0)
+				+ c_shield + formatNum((shieldDisp + defendOldDisp)) + "[WHITE]" + " → " + c_shield
+				+ formatNum((shieldDisp + defendNewDisp)) + "[WHITE]/" + c_shield
+				+ formatNum(self.getStatsDefault().getDisplayHp()) + "[WHITE] (" + c_pos + "+"
+				+ formatNum(((shieldDisp + defendNewDisp) - (shieldDisp + defendOldDisp))) + "[WHITE])");
+		if (!self.isEffectBlock() && self.getShield() == 0 && defendOld == 0)
 			appendToLog(formatName(self.getUnitType().getName(), self.getPos(), false) + " " + lang.get("log.is_now")
 					+ " " + c_stat + lang.get("log.effect_block"));
 	}
@@ -53,14 +54,14 @@ public class ChangeDefend implements BuffEffect {
 
 		if (self.getShield() > 0)
 			appendToLog(formatName(self.getUnitType().getName(), self.getPos()) + " " + c_buff + lang.get("shield")
-					+ " " + c_shield + String.format("%,d", (shieldDisp + defendOldDisp)) + "[WHITE]" + " → " + c_shield
-					+ String.format("%,d", shieldDisp) + "[WHITE]/" + c_shield
-					+ String.format("%,d", self.getStatsDefault().getDisplayHp()) + "[WHITE] (" + c_neg
-					+ String.format("%,d", (defendOldDisp * -1)) + "[WHITE])");
+					+ " " + c_shield + formatNum((shieldDisp + defendOldDisp)) + "[WHITE]" + " → " + c_shield
+					+ formatNum(shieldDisp) + "[WHITE]/" + c_shield
+					+ formatNum(self.getStatsDefault().getDisplayHp()) + "[WHITE] (" + c_neg
+					+ formatNum((defendOldDisp * -1)) + "[WHITE])");
 		else
 			appendToLog(formatName(self.getUnitType().getName(), self.getPos(), false) + " " + lang.get("log.loses")
-					+ " " + c_shield + String.format("%,d", defendOldDisp) + "[WHITE] " + c_buff + lang.get("shield"));
-		if (self.isEffectBlock() && self.getShield() == 0)
+					+ " " + c_shield + formatNum(defendOldDisp) + "[WHITE] " + c_buff + lang.get("shield"));
+		if (!self.isEffectBlock() && self.getShield() == 0)
 			appendToLog(formatName(self.getUnitType().getName(), self.getPos(), false) + " "
 					+ lang.get("log.is_no_longer") + " " + c_stat + lang.get("log.effect_block"));
 	}
