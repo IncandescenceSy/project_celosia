@@ -1499,7 +1499,7 @@ public class Unit {
 		return affsCur.getAff(element) < 0;
 	}
 
-	public boolean isResists(Element element) {
+	public boolean resists(Element element) {
 		return affsCur.getAff(element) > 0;
 	}
 
@@ -1514,8 +1514,9 @@ public class Unit {
 	// Returns if the requested Passive is present
 	public boolean findPassive(Passive passiveTarget) {
 		for (Passive passive : passives) {
-			if (passive == passiveTarget)
-				return true;
+			if (passive == passiveTarget) {
+                return true;
+            }
 		}
 		return false;
 	}
@@ -1523,11 +1524,71 @@ public class Unit {
 	// Returns the requested BuffInstance if present
 	public BuffInstance findBuff(Buff buff) {
 		for (BuffInstance buffInstance : buffInstances) {
-			if (buffInstance.getBuff() == buff)
-				return buffInstance;
+			if (buffInstance.getBuff() == buff) {
+                return buffInstance;
+            }
 		}
 		return null;
 	}
+
+    private void notifyBuffEffects(Unit target, BuffEffectNotifier notifier) {
+        // Handle Passives
+        for (Passive passive : this.getPassives()) {
+            for (BuffEffect buffEffect : passive.buffEffects()) {
+                notifier.notify(buffEffect, this, target, 1);
+            }
+        }
+
+        // Handle Buffs
+        for (BuffInstance buffInstance : this.getBuffInstances()) {
+            for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
+                notifier.notify(buffEffect, this, target, buffInstance.getStacks());
+            }
+        }
+    }
+
+    public void onUseSkill(Unit target, Skill skill) {
+        notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onUseSkill(s, t, stacks, skill));
+    }
+
+    public void onTargetedBySkill(Unit target, Skill skill) {
+        notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onTargetedBySkill(s, t, stacks, skill));
+    }
+
+    public void onDealDamage(Unit target, long damage, Element element) {
+        notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onDealDamage(s, t, stacks, damage, element));
+    }
+
+    public void onTakeDamage(Unit target, long damage, Element element) {
+        notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onDealDamage(s, t, stacks, damage, element));
+    }
+
+    public void onDealHeal(Unit target, long heal, int overHeal) {
+        notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onDealHeal(s, t, stacks, heal, overHeal));
+    }
+
+    public void onTakeHeal(Unit target, long heal, int overHeal) {
+        notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onTakeHeal(s, t, stacks, heal, overHeal));
+    }
+
+    public void onDealShield(Unit target, int turns, long heal) {
+        notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onDealShield(s, t, stacks, turns, heal));
+    }
+
+    public void onTakeShield(Unit target, int turns, long heal) {
+        notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onTakeShield(s, t, stacks, turns, heal));
+    }
+
+    public void onGiveBuff(Unit target, Buff buff, int turnsMod, int stacksChange) {
+        notifyBuffEffects(target,
+            (effect, s, t, stacks) -> effect.onGiveBuff(s, t, stacks, buff, turnsMod, stacksChange));
+    }
+
+    public void onChangeStage(Unit target, StageType stageType, int turnsMod,
+                              int stacksChange) {
+        notifyBuffEffects(target,
+            (effect, s, t, stacks) -> effect.onChangeStage(s, t, stacks, stageType, turnsMod, stacksChange));
+    }
 
 	// Returns the Unit's Side
 	public Side getSide() {

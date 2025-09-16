@@ -1,5 +1,6 @@
 package io.github.celosia.sys.battle;
 
+// todo record?
 public class Buff {
 	private final String name;
 	private final String desc;

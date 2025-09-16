@@ -142,6 +142,9 @@ public class Damage implements SkillEffect {
 				} else if (dmg == 0) {
 					dmg = 1;
 				}
+
+                self.onDealDamage(target, dmg, element);
+                target.onTakeDamage(self, dmg, element);
 			}
 
 			// Deal damage

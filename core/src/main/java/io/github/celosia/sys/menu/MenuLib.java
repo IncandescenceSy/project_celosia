@@ -50,9 +50,9 @@ public class MenuLib {
 			}
 
 			// Lock cursor to valid side
-			if (range.getSide() == Side.BOTH)
+			if (range.side() == Side.BOTH)
 				return newIndex;
-			else if (range.getSide() == getRelativeSide(selectingMove, newIndex))
+			else if (range.side() == getRelativeSide(selectingMove, newIndex))
 				return newIndex;
 			else
 				return index;

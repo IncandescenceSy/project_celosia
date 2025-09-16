@@ -1,6 +1,7 @@
 package io.github.celosia.sys.battle.buff_effects;
 
 import io.github.celosia.sys.battle.BuffEffect;
+import io.github.celosia.sys.battle.Element;
 import io.github.celosia.sys.battle.Result;
 import io.github.celosia.sys.battle.Unit;
 
@@ -56,16 +57,18 @@ public class ChangeHp implements BuffEffect {
 
 	@Override
 	public void onGive(Unit self, int stacks) {
-		if (isImmediate)
-			appendToLog(calc(self, stacks));
+		if (isImmediate) {
+            appendToLog(calc(self, stacks));
+        }
 	}
 
 	@Override
 	public String[] onTurnEnd(Unit self, int stacks) {
 		if (!isImmediate) {
 			return calc(self, stacks);
-		} else
-			return new String[]{""};
+		} else {
+            return new String[]{""};
+        }
 	}
 
 	private String[] calc(Unit self, int stacks) {
@@ -75,6 +78,7 @@ public class ChangeHp implements BuffEffect {
 					? (long) Math.abs(((self.getStatsDefault().getHp() * (change / 1000d)) * stacks)
 							* self.getMultWithExpDmgTaken() * multDoTDmgTaken)
 					: (long) (change * self.getMultWithExpDmgTaken() * multDoTDmgTaken);
+            self.onTakeDamage(self, dmg, Element.VIS);
 			Result result = self.damage(dmg, isPierce, false);
 			return result.getMessages().toArray(String[]::new);
 		} else { // Healing
@@ -83,6 +87,7 @@ public class ChangeHp implements BuffEffect {
 			long heal = (long) (change * ((isPercentage) ? hpMax : 1) * stacks * self.getMultWithExpHealingTaken());
 			long hpNew = Math.max(hpOld, Math.min(hpOld + heal, hpMax));
 			if (hpNew > hpOld) {
+                self.onTakeHeal(self, heal, 0);
 				self.getStatsCur().setHp(hpNew);
 
 				long hpOldDisp = self.getStatsCur().getDisplayHp();

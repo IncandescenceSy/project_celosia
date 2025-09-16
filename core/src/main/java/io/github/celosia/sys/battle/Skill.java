@@ -143,7 +143,7 @@ public class Skill {
 
 	// Returns whether this skill would be expected to target the opponent
 	public boolean shouldTargetOpponent() {
-		return range.getSide() == Side.OPPONENT || this.hasRole(SkillRole.ATTACK)
+		return range.side() == Side.OPPONENT || this.hasRole(SkillRole.ATTACK)
 				|| this.hasRole(SkillRole.DEBUFF_DEFENSIVE) || this.hasRole(SkillRole.DEBUFF_OFFENSIVE);
 	}
 }

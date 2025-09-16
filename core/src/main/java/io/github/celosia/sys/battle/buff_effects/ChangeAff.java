@@ -38,4 +38,5 @@ public class ChangeAff implements BuffEffect {
 				+ lang.get("affinity") + " " + getColor(affOld) + Math.clamp(affOld, -5, 5) + "[WHITE]" + " → "
 				+ getColor(affNew) + Math.clamp(affNew, -5, 5));
 	}
+
 }

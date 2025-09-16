@@ -10,7 +10,6 @@ import java.util.List;
 
 import static io.github.celosia.sys.battle.BattleController.appendToLog;
 import static io.github.celosia.sys.battle.BattleLib.getStageBuffType;
-import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnChangeStage;
 import static io.github.celosia.sys.menu.TextLib.c_buff;
 import static io.github.celosia.sys.menu.TextLib.c_num;
 import static io.github.celosia.sys.menu.TextLib.formatName;
@@ -90,7 +89,7 @@ public class ChangeStage implements SkillEffect {
 			int stacksMod = stacks + self.getStacksModBuffTypeDealt(getStageBuffType(unit.getStage(stageType) + stacks))
 					+ unit.getStacksModBuffTypeTaken(getStageBuffType(unit.getStage(stageType) + stacks));
 
-			notifyOnChangeStage(self, target, stageType, turnsMod, stacksMod);
+			self.onChangeStage(target, stageType, turnsMod, stacksMod);
 
 			int stageOld = target.getStage(stageType);
 			int stageNew = Math.clamp(stageOld + stacksMod, -5, 5);

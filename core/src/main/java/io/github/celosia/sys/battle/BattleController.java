@@ -35,7 +35,6 @@ import static io.github.celosia.Main.stage2;
 import static io.github.celosia.Main.stage3;
 import static io.github.celosia.sys.battle.AffLib.affSpCost;
 import static io.github.celosia.sys.battle.BattleLib.getStartingIndex;
-import static io.github.celosia.sys.battle.BuffEffectLib.notifyOnUseSkill;
 import static io.github.celosia.sys.battle.PosLib.getSide;
 import static io.github.celosia.sys.menu.MenuLib.setTextIfChanged;
 import static io.github.celosia.sys.menu.TextLib.c_ally;
@@ -398,7 +397,7 @@ public class BattleController {
 							appendToLog(builder.toString());
 
 							// Apply on-skill use BuffEffects
-							notifyOnUseSkill(self, target, skill);
+							self.onUseSkill(target, skill);
 
 							// Color move for currently acting combatant (temp)
 							for (int i = 0; i < 8; i++) {
@@ -446,10 +445,7 @@ public class BattleController {
 											prevResults.put(targetPos, ResultType.SUCCESS);
 
 											// Apply onTargetedBySkill BuffEffects
-											for (BuffInstance buffInstance : targetCur.getBuffInstances()) {
-												for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects())
-													buffEffect.onTargetedBySkill(targetCur, buffInstance.getStacks());
-											}
+											targetCur.onTargetedBySkill(move.self(), move.skill());
 										}
 
 										// Hasn't failed on this target yet

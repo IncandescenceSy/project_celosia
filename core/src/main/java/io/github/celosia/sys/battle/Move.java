@@ -8,17 +8,19 @@ public record Move(Skill skill, Unit self, int targetPos) {
 
 	public boolean isValid() {
 		// Check for disallowed self-targeting
-		if ((!skill.getRange().isCanTargetSelf()) && (targetPos == self.getPos()))
+		if ((!skill.getRange().canTargetSelf()) && (targetPos == self.getPos())) {
 			return false;
+		}
 
 		// Check if target is within vertical range
-		if (Math.abs(getHeight(self.getPos()) - getHeight(targetPos)) > skill.getRange().getRangeVertical()
-				+ self.getModRange())
+		if (Math.abs(getHeight(self.getPos()) - getHeight(targetPos)) > skill.getRange().rangeVertical()
+				+ self.getModRange()) {
 			return false;
+		}
 
 		// Check if the targeted side is allowed
-		return skill.getRange().getSide() == Side.BOTH
-				|| skill.getRange().getSide() == getRelativeSide(self.getPos(), targetPos);
+		return skill.getRange().side() == Side.BOTH
+				|| skill.getRange().side() == getRelativeSide(self.getPos(), targetPos);
 	}
 
 }
