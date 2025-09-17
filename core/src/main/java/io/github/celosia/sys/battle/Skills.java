@@ -13,7 +13,7 @@ public class Skills {
 	// Temp testing skills
 	static Skill GET_EXA = new Skill.Builder("Get ExA", "", Element.VIS, Ranges.OTHER_3R_OR_SELF, 1)
 			.effect(new GiveBuff.Builder(Buffs.EXTRA_ACTION, 3).build()).build();
-	static Skill STAR_RULER = new Skill.Builder("Star Ruler", "", Element.IGNIS, Ranges.OTHER_2R, 0).bloom()
+	static Skill STAR_RULER = new Skill.Builder("Star Ruler", "", Element.IGNIS, Ranges.OTHER_2R, 0).cooldown(6).bloom()
 			.effects(new Damage.Builder(SkillType.STR, Element.IGNIS, 280).build(),
 					new GiveBuff.Builder(Buffs.STAR_RULER, 5).giveToSelf().build())
 			.build();
@@ -27,8 +27,8 @@ public class Skills {
 							new ChangeSp.Builder(70).giveToSelf().build())
 					.build();
 	static Skill PROTECT = new Skill.Builder(lang.get("skill.protect"), lang.get("skill.protect.desc"), Element.VIS,
-			Ranges.SELF, 40).prio(3).role(SkillRole.BUFF_DEFENSIVE)
-					.effect(new GiveBuff.Builder(Buffs.PROTECT, 1).notInstant().build()).build(); // todo cooldown
+			Ranges.SELF, 40).cooldown(2).prio(3).role(SkillRole.BUFF_DEFENSIVE)
+					.effect(new GiveBuff.Builder(Buffs.PROTECT, 1).notInstant().build()).build();
 	static Skill BLOSSOM = new Skill.Builder(lang.get("skill.blossom"), lang.get("skill.blossom.desc"), Element.VIS,
 			Ranges.SELF, 300)
 					// todo roles

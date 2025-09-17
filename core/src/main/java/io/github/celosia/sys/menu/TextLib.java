@@ -1,8 +1,10 @@
 package io.github.celosia.sys.menu;
 
 import io.github.celosia.sys.battle.Mod;
+import io.github.celosia.sys.battle.Move;
 import io.github.celosia.sys.battle.Mult;
 import io.github.celosia.sys.battle.Side;
+import io.github.celosia.sys.battle.Skill;
 import io.github.celosia.sys.battle.StageType;
 import io.github.celosia.sys.battle.Stat;
 import io.github.celosia.sys.battle.Unit;
@@ -11,7 +13,9 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import static io.github.celosia.sys.battle.BattleController.battle;
 import static io.github.celosia.sys.battle.PosLib.getSide;
+import static io.github.celosia.sys.settings.Lang.lang;
 
 public class TextLib {
 	public static String tags = "{FADE}{SLIDE}";
@@ -37,6 +41,7 @@ public class TextLib {
 	public static String c_passive = "[#c6a1ff]";
 	public static String c_stat = "[#deff81]";
 	public static String c_exp = "[#a034ff]"; // Calculated exponent parenthesis
+    public static String c_cd = "[#1898ff]"; // Cooldown
 
 	// Decimal formatter with up to 2 decimal places
 	public static DecimalFormat df = new DecimalFormat("#.##");
@@ -261,4 +266,20 @@ public class TextLib {
 
 		return builder.toString();
 	}
+
+    public static String getTriesToUseString(Move move) {
+        Skill skill = move.skillInstance().getSkill();
+        Unit self = move.self();
+
+        String msg = formatName(self.getUnitType().name(), self.getPos(), false) + " "
+            + lang.get("log.tries_to_use") + " " + c_skill + skill.getName();
+
+        if (!skill.isRangeSelf()) {
+            msg += "[WHITE] " + lang.get("log.on") + " "
+                + formatName(battle.getUnitAtPos(move.targetPos()).getUnitType().name(),
+                move.targetPos(), false);
+        }
+
+        return msg;
+    }
 }

@@ -1,6 +1,7 @@
 package io.github.celosia.sys.battle;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static io.github.celosia.sys.battle.BattleController.appendToLog;
@@ -28,7 +29,7 @@ public class Unit {
 	private final Stats statsCur;
 
 	// Skills
-	private final Skill[] skills;
+	private final SkillInstance[] skillInstances;
 
 	// Passives
 	private List<Passive> passives;
@@ -162,7 +163,9 @@ public class Unit {
 		this.lvl = lvl;
 		statsDefault = unitType.statsBase().getRealStats(lvl);
 		statsCur = new Stats(statsDefault);
-		this.skills = skills;
+		skillInstances = Arrays.stream(skills)
+            .map(Skill::toSkillInstance)
+            .toArray(SkillInstance[]::new);
 		passives = List.of(unitType.passives());
 		sp = 200;
 		this.pos = pos;
@@ -259,8 +262,8 @@ public class Unit {
 		return statsCur;
 	}
 
-	public Skill[] getSkills() {
-		return skills;
+	public SkillInstance[] getSkillInstances() {
+		return skillInstances;
 	}
 
 	public void setPassives(List<Passive> passives) {
@@ -1635,6 +1638,7 @@ public class Unit {
 		}
 
 		// Buffs
+        // Iterate backwards so they can be removed
 		for (int i = buffInstances.size() - 1; i >= 0; i--) {
 			BuffInstance buffInstance = buffInstances.get(i);
 			int turns = buffInstance.getTurns();
@@ -1655,9 +1659,14 @@ public class Unit {
 				// Remove effects
 				for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects())
 					buffEffect.onRemove(this, buffInstance.getStacks());
-				buffInstances.remove(buffInstance);
+				buffInstances.remove(i);
 			}
 		}
+
+        // Skill cooldowns
+        for(SkillInstance skillInstance : skillInstances) {
+            skillInstance.decrementCooldown();
+        }
 	}
 
 	// Damage Unit, taking into account Defend and Shield

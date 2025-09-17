@@ -34,13 +34,14 @@ import static io.github.celosia.Main.paths;
 import static io.github.celosia.Main.stage2;
 import static io.github.celosia.Main.stage3;
 import static io.github.celosia.sys.battle.AffLib.affSpCost;
-import static io.github.celosia.sys.battle.BattleLib.getStartingIndex;
 import static io.github.celosia.sys.battle.PosLib.getSide;
+import static io.github.celosia.sys.battle.PosLib.getStartingIndex;
 import static io.github.celosia.sys.menu.MenuLib.setTextIfChanged;
 import static io.github.celosia.sys.menu.TextLib.c_ally;
 import static io.github.celosia.sys.menu.TextLib.c_ally_l;
 import static io.github.celosia.sys.menu.TextLib.c_bloom;
 import static io.github.celosia.sys.menu.TextLib.c_buff;
+import static io.github.celosia.sys.menu.TextLib.c_cd;
 import static io.github.celosia.sys.menu.TextLib.c_opp;
 import static io.github.celosia.sys.menu.TextLib.c_opp_l;
 import static io.github.celosia.sys.menu.TextLib.c_passive;
@@ -51,6 +52,7 @@ import static io.github.celosia.sys.menu.TextLib.c_turn;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.menu.TextLib.getColor;
+import static io.github.celosia.sys.menu.TextLib.getTriesToUseString;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class BattleController {
@@ -78,7 +80,7 @@ public class BattleController {
 	static int indexSkill = 0;
 	static int indexTarget = 0;
 
-	static Skill selectedSkill; // Currently selected skill
+	static SkillInstance selectedSkillInstance; // Currently selected skill
 
 	// Display
 	// Turn display
@@ -107,6 +109,7 @@ public class BattleController {
 			Skills.ICE_AGE, Skills.DEFEND};
 	static Skill[] skills3 = new Skill[]{Skills.DEFENSE_DOWN, Skills.FIREBALL, Skills.HEAT_WAVE, Skills.PROTECT,
 			Skills.ICE_AGE, Skills.DEFEND};
+	static SkillInstance nothingInstanceTemp = new SkillInstance(Skills.NOTHING);
 
 	// Battle log
 	// todo fix positioning
@@ -240,247 +243,263 @@ public class BattleController {
 						skillsL.get(i).setPosition(600, (World.HEIGHT - 400 - 250 * selectingMove) - ((i - 2) * 35));
 						// todo support ExA
 						setTextIfChanged(skillsL.get(i),
-								battle.getPlayerTeam().getUnits()[selectingMove].getSkills()[i].getName());
+								battle.getPlayerTeam().getUnits()[selectingMove].getSkillInstances()[i].getSkill()
+										// temp
+										.getName() + "(" + c_cd
+										+ battle.getPlayerTeam().getUnits()[selectingMove].getSkillInstances()[i]
+												.getCooldown()
+										+ "[WHITE])");
+						skillsL.get(i).skipToTheEnd();
 					}
 
 					selectMove();
 				}
 			} else if (selectingMove <= 8) { // opponent's turn
 				if (!Debug.selectOpponentMoves) {
-					if ((selectingMove - 4) < battle.getOpponentTeam().getUnits().length) { // if there are more
-																							// opponents yet to act
+                    // If there are more opponents yet to act
+					if ((selectingMove - 4) < battle.getOpponentTeam().getUnits().length) {
 						// Skill selectedSkill = skills2[MathUtils.random(skills.length - 1)];
-						Skill selectedSkill = Skills.NOTHING;
+						SkillInstance selectedSkillInstance = nothingInstanceTemp;
 						Unit target = battle.getPlayerTeam().getUnits()[MathUtils
 								.random(battle.getPlayerTeam().getUnits().length - 1)];
 						// todo support ExA
 						setTextIfChanged(movesL.get(selectingMove),
-								selectedSkill.getName() + " → " + target.getUnitType().name());
-						moves.add(new Move(selectedSkill, battle.getOpponentTeam().getUnits()[selectingMove - 4],
-								target.getPos())); // todo AI
+								selectedSkillInstance.getSkill().getName() + " → " + target.getUnitType().name());
+						moves.add(new Move(selectedSkillInstance,
+								battle.getOpponentTeam().getUnits()[selectingMove - 4], target.getPos())); // todo AI
 						selectingMove++;
 					} else
 						selectingMove = 100; // Jump to move execution
 				}
-				selectMove();
+				selectMove(); // should this be in an else???
 			} else if (selectingMove == 100) { // Moves play out
-				// All moves have happened; end turn
-				if (moves.isEmpty()) {
-					selectingMove = 0;
-					usingMove = 0;
-					battle.setTurn(battle.getTurn() + 1);
+                // All moves have happened; end turn
+                if (moves.isEmpty()) {
+                    selectingMove = 0;
+                    usingMove = 0;
+                    battle.setTurn(battle.getTurn() + 1);
 
-					// Update turn display
-					turn.setText(c_turn + lang.get("turn") + " " + (battle.getTurn() + 1));
+                    // Update turn display
+                    turn.setText(c_turn + lang.get("turn") + " " + (battle.getTurn() + 1));
 
-					// Reset stat/move displays to normal
-					for (int i = 0; i < 8; i++) {
-						// statsL.get(i).setX((i >= 4) ? World.WIDTH - 250 : 150);
-						movesL.get(i).setText("");
-						movesL.get(i).setColor(Color.WHITE);
-					}
+                    // Reset stat/move displays to normal
+                    for (int i = 0; i < 8; i++) {
+                        // statsL.get(i).setX((i >= 4) ? World.WIDTH - 250 : 150);
+                        movesL.get(i).setText("");
+                        movesL.get(i).setColor(Color.WHITE);
+                    }
 
-					for (Unit unit : battle.getAllUnits()) {
-						// Increase SP
-						if (!unit.isInfiniteSp())
-							unit.setSp(Math.min((int) (unit.getSp() + (100 * unit.getMultWithExpSpGain())), 1000));
+                    for (Unit unit : battle.getAllUnits()) {
+                        // Increase SP
+                        if (!unit.isInfiniteSp())
+                            unit.setSp(Math.min((int) (unit.getSp() + (100 * unit.getMultWithExpSpGain())), 1000));
 
-						// Apply turn end BuffEffects
-						for (Passive passive : unit.getPassives()) {
-							StringBuilder turnEnd1 = new StringBuilder();
-							turnEnd1.append(formatName(unit.getUnitType().name(), unit.getPos())).append(" ")
-									.append(c_passive).append(passive.name()).append("[WHITE]: ");
+                        // Apply turn end BuffEffects
+                        for (Passive passive : unit.getPassives()) {
+                            StringBuilder turnEnd1 = new StringBuilder();
+                            turnEnd1.append(formatName(unit.getUnitType().name(), unit.getPos())).append(" ")
+                                .append(c_passive).append(passive.name()).append("[WHITE]: ");
 
-							for (BuffEffect buffEffect : passive.buffEffects()) {
-								StringBuilder turnEnd2 = new StringBuilder();
-								String[] effectMsgs = buffEffect.onTurnEnd(unit, 1);
-								for (String effectMsg : effectMsgs)
-									if (!effectMsg.isEmpty())
-										turnEnd2.append(effectMsg);
+                            for (BuffEffect buffEffect : passive.buffEffects()) {
+                                StringBuilder turnEnd2 = new StringBuilder();
+                                String[] effectMsgs = buffEffect.onTurnEnd(unit, 1);
+                                for (String effectMsg : effectMsgs)
+                                    if (!effectMsg.isEmpty())
+                                        turnEnd2.append(effectMsg);
 
-								// Only have turn end message if both have messages
-								if (!turnEnd2.isEmpty())
-									appendToLog(turnEnd1 + turnEnd2.toString());
-							}
-						}
+                                // Only have turn end message if both have messages
+                                if (!turnEnd2.isEmpty())
+                                    appendToLog(turnEnd1 + turnEnd2.toString());
+                            }
+                        }
 
-						for (BuffInstance buffInstance : unit.getBuffInstances()) {
-							StringBuilder turnEnd1 = new StringBuilder();
-							turnEnd1.append(formatName(unit.getUnitType().name(), unit.getPos())).append(" ")
-									.append(c_buff).append(buffInstance.getBuff().getName()).append("[WHITE]: ");
+                        for (BuffInstance buffInstance : unit.getBuffInstances()) {
+                            StringBuilder turnEnd1 = new StringBuilder();
+                            turnEnd1.append(formatName(unit.getUnitType().name(), unit.getPos())).append(" ")
+                                .append(c_buff).append(buffInstance.getBuff().getName()).append("[WHITE]: ");
 
-							for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
-								StringBuilder turnEnd2 = new StringBuilder();
-								String[] effectMsgs = buffEffect.onTurnEnd(unit, buffInstance.getStacks());
-								for (String effectMsg : effectMsgs)
-									if (!effectMsg.isEmpty())
-										turnEnd2.append(effectMsg);
+                            for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
+                                StringBuilder turnEnd2 = new StringBuilder();
+                                String[] effectMsgs = buffEffect.onTurnEnd(unit, buffInstance.getStacks());
+                                for (String effectMsg : effectMsgs)
+                                    if (!effectMsg.isEmpty())
+                                        turnEnd2.append(effectMsg);
 
-								if (!turnEnd2.isEmpty())
-									appendToLog(turnEnd1 + turnEnd2.toString());
-							}
-						}
+                                if (!turnEnd2.isEmpty())
+                                    appendToLog(turnEnd1 + turnEnd2.toString());
+                            }
+                        }
 
-						// Decrement stage/shield/buff turns and remove expired stages/shields/buffs
-						unit.decrementTurns();
-					}
+                        // Decrement stage/shield/buff turns and remove expired stages/shields/buffs
+                        unit.decrementTurns();
+                    }
 
-					// Log
-					appendToLog(c_turn + lang.get("turn") + " " + (battle.getTurn() + 1) + "[WHITE]");
-					appendToLog(lang.get("log.gain_sp_bloom"));
+                    // Log
+                    appendToLog(c_turn + lang.get("turn") + " " + (battle.getTurn() + 1) + "[WHITE]");
+                    appendToLog(lang.get("log.gain_sp_bloom"));
 
-					// Increase bloom
-					battle.getPlayerTeam().setBloom(Math.min(battle.getPlayerTeam().getBloom() + 100, 1000));
-					battle.getOpponentTeam().setBloom(Math.min(battle.getOpponentTeam().getBloom() + 100, 1000));
+                    // Increase bloom
+                    battle.getPlayerTeam().setBloom(Math.min(battle.getPlayerTeam().getBloom() + 100, 1000));
+                    battle.getOpponentTeam().setBloom(Math.min(battle.getOpponentTeam().getBloom() + 100, 1000));
 
-					return;
-				}
+                    return;
+                }
 
-				// Sort moves by Prio and then by Agi
-				moves.sort(Comparator.comparingInt((Move entry) -> entry.skill().getPrio())
-						.thenComparingLong(entry -> entry.self().getAgiWithStage()).reversed());
+                // Sort moves by Prio and then by Agi
+                moves.sort(Comparator.comparingInt((Move entry) -> entry.skillInstance().getSkill().getPrio())
+                    .thenComparingLong(entry -> entry.self().getAgiWithStage()).reversed());
 
-				// The next move plays out
-				Move move = moves.getFirst();
+                // The next move plays out
+                Move move = moves.getFirst();
 
-				// Is in range
-				if (move.isValid()) {
-					// Invalid newSp will cancel move
-					int newSp;
+                if (move.isInRange()) {
+                    int cd = move.skillInstance().getCooldown();
+                    // Only check cooldown at the start
+                    if (cd == 0 || applyingEffect > 0) {
+                        // Invalid newSp will cancel move
+                        int newSp = 0;
 
-					// Execute move
-					if (applyingEffect == 0) {
+                        // Execute move
+                        if (applyingEffect == 0) {
+                                // Set cooldown
+                                move.skillInstance().setCooldown(cd);
 
-						// Set newSp
-						Unit self = move.self();
-						Skill skill = move.skill();
+                                // Set newSp
+                                Unit self = move.self();
+                                Skill skill = move.skillInstance().getSkill();
 
-						Element element = skill.getElement();
-						boolean isPlayerTeam = self.getPos() < 4;
-						Team team = (isPlayerTeam) ? battle.getPlayerTeam() : battle.getOpponentTeam();
-						int cost = (self.isInfiniteSp() && !skill.isBloom()) ? 0 : skill.getCost();
-						// Make sure cost doesn't go below 1 unless the skill has a base 0 SP cost
-						int costMod = (cost > 0)
-								? (int) Math.max(cost * (affSpCost.get(self.getAffsCur().getAff(element)) / 1000d), 1)
-								: 0;
-						int change = skill.isBloom() ? costMod : (int) (costMod * self.getMultWithExpSpUse());
-						newSp = skill.isBloom() ? team.getBloom() - change : self.getSp() - change;
+                                Element element = skill.getElement();
+                                boolean isPlayerTeam = self.getPos() < 4;
+                                Team team = (isPlayerTeam) ? battle.getPlayerTeam() : battle.getOpponentTeam();
+                                int cost = (self.isInfiniteSp() && !skill.isBloom()) ? 0 : skill.getCost();
+                                // Make sure cost doesn't go below 1 unless the skill has a base 0 SP cost
+                                int costMod = (cost > 0)
+                                    ? (int) Math.max(cost * (affSpCost.get(self.getAffsCur().getAff(element)) / 1000d),
+                                    1)
+                                    : 0;
+                                int change = skill.isBloom() ? costMod : (int) (costMod * self.getMultWithExpSpUse());
+                                newSp = skill.isBloom() ? team.getBloom() - change : self.getSp() - change;
 
-						StringBuilder builder = new StringBuilder();
-						if (newSp >= 0) {
-							Unit target = battle.getUnitAtPos(move.targetPos());
-							builder.append(formatName(self.getUnitType().name(), self.getPos(), false)).append(" ")
-									.append(lang.get("log.uses")).append(" ").append(c_skill).append(skill.getName())
-									.append("[WHITE]");
-							if (!skill.isRangeSelf())
-								builder.append(" ").append(lang.get("log.on")).append(" ")
-										.append(formatName(target.getUnitType().name(), move.targetPos(), false));
+                                StringBuilder builder = new StringBuilder();
+                                if (newSp >= 0) {
+                                    Unit target = battle.getUnitAtPos(move.targetPos());
+                                    builder.append(formatName(self.getUnitType().name(), self.getPos(), false)).append(" ")
+                                        .append(lang.get("log.uses")).append(" ").append(c_skill)
+                                        .append(skill.getName()).append("[WHITE]");
+                                    if (!skill.isRangeSelf())
+                                        builder.append(" ").append(lang.get("log.on")).append(" ")
+                                            .append(formatName(target.getUnitType().name(), move.targetPos(), false));
 
-							if (skill.isBloom() && newSp != team.getBloom()) { // Use bloom
-								builder.append(" (").append(
-										(isPlayerTeam) ? lang.get("log.team_player") : lang.get("log.team_opponent"))
-										.append(" ").append(c_stat).append(lang.get("bloom")).append(" ")
-										.append(c_bloom).append(formatNum(team.getBloom())).append("[WHITE] → ")
-										.append(c_bloom).append(formatNum(newSp));
-								team.setBloom(newSp);
-							} else if (!skill.isBloom() && newSp != self.getSp()) { // Use SP
-								builder.append(" (").append(c_stat).append(lang.get("sp")).append(" ").append(c_sp)
-										.append(formatNum(self.getSp())).append("[WHITE] → ").append(c_sp)
-										.append(formatNum(newSp));
-								self.setSp(newSp);
-							}
+                                    if (skill.isBloom() && newSp != team.getBloom()) { // Use bloom
+                                        builder.append(" (")
+                                            .append((isPlayerTeam)
+                                                ? lang.get("log.team_player")
+                                                : lang.get("log.team_opponent"))
+                                            .append(" ").append(c_stat).append(lang.get("bloom")).append(" ")
+                                            .append(c_bloom).append(formatNum(team.getBloom())).append("[WHITE] → ")
+                                            .append(c_bloom).append(formatNum(newSp));
+                                        team.setBloom(newSp);
+                                    } else if (!skill.isBloom() && newSp != self.getSp()) { // Use SP
+                                        builder.append(" (").append(c_stat).append(lang.get("sp")).append(" ").append(c_sp)
+                                            .append(formatNum(self.getSp())).append("[WHITE] → ").append(c_sp)
+                                            .append(formatNum(newSp));
+                                        self.setSp(newSp);
+                                    }
 
-							if (change != 0)
-								builder.append("[WHITE] (").append(getColor(change * -1))
-										.append((change < 0) ? "+" : "").append(change * -1).append("[WHITE]))");
+                                    if (change != 0)
+                                        builder.append("[WHITE] (").append(getColor(change * -1))
+                                            .append((change < 0) ? "+" : "").append(change * -1).append("[WHITE]))");
 
-							appendToLog(builder.toString());
+                                    appendToLog(builder.toString());
 
-							// Apply on-skill use BuffEffects
-							self.onUseSkill(target, skill);
+                                    // Apply on-skill use BuffEffects
+                                    self.onUseSkill(target, skill);
 
-							// Color move for currently acting combatant (temp)
-							for (int i = 0; i < 8; i++) {
-								// statsL.get(i).setX(((self.getPos()) == i) ? (i >= 4) ? World.WIDTH - 300 :
-								// 200 : (i >= 4) ? World.WIDTH - 250 : 150);
-								if (self.getPos() == i) {
-									movesL.get(i).setColor(Color.PINK);
-								} else
-									movesL.get(i).setColor(Color.WHITE);
-							}
+                                    // Color move for currently acting combatant (temp)
+                                    for (int i = 0; i < 8; i++) {
+                                        // statsL.get(i).setX(((self.getPos()) == i) ? (i >= 4) ? World.WIDTH - 300 :
+                                        // 200 : (i >= 4) ? World.WIDTH - 250 : 150);
+                                        if (self.getPos() == i) {
+                                            movesL.get(i).setColor(Color.PINK);
+                                        } else
+                                            movesL.get(i).setColor(Color.WHITE);
+                                    }
 
-							prevResults = new Int2ObjectOpenHashMap<>();
+                                    prevResults = new Int2ObjectOpenHashMap<>();
+                                } else {
+                                    String msg = getTriesToUseString(move);
+                                    msg += ", " + lang.get("log.but_doesnt_have_enough") + " " + c_stat
+                                        + (skill.isBloom() ? lang.get("bloom") : lang.get("sp"));
+                                    appendToLog(msg);
+                                }
+                        }
+
+                        Skill skill = move.skillInstance().getSkill();
+                        List<SkillEffect> skillEffects = skill.getSkillEffects();
+
+                        Unit targetMain = battle.getUnitAtPos(move.targetPos());
+
+                        // Make sure newSp is valid
+                        // Apply SkillEffects one at a time
+                        // Looking for at least 1 non-fail to continue the skill after the first effect
+                        if (newSp >= 0 && applyingEffect < skillEffects.size()
+                            && (nonFails > 0 || applyingEffect == 0)) {
+                            // Apply to all targets
+                            for (int targetPos : skill.getRange().getTargetPositions(move.self().getPos(),
+                                move.targetPos())) {
+                                if (targetPos != -1) { // Target's position is valid
+                                    Unit targetCur = battle.getUnitAtPos(targetPos);
+                                    if (applyingEffect == 0) { // First effect
+                                        // Initialize prevResults
+                                        prevResults.put(targetPos, ResultType.SUCCESS);
+
+                                        // Apply onTargetedBySkill BuffEffects
+                                        targetCur.onTargetedBySkill(move.self(), skill);
+                                    }
+
+                                    // Hasn't failed on this target yet
+                                    if (prevResults.get(targetPos) != ResultType.FAIL) {
+                                        // Not a fail
+                                        nonFails++;
+
+                                        // Apply effect and track result
+                                        ResultType resultType = skillEffects.get(applyingEffect).apply(move.self(),
+                                            targetCur, targetCur == targetMain, prevResults.get(targetPos));
+                                        prevResults.put(targetPos, resultType);
+                                    }
+                                }
+                            }
+                            // Wait a bit before next SkillEffect
+                            if (!skillEffects.get(applyingEffect).isInstant()) {
+                                wait += 0.25f * Settings.battleSpeed;
+                            }
+
+                            applyingEffect++;
+
+                            // Just finished applying the last effect
+                            if (skillEffects.size() == applyingEffect) {
+                                endMove();
+                                // Set cooldown
+                                move.skillInstance().setCooldown(move.skillInstance().getSkill().getCooldown());
+                            }
                         } else {
-							String msg = formatName(self.getUnitType().name(), self.getPos(), false) + " "
-									+ lang.get("log.tries_to_use") + " " + c_skill + skill.getName();
-							if (!skill.isRangeSelf())
-								msg += "[WHITE] " + lang.get("log.on") + " "
-										+ formatName(battle.getUnitAtPos(move.targetPos()).getUnitType().name(),
-												move.targetPos(), false);
-							msg += ", " + lang.get("log.but_doesnt_have_enough") + " " + c_stat
-									+ (skill.isBloom() ? lang.get("bloom") : lang.get("sp"));
-							appendToLog(msg);
-						}
-					} else
-						newSp = 0; // SP shouldn't change
-
-					// Make sure newSp is valid
-					if (newSp >= 0) {
-						// Apply all SkillEffects over a period of time
-						List<SkillEffect> skillEffects = move.skill().getSkillEffects();
-
-						Unit targetMain = battle.getUnitAtPos(move.targetPos());
-
-						// Apply SkillEffects one at a time
-						if (applyingEffect < skillEffects.size()) {
-							// Looking for at least 1 non-fail to continue the skill after the first effect
-							if (nonFails > 0 || applyingEffect == 0) {
-								// Apply to all targets
-								for (int targetPos : move.skill().getRange().getTargetPositions(move.self().getPos(),
-										move.targetPos())) {
-									if (targetPos != -1) { // Target's position is valid
-										Unit targetCur = battle.getUnitAtPos(targetPos);
-										if (applyingEffect == 0) { // First effect
-											// Initialize prevResults
-											prevResults.put(targetPos, ResultType.SUCCESS);
-
-											// Apply onTargetedBySkill BuffEffects
-											targetCur.onTargetedBySkill(move.self(), move.skill());
-										}
-
-										// Hasn't failed on this target yet
-										if (prevResults.get(targetPos) != ResultType.FAIL) {
-											// Not a fail
-											nonFails++;
-
-											// Apply effect and track result
-											ResultType resultType = skillEffects.get(applyingEffect).apply(move.self(),
-													targetCur, targetCur == targetMain, prevResults.get(targetPos));
-											prevResults.put(targetPos, resultType);
-										}
-									}
-								}
-								// Wait a bit before next SkillEffect
-								if (!skillEffects.get(applyingEffect).isInstant())
-									wait += 0.25f * Settings.battleSpeed;
-								applyingEffect++;
-							} else
-								endMove();
-						} else
-							endMove();
-					} else
-						endMove();
-
-					// todo delete killed units
-				} else {
-					appendToLog(formatName(move.self().getUnitType().name(), move.self().getPos(), false) + " "
-							+ lang.get("log.tries_to_use") + " " + c_skill + move.skill().getName() + "[WHITE] "
-							+ lang.get("log.on") + " "
-							+ formatName(battle.getUnitAtPos(move.targetPos()).getUnitType().name(), move.targetPos(),
-									false)
-							+ ", " + lang.get("log.but_cant_reach"));
-					endMove();
-				}
+                            endMove();
+                        }
+                        // todo delete killed units
+                    } else {
+                        appendToLog(getTriesToUseString(move) + "[WHITE] " + lang.get("log.but_its_on_cooldown")
+                            + " (" + c_cd + cd + " " + lang.format("turn_s", cd) + "[WHITE])");
+                        endMove();
+                    }
+                } else {
+                    appendToLog(formatName(move.self().getUnitType().name(), move.self().getPos(), false) + " "
+                        + lang.get("log.tries_to_use") + " " + c_skill + move.skillInstance().getSkill().getName()
+                        + "[WHITE] " + lang.get("log.on") + " "
+                        + formatName(battle.getUnitAtPos(move.targetPos()).getUnitType().name(), move.targetPos(),
+                        false)
+                        + ", " + lang.get("log.but_cant_reach"));
+                    endMove();
+                }
 			}
 		} else if (menuList.getLast() == MenuType.TARGETING) { // Picking a target
 
@@ -495,7 +514,8 @@ public class BattleController {
 			}
 
 			// Handle menu navigation
-			indexTarget = MenuLib.checkMovementTargeting(indexTarget, selectingMove, selectedSkill.getRange());
+			indexTarget = MenuLib.checkMovementTargeting(indexTarget, selectingMove,
+					selectedSkillInstance.getSkill().getRange());
 
 			// Handle option colors
 			MenuLib.handleOptColor(statsL, indexTarget);
@@ -506,7 +526,7 @@ public class BattleController {
 				Unit target = (indexTarget < 4)
 						? battle.getPlayerTeam().getUnits()[indexTarget]
 						: battle.getOpponentTeam().getUnits()[indexTarget - 4];
-				moves.add(new Move(selectedSkill, self, target.getPos()));
+				moves.add(new Move(selectedSkillInstance, self, target.getPos()));
 				// todo support ExA
 				setTextIfChanged(movesL.get(selectingMove),
 						movesL.get(selectingMove).getOriginalText() + " → " + target.getUnitType().name());
@@ -559,7 +579,7 @@ public class BattleController {
 		if (selectingMove == 8)
 			moves2 = new ArrayList<>(moves);
 		else if (selectingMove == 100) {
-			moves2.sort(Comparator.comparingInt((Move entry) -> entry.skill().getPrio())
+			moves2.sort(Comparator.comparingInt((Move entry) -> entry.skillInstance().getSkill().getPrio())
 					.thenComparingLong(entry -> entry.self().getAgiWithStage()).reversed());
 			// todo will thenComparingInt(pos.reversed) work
 		} else
@@ -780,8 +800,9 @@ public class BattleController {
 
 		// Move selected
 		if (InputLib.checkInput(Keybind.CONFIRM)) {
-			selectedSkill = battle.getPlayerTeam().getUnits()[selectingMove].getSkills()[indexSkill];
-			setTextIfChanged(movesL.get(selectingMove), lang.get("skill") + ": " + selectedSkill.getName());
+			selectedSkillInstance = battle.getPlayerTeam().getUnits()[selectingMove].getSkillInstances()[indexSkill];
+			setTextIfChanged(movesL.get(selectingMove),
+					lang.get("skill") + ": " + selectedSkillInstance.getSkill().getName());
 
 			// Reset for next time
 			for (TypingLabel skill : skillsL) {
@@ -790,7 +811,7 @@ public class BattleController {
 			}
 
 			// Prepare menus
-			indexTarget = getStartingIndex(selectedSkill);
+			indexTarget = getStartingIndex(selectedSkillInstance.getSkill());
 
 			menuList.add(MenuType.TARGETING);
 		}
