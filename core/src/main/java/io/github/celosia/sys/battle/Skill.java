@@ -11,7 +11,7 @@ public class Skill {
 	private final Element element;
 	private final Range range;
 	private final int cost;
-    private final int cooldown;
+	private final int cooldown;
 
 	// Skills happen in order of prio, and in order of user Agi within each prio
 	// Prio brackets:
@@ -35,7 +35,7 @@ public class Skill {
 		element = builder.element;
 		range = builder.range;
 		cost = builder.cost;
-        cooldown = builder.cooldown;
+		cooldown = builder.cooldown;
 		prio = builder.prio;
 		isBloom = builder.isBloom;
 		skillRoles = builder.skillRoles;
@@ -48,7 +48,7 @@ public class Skill {
 		private final Element element;
 		private final Range range;
 		private final int cost;
-        private int cooldown = 0;
+		private int cooldown = 0;
 		private int prio = 0;
 		private boolean isBloom = false;
 
@@ -63,10 +63,10 @@ public class Skill {
 			this.cost = cost;
 		}
 
-        public Builder cooldown(int cooldown) {
-            this.cooldown = cooldown;
-            return this;
-        }
+		public Builder cooldown(int cooldown) {
+			this.cooldown = cooldown;
+			return this;
+		}
 
 		public Builder prio(int prio) {
 			this.prio = prio;
@@ -123,11 +123,11 @@ public class Skill {
 		return cost;
 	}
 
-    public int getCooldown() {
-        return cooldown;
-    }
+	public int getCooldown() {
+		return cooldown;
+	}
 
-    public int getPrio() {
+	public int getPrio() {
 		return prio;
 	}
 
@@ -158,7 +158,7 @@ public class Skill {
 				|| this.hasRole(SkillRole.DEBUFF_DEFENSIVE) || this.hasRole(SkillRole.DEBUFF_OFFENSIVE);
 	}
 
-    public SkillInstance toSkillInstance() {
-        return new SkillInstance(this);
-    }
+	public SkillInstance toSkillInstance() {
+		return new SkillInstance(this);
+	}
 }

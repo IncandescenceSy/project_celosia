@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static io.github.celosia.sys.battle.BattleController.appendToLog;
+import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_HIDDEN;
 import static io.github.celosia.sys.menu.TextLib.c_buff;
 import static io.github.celosia.sys.menu.TextLib.c_hp;
@@ -163,9 +163,7 @@ public class Unit {
 		this.lvl = lvl;
 		statsDefault = unitType.statsBase().getRealStats(lvl);
 		statsCur = new Stats(statsDefault);
-		skillInstances = Arrays.stream(skills)
-            .map(Skill::toSkillInstance)
-            .toArray(SkillInstance[]::new);
+		skillInstances = Arrays.stream(skills).map(Skill::toSkillInstance).toArray(SkillInstance[]::new);
 		passives = List.of(unitType.passives());
 		sp = 200;
 		this.pos = pos;
@@ -1228,8 +1226,10 @@ public class Unit {
 			case MALUM_DMG_TAKEN -> Math.max(Math.pow(multMalumDmgTaken / 1000d, expMalumDmgTaken / 100d), 0.1);
 			case WEAK_DMG_DEALT -> Math.max(Math.pow(multWeakDmgDealt / 1000d, expWeakDmgDealt / 100d), 0.1);
 			case WEAK_DMG_TAKEN -> Math.max(Math.pow(multWeakDmgTaken / 1000d, expWeakDmgTaken / 100d), 0.1);
-			case FOLLOW_UP_DMG_DEALT -> Math.max(Math.pow(multFollowUpDmgDealt / 1000d, expFollowUpDmgDealt / 100d), 0.1);
-			case FOLLOW_UP_DMG_TAKEN -> Math.max(Math.pow(multFollowUpDmgTaken / 1000d, expFollowUpDmgTaken / 100d), 0.1);
+			case FOLLOW_UP_DMG_DEALT -> Math.max(Math.pow(multFollowUpDmgDealt / 1000d, expFollowUpDmgDealt / 100d),
+					0.1);
+			case FOLLOW_UP_DMG_TAKEN -> Math.max(Math.pow(multFollowUpDmgTaken / 1000d, expFollowUpDmgTaken / 100d),
+					0.1);
 			case DOT_DMG_TAKEN -> Math.max(Math.pow(multDoTDmgTaken / 1000d, expDoTDmgTaken / 100d), 0.1);
 			case HEALING_DEALT -> Math.max(Math.pow(multHealingDealt / 1000d, expHealingDealt / 100d), 0.1);
 			case HEALING_TAKEN -> Math.max(Math.pow(multHealingTaken / 1000d, expHealingTaken / 100d), 0.1);
@@ -1512,8 +1512,8 @@ public class Unit {
 	public boolean findPassive(Passive passiveTarget) {
 		for (Passive passive : passives) {
 			if (passive == passiveTarget) {
-                return true;
-            }
+				return true;
+			}
 		}
 		return false;
 	}
@@ -1522,70 +1522,69 @@ public class Unit {
 	public BuffInstance findBuff(Buff buff) {
 		for (BuffInstance buffInstance : buffInstances) {
 			if (buffInstance.getBuff() == buff) {
-                return buffInstance;
-            }
+				return buffInstance;
+			}
 		}
 		return null;
 	}
 
-    private void notifyBuffEffects(Unit target, BuffEffectNotifier notifier) {
-        // Handle Passives
-        for (Passive passive : this.getPassives()) {
-            for (BuffEffect buffEffect : passive.buffEffects()) {
-                notifier.notify(buffEffect, this, target, 1);
-            }
-        }
+	private void notifyBuffEffects(Unit target, BuffEffectNotifier notifier) {
+		// Handle Passives
+		for (Passive passive : this.getPassives()) {
+			for (BuffEffect buffEffect : passive.buffEffects()) {
+				notifier.notify(buffEffect, this, target, 1);
+			}
+		}
 
-        // Handle Buffs
-        for (BuffInstance buffInstance : this.getBuffInstances()) {
-            for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
-                notifier.notify(buffEffect, this, target, buffInstance.getStacks());
-            }
-        }
-    }
+		// Handle Buffs
+		for (BuffInstance buffInstance : this.getBuffInstances()) {
+			for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
+				notifier.notify(buffEffect, this, target, buffInstance.getStacks());
+			}
+		}
+	}
 
-    public void onUseSkill(Unit target, Skill skill) {
-        notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onUseSkill(s, t, stacks, skill));
-    }
+	public void onUseSkill(Unit target, Skill skill) {
+		notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onUseSkill(s, t, stacks, skill));
+	}
 
-    public void onTargetedBySkill(Unit target, Skill skill) {
-        notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onTargetedBySkill(s, t, stacks, skill));
-    }
+	public void onTargetedBySkill(Unit target, Skill skill) {
+		notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onTargetedBySkill(s, t, stacks, skill));
+	}
 
-    public void onDealDamage(Unit target, long damage, Element element) {
-        notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onDealDamage(s, t, stacks, damage, element));
-    }
+	public void onDealDamage(Unit target, long damage, Element element) {
+		notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onDealDamage(s, t, stacks, damage, element));
+	}
 
-    public void onTakeDamage(Unit target, long damage, Element element) {
-        notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onDealDamage(s, t, stacks, damage, element));
-    }
+	public void onTakeDamage(Unit target, long damage, Element element) {
+		notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onDealDamage(s, t, stacks, damage, element));
+	}
 
-    public void onDealHeal(Unit target, long heal, int overHeal) {
-        notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onDealHeal(s, t, stacks, heal, overHeal));
-    }
+	public void onDealHeal(Unit target, long heal, int overHeal) {
+		notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onDealHeal(s, t, stacks, heal, overHeal));
+	}
 
-    public void onTakeHeal(Unit target, long heal, int overHeal) {
-        notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onTakeHeal(s, t, stacks, heal, overHeal));
-    }
+	public void onTakeHeal(Unit target, long heal, int overHeal) {
+		notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onTakeHeal(s, t, stacks, heal, overHeal));
+	}
 
-    public void onDealShield(Unit target, int turns, long heal) {
-        notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onDealShield(s, t, stacks, turns, heal));
-    }
+	public void onDealShield(Unit target, int turns, long heal) {
+		notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onDealShield(s, t, stacks, turns, heal));
+	}
 
-    public void onTakeShield(Unit target, int turns, long heal) {
-        notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onTakeShield(s, t, stacks, turns, heal));
-    }
+	public void onTakeShield(Unit target, int turns, long heal) {
+		notifyBuffEffects(target, (effect, s, t, stacks) -> effect.onTakeShield(s, t, stacks, turns, heal));
+	}
 
-    public void onGiveBuff(Unit target, Buff buff, int turnsMod, int stacksChange) {
-        notifyBuffEffects(target,
-            (effect, s, t, stacks) -> effect.onGiveBuff(s, t, stacks, buff, turnsMod, stacksChange));
-    }
+	public void onGiveBuff(Unit target, Buff buff, int turnsMod, int stacksChange) {
+		notifyBuffEffects(target,
+				(effect, s, t, stacks) -> effect.onGiveBuff(s, t, stacks, buff, turnsMod, stacksChange));
+	}
 
-    public void onChangeStage(Unit target, StageType stageType, int turnsMod,
-                              int stacksChange) {
-        notifyBuffEffects(target,
-            (effect, s, t, stacks) -> effect.onChangeStage(s, t, stacks, stageType, turnsMod, stacksChange));
-    }
+	public void onChangeStage(Unit target, StageType stageType, int turnsMod, int stacksChange) {
+		notifyBuffEffects(target,
+				(effect, s, t, stacks) -> effect.onChangeStage(s, t, stacks, stageType, turnsMod, stacksChange));
+	}
 
 	// Returns the Unit's Side
 	public Side getSide() {
@@ -1598,7 +1597,7 @@ public class Unit {
 			appendToLog(formatName(unitType.name(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageAtk)
 					+ stageAtk + "[WHITE] " + lang.format("stage_s", stageAtk) + " " + c_buff + StageType.ATK.getName()
 					+ getStageStatString(this, StageType.ATK, 0));
-            // Remove stages
+			// Remove stages
 			stageAtk = 0;
 		}
 		if (stageDef != 0 && --stageDefTurns <= 0) {
@@ -1638,7 +1637,7 @@ public class Unit {
 		}
 
 		// Buffs
-        // Iterate backwards so they can be removed
+		// Iterate backwards so they can be removed
 		for (int i = buffInstances.size() - 1; i >= 0; i--) {
 			BuffInstance buffInstance = buffInstances.get(i);
 			int turns = buffInstance.getTurns();
@@ -1663,10 +1662,10 @@ public class Unit {
 			}
 		}
 
-        // Skill cooldowns
-        for(SkillInstance skillInstance : skillInstances) {
-            skillInstance.decrementCooldown();
-        }
+		// Skill cooldowns
+		for (SkillInstance skillInstance : skillInstances) {
+			skillInstance.decrementCooldown();
+		}
 	}
 
 	// Damage Unit, taking into account Defend and Shield

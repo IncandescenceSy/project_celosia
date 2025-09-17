@@ -4,10 +4,9 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Calcs;
 import io.github.celosia.sys.battle.Unit;
 
-import static io.github.celosia.sys.battle.BattleController.appendToLog;
-import static io.github.celosia.sys.battle.BattleController.battle;
+import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
+import static io.github.celosia.sys.battle.BattleControllerLib.battle;
 
-// Todo heavily limit %-based damage on bosses
 public class ChangeBloom implements BuffEffect {
 	private final int change; // Amount to change SP by
 	private final boolean isImmediate; // If true, happens onGive. If false, happens onTurnEnd

@@ -21,6 +21,7 @@ import io.github.celosia.sys.Debug;
 import io.github.celosia.sys.InputHandler;
 import io.github.celosia.sys.World;
 import io.github.celosia.sys.battle.BattleController;
+import io.github.celosia.sys.battle.BattleControllerLib;
 import io.github.celosia.sys.menu.CoolRect;
 import io.github.celosia.sys.menu.CoolRects;
 import io.github.celosia.sys.menu.Fonts;
@@ -250,7 +251,7 @@ public class Main extends ApplicationAdapter {
 			case BATTLE :
 			case TARGETING :
 			case LOG :
-				BattleController.updateStatDisplay();
+				BattleControllerLib.updateStatDisplay();
 				BattleController.input();
 				break;
 		}

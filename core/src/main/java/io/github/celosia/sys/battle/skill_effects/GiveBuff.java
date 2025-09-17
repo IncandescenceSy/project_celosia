@@ -10,7 +10,7 @@ import io.github.celosia.sys.battle.Unit;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.celosia.sys.battle.BattleController.appendToLog;
+import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.menu.TextLib.c_buff;
 import static io.github.celosia.sys.menu.TextLib.c_num;
 import static io.github.celosia.sys.menu.TextLib.formatName;
@@ -95,7 +95,7 @@ public class GiveBuff implements SkillEffect {
 			int stacksMod = stacks + self.getStacksModBuffTypeDealt(buff.getBuffType())
 					+ unit.getStacksModBuffTypeTaken(buff.getBuffType());
 
-            self.onGiveBuff(target, buff, turnsMod, stacksMod);
+			self.onGiveBuff(target, buff, turnsMod, stacksMod);
 
 			List<BuffInstance> buffInstances = unit.getBuffInstances();
 			BuffInstance buffInstance = unit.findBuff(buff);

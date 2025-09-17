@@ -5,7 +5,7 @@ import io.github.celosia.sys.battle.ResultType;
 import io.github.celosia.sys.battle.SkillEffect;
 import io.github.celosia.sys.battle.Unit;
 
-import static io.github.celosia.sys.battle.BattleController.appendToLog;
+import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 
 public class ChangeSp implements SkillEffect {
 	private final int change;

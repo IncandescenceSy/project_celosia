@@ -9,7 +9,7 @@ import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.AffLib.affDmgDealt;
 import static io.github.celosia.sys.battle.AffLib.affDmgTaken;
-import static io.github.celosia.sys.battle.BattleController.appendToLog;
+import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_HIDDEN;
 import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_VISIBLE;
 
@@ -143,8 +143,8 @@ public class Damage implements SkillEffect {
 					dmg = 1;
 				}
 
-                self.onDealDamage(target, dmg, element);
-                target.onTakeDamage(self, dmg, element);
+				self.onDealDamage(target, dmg, element);
+				target.onTakeDamage(self, dmg, element);
 			}
 
 			// Deal damage

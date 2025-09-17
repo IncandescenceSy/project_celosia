@@ -8,7 +8,7 @@ import io.github.celosia.sys.battle.Unit;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.celosia.sys.battle.BattleController.appendToLog;
+import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.battle.BattleLib.getStageBuffType;
 import static io.github.celosia.sys.menu.TextLib.c_buff;
 import static io.github.celosia.sys.menu.TextLib.c_num;

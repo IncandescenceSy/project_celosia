@@ -4,7 +4,7 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Mult;
 import io.github.celosia.sys.battle.Unit;
 
-import static io.github.celosia.sys.battle.BattleController.appendToLog;
+import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.menu.TextLib.c_exp;
 import static io.github.celosia.sys.menu.TextLib.c_stat;
 import static io.github.celosia.sys.menu.TextLib.formatName;

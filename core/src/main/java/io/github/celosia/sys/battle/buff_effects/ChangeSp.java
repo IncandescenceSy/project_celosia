@@ -4,7 +4,7 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Calcs;
 import io.github.celosia.sys.battle.Unit;
 
-import static io.github.celosia.sys.battle.BattleController.appendToLog;
+import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 
 // Todo heavily limit %-based damage on bosses
 public class ChangeSp implements BuffEffect {

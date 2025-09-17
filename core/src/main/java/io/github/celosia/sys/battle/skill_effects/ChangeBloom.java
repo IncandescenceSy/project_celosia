@@ -6,8 +6,8 @@ import io.github.celosia.sys.battle.SkillEffect;
 import io.github.celosia.sys.battle.Team;
 import io.github.celosia.sys.battle.Unit;
 
-import static io.github.celosia.sys.battle.BattleController.appendToLog;
-import static io.github.celosia.sys.battle.BattleController.battle;
+import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
+import static io.github.celosia.sys.battle.BattleControllerLib.battle;
 
 public class ChangeBloom implements SkillEffect {
 	private final int change;

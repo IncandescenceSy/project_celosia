@@ -7,7 +7,7 @@ import io.github.celosia.sys.battle.Unit;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.celosia.sys.battle.BattleController.appendToLog;
+import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.menu.TextLib.c_buff;
 import static io.github.celosia.sys.menu.TextLib.c_hp;
 import static io.github.celosia.sys.menu.TextLib.c_num;
@@ -22,7 +22,7 @@ public class Heal implements SkillEffect {
 	private final int overHeal; // Amount to heal over max HP in 10ths of a % (1000 = 100%)
 	private final int shieldTurns;
 	private final boolean isInstant;
-    private final boolean giveToSelf;
+	private final boolean giveToSelf;
 	private final boolean mainTargetOnly;
 
 	public Heal(Builder builder) {
@@ -30,7 +30,7 @@ public class Heal implements SkillEffect {
 		overHeal = builder.overHeal;
 		shieldTurns = builder.shieldTurns;
 		isInstant = builder.isInstant;
-        giveToSelf = builder.giveToSelf;
+		giveToSelf = builder.giveToSelf;
 		mainTargetOnly = builder.mainTargetOnly;
 	}
 
@@ -39,7 +39,7 @@ public class Heal implements SkillEffect {
 		private int overHeal = 0;
 		private int shieldTurns = 0;
 		private boolean isInstant = false;
-        private boolean giveToSelf = false;
+		private boolean giveToSelf = false;
 		private boolean mainTargetOnly = false;
 
 		public Builder(int pow) {
@@ -61,10 +61,10 @@ public class Heal implements SkillEffect {
 			return this;
 		}
 
-        public Builder giveToSelf() {
-            this.giveToSelf = true;
-            return this;
-        }
+		public Builder giveToSelf() {
+			this.giveToSelf = true;
+			return this;
+		}
 
 		public Builder mainTargetOnly() {
 			this.mainTargetOnly = true;
@@ -81,7 +81,7 @@ public class Heal implements SkillEffect {
 		if (!mainTargetOnly || isMainTarget) {
 			List<String> msg = new ArrayList<>();
 
-            Unit unit = (giveToSelf) ? self : target;
+			Unit unit = (giveToSelf) ? self : target;
 
 			// Heals by pow% of user's Fth
 			long heal = (long) (self.getFthWithStage() * (pow / 100d) * self.getMultWithExpHealingDealt()
@@ -94,8 +94,8 @@ public class Heal implements SkillEffect {
 				// Apply self's durationMod
 				int turnsMod = shieldTurns + self.getModDurationBuffDealt() + unit.getModDurationBuffTaken();
 
-                self.onDealShield(unit, turnsMod, heal);
-                unit.onTakeShield(unit, turnsMod, heal);
+				self.onDealShield(unit, turnsMod, heal);
+				unit.onTakeShield(unit, turnsMod, heal);
 
 				long hpMax = unit.getStatsDefault().getHp();
 				long shieldCur = unit.getShield();
@@ -107,37 +107,37 @@ public class Heal implements SkillEffect {
 				if (shieldNew > shieldCur) {
 					long shieldCurDisp = unit.getDisplayShield();
 
-                    unit.setShield(shieldNew);
+					unit.setShield(shieldNew);
 
 					long hpMaxDisp = unit.getStatsDefault().getDisplayHp();
 					long shieldNewDisp = unit.getDisplayShield();
 
-					str = formatName(unit.getUnitType().name(), unit.getPos()) + " " + c_buff + lang.get("shield")
-							+ " " + c_shield + formatNum((shieldCurDisp + unit.getDisplayDefend())) + "[WHITE] → "
-							+ c_shield + formatNum((shieldNewDisp + unit.getDisplayDefend())) + "[WHITE]/" + c_shield
+					str = formatName(unit.getUnitType().name(), unit.getPos()) + " " + c_buff + lang.get("shield") + " "
+							+ c_shield + formatNum((shieldCurDisp + unit.getDisplayDefend())) + "[WHITE] → " + c_shield
+							+ formatNum((shieldNewDisp + unit.getDisplayDefend())) + "[WHITE]/" + c_shield
 							+ formatNum(hpMaxDisp) + "[WHITE] (" + getColor(shieldNewDisp - shieldCurDisp) + "+"
 							+ formatNum((shieldNewDisp - shieldCurDisp)) + "[WHITE])";
 				}
 
 				if (turnsMod > turnsCur) {
-                    unit.setShieldTurns(turnsMod);
+					unit.setShieldTurns(turnsMod);
 					if (shieldNew > shieldCur)
 						msg.add(str + "[WHITE], " + lang.get("turns") + " " + c_num + turnsCur + "[WHITE] → " + c_num
 								+ turnsMod);
 					else
-						msg.add(formatName(unit.getUnitType().name(), unit.getPos()) + " " + lang.get("shield")
-								+ " " + lang.get("turns") + " " + c_num + turnsCur + "[WHITE] → " + c_num + turnsMod);
+						msg.add(formatName(unit.getUnitType().name(), unit.getPos()) + " " + lang.get("shield") + " "
+								+ lang.get("turns") + " " + c_num + turnsCur + "[WHITE] → " + c_num + turnsMod);
 				}
 
 				// Effect block message
 				if (shieldCur == 0 && shieldNew > 0 && !unit.isEffectBlock() && unit.getDefend() == 0) {
-					msg.add(formatName(unit.getUnitType().name(), unit.getPos(), false) + " "
-							+ lang.get("log.is_now") + " " + c_buff + lang.get("log.effect_block"));
+					msg.add(formatName(unit.getUnitType().name(), unit.getPos(), false) + " " + lang.get("log.is_now")
+							+ " " + c_buff + lang.get("log.effect_block"));
 				}
 
 			} else { // Heals
-                self.onDealHeal(unit, heal, overHeal);
-                unit.onTakeHeal(self, heal, overHeal);
+				self.onDealHeal(unit, heal, overHeal);
+				unit.onTakeHeal(self, heal, overHeal);
 
 				long hpCur = unit.getStatsCur().getHp();
 				long hpMax = unit.getStatsDefault().getHp();
@@ -148,7 +148,7 @@ public class Heal implements SkillEffect {
 				if (hpNew > hpCur) {
 					long hpCurDisp = unit.getStatsCur().getDisplayHp();
 
-                    unit.getStatsCur().setHp(hpNew);
+					unit.getStatsCur().setHp(hpNew);
 
 					long hpNewDisp = unit.getStatsCur().getDisplayHp();
 					long hpMaxDisp = unit.getStatsDefault().getDisplayHp();

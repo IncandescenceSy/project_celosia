@@ -13,7 +13,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import static io.github.celosia.sys.battle.BattleController.battle;
+import static io.github.celosia.sys.battle.BattleControllerLib.battle;
 import static io.github.celosia.sys.battle.PosLib.getSide;
 import static io.github.celosia.sys.settings.Lang.lang;
 
@@ -41,7 +41,7 @@ public class TextLib {
 	public static String c_passive = "[#c6a1ff]";
 	public static String c_stat = "[#deff81]";
 	public static String c_exp = "[#a034ff]"; // Calculated exponent parenthesis
-    public static String c_cd = "[#1898ff]"; // Cooldown
+	public static String c_cd = "[#1898ff]"; // Cooldown
 
 	// Decimal formatter with up to 2 decimal places
 	public static DecimalFormat df = new DecimalFormat("#.##");
@@ -267,19 +267,18 @@ public class TextLib {
 		return builder.toString();
 	}
 
-    public static String getTriesToUseString(Move move) {
-        Skill skill = move.skillInstance().getSkill();
-        Unit self = move.self();
+	public static String getTriesToUseString(Move move) {
+		Skill skill = move.skillInstance().getSkill();
+		Unit self = move.self();
 
-        String msg = formatName(self.getUnitType().name(), self.getPos(), false) + " "
-            + lang.get("log.tries_to_use") + " " + c_skill + skill.getName();
+		String msg = formatName(self.getUnitType().name(), self.getPos(), false) + " " + lang.get("log.tries_to_use")
+				+ " " + c_skill + skill.getName();
 
-        if (!skill.isRangeSelf()) {
-            msg += "[WHITE] " + lang.get("log.on") + " "
-                + formatName(battle.getUnitAtPos(move.targetPos()).getUnitType().name(),
-                move.targetPos(), false);
-        }
+		if (!skill.isRangeSelf()) {
+			msg += "[WHITE] " + lang.get("log.on") + " "
+					+ formatName(battle.getUnitAtPos(move.targetPos()).getUnitType().name(), move.targetPos(), false);
+		}
 
-        return msg;
-    }
+		return msg;
+	}
 }

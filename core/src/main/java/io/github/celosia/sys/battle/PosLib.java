@@ -51,9 +51,9 @@ public class PosLib {
 		return (pos2 < 4) ? (pos1 < 4) ? Side.ALLY : Side.OPPONENT : (pos1 >= 4) ? Side.ALLY : Side.OPPONENT;
 	}
 
-    // Returns the index a skill should start at based off of its role
-    // todo more complex logic
-    public static int getStartingIndex(Skill skill) {
-        return (skill.shouldTargetOpponent()) ? 4 : 0;
-    }
+	// Returns the index a skill should start at based off of its role
+	// todo more complex logic
+	public static int getStartingIndex(Skill skill) {
+		return (skill.shouldTargetOpponent()) ? 4 : 0;
+	}
 }

@@ -4,7 +4,7 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Stat;
 import io.github.celosia.sys.battle.Unit;
 
-import static io.github.celosia.sys.battle.BattleController.appendToLog;
+import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.battle.Calcs.getDisplayStatWithStage;
 import static io.github.celosia.sys.menu.TextLib.c_num;
 import static io.github.celosia.sys.menu.TextLib.c_stat;
