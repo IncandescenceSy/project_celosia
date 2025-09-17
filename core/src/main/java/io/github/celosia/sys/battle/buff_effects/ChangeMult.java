@@ -41,10 +41,14 @@ public class ChangeMult implements BuffEffect {
 		calc(self, (changeMult * stacks) * -1, (changeExp * stacks) * -1, false);
 	}
 
+    // todo fix display errors with sub-% mults
 	public void calc(Unit self, int changeMultFull, int changeExpFull, boolean giving) {
+        // Minimum mult to display
+        int multMin = (mult == Mult.PERCENTAGE_DMG_TAKEN) ? 1 : 100;
+
 		int multOld = self.getMult(mult);
 		int multNew = multOld + changeMultFull;
-		int changeMultDisplay = (Math.max(multNew, 100) - Math.max(multOld, 100)) / 10;
+		int changeMultDisplay = (Math.max(multNew, multMin) - Math.max(multOld, multMin)) / 10;
 		int expOld = self.getExp(mult);
 		int expNew = expOld + changeExpFull;
 		double changeExpDisplay = (Math.max(expNew, 10) - Math.max(expOld, 10)) / 100d;
@@ -82,8 +86,8 @@ public class ChangeMult implements BuffEffect {
 		}
 
 		appendToLog(formatName(self.getUnitType().name(), self.getPos()) + " " + c_stat + mult.getName() + " "
-				+ getMultColor(multOld, mult) + formatNum(Math.max(multOld, 100) / 10) + "%" + calcedOld + "[WHITE] → "
-				+ getMultColor(multNew, mult) + formatNum(Math.max(multNew, 100) / 10) + "%" + calcedNew + "[WHITE] ("
+				+ getMultColor(multOld, mult) + formatNum(Math.max(multOld, multMin) / 10) + "%" + calcedOld + "[WHITE] → "
+				+ getMultColor(multNew, mult) + formatNum(Math.max(multNew, multMin) / 10) + "%" + calcedNew + "[WHITE] ("
 				+ getMultChangeColor(changeMultFull, mult) + ((changeMultDisplay > 0) ? "+" : "")
 				+ formatNum(changeMultDisplay) + "%" + calcedChange);
 	}

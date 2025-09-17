@@ -27,6 +27,7 @@ public enum Mult {
     FOLLOW_UP_DMG_DEALT(lang.get("mult.follow_up_dmg_dealt"), true),
     FOLLOW_UP_DMG_TAKEN(lang.get("mult.follow_up_dmg_taken"), false),
     DOT_DMG_TAKEN(lang.get("mult.dot_dmg_taken"), false),
+    PERCENTAGE_DMG_TAKEN(lang.get("mult.percentage_dmg_taken"), false),
     HEALING_DEALT(lang.get("mult.healing_dealt"), true),
     HEALING_TAKEN(lang.get("mult.healing_taken"), true),
     SP_GAIN(lang.get("mult.sp_gain"), true),

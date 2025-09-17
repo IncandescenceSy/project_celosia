@@ -11,7 +11,6 @@ import static io.github.celosia.sys.menu.TextLib.c_pos;
 import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.settings.Lang.lang;
 
-// todo protect bosses against %-based damage
 public class ChangeHp implements BuffEffect {
 	private final int change; // Amount to change HP by. If isPercentage, 1000 = +100%
 	private final boolean isImmediate; // If true, happens onGive. If false, happens onTurnEnd
@@ -76,7 +75,7 @@ public class ChangeHp implements BuffEffect {
 			double multDoTDmgTaken = ((isImmediate) ? 1 : self.getMultWithExpDoTDmgTaken());
 			long dmg = (isPercentage)
 					? (long) Math.abs(((self.getStatsDefault().getHp() * (change / 1000d)) * stacks)
-							* self.getMultWithExpDmgTaken() * multDoTDmgTaken)
+							* self.getMultWithExpDmgTaken() * multDoTDmgTaken * self.getMultWithExpPercentageDmgTaken())
 					: (long) (change * self.getMultWithExpDmgTaken() * multDoTDmgTaken);
 			self.onTakeDamage(self, dmg, Element.VIS);
 			Result result = self.damage(dmg, isPierce, false);

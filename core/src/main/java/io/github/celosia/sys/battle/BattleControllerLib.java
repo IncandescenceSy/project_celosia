@@ -123,6 +123,7 @@ public class BattleControllerLib {
 	// moves are executing
 	static int selectingMove = 0;
 
+    // temp
 	static SkillInstance nothingInstanceTemp = new SkillInstance(Skills.NOTHING);
 
 	static List<String> logText = new ArrayList<>();
@@ -134,7 +135,7 @@ public class BattleControllerLib {
 		// Setup teams (temp)
 		Stats johnyStats = new Stats(100, 100, 100, 100, 100, 100, 100);
 		UnitType johny = new UnitType("Johny", johnyStats, new Affinities(4, -4, 0, 0, 0, 0, 0),
-				Passives.DEBUFF_DURATION_UP, Passives.RESTORATION);
+				Passives.DEBUFF_DURATION_UP, Passives.RESTORATION, Passives.PERCENTAGE_DMG_TAKEN_DOWN_50);
 		Stats jerryStats = new Stats(100, 100, 100, 100, 100, 100, 115);
 		UnitType jerry = new UnitType("Jerry", jerryStats, new Affinities(5, -4, 0, 5, 0, 0, 0),
 				Passives.DEBUFF_DURATION_UP);
@@ -145,7 +146,7 @@ public class BattleControllerLib {
 		UnitType julia = new UnitType("Julia", johnyStats, new Affinities(0, 0, -4, 5, 0, 0, 0),
 				Passives.DEBUFF_DURATION_UP);
 		UnitType jude = new UnitType("Jude", jerryStats, new Affinities(0, 0, -3, -3, 5, 0, 0),
-				Passives.DEBUFF_DURATION_UP);
+				Passives.DEBUFF_DURATION_UP, Passives.PERCENTAGE_DMG_TAKEN_DOWN_999);
 		UnitType josephine = new UnitType("Josephine", jerryStats, new Affinities(0, 0, 0, 0, 0, 5, -4),
 				Passives.DEBUFF_DURATION_UP);
 		UnitType julian = new UnitType("Julian", johnyStats, new Affinities(0, 0, 0, 0, 0, -4, 5),
