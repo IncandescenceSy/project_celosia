@@ -59,7 +59,6 @@ public class Unit {
 	// In 10ths of a % (1000 = *100%)
 	// Raised to the corresponding exponent
 	// Exps are in hundredths (100 = ^1, 150 = ^1.5, etc)
-	// todo add exp changers
 
 	// Multiplies damage dealt/taken
 	private int multDmgDealt;
@@ -142,21 +141,18 @@ public class Unit {
 	private int infiniteSp;
 
 	// Buff/debuff duration modifiers
-	// todo add missing changers
 	private int modDurationBuffDealt;
 	private int modDurationBuffTaken;
 	private int modDurationDebuffDealt;
 	private int modDurationDebuffTaken;
 
 	// Buff/debuff stack modifiers
-	// todo add changers
 	private int modStacksBuffDealt;
 	private int modStacksBuffTaken;
 	private int modStacksDebuffDealt;
 	private int modStacksDebuffTaken;
 
 	// Range modifier
-	// todo add changer
 	private int modRange;
 
 	private List<BuffInstance> buffInstances = new ArrayList<>();
@@ -1229,10 +1225,8 @@ public class Unit {
 			case MALUM_DMG_TAKEN -> Math.max(Math.pow(multMalumDmgTaken / 1000d, expMalumDmgTaken / 100d), 0.1);
 			case WEAK_DMG_DEALT -> Math.max(Math.pow(multWeakDmgDealt / 1000d, expWeakDmgDealt / 100d), 0.1);
 			case WEAK_DMG_TAKEN -> Math.max(Math.pow(multWeakDmgTaken / 1000d, expWeakDmgTaken / 100d), 0.1);
-			case FOLLOW_UP_DMG_DEALT -> Math.max(Math.pow(multFollowUpDmgDealt / 1000d, expFollowUpDmgDealt / 100d),
-					0.1);
-			case FOLLOW_UP_DMG_TAKEN -> Math.max(Math.pow(multFollowUpDmgTaken / 1000d, expFollowUpDmgTaken / 100d),
-					0.1);
+			case FOLLOW_UP_DMG_DEALT -> Math.max(Math.pow(multFollowUpDmgDealt / 1000d, expFollowUpDmgDealt / 100d), 0.1);
+			case FOLLOW_UP_DMG_TAKEN -> Math.max(Math.pow(multFollowUpDmgTaken / 1000d, expFollowUpDmgTaken / 100d), 0.1);
 			case DOT_DMG_TAKEN -> Math.max(Math.pow(multDoTDmgTaken / 1000d, expDoTDmgTaken / 100d), 0.1);
 			case HEALING_DEALT -> Math.max(Math.pow(multHealingDealt / 1000d, expHealingDealt / 100d), 0.1);
 			case HEALING_TAKEN -> Math.max(Math.pow(multHealingTaken / 1000d, expHealingTaken / 100d), 0.1);
@@ -1601,7 +1595,8 @@ public class Unit {
 			appendToLog(formatName(unitType.name(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageAtk)
 					+ stageAtk + "[WHITE] " + lang.format("stage_s", stageAtk) + " " + c_buff + StageType.ATK.getName()
 					+ getStageStatString(this, StageType.ATK, 0));
-			stageAtk = 0; // Remove stages
+            // Remove stages
+			stageAtk = 0;
 		}
 		if (stageDef != 0 && --stageDefTurns <= 0) {
 			appendToLog(formatName(unitType.name(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageDef)

@@ -20,12 +20,12 @@ import io.github.celosia.sys.menu.Path;
 import io.github.celosia.sys.menu.Paths;
 import io.github.celosia.sys.settings.Keybind;
 import io.github.celosia.sys.settings.Settings;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static io.github.celosia.Main.coolRects;
 import static io.github.celosia.Main.createPopup;
@@ -71,7 +71,7 @@ public class BattleController {
 	static int extraActions = 0; // How many extra actions have been used for the current combatant
 	static int usingMove = 0; // Who's currently using their move
 	static int applyingEffect = 0; // Which SkillEffect of the current skill is currently being applied
-	static Map<Integer, ResultType> prevResults; // Previous SkillEffect resultType
+	static Int2ObjectMap<ResultType> prevResults; // Previous SkillEffect resultTypes for each pos
 	static int nonFails = 0; // If this skill's effects have succeeded at all
 
 	// Menu navigation
@@ -409,8 +409,8 @@ public class BattleController {
 									movesL.get(i).setColor(Color.WHITE);
 							}
 
-							prevResults = new HashMap<>();
-						} else {
+							prevResults = new Int2ObjectOpenHashMap<>();
+                        } else {
 							String msg = formatName(self.getUnitType().name(), self.getPos(), false) + " "
 									+ lang.get("log.tries_to_use") + " " + c_skill + skill.getName();
 							if (!skill.isRangeSelf())
