@@ -123,7 +123,7 @@ public class BattleControllerLib {
 	// moves are executing
 	static int selectingMove = 0;
 
-    // temp
+	// temp
 	static SkillInstance nothingInstanceTemp = new SkillInstance(Skills.NOTHING);
 
 	static List<String> logText = new ArrayList<>();

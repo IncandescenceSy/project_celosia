@@ -60,7 +60,7 @@ public class Unit {
 	// In 10ths of a % (1000 = *100%)
 	// Raised to the corresponding exponent
 	// Exps are in hundredths (100 = ^1, 150 = ^1.5, etc)
-    // Calculations are performed on max(mult^exp, 10%)
+	// Calculations are performed on max(mult^exp, 10%)
 
 	// Multiplies damage dealt/taken
 	private int multDmgDealt;
@@ -114,10 +114,10 @@ public class Unit {
 	private int multDoTDmgTaken;
 	private int expDoTDmgTaken;
 
-    // For %-based damage. Primarily reserved for bosses
-    // Unlike other mults, the minimum is 0.1%
-    private int multPercentageDmgTaken;
-    private int expPercentageDmgTaken;
+	// For %-based damage. Primarily reserved for bosses
+	// Unlike other mults, the minimum is 0.1%
+	private int multPercentageDmgTaken;
+	private int expPercentageDmgTaken;
 
 	// For healing and shield
 	private int multHealingDealt;
@@ -204,7 +204,7 @@ public class Unit {
 		multFollowUpDmgDealt = 1000;
 		multFollowUpDmgTaken = 1000;
 		multDoTDmgTaken = 1000;
-        multPercentageDmgTaken = 1000;
+		multPercentageDmgTaken = 1000;
 		multHealingDealt = 1000;
 		multHealingTaken = 1000;
 		multSpGain = 1000;
@@ -230,7 +230,7 @@ public class Unit {
 		expFollowUpDmgDealt = 100;
 		expFollowUpDmgTaken = 100;
 		expDoTDmgTaken = 100;
-        expPercentageDmgTaken = 100;
+		expPercentageDmgTaken = 100;
 		expHealingDealt = 100;
 		expHealingTaken = 100;
 		expSpGain = 100;
@@ -702,15 +702,15 @@ public class Unit {
 		return multDoTDmgTaken;
 	}
 
-    public void setMultPercentageDmgTaken(int multPercentageDmgTaken) {
-        this.multPercentageDmgTaken = multPercentageDmgTaken;
-    }
+	public void setMultPercentageDmgTaken(int multPercentageDmgTaken) {
+		this.multPercentageDmgTaken = multPercentageDmgTaken;
+	}
 
-    public int getMultPercentageDmgTaken() {
-        return multPercentageDmgTaken;
-    }
+	public int getMultPercentageDmgTaken() {
+		return multPercentageDmgTaken;
+	}
 
-    public void setMultHealingDealt(int multHealingDealt) {
+	public void setMultHealingDealt(int multHealingDealt) {
 		this.multHealingDealt = multHealingDealt;
 	}
 
@@ -765,7 +765,7 @@ public class Unit {
 			case FOLLOW_UP_DMG_DEALT -> multFollowUpDmgDealt = set;
 			case FOLLOW_UP_DMG_TAKEN -> multFollowUpDmgTaken = set;
 			case DOT_DMG_TAKEN -> multDoTDmgTaken = set;
-            case PERCENTAGE_DMG_TAKEN -> multPercentageDmgTaken = set;
+			case PERCENTAGE_DMG_TAKEN -> multPercentageDmgTaken = set;
 			case HEALING_DEALT -> multHealingDealt = set;
 			case HEALING_TAKEN -> multHealingTaken = set;
 			case SP_GAIN -> multSpGain = set;
@@ -796,7 +796,7 @@ public class Unit {
 			case FOLLOW_UP_DMG_DEALT -> multFollowUpDmgDealt;
 			case FOLLOW_UP_DMG_TAKEN -> multFollowUpDmgTaken;
 			case DOT_DMG_TAKEN -> multDoTDmgTaken;
-            case PERCENTAGE_DMG_TAKEN -> multPercentageDmgTaken;
+			case PERCENTAGE_DMG_TAKEN -> multPercentageDmgTaken;
 			case HEALING_DEALT -> multHealingDealt;
 			case HEALING_TAKEN -> multHealingTaken;
 			case SP_GAIN -> multSpGain;
@@ -1000,15 +1000,15 @@ public class Unit {
 		return expDoTDmgTaken;
 	}
 
-    public void setExpPercentageDmgTaken(int expPercentageDmgTaken) {
-        this.expPercentageDmgTaken = expPercentageDmgTaken;
-    }
+	public void setExpPercentageDmgTaken(int expPercentageDmgTaken) {
+		this.expPercentageDmgTaken = expPercentageDmgTaken;
+	}
 
-    public int getExpPercentageDmgTaken() {
-        return expPercentageDmgTaken;
-    }
+	public int getExpPercentageDmgTaken() {
+		return expPercentageDmgTaken;
+	}
 
-    public void setExpHealingDealt(int expHealingDealt) {
+	public void setExpHealingDealt(int expHealingDealt) {
 		this.expHealingDealt = expHealingDealt;
 	}
 
@@ -1063,7 +1063,7 @@ public class Unit {
 			case FOLLOW_UP_DMG_DEALT -> expFollowUpDmgDealt = set;
 			case FOLLOW_UP_DMG_TAKEN -> expFollowUpDmgTaken = set;
 			case DOT_DMG_TAKEN -> expDoTDmgTaken = set;
-            case PERCENTAGE_DMG_TAKEN -> expPercentageDmgTaken = set;
+			case PERCENTAGE_DMG_TAKEN -> expPercentageDmgTaken = set;
 			case HEALING_DEALT -> expHealingDealt = set;
 			case HEALING_TAKEN -> expHealingTaken = set;
 			case SP_GAIN -> expSpGain = set;
@@ -1094,7 +1094,7 @@ public class Unit {
 			case FOLLOW_UP_DMG_DEALT -> expFollowUpDmgDealt;
 			case FOLLOW_UP_DMG_TAKEN -> expFollowUpDmgTaken;
 			case DOT_DMG_TAKEN -> expDoTDmgTaken;
-            case PERCENTAGE_DMG_TAKEN -> expPercentageDmgTaken;
+			case PERCENTAGE_DMG_TAKEN -> expPercentageDmgTaken;
 			case HEALING_DEALT -> expHealingDealt;
 			case HEALING_TAKEN -> expHealingTaken;
 			case SP_GAIN -> expSpGain;
@@ -1212,9 +1212,9 @@ public class Unit {
 		return Math.max(Math.pow(multDoTDmgTaken / 1000d, expDoTDmgTaken / 100d), 0.1);
 	}
 
-    public double getMultWithExpPercentageDmgTaken() {
-        return Math.max(Math.pow(multPercentageDmgTaken / 1000d, expPercentageDmgTaken / 100d), 0.001);
-    }
+	public double getMultWithExpPercentageDmgTaken() {
+		return Math.max(Math.pow(multPercentageDmgTaken / 1000d, expPercentageDmgTaken / 100d), 0.001);
+	}
 
 	public double getMultWithExpHealingDealt() {
 		return Math.max(Math.pow(multHealingDealt / 1000d, expHealingDealt / 100d), 0.1);
@@ -1257,7 +1257,8 @@ public class Unit {
 			case FOLLOW_UP_DMG_TAKEN -> Math.max(Math.pow(multFollowUpDmgTaken / 1000d, expFollowUpDmgTaken / 100d),
 					0.1);
 			case DOT_DMG_TAKEN -> Math.max(Math.pow(multDoTDmgTaken / 1000d, expDoTDmgTaken / 100d), 0.1);
-            case PERCENTAGE_DMG_TAKEN -> Math.max(Math.pow(multPercentageDmgTaken / 1000d, expPercentageDmgTaken / 100d), 0.001);
+			case PERCENTAGE_DMG_TAKEN -> Math
+					.max(Math.pow(multPercentageDmgTaken / 1000d, expPercentageDmgTaken / 100d), 0.001);
 			case HEALING_DEALT -> Math.max(Math.pow(multHealingDealt / 1000d, expHealingDealt / 100d), 0.1);
 			case HEALING_TAKEN -> Math.max(Math.pow(multHealingTaken / 1000d, expHealingTaken / 100d), 0.1);
 			case SP_GAIN -> Math.max(Math.pow(multSpGain / 1000d, expSpGain / 100d), 0.1);

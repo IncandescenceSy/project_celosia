@@ -16,6 +16,8 @@ public class Passives {
 			lang.get("passive.debuff_duration_up.desc"), new ChangeMod(Mod.DURATION_DEBUFF_DEALT, 1));
 	static Passive ETERNAL_WELLSPRING = new Passive(lang.get("passive.eternal_wellspring"),
 			lang.get("passive.eternal_wellspring.desc"), new ChangeInfiniteSp(1));
-    static Passive PERCENTAGE_DMG_TAKEN_DOWN_50 = new Passive(lang.get("passive.percentage_dmg_down_50"), lang.get("passive.percentage_dmg_down_50.desc"), new ChangeMult(Mult.PERCENTAGE_DMG_TAKEN, -500));
-    static Passive PERCENTAGE_DMG_TAKEN_DOWN_999 = new Passive(lang.get("passive.percentage_dmg_down_999"), lang.get("passive.percentage_dmg_down_999.desc"), new ChangeMult(Mult.PERCENTAGE_DMG_TAKEN, -999));
+	static Passive PERCENTAGE_DMG_TAKEN_DOWN_50 = new Passive(lang.get("passive.percentage_dmg_taken_down_50"),
+			lang.get("passive.percentage_dmg_taken_down_50.desc"), new ChangeMult(Mult.PERCENTAGE_DMG_TAKEN, -500));
+	static Passive PERCENTAGE_DMG_TAKEN_DOWN_999 = new Passive(lang.get("passive.percentage_dmg_taken_down_999"),
+			lang.get("passive.percentage_dmg_taken_down_999.desc"), new ChangeMult(Mult.PERCENTAGE_DMG_TAKEN, -999));
 }

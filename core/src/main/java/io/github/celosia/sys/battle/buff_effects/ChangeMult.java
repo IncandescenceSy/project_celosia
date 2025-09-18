@@ -42,8 +42,8 @@ public class ChangeMult implements BuffEffect {
 	}
 
 	public void calc(Unit self, int changeMultFull, int changeExpFull, boolean giving) {
-        // Minimum mult to display
-        int multMin = (mult == Mult.PERCENTAGE_DMG_TAKEN) ? 1 : 100;
+		// Minimum mult to display
+		int multMin = (mult == Mult.PERCENTAGE_DMG_TAKEN) ? 1 : 100;
 
 		int multOld = self.getMult(mult);
 		int multNew = multOld + changeMultFull;
@@ -85,9 +85,9 @@ public class ChangeMult implements BuffEffect {
 		}
 
 		appendToLog(formatName(self.getUnitType().name(), self.getPos()) + " " + c_stat + mult.getName() + " "
-				+ getMultColor(multOld, mult) + formatNum(Math.max(multOld, multMin) / 10d) + "%" + calcedOld + "[WHITE] → "
-				+ getMultColor(multNew, mult) + formatNum(Math.max(multNew, multMin) / 10d) + "%" + calcedNew + "[WHITE] ("
-				+ getMultChangeColor(changeMultFull, mult) + ((changeMultDisplay > 0) ? "+" : "")
-				+ formatNum(changeMultDisplay) + "%" + calcedChange);
+				+ getMultColor(multOld, mult) + formatNum(Math.max(multOld, multMin) / 10d) + "%" + calcedOld
+				+ "[WHITE] → " + getMultColor(multNew, mult) + formatNum(Math.max(multNew, multMin) / 10d) + "%"
+				+ calcedNew + "[WHITE] (" + getMultChangeColor(changeMultFull, mult)
+				+ ((changeMultDisplay > 0) ? "+" : "") + formatNum(changeMultDisplay) + "%" + calcedChange);
 	}
 }
