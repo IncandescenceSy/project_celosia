@@ -149,8 +149,8 @@ public class Damage implements SkillEffect {
 
 			// Deal damage
 			Result result = target.damage(dmg, isPierce);
-			appendToLog(result.getMessages());
-			return result.getResultType();
+			appendToLog(result.messages());
+			return result.resultType();
 		} else {
 			// If the previous hit failed entirely, this one wouldn't have been reached. If
 			// this return statement is ever reached, it's under special circumstances (such

@@ -4,11 +4,10 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.c_sp;
-import static io.github.celosia.sys.menu.TextLib.c_stat;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.settings.Lang.lang;
+import static io.github.celosia.sys.util.MiscLib.isMatchingTruthiness;
 
 public class ChangeInfiniteSp implements BuffEffect {
 	private final int change; // Amount to add
@@ -19,21 +18,21 @@ public class ChangeInfiniteSp implements BuffEffect {
 
 	@Override
 	public void onGive(Unit self, int stacks) {
-		int infiniteSpOld = self.getInfiniteSp();
-		int infiniteSpNew = infiniteSpOld + (change * stacks);
-		self.setInfiniteSp(infiniteSpNew);
-		if (infiniteSpNew > 0 && self.getShield() == 0 && self.getDefend() == 0)
-			appendToLog(formatName(self.getUnitType().name(), self.getPos()) + " " + c_stat + lang.get("sp") + " "
-					+ c_sp + formatNum(self.getSp()) + "[WHITE] → " + c_sp + "∞");
+		calc(self, change * stacks);
 	}
 
 	@Override
 	public void onRemove(Unit self, int stacks) {
+		calc(self, (change * stacks) * -1);
+	}
+
+	public void calc(Unit self, int changeFull) {
 		int infiniteSpOld = self.getInfiniteSp();
-		int infiniteSpNew = infiniteSpOld - (change * stacks);
+		int infiniteSpNew = infiniteSpOld + changeFull;
 		self.setInfiniteSp(infiniteSpNew);
-		if (infiniteSpNew <= 0 && self.getShield() == 0 && self.getDefend() == 0)
-			appendToLog(formatName(self.getUnitType().name(), self.getPos()) + " " + c_stat + lang.get("sp") + c_sp
-					+ " ∞" + "[WHITE] → " + c_sp + formatNum(self.getSp()));
+		if (!isMatchingTruthiness(infiniteSpOld, infiniteSpNew)) {
+			appendToLog(lang.format("log.change_sp.infinite", formatName(self.getUnitType().name(), self.getPos()),
+					formatNum(self.getSp()), infiniteSpNew));
+		}
 	}
 }

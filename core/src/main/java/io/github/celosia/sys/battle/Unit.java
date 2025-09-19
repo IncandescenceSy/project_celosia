@@ -11,7 +11,6 @@ import static io.github.celosia.sys.menu.TextLib.c_hp;
 import static io.github.celosia.sys.menu.TextLib.c_neg;
 import static io.github.celosia.sys.menu.TextLib.c_num;
 import static io.github.celosia.sys.menu.TextLib.c_shield;
-import static io.github.celosia.sys.menu.TextLib.c_stat;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.menu.TextLib.getColor;
@@ -169,6 +168,8 @@ public class Unit {
 		this.lvl = lvl;
 		statsDefault = unitType.statsBase().getRealStats(lvl);
 		statsCur = new Stats(statsDefault);
+		// streams have bad perf, so make sure this doesn't become an issue. but this is
+		// called so infrequently that it shouldn't
 		skillInstances = Arrays.stream(skills).map(Skill::toSkillInstance).toArray(SkillInstance[]::new);
 		passives = List.of(unitType.passives());
 		sp = 200;
@@ -1566,7 +1567,7 @@ public class Unit {
 
 		// Handle Buffs
 		for (BuffInstance buffInstance : this.getBuffInstances()) {
-			for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
+			for (BuffEffect buffEffect : buffInstance.getBuff().buffEffects()) {
 				notifier.notify(buffEffect, this, target, buffInstance.getStacks());
 			}
 		}
@@ -1622,44 +1623,44 @@ public class Unit {
 	public void decrementTurns() {
 		// Stages
 		if (stageAtk != 0 && --stageAtkTurns <= 0) {
-			appendToLog(formatName(unitType.name(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageAtk)
-					+ stageAtk + "[WHITE] " + lang.format("stage_s", stageAtk) + " " + c_buff + StageType.ATK.getName()
-					+ getStageStatString(this, StageType.ATK, 0));
+			appendToLog(lang.format("log.lose.stage", formatName(unitType.name(), pos, false),
+					getColor(stageAtk) + stageAtk, c_buff + StageType.ATK.getName(),
+					getStageStatString(this, StageType.ATK, 0)));
 			// Remove stages
 			stageAtk = 0;
 		}
 		if (stageDef != 0 && --stageDefTurns <= 0) {
-			appendToLog(formatName(unitType.name(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageDef)
-					+ stageDef + "[WHITE] " + lang.format("stage_s", stageDef) + " " + c_buff + StageType.DEF.getName()
-					+ getStageStatString(this, StageType.DEF, 0));
+			appendToLog(lang.format("log.lose.stage", formatName(unitType.name(), pos, false),
+					getColor(stageDef) + stageDef, c_buff + StageType.DEF.getName(),
+					getStageStatString(this, StageType.DEF, 0)));
 			stageDef = 0;
 		}
 		if (stageFth != 0 && --stageFthTurns <= 0) {
-			appendToLog(formatName(unitType.name(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageFth)
-					+ stageFth + "[WHITE] " + lang.format("stage_s", stageFth) + " " + c_buff + StageType.FTH.getName()
-					+ getStageStatString(this, StageType.FTH, 0));
+			appendToLog(lang.format("log.lose.stage", formatName(unitType.name(), pos, false),
+					getColor(stageFth) + stageFth, c_buff + StageType.FTH.getName(),
+					getStageStatString(this, StageType.FTH, 0)));
 			stageFth = 0;
 		}
 		if (stageAgi != 0 && --stageAgiTurns <= 0) {
-			appendToLog(formatName(unitType.name(), pos, false) + " " + lang.get("log.loses") + " " + getColor(stageAgi)
-					+ stageAgi + "[WHITE] " + lang.format("stage_s", stageAgi) + " " + c_buff + StageType.AGI.getName()
-					+ getStageStatString(this, StageType.AGI, 0));
+			appendToLog(lang.format("log.lose.stage", formatName(unitType.name(), pos, false),
+					getColor(stageAgi) + stageAgi, c_buff + StageType.AGI.getName(),
+					getStageStatString(this, StageType.AGI, 0)));
 			stageAgi = 0;
 		}
 
 		// Shield
 		if (shield != 0 && --shieldTurns <= 0) {
 			if (defend == 0) {
-				appendToLog(formatName(unitType.name(), pos, false) + " " + lang.get("log.loses") + " " + c_shield
-						+ formatNum(shield / STAT_MULT_HIDDEN) + " " + c_buff + lang.get("shield"));
-				if (effectBlock <= 0)
-					appendToLog(formatName(unitType.name(), pos, false) + lang.get("log.is_no_longer") + " " + c_buff
-							+ lang.get("log.effect_block"));
+				appendToLog(lang.format("log.lose.shield", formatName(unitType.name(), pos, false),
+						c_shield + formatNum(shield / STAT_MULT_HIDDEN)));
+				if (effectBlock <= 0) {
+					appendToLog(lang.format("log.change_effect_block", formatName(unitType.name(), pos, false), 0));
+				}
 			} else {
-				appendToLog(formatName(unitType.name(), pos) + " " + c_buff + lang.get("shield") + " " + c_shield
-						+ formatNum((shield + defend) / STAT_MULT_HIDDEN) + "[WHITE] → " + c_shield
-						+ formatNum(defend / STAT_MULT_HIDDEN) + "[WHITE]/" + c_shield + formatNum(statsDefault.getHp())
-						+ "[WHITE] (" + c_neg + "-" + formatNum(shield / STAT_MULT_HIDDEN) + "[WHITE])");
+				appendToLog(lang.format("log.change_shield", formatName(unitType.name(), pos),
+						c_shield + formatNum((shield + defend) / STAT_MULT_HIDDEN),
+						c_shield + formatNum(defend / STAT_MULT_HIDDEN), c_hp + formatNum(statsDefault.getHp()),
+						c_neg + "-" + formatNum(shield / STAT_MULT_HIDDEN)));
 			}
 			shield = 0;
 		}
@@ -1672,20 +1673,14 @@ public class Unit {
 			if (turns >= 2 && turns < 1000) { // 1000+ turns = infinite
 				buffInstance.setTurns(turns - 1);
 			} else {
-				StringBuilder str = new StringBuilder();
-				int maxStacks = buffInstance.getBuff().getMaxStacks();
-				str.append(formatName(unitType.name(), pos, false)).append(" ").append(lang.get("log.loses"))
-						.append(" ");
-				if (maxStacks > 1)
-					str.append(c_num).append(buffInstance.getStacks()).append(" ");
-				str.append(c_buff).append(buffInstance.getBuff().getName());
-				if (maxStacks > 1)
-					str.append("[WHITE] ").append(lang.format("stack_s", buffInstance.getStacks()));
-				appendToLog(str.toString());
+				appendToLog(lang.format("log.lose.buff", formatName(unitType.name(), pos, false),
+						buffInstance.getBuff().maxStacks(), c_num + buffInstance.getStacks(),
+						c_buff + buffInstance.getBuff().name()));
 
 				// Remove effects
-				for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects())
+				for (BuffEffect buffEffect : buffInstance.getBuff().buffEffects()) {
 					buffEffect.onRemove(this, buffInstance.getStacks());
+				}
 				buffInstances.remove(i);
 			}
 		}
@@ -1711,17 +1706,18 @@ public class Unit {
 				if (defend > dmg) { // Only hit Defend
 					defend -= dmg;
 					return new Result(ResultType.HIT_SHIELD,
-							name_s + lang.get("shield") + " " + c_shield
-									+ formatNum((defendOld + shield) / STAT_MULT_HIDDEN) + "[WHITE] → " + c_shield
-									+ formatNum((defend + shield) / STAT_MULT_HIDDEN) + "[WHITE]/" + c_shield
-									+ formatNum(statsDefault.getDisplayHp()) + "[WHITE] (" + c_neg + "-"
-									+ formatNum(dmgFull / STAT_MULT_HIDDEN) + "[WHITE])");
+							lang.format("log.change_shield", name_s,
+									c_shield + formatNum((defendOld + shield) / STAT_MULT_HIDDEN),
+									c_shield + formatNum((defend + shield) / STAT_MULT_HIDDEN),
+									c_hp + formatNum(statsDefault.getDisplayHp()),
+									c_neg + "-" + formatNum(dmgFull / STAT_MULT_HIDDEN)));
 				} else { // Destroy Defend and proceed to Shield
 					dmg -= defend;
 					defend = 0;
 					// todo this should come after the dmg message
-					if (shield == 0 && effectBlock <= 0)
-						msg.add(name + lang.get("log.is_no_longer") + " " + c_buff + lang.get("log.effect_block"));
+					if (shield == 0 && effectBlock <= 0) {
+						msg.add(lang.format(name, 0));
+					}
 				}
 			}
 
@@ -1730,21 +1726,22 @@ public class Unit {
 					long shieldOld = shield;
 					shield -= dmg;
 					return new Result(ResultType.HIT_SHIELD,
-							name_s + lang.get("shield") + " " + c_shield
-									+ formatNum((defendOld + shieldOld) / STAT_MULT_HIDDEN) + "[WHITE] → " + c_shield
-									+ formatNum(shield / STAT_MULT_HIDDEN) + "[WHITE]/" + c_shield
-									+ formatNum(statsDefault.getDisplayHp()) + "[WHITE] (" + c_neg + "-"
-									+ formatNum(dmgFull / STAT_MULT_HIDDEN) + "[WHITE])");
+							lang.format("log.change_shield", name_s,
+									c_shield + formatNum((defendOld + shieldOld) / STAT_MULT_HIDDEN),
+									c_shield + formatNum(shield / STAT_MULT_HIDDEN),
+									c_hp + formatNum(statsDefault.getDisplayHp()),
+									c_neg + "-" + formatNum(dmgFull / STAT_MULT_HIDDEN)));
 				} else { // Destroy Shield and proceed to HP
-					msg.add(name_s + lang.get("shield") + " " + c_shield
-							+ formatNum((defendOld + shield) / STAT_MULT_HIDDEN) + "[WHITE] → " + c_num + 0 + "[WHITE]/"
-							+ c_shield + statsDefault.getDisplayHp() + "[WHITE] (" + c_neg + "-"
-							+ formatNum((defendOld + shield) / STAT_MULT_HIDDEN) + "[WHITE])");
+					msg.add(lang.format("log.change_shield", name_s,
+							c_shield + formatNum((defendOld + shield) / STAT_MULT_HIDDEN), c_shield + 0,
+							c_hp + formatNum(statsDefault.getDisplayHp()),
+							c_neg + "-" + formatNum((defendOld + shield) / STAT_MULT_HIDDEN)));
 					dmg -= shield;
 					shield = 0;
 					shieldTurns = 0;
-					if (effectBlock <= 0)
-						msg.add(name + lang.get("log.is_no_longer") + " " + c_stat + lang.get("log.effect_block"));
+					if (effectBlock <= 0) {
+						msg.add(lang.format(name, 0));
+					}
 				}
 			}
 		}
@@ -1755,17 +1752,16 @@ public class Unit {
 		long hpNew = Math.clamp(hpOld - dmg, 0, statsDefault.getHp());
 		statsCur.setHp(hpNew);
 		long hpNewDisp = statsCur.getDisplayHp();
-		msg.add(name_s + c_stat + lang.get("hp") + " " + c_hp + formatNum(hpOldDisp) + "[WHITE] → " + c_hp
-				+ formatNum(hpNewDisp) + "[WHITE]/" + c_hp + formatNum(statsDefault.getDisplayHp()) + "[WHITE] ("
-				+ c_neg + "-" + formatNum((dmg / STAT_MULT_HIDDEN)) + "[WHITE])");
+		msg.add(lang.format("log.change_hp", name_s, c_hp + formatNum(hpOldDisp), c_hp + formatNum(hpNewDisp),
+				c_hp + formatNum(statsDefault.getDisplayHp()), c_neg + "-" + formatNum(dmg / STAT_MULT_HIDDEN)));
 
 		if (effectBlock > 0) { // todo should this be a separate result from hitting shield
 			return new Result(ResultType.HIT_SHIELD, msg);
 		} else if (dmg > 0) { // Did damage
 			return new Result(ResultType.SUCCESS, msg);
-		} else
-			return new Result(ResultType.FAIL, c_neg + lang.get("log.no_effect") + "[WHITE] " + lang.get("log.on") + " "
-					+ formatName(unitType.name(), pos, false)); // Did no damage
+		} else { // Did no damage
+			return new Result(ResultType.FAIL, lang.format("log.no_effect", name));
+		}
 	}
 
 	public Result damage(long dmg, boolean pierce) {

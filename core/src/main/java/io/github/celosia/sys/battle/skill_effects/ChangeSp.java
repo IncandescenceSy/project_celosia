@@ -52,8 +52,9 @@ public class ChangeSp implements SkillEffect {
 
 	@Override
 	public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
-		if (!mainTargetOnly || isMainTarget)
+		if (!mainTargetOnly || isMainTarget) {
 			appendToLog(Calcs.changeSp((giveToSelf) ? self : target, change));
+		}
 		return ResultType.SUCCESS;
 	}
 

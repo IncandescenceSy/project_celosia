@@ -4,8 +4,6 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.c_stat;
-import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeEffectBlock implements BuffEffect {
@@ -17,21 +15,21 @@ public class ChangeEffectBlock implements BuffEffect {
 
 	@Override
 	public void onGive(Unit self, int stacks) {
-		int effectBlockOld = self.getEffectBlock();
-		int effectBlockNew = effectBlockOld + (change * stacks);
-		self.setEffectBlock(effectBlockNew);
-		if (effectBlockNew > 0 && self.getShield() == 0 && self.getDefend() == 0)
-			appendToLog(formatName(self.getUnitType().name(), self.getPos(), false) + " " + lang.get("log.is_now") + " "
-					+ c_stat + lang.get("log.effect_block"));
+		calc(self, change * stacks);
 	}
 
 	@Override
 	public void onRemove(Unit self, int stacks) {
+		calc(self, (change * stacks) * -1);
+	}
+
+	// todo test
+	public void calc(Unit self, int changeFull) {
 		int effectBlockOld = self.getEffectBlock();
-		int effectBlockNew = effectBlockOld - (change * stacks);
+		int effectBlockNew = effectBlockOld + changeFull;
 		self.setEffectBlock(effectBlockNew);
-		if (effectBlockNew <= 0 && self.getShield() == 0 && self.getDefend() == 0)
-			appendToLog(formatName(self.getUnitType().name(), self.getPos(), false) + " " + lang.get("log.is_no_longer")
-					+ " " + c_stat + lang.get("log.effect_block"));
+		if (self.getShield() == 0 && self.getDefend() == 0) {
+			appendToLog(lang.format("log.change_effect_block", effectBlockNew));
+		}
 	}
 }

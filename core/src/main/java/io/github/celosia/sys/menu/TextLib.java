@@ -20,7 +20,7 @@ import static io.github.celosia.sys.settings.Lang.lang;
 public class TextLib {
 	public static String tags = "{FADE}{SLIDE}";
 
-	// Colors
+	/// Colors
 	public static String c_ally = "[#2d74f5]";
 	public static String c_ally_l = "[#528cf5]";
 	public static String c_opp = "[#ff4545]";
@@ -43,9 +43,7 @@ public class TextLib {
 	public static String c_exp = "[#a034ff]"; // Calculated exponent parenthesis
 	public static String c_cd = "[#1898ff]"; // Cooldown
 
-	// Decimal formatter with up to 2 decimal places
-	public static DecimalFormat df = new DecimalFormat("#.##");
-
+	/// Formatters
 	// Decimal formatter for scientific notation
 	public static DecimalFormat sf = new DecimalFormat("0.###E0");
 
@@ -85,11 +83,14 @@ public class TextLib {
 		return formatName(name, pos, true);
 	}
 
-	// Returns the color a number should be displayed based on if it's positive or
-	// negative
-	public static String getColor(double num) {
+	// Returns the color a number should be displayed based on if it's positive or negative
+	public static String getColor(long num) {
 		return (num > 0) ? c_pos : (num < 0) ? c_neg : c_num;
 	}
+
+    public static String getSign(double num) {
+        return (num > 0) ? "+" : "";
+    }
 
 	// Returns the color a mult should be based on its relation to 100% and whether
 	// higher is better
@@ -234,7 +235,7 @@ public class TextLib {
 	}
 
 	public static String formatMod(int mod, Mod modType) {
-		return getModColor(mod, modType) + ((mod > 0) ? "+" : "") + mod;
+		return getModColor(mod, modType) + getSign(mod) + mod;
 	}
 
 	public static String getStatColor(long stat, long statBase) {
@@ -252,16 +253,16 @@ public class TextLib {
 			long statOld = unit.getDisplayStatWithStage(stat);
 			long statNew = unit.getDisplayStatWithStage(stat, stageNew);
 			long change = statNew - statOld;
-			builder.append(c_stat).append(stat.getName()).append(" ").append(getStatColor(statOld, statDefault))
-					.append(formatNum(statOld)).append("[WHITE] → ").append(getStatColor(statNew, statDefault))
-					.append(formatNum(statNew)).append("[WHITE]").append("/").append(c_num)
-					.append(formatNum(statDefault)).append("[WHITE] (").append(getColor(change))
-					.append((change >= 0) ? "+" : "").append(formatNum((statNew - statOld))).append("[WHITE])");
+			builder.append(lang.format("log.stage_stat", c_stat + stat.getName(),
+					getStatColor(statOld, statDefault) + formatNum(statOld),
+					getStatColor(statNew, statDefault) + formatNum(statNew), c_num + formatNum(statDefault),
+					getColor(change) + ((change >= 0) ? "+" : "") + formatNum(statNew - statOld)));
 
-			if (i == statCount - 1)
+			if (i == statCount - 1) {
 				builder.append(")");
-			else
+			} else {
 				builder.append(", ");
+			}
 		}
 
 		return builder.toString();
@@ -271,12 +272,12 @@ public class TextLib {
 		Skill skill = move.skillInstance().getSkill();
 		Unit self = move.self();
 
-		String msg = formatName(self.getUnitType().name(), self.getPos(), false) + " " + lang.get("log.tries_to_use")
-				+ " " + c_skill + skill.getName();
+		String msg = lang.format("log.tries_to_use.1", formatName(self.getUnitType().name(), self.getPos(), false),
+				c_skill + skill.getName());
 
 		if (!skill.isRangeSelf()) {
-			msg += "[WHITE] " + lang.get("log.on") + " "
-					+ formatName(battle.getUnitAtPos(move.targetPos()).getUnitType().name(), move.targetPos(), false);
+			msg += lang.format("log.tries_to_use.2",
+					formatName(battle.getUnitAtPos(move.targetPos()).getUnitType().name(), move.targetPos(), false));
 		}
 
 		return msg;

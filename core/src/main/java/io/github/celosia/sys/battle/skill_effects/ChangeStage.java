@@ -14,6 +14,7 @@ import static io.github.celosia.sys.menu.TextLib.c_buff;
 import static io.github.celosia.sys.menu.TextLib.c_num;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.menu.TextLib.getColor;
+import static io.github.celosia.sys.menu.TextLib.getSign;
 import static io.github.celosia.sys.menu.TextLib.getStageStatString;
 import static io.github.celosia.sys.settings.Lang.lang;
 
@@ -75,19 +76,14 @@ public class ChangeStage implements SkillEffect {
 			String str = "";
 			String str2 = "";
 
-			// Apply self's durationMod
-			// Sometimes this is wrong about the BuffType, but it shouldn't really matter
-			// since it's only applied if it's correct
-			// Unless some Passive has a weird interaction with it. Just keep it in mind
-			// todo fix just in case
 			Unit unit = (giveToSelf) ? self : target;
 
-			int turnsMod = turns
-					+ self.getDurationModBuffTypeDealt(getStageBuffType(target.getStage(stageType) + stacks))
-					+ unit.getDurationModBuffTypeTaken(getStageBuffType(target.getStage(stageType) + stacks));
+			// Apply self's mods
+			int turnsMod = turns + self.getDurationModBuffTypeDealt(getStageBuffType(stacks))
+					+ unit.getDurationModBuffTypeTaken(getStageBuffType(stacks));
 
-			int stacksMod = stacks + self.getStacksModBuffTypeDealt(getStageBuffType(unit.getStage(stageType) + stacks))
-					+ unit.getStacksModBuffTypeTaken(getStageBuffType(unit.getStage(stageType) + stacks));
+			int stacksMod = stacks + self.getStacksModBuffTypeDealt(getStageBuffType(stacks))
+					+ unit.getStacksModBuffTypeTaken(getStageBuffType(stacks));
 
 			self.onChangeStage(target, stageType, turnsMod, stacksMod);
 
@@ -95,12 +91,9 @@ public class ChangeStage implements SkillEffect {
 			int stageNew = Math.clamp(stageOld + stacksMod, -5, 5);
 
 			if (stageNew != stageOld) {
-				String signOld = (stageOld > 0) ? "+" : "";
-				String signNew = (stageNew > 0) ? "+" : "";
-
-				str = formatName(unit.getUnitType().name(), unit.getPos()) + " " + c_buff + stageType.getName()
-						+ "[WHITE] " + lang.get("stage") + " " + getColor(stageOld) + signOld + stageOld + "[WHITE] → "
-						+ getColor(stageNew) + signNew + stageNew;
+				str = lang.format("log.change_stage.stacks", formatName(unit.getUnitType().name(), unit.getPos()),
+						c_buff + stageType.getName(), getColor(stageOld) + getSign(stageOld) + stageOld,
+						getColor(stageNew) + getSign(stageNew) + stageNew);
 				str2 = getStageStatString(unit, stageType, stageNew);
 
 				unit.setStage(stageType, stageNew);
@@ -111,20 +104,23 @@ public class ChangeStage implements SkillEffect {
 				int turnsOld = unit.getStageTurns(stageType);
 				if (turnsMod > turnsOld) {
 					unit.setStageTurns(stageType, turnsMod);
-					if (stageNew != stageOld)
-						msg.add(str + "[WHITE], " + lang.get("turns") + " " + c_num + turnsOld + "[WHITE] → " + c_num
-								+ turnsMod + str2);
-					else
-						msg.add(formatName(unit.getUnitType().name(), unit.getPos()) + " " + c_buff
-								+ stageType.getName() + "[WHITE] " + lang.get("stage") + " " + lang.get("turns") + " "
-								+ c_num + turnsOld + "[WHITE] → " + c_num + turnsMod);
-				} else if (stageNew != stageOld)
+					if (stageNew != stageOld) {
+						msg.add(str + lang.format("log.turns.nameless", c_num + turnsOld, c_num + turnsMod) + str2);
+					} else {
+						msg.add(lang.format("log.change_stage.turns",
+								formatName(unit.getUnitType().name(), unit.getPos()), c_buff + stageType.getName(),
+								c_num + turnsOld, c_num + turnsMod));
+					}
+				} else if (stageNew != stageOld) {
 					msg.add(str + str2);
-			} else if (stageNew != stageOld)
+				}
+			} else if (stageNew != stageOld) {
 				msg.add(str + str2);
+			}
 
-			if (!msg.isEmpty())
+			if (!msg.isEmpty()) {
 				appendToLog(msg);
+			}
 		}
 
 		return ResultType.SUCCESS;

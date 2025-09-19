@@ -89,11 +89,11 @@ public class GiveBuff implements SkillEffect {
 			Unit unit = (giveToSelf) ? self : target;
 
 			// Apply durationMod
-			int turnsMod = turns + self.getDurationModBuffTypeDealt(buff.getBuffType())
-					+ unit.getDurationModBuffTypeTaken(buff.getBuffType());
+			int turnsMod = turns + self.getDurationModBuffTypeDealt(buff.buffType())
+					+ unit.getDurationModBuffTypeTaken(buff.buffType());
 
-			int stacksMod = stacks + self.getStacksModBuffTypeDealt(buff.getBuffType())
-					+ unit.getStacksModBuffTypeTaken(buff.getBuffType());
+			int stacksMod = stacks + self.getStacksModBuffTypeDealt(buff.buffType())
+					+ unit.getStacksModBuffTypeTaken(buff.buffType());
 
 			self.onGiveBuff(target, buff, turnsMod, stacksMod);
 
@@ -102,54 +102,46 @@ public class GiveBuff implements SkillEffect {
 
 			if (buffInstance != null) { // Already has buff
 				String str = "";
+				// Add stacks
+				int stacksOld = buffInstance.getStacks();
+				int stacksNew = Math.min(buffInstance.getBuff().maxStacks(), stacksOld + stacksMod);
+				if (stacksNew != stacksOld) {
+					buffInstance.setStacks(stacksNew);
+					str = lang.format("log.give_buff.stacks", formatName(unit.getUnitType().name(), unit.getPos()),
+							c_buff + buff.name(), c_num + stacksOld, c_num + stacksNew);
+				}
 
 				// Refresh turns
 				int turnsOld = buffInstance.getTurns();
 				if (turnsMod > turnsOld) {
 					buffInstance.setTurns(turnsMod);
-					str = formatName(unit.getUnitType().name(), unit.getPos()) + " " + c_buff + buff.getName()
-							+ "[WHITE] " + lang.format("turn_s", turnsMod) + " " + c_num + turnsOld + "[WHITE] → "
-							+ c_num + turnsMod;
-				}
 
-				// Add stacks
-				int stacksOld = buffInstance.getStacks();
-				int stacksNew = Math.min(buffInstance.getBuff().getMaxStacks(), stacksOld + stacksMod);
-				if (stacksNew != stacksOld) {
-					buffInstance.setStacks(stacksNew);
-					if (turnsMod > turnsOld)
-						msg.add(str + "[WHITE], " + lang.format("stack_s", stacksNew) + " " + c_num + stacksOld
-								+ "[WHITE] → " + c_num + stacksNew);
-					else
-						msg.add(formatName(unit.getUnitType().name(), unit.getPos()) + " " + c_buff + buff.getName()
-								+ " " + lang.get("stacks") + " " + c_num + stacksOld + "[WHITE] → " + c_num
-								+ stacksNew);
-				} else
-					msg.add(str);
+					if (stacksNew != stacksOld) {
+						msg.add(str + lang.format("log.turns.nameless", c_num + turnsOld, c_num + turnsMod));
+					} else {
+						msg.add(lang.format("log.give_buff.turns", formatName(unit.getUnitType().name(), unit.getPos()),
+								c_buff + buff.name(), c_num + turnsOld, c_num + turnsMod));
+					}
+				}
 
 				appendToLog(msg);
 
 				// Apply newly added stacks
 				int stacksAdded = stacksNew - stacksOld;
 				if (stacksAdded > 0)
-					for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects())
+					for (BuffEffect buffEffect : buffInstance.getBuff().buffEffects())
 						buffEffect.onGive(unit, stacksAdded);
 
 			} else { // Doesn't have buff
-				msg.add(formatName(unit.getUnitType().name(), unit.getPos(), false) + " " + lang.get("log.gains") + " "
-						+ c_buff + buff.getName() + "[WHITE] "
-						+ ((buff.getMaxStacks() > 1)
-								? (lang.get("log.with") + " " + c_num + stacks + " [WHITE]"
-										+ lang.format("stack_s", stacksMod) + " " + lang.get("log.and")) + " "
-								: lang.get("log.for") + " ")
-						+ c_num + turnsMod + "[WHITE] " + lang.format("turn_s", turnsMod));
+				msg.add(lang.format("log.give_buff.gain", formatName(unit.getUnitType().name(), unit.getPos(), false),
+						c_buff + buff.name(), buff.maxStacks(), stacksMod, turnsMod));
 				unit.addBuffInstance(new BuffInstance(buff, turnsMod, stacksMod));
 				buffInstance = buffInstances.getLast();
 
 				appendToLog(msg);
 
 				// Apply
-				BuffEffect[] buffEffects = buffInstance.getBuff().getBuffEffects();
+				BuffEffect[] buffEffects = buffInstance.getBuff().buffEffects();
 				for (BuffEffect buffEffect : buffEffects)
 					buffEffect.onGive(unit, buffInstance.getStacks());
 

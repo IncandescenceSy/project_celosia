@@ -10,10 +10,10 @@ public class Lang {
 
 	// todo use language setting
 	public static void createBundle() {
-		lang = I18NBundle.createBundle(Gdx.files.internal("i18n/lang"), Locale.getDefault());
+		lang = I18NBundle.createBundle(Gdx.files.internal("i18n/lang"), Locale.getDefault(), "UTF-16");
 	}
 
 	public static void createBundle(Locale locale) {
-		lang = I18NBundle.createBundle(Gdx.files.internal("i18n/lang"), locale);
+		lang = I18NBundle.createBundle(Gdx.files.internal("i18n/lang"), locale, "UTF-16");
 	}
 }

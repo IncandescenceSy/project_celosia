@@ -5,9 +5,10 @@ import io.github.celosia.sys.battle.Element;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.c_stat;
 import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.menu.TextLib.getColor;
+import static io.github.celosia.sys.menu.TextLib.getSign;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeAff implements BuffEffect {
@@ -21,22 +22,21 @@ public class ChangeAff implements BuffEffect {
 
 	@Override
 	public void onGive(Unit self, int stacks) {
-		int affOld = self.getAffsCur().getAff(element);
-		int affNew = affOld + (change * stacks);
-		self.getAffsCur().setAff(element, affNew);
-		appendToLog(formatName(self.getUnitType().name(), self.getPos()) + " " + c_stat + element.getName() + " "
-				+ lang.get("affinity") + " " + getColor(affOld) + Math.clamp(affOld, -5, 5) + "[WHITE]" + " → "
-				+ getColor(affNew) + Math.clamp(affNew, -5, 5));
+		calc(self, change * stacks);
 	}
 
 	@Override
 	public void onRemove(Unit self, int stacks) {
-		int affOld = self.getAffsCur().getAff(element);
-		int affNew = affOld - (change * stacks);
-		self.getAffsCur().setAff(element, affNew);
-		appendToLog(formatName(self.getUnitType().name(), self.getPos()) + " " + c_stat + element.getName() + " "
-				+ lang.get("affinity") + " " + getColor(affOld) + Math.clamp(affOld, -5, 5) + "[WHITE]" + " → "
-				+ getColor(affNew) + Math.clamp(affNew, -5, 5));
+		calc(self, (change * stacks) * -1);
 	}
 
+	public void calc(Unit self, int changeFull) {
+		int affOld = self.getAffsCur().getAff(element);
+		int affNew = affOld + changeFull;
+		self.getAffsCur().setAff(element, affNew);
+
+		appendToLog(lang.format("log.change_aff", formatName(self.getUnitType().name(), self.getPos()),
+				element.getName(), getColor(affOld) + getSign(affOld) + formatNum(affOld),
+				getColor(affNew) + getSign(affNew) + formatNum(affNew)));
+	}
 }

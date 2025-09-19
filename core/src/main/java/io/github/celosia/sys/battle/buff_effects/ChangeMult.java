@@ -5,7 +5,6 @@ import io.github.celosia.sys.battle.Mult;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.c_exp;
 import static io.github.celosia.sys.menu.TextLib.c_stat;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.menu.TextLib.formatNum;
@@ -15,6 +14,8 @@ import static io.github.celosia.sys.menu.TextLib.getMultChangeColor;
 import static io.github.celosia.sys.menu.TextLib.getMultColor;
 import static io.github.celosia.sys.menu.TextLib.getMultWithExpChangeColor;
 import static io.github.celosia.sys.menu.TextLib.getMultWithExpColor;
+import static io.github.celosia.sys.menu.TextLib.getSign;
+import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeMult implements BuffEffect {
 	private final Mult mult;
@@ -62,32 +63,31 @@ public class ChangeMult implements BuffEffect {
 		// The final mult with the exponent calculated as displays
 		String calcedOld = "";
 		String calcedNew = "";
-		String calcedChange = "[WHITE])";
+		String calcedChange = lang.get("log.change_mult.calced.change.default");
 
 		if (expOld != 100) {
-			calcedOld = getExpColor(expOld, multOld, mult) + "^" + formatNum(expOld / 100d) + " " + c_exp + "("
-					+ getMultWithExpColor(multWithExpOld, mult) + formatNum(multWithExpOld * 100) + "%[WHITE]" + c_exp
-					+ ")[WHITE]";
+			calcedOld = lang.format("log.change_mult.calced", getExpColor(expOld, multOld, mult),
+					formatNum(expOld / 100d),
+					getMultWithExpColor(multWithExpOld, mult) + formatNum(multWithExpOld * 100));
 		}
 
 		if (expNew != 100) {
-			calcedNew = getExpColor(expNew, multNew, mult) + "^" + formatNum(expNew / 100d) + " " + c_exp + "("
-					+ getMultWithExpColor(multWithExpNew, mult) + formatNum(multWithExpNew * 100) + "%[WHITE]" + c_exp
-					+ ")[WHITE]";
+			calcedNew = lang.format("log.change_mult.calced", getExpColor(expNew, multNew, mult),
+					formatNum(expNew / 100d),
+					getMultWithExpColor(multWithExpNew, mult) + formatNum(multWithExpNew * 100));
 		}
 
 		if (expOld != expNew) {
-			calcedChange = getExpChangeColor(changeExpFull, (giving) ? multNew : multOld, mult) + "^"
-					+ ((changeExpDisplay > 0) ? "+" : "") + formatNum(changeExpDisplay) + "[WHITE]) " + c_exp + "("
-					+ getMultWithExpChangeColor(changeMultWithExpDisplay, mult)
-					+ ((changeMultWithExpDisplay > 0) ? "+" : "") + formatNum(changeMultWithExpDisplay * 100)
-					+ "%[WHITE]" + c_exp + ")[WHITE]";
+			calcedChange = lang.format("log.change_mult.calced.change",
+					getExpChangeColor(changeExpFull, (giving) ? multNew : multOld, mult),
+					getSign(changeExpDisplay) + formatNum(changeExpDisplay), getMultWithExpChangeColor(changeMultWithExpDisplay, mult),
+					getSign(changeMultWithExpDisplay) + formatNum(changeMultWithExpDisplay * 100));
 		}
 
-		appendToLog(formatName(self.getUnitType().name(), self.getPos()) + " " + c_stat + mult.getName() + " "
-				+ getMultColor(multOld, mult) + formatNum(Math.max(multOld, multMin) / 10d) + "%" + calcedOld
-				+ "[WHITE] → " + getMultColor(multNew, mult) + formatNum(Math.max(multNew, multMin) / 10d) + "%"
-				+ calcedNew + "[WHITE] (" + getMultChangeColor(changeMultFull, mult)
-				+ ((changeMultDisplay > 0) ? "+" : "") + formatNum(changeMultDisplay) + "%" + calcedChange);
+		appendToLog(lang.format("log.change_mult", formatName(self.getUnitType().name(), self.getPos()),
+				c_stat + mult.getName(), getMultColor(multOld, mult) + formatNum(Math.max(multOld, multMin) / 10d),
+				calcedOld, getMultColor(multNew, mult) + formatNum(Math.max(multNew, multMin) / 10d), calcedNew,
+				getMultChangeColor(changeMultFull, mult) + getSign(changeMultDisplay) + formatNum(changeMultDisplay),
+				calcedChange));
 	}
 }

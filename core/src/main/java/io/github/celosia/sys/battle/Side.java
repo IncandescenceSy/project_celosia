@@ -1,5 +1,19 @@
 package io.github.celosia.sys.battle;
 
 public enum Side {
-	ALLY, OPPONENT, BOTH;
+	// spotless:off
+	ALLY(0),
+    OPPONENT(1),
+    BOTH(2);
+    // spotless:on
+
+	int id;
+
+	Side(int id) {
+		this.id = id;
+	}
+
+	public int getId() {
+		return id;
+	}
 }

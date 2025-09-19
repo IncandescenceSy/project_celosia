@@ -4,6 +4,7 @@ import io.github.celosia.sys.battle.buff_effects.ChangeDefend;
 import io.github.celosia.sys.battle.buff_effects.ChangeEffectBlock;
 import io.github.celosia.sys.battle.buff_effects.ChangeExtraActions;
 import io.github.celosia.sys.battle.buff_effects.ChangeHp;
+import io.github.celosia.sys.battle.buff_effects.ChangeInfiniteSp;
 import io.github.celosia.sys.battle.buff_effects.ChangeMult;
 import io.github.celosia.sys.battle.buff_effects.ChangeStat;
 
@@ -11,9 +12,7 @@ import static io.github.celosia.sys.settings.Lang.lang;
 
 public class Buffs {
 	// Temp testing
-	static Buff STAR_RULER = new Buff("Star Ruler", "", BuffType.BUFF,
-			new ChangeMult(Mult.FOLLOW_UP_DMG_DEALT, 150000, 5000), new ChangeMult(Mult.TERRA_DMG_DEALT, 300000),
-			new ChangeStat(Stat.STR, 10000000), new ChangeStat(Stat.MAG, 10000000));
+	static Buff STAR_RULER = new Buff("Star Ruler", "", BuffType.BUFF, new ChangeInfiniteSp(1));
 
 	// Basic
 	static Buff DEFEND = new Buff(lang.get("skill.defend"), lang.get("buff.defend.desc"), BuffType.BUFF,

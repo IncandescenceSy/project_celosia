@@ -52,8 +52,10 @@ import static io.github.celosia.sys.menu.TextLib.c_turn;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.menu.TextLib.getColor;
+import static io.github.celosia.sys.menu.TextLib.getSign;
 import static io.github.celosia.sys.menu.TextLib.getTriesToUseString;
 import static io.github.celosia.sys.settings.Lang.lang;
+import static io.github.celosia.sys.util.MiscLib.booleanToInt;
 
 public class BattleControllerLib {
 	// Battle
@@ -322,35 +324,24 @@ public class BattleControllerLib {
 					int change = skill.isBloom() ? costMod : (int) (costMod * self.getMultWithExpSpUse());
 					newSp = skill.isBloom() ? team.getBloom() - change : self.getSp() - change;
 
-					StringBuilder builder = new StringBuilder();
 					if (newSp >= 0) {
 						Unit target = battle.getUnitAtPos(move.targetPos());
-						builder.append(formatName(self.getUnitType().name(), self.getPos(), false)).append(" ")
-								.append(lang.get("log.uses")).append(" ").append(c_skill).append(skill.getName())
-								.append("[WHITE]");
-						if (!skill.isRangeSelf())
-							builder.append(" ").append(lang.get("log.on")).append(" ")
-									.append(formatName(target.getUnitType().name(), move.targetPos(), false));
 
-						if (skill.isBloom() && newSp != team.getBloom()) { // Use bloom
-							builder.append(" (").append(
-									(isPlayerTeam) ? lang.get("log.team_player") : lang.get("log.team_opponent"))
-									.append(" ").append(c_stat).append(lang.get("bloom")).append(" ").append(c_bloom)
-									.append(formatNum(team.getBloom())).append("[WHITE] → ").append(c_bloom)
-									.append(formatNum(newSp));
+						if (skill.isBloom() && newSp != team.getBloom()) {
+							appendToLog(lang.format("log.skill_use",
+									formatName(self.getUnitType().name(), self.getPos(), false),
+									c_skill + skill.getName(),
+									formatName(target.getUnitType().name(), move.targetPos(), false),
+									booleanToInt(skill.isRangeSelf()), 1, c_bloom + formatNum(team.getBloom()), c_bloom + formatNum(newSp), getColor(change) + getSign(change) + formatNum(change)));
 							team.setBloom(newSp);
-						} else if (!skill.isBloom() && newSp != self.getSp()) { // Use SP
-							builder.append(" (").append(c_stat).append(lang.get("sp")).append(" ").append(c_sp)
-									.append(formatNum(self.getSp())).append("[WHITE] → ").append(c_sp)
-									.append(formatNum(newSp));
+						} else if (!skill.isBloom() && newSp != self.getSp()) {
+							appendToLog(lang.format("log.skill_use",
+									formatName(self.getUnitType().name(), self.getPos(), false),
+									c_skill + skill.getName(),
+									formatName(target.getUnitType().name(), move.targetPos(), false),
+									booleanToInt(skill.isRangeSelf()), 0, c_sp + formatNum(self.getSp()), c_sp + formatNum(newSp), getColor(change) + getSign(change) + change));
 							self.setSp(newSp);
 						}
-
-						if (change != 0)
-							builder.append("[WHITE] (").append(getColor(change * -1)).append((change < 0) ? "+" : "")
-									.append(change * -1).append("[WHITE]))");
-
-						appendToLog(builder.toString());
 
 						// Apply on-skill use BuffEffects
 						self.onUseSkill(target, skill);
@@ -367,9 +358,8 @@ public class BattleControllerLib {
 
 						prevResults = new Int2ObjectOpenHashMap<>();
 					} else {
-						String msg = getTriesToUseString(move);
-						msg += ", " + lang.get("log.but_doesnt_have_enough") + " " + c_stat
-								+ (skill.isBloom() ? lang.get("bloom") : lang.get("sp"));
+						String msg = lang.format("log.skill_fail.no_sp", getTriesToUseString(move),
+								lang.format("log.but_doesnt_have_enough", booleanToInt(skill.isBloom())));
 						appendToLog(msg);
 					}
 				}
@@ -425,16 +415,12 @@ public class BattleControllerLib {
 				}
 				// todo delete killed units
 			} else {
-				appendToLog(getTriesToUseString(move) + "[WHITE] " + lang.get("log.but_its_on_cooldown") + " (" + c_cd
-						+ cd + " " + lang.format("turn_s", cd) + "[WHITE])");
+				appendToLog(lang.format("log.skill_fail.cooldown", getTriesToUseString(move),
+						lang.format("log.but_its_on_cooldown", c_cd + cd)));
 				endMove();
 			}
 		} else {
-			appendToLog(formatName(move.self().getUnitType().name(), move.self().getPos(), false) + " "
-					+ lang.get("log.tries_to_use") + " " + c_skill + move.skillInstance().getSkill().getName()
-					+ "[WHITE] " + lang.get("log.on") + " "
-					+ formatName(battle.getUnitAtPos(move.targetPos()).getUnitType().name(), move.targetPos(), false)
-					+ ", " + lang.get("log.but_cant_reach"));
+			appendToLog(lang.format("log.skill_fail.range", getTriesToUseString(move), lang.get("log.but_cant_reach")));
 			endMove();
 		}
 	}
@@ -528,8 +514,8 @@ public class BattleControllerLib {
 			// Apply turn end BuffEffects
 			for (Passive passive : unit.getPassives()) {
 				StringBuilder turnEnd1 = new StringBuilder();
-				turnEnd1.append(formatName(unit.getUnitType().name(), unit.getPos())).append(" ").append(c_passive)
-						.append(passive.name()).append("[WHITE]: ");
+				turnEnd1.append(lang.format("log.turn_end_effect", formatName(unit.getUnitType().name(), unit.getPos()),
+						c_passive + passive.name())).append(" ");
 
 				for (BuffEffect buffEffect : passive.buffEffects()) {
 					StringBuilder turnEnd2 = new StringBuilder();
@@ -546,10 +532,10 @@ public class BattleControllerLib {
 
 			for (BuffInstance buffInstance : unit.getBuffInstances()) {
 				StringBuilder turnEnd1 = new StringBuilder();
-				turnEnd1.append(formatName(unit.getUnitType().name(), unit.getPos())).append(" ").append(c_buff)
-						.append(buffInstance.getBuff().getName()).append("[WHITE]: ");
+				turnEnd1.append(lang.format("log.turn_end_effect", formatName(unit.getUnitType().name(), unit.getPos()),
+						c_buff + buffInstance.getBuff().name())).append(" ");
 
-				for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
+				for (BuffEffect buffEffect : buffInstance.getBuff().buffEffects()) {
 					StringBuilder turnEnd2 = new StringBuilder();
 					String[] effectMsgs = buffEffect.onTurnEnd(unit, buffInstance.getStacks());
 					for (String effectMsg : effectMsgs)
@@ -566,7 +552,8 @@ public class BattleControllerLib {
 		}
 
 		// Log
-		appendToLog(c_turn + lang.get("turn") + " " + (battle.getTurn() + 1) + "[WHITE]");
+		appendToLog(c_turn + lang.get("turn") + " " + (battle.getTurn() + 1) + "[WHITE]"); // todo is trailing white
+																							// needed
 		appendToLog(lang.get("log.gain_sp_bloom"));
 
 		// Increase bloom
@@ -684,12 +671,12 @@ public class BattleControllerLib {
 				if (!buffInstances.isEmpty()) {
 					for (BuffInstance buffInstance : buffInstances) {
 						if (buffInstance.getBuff() == Buffs.DEFEND) {
-							text.append(buffInstance.getBuff().getName()).append("x")
+							text.append(buffInstance.getBuff().name()).append("x")
 									.append(formatNum(unit.getDisplayDefend())).append("(")
 									.append(buffInstance.getTurns()).append(") ");
 						} else {
-							text.append(buffInstance.getBuff().getName());
-							if (buffInstance.getBuff().getMaxStacks() > 1)
+							text.append(buffInstance.getBuff().name());
+							if (buffInstance.getBuff().maxStacks() > 1)
 								text.append("x").append(buffInstance.getStacks());
 							// 1000+ turns = infinite
 							text.append("(");
@@ -711,8 +698,9 @@ public class BattleControllerLib {
 		// If logText exceeds 2500 lines, remove ~500 lines (so this doesn't have to get
 		// called again soon)
 		// todo figure out a good size limit
-		if (logText.size() > 2500)
+		if (logText.size() > 2500) {
 			logText.subList(0, 500).clear();
+		}
 
 		for (String entry : entries) {
 			if (!entry.isEmpty()) {
@@ -727,8 +715,9 @@ public class BattleControllerLib {
 	}
 
 	public static void appendToLog(List<String> entry) {
-		if (logText.size() > 2500)
+		if (logText.size() > 2500) {
 			logText.subList(0, 500).clear();
+		}
 
 		logText.addAll(entry);
 

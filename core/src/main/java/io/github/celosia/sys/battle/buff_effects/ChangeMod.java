@@ -8,6 +8,7 @@ import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.menu.TextLib.c_stat;
 import static io.github.celosia.sys.menu.TextLib.formatMod;
 import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeMod implements BuffEffect {
 	private final Mod mod;
@@ -33,8 +34,7 @@ public class ChangeMod implements BuffEffect {
 		int modNew = modOld + changeFull;
 
 		self.setMod(mod, modNew);
-
-		appendToLog(formatName(self.getUnitType().name(), self.getPos()) + " " + c_stat + mod.getName() + " "
-				+ formatMod(modOld, mod) + "[WHITE] → " + formatMod(modNew, mod));
+		appendToLog(lang.format("log.change_mod", formatName(self.getUnitType().name(), self.getPos()),
+				c_stat + mod.getName(), formatMod(modOld, mod), formatMod(modNew, mod)));
 	}
 }

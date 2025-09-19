@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.c_buff;
 import static io.github.celosia.sys.menu.TextLib.c_hp;
 import static io.github.celosia.sys.menu.TextLib.c_num;
+import static io.github.celosia.sys.menu.TextLib.c_pos;
 import static io.github.celosia.sys.menu.TextLib.c_shield;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.menu.TextLib.formatNum;
@@ -98,41 +98,41 @@ public class Heal implements SkillEffect {
 				unit.onTakeShield(unit, turnsMod, heal);
 
 				long hpMax = unit.getStatsDefault().getHp();
-				long shieldCur = unit.getShield();
-				long shieldNew = (shieldCur + unit.getDefend() + heal > hpMax)
+				long shieldOld = unit.getShield();
+				long shieldNew = (shieldOld + unit.getDefend() + heal > hpMax)
 						? hpMax - unit.getDefend()
-						: shieldCur + heal;
-				int turnsCur = unit.getShieldTurns();
+						: shieldOld + heal;
+				int turnsOld = unit.getShieldTurns();
 
-				if (shieldNew > shieldCur) {
-					long shieldCurDisp = unit.getDisplayShield();
+				if (shieldNew > shieldOld) {
+					long shieldOldDisp = unit.getDisplayShield();
 
 					unit.setShield(shieldNew);
 
 					long hpMaxDisp = unit.getStatsDefault().getDisplayHp();
 					long shieldNewDisp = unit.getDisplayShield();
 
-					str = formatName(unit.getUnitType().name(), unit.getPos()) + " " + c_buff + lang.get("shield") + " "
-							+ c_shield + formatNum((shieldCurDisp + unit.getDisplayDefend())) + "[WHITE] → " + c_shield
-							+ formatNum((shieldNewDisp + unit.getDisplayDefend())) + "[WHITE]/" + c_shield
-							+ formatNum(hpMaxDisp) + "[WHITE] (" + getColor(shieldNewDisp - shieldCurDisp) + "+"
-							+ formatNum((shieldNewDisp - shieldCurDisp)) + "[WHITE])";
+					str = lang.format("log.change_shield", formatName(unit.getUnitType().name(), unit.getPos()),
+							c_shield + formatNum((shieldOldDisp + unit.getDisplayDefend())),
+							c_shield + formatNum((shieldNewDisp + unit.getDisplayDefend())),
+							c_hp + formatNum(hpMaxDisp),
+							getColor(shieldNewDisp - shieldOldDisp) + "+" + formatNum((shieldNewDisp - shieldOldDisp)));
 				}
 
-				if (turnsMod > turnsCur) {
+				if (turnsMod > turnsOld) {
 					unit.setShieldTurns(turnsMod);
-					if (shieldNew > shieldCur)
-						msg.add(str + "[WHITE], " + lang.get("turns") + " " + c_num + turnsCur + "[WHITE] → " + c_num
-								+ turnsMod);
-					else
-						msg.add(formatName(unit.getUnitType().name(), unit.getPos()) + " " + lang.get("shield") + " "
-								+ lang.get("turns") + " " + c_num + turnsCur + "[WHITE] → " + c_num + turnsMod);
+					if (shieldNew > shieldOld) {
+						msg.add(str + lang.format("log.turns.nameless", c_num + turnsOld, c_num + turnsMod));
+					} else {
+						msg.add(lang.format("log.shield.turns", formatName(unit.getUnitType().name(), unit.getPos()),
+								c_num + turnsOld, c_num + turnsMod));
+					}
 				}
 
 				// Effect block message
-				if (shieldCur == 0 && shieldNew > 0 && !unit.isEffectBlock() && unit.getDefend() == 0) {
-					msg.add(formatName(unit.getUnitType().name(), unit.getPos(), false) + " " + lang.get("log.is_now")
-							+ " " + c_buff + lang.get("log.effect_block"));
+				if (shieldOld == 0 && shieldNew > 0 && !unit.isEffectBlock() && unit.getDefend() == 0) {
+					msg.add(lang.format("log.change_effect_block",
+							formatName(unit.getUnitType().name(), unit.getPos(), false), 1));
 				}
 
 			} else { // Heals
@@ -146,17 +146,16 @@ public class Heal implements SkillEffect {
 				long hpNew = Math.max(hpCur, Math.min(hpCur + heal, (long) (hpMax * (1 + (overHeal / 1000d)))));
 
 				if (hpNew > hpCur) {
-					long hpCurDisp = unit.getStatsCur().getDisplayHp();
+					long hpOldDisp = unit.getStatsCur().getDisplayHp();
 
 					unit.getStatsCur().setHp(hpNew);
 
 					long hpNewDisp = unit.getStatsCur().getDisplayHp();
 					long hpMaxDisp = unit.getStatsDefault().getDisplayHp();
 
-					msg.add(formatName(unit.getUnitType().name(), self.getPos()) + " " + lang.get("hp") + " " + c_hp
-							+ formatNum(hpCurDisp) + "[WHITE] → " + c_hp + formatNum(hpNewDisp) + "[WHITE]/" + c_hp
-							+ formatNum(hpMaxDisp) + getColor(hpNewDisp - hpCurDisp) + " (+"
-							+ formatNum((hpNewDisp - hpCurDisp)) + ")");
+					msg.add(lang.format("log.change_hp", formatName(unit.getUnitType().name(), self.getPos()),
+							c_hp + formatNum(hpOldDisp), c_hp + formatNum(hpNewDisp), c_hp + formatNum(hpMaxDisp),
+							c_pos + "+" + formatNum((hpNewDisp - hpOldDisp))));
 				}
 			}
 

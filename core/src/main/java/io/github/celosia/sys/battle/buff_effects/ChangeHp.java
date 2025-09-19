@@ -6,9 +6,6 @@ import io.github.celosia.sys.battle.Result;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.c_hp;
-import static io.github.celosia.sys.menu.TextLib.c_pos;
-import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeHp implements BuffEffect {
@@ -54,6 +51,7 @@ public class ChangeHp implements BuffEffect {
 		}
 	}
 
+	// todo this might need to display the name if immediate
 	@Override
 	public void onGive(Unit self, int stacks) {
 		if (isImmediate) {
@@ -79,7 +77,7 @@ public class ChangeHp implements BuffEffect {
 					: (long) (change * self.getMultWithExpDmgTaken() * multDoTDmgTaken);
 			self.onTakeDamage(self, dmg, Element.VIS);
 			Result result = self.damage(dmg, isPierce, false);
-			return result.getMessages().toArray(String[]::new);
+			return result.messages().toArray(String[]::new);
 		} else { // Healing
 			long hpOld = self.getStatsCur().getHp();
 			long hpMax = self.getStatsDefault().getHp();
@@ -87,14 +85,14 @@ public class ChangeHp implements BuffEffect {
 			long hpNew = Math.max(hpOld, Math.min(hpOld + heal, hpMax));
 			if (hpNew > hpOld) {
 				self.onTakeHeal(self, heal, 0);
-				self.getStatsCur().setHp(hpNew);
 
 				long hpOldDisp = self.getStatsCur().getDisplayHp();
-				long hpMaxDisp = self.getStatsDefault().getDisplayHp();
+				self.getStatsCur().setHp(hpNew);
 				long hpNewDisp = self.getStatsCur().getDisplayHp();
-				return new String[]{lang.get("hp") + " " + c_hp + formatNum(hpOldDisp) + "[WHITE] → " + c_hp
-						+ formatNum(hpNewDisp) + "[WHITE]/" + c_hp + formatNum(hpMaxDisp) + "[WHITE] (" + c_pos + "+"
-						+ formatNum(Math.max(hpNewDisp - hpOldDisp, 0)) + "[WHITE])"};
+				long hpMaxDisp = self.getStatsDefault().getDisplayHp();
+
+				return new String[]{lang.format("log.change_hp.heal", hpOldDisp, hpNewDisp, hpMaxDisp,
+						Math.max(hpNewDisp - hpOldDisp, 0))};
 			} else
 				return new String[]{""};
 		}
