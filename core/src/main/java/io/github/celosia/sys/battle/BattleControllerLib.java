@@ -327,6 +327,8 @@ public class BattleControllerLib {
 					if (newSp >= 0) {
 						Unit target = battle.getUnitAtPos(move.targetPos());
 
+                        change *= -1;
+
 						if (skill.isBloom() && newSp != team.getBloom()) {
 							appendToLog(lang.format("log.skill_use",
 									formatName(self.getUnitType().name(), self.getPos(), false),

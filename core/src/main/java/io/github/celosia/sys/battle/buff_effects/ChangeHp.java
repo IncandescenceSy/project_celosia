@@ -6,6 +6,10 @@ import io.github.celosia.sys.battle.Result;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
+import static io.github.celosia.sys.menu.TextLib.c_hp;
+import static io.github.celosia.sys.menu.TextLib.formatNum;
+import static io.github.celosia.sys.menu.TextLib.getColor;
+import static io.github.celosia.sys.menu.TextLib.getSign;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeHp implements BuffEffect {
@@ -90,9 +94,10 @@ public class ChangeHp implements BuffEffect {
 				self.getStatsCur().setHp(hpNew);
 				long hpNewDisp = self.getStatsCur().getDisplayHp();
 				long hpMaxDisp = self.getStatsDefault().getDisplayHp();
+                long changeFullDisp = Math.max(hpNewDisp - hpOldDisp, 0);
 
-				return new String[]{lang.format("log.change_hp.heal", hpOldDisp, hpNewDisp, hpMaxDisp,
-						Math.max(hpNewDisp - hpOldDisp, 0))};
+				return new String[]{lang.format("log.change_hp", "", c_hp + formatNum(hpOldDisp), c_hp + formatNum(hpNewDisp), c_hp + formatNum(hpMaxDisp),
+						getColor(changeFullDisp) + getSign(changeFullDisp) + formatNum(changeFullDisp))};
 			} else
 				return new String[]{""};
 		}

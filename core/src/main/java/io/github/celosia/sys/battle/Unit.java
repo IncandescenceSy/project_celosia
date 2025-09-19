@@ -1675,7 +1675,7 @@ public class Unit {
 			} else {
 				appendToLog(lang.format("log.lose.buff", formatName(unitType.name(), pos, false),
 						buffInstance.getBuff().maxStacks(), c_num + buffInstance.getStacks(),
-						c_buff + buffInstance.getBuff().name()));
+						c_buff + buffInstance.getBuff().name(), lang.format("log.stack_s", buffInstance.getStacks())));
 
 				// Remove effects
 				for (BuffEffect buffEffect : buffInstance.getBuff().buffEffects()) {
