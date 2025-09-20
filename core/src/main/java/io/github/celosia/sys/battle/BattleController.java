@@ -34,8 +34,8 @@ public class BattleController {
 		} else if (InputLib.checkInput(Keybind.MENU)) { // Create fullscreen log
 			createFullLog();
 		} else if (wait > 0f) {
-            wait -= Gdx.graphics.getDeltaTime();
-        } else if (menuList.getLast() == MenuType.BATTLE) { // Selecting and executing moves
+			wait -= Gdx.graphics.getDeltaTime();
+		} else if (menuList.getLast() == MenuType.BATTLE) { // Selecting and executing moves
 			handleBattle();
 		} else if (menuList.getLast() == MenuType.TARGETING) { // Picking a target
 			handleTargeting();

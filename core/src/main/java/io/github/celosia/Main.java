@@ -193,8 +193,8 @@ public class Main extends ApplicationAdapter {
 
 		// Display FPS counter
 		if (Settings.showFpsCounter) {
-            fps.setText((int) (1d / Gdx.graphics.getDeltaTime()) + " FPS");
-        }
+			fps.setText((int) (1d / Gdx.graphics.getDeltaTime()) + " FPS");
+		}
 
 		// Get mappings of current controller
 		InputHandler.checkController();

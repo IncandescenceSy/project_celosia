@@ -327,21 +327,24 @@ public class BattleControllerLib {
 					if (newSp >= 0) {
 						Unit target = battle.getUnitAtPos(move.targetPos());
 
-                        change *= -1;
+						change *= -1;
 
 						if (skill.isBloom() && newSp != team.getBloom()) {
 							appendToLog(lang.format("log.skill_use",
 									formatName(self.getUnitType().name(), self.getPos(), false),
 									c_skill + skill.getName(),
 									formatName(target.getUnitType().name(), move.targetPos(), false),
-									booleanToInt(skill.isRangeSelf()), 1, c_bloom + formatNum(team.getBloom()), c_bloom + formatNum(newSp), getColor(change) + getSign(change) + formatNum(change)));
+									booleanToInt(skill.isRangeSelf()), 1, c_bloom + formatNum(team.getBloom()),
+									c_bloom + formatNum(newSp),
+									getColor(change) + getSign(change) + formatNum(change)));
 							team.setBloom(newSp);
 						} else if (!skill.isBloom() && newSp != self.getSp()) {
 							appendToLog(lang.format("log.skill_use",
 									formatName(self.getUnitType().name(), self.getPos(), false),
 									c_skill + skill.getName(),
 									formatName(target.getUnitType().name(), move.targetPos(), false),
-									booleanToInt(skill.isRangeSelf()), 0, c_sp + formatNum(self.getSp()), c_sp + formatNum(newSp), getColor(change) + getSign(change) + change));
+									booleanToInt(skill.isRangeSelf()), 0, c_sp + formatNum(self.getSp()),
+									c_sp + formatNum(newSp), getColor(change) + getSign(change) + change));
 							self.setSp(newSp);
 						}
 
@@ -644,9 +647,8 @@ public class BattleControllerLib {
 				String shieldStr = (shield > 0) ? "[CYAN]+" + formatNum(shield) + "[WHITE]" : "";
 				String spStr = (!unit.isInfiniteSp()) ? formatNum(unit.getSp()) + "/" + formatNum(1000) : "∞";
 				StringBuilder text = new StringBuilder(unit.getUnitType().name() + "\n" + lang.get("hp") + ": "
-						+ formatNum(unit.getDisplayHp()) + shieldStr + "/"
-						+ formatNum(unit.getDisplayMaxHp()) + "\n" + lang.get("sp") + ": " + spStr
-						+ "\nStr: " + formatNum(unit.getStrWithStage()) + "/"
+						+ formatNum(unit.getDisplayHp()) + shieldStr + "/" + formatNum(unit.getDisplayMaxHp()) + "\n"
+						+ lang.get("sp") + ": " + spStr + "\nStr: " + formatNum(unit.getStrWithStage()) + "/"
 						+ formatNum(unit.getStatsDefault().getStr()) +
 						// "\nMag:" + unit.getMagWithStage() + "/" + unit.getStatsDefault().getMag() +
 						// "\nAmr: " + unit.getAmrWithStage() + "/" + unit.getStatsDefault().getAmr() +

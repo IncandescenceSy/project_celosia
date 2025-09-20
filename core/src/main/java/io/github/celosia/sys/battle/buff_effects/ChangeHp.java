@@ -76,8 +76,8 @@ public class ChangeHp implements BuffEffect {
 		if (change < 0) { // Damage
 			double multDoTDmgTaken = ((isImmediate) ? 1 : self.getMultWithExpDoTDmgTaken());
 			long dmg = (isPercentage)
-					? (long) Math.abs(((self.getMaxHp() * (change / 1000d)) * stacks)
-							* self.getMultWithExpDmgTaken() * multDoTDmgTaken * self.getMultWithExpPercentageDmgTaken())
+					? (long) Math.abs(((self.getMaxHp() * (change / 1000d)) * stacks) * self.getMultWithExpDmgTaken()
+							* multDoTDmgTaken * self.getMultWithExpPercentageDmgTaken())
 					: (long) (change * self.getMultWithExpDmgTaken() * multDoTDmgTaken);
 			self.onTakeDamage(self, dmg, Element.VIS);
 			Result result = self.damage(dmg, isPierce, false);
@@ -94,9 +94,10 @@ public class ChangeHp implements BuffEffect {
 				self.setHp(hpNew);
 				long hpNewDisp = self.getDisplayHp();
 				long hpMaxDisp = self.getDisplayMaxHp();
-                long changeFullDisp = Math.max(hpNewDisp - hpOldDisp, 0);
+				long changeFullDisp = Math.max(hpNewDisp - hpOldDisp, 0);
 
-				return new String[]{lang.format("log.change_hp", "", c_hp + formatNum(hpOldDisp), c_hp + formatNum(hpNewDisp), c_hp + formatNum(hpMaxDisp),
+				return new String[]{lang.format("log.change_hp", "", c_hp + formatNum(hpOldDisp),
+						c_hp + formatNum(hpNewDisp), c_hp + formatNum(hpMaxDisp),
 						getColor(changeFullDisp) + getSign(changeFullDisp) + formatNum(changeFullDisp))};
 			} else
 				return new String[]{""};

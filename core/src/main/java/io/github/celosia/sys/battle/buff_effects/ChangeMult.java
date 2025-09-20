@@ -80,7 +80,8 @@ public class ChangeMult implements BuffEffect {
 		if (expOld != expNew) {
 			calcedChange = lang.format("log.change_mult.calced.change",
 					getExpChangeColor(changeExpFull, (giving) ? multNew : multOld, mult),
-					getSign(changeExpDisplay) + formatNum(changeExpDisplay), getMultWithExpChangeColor(changeMultWithExpDisplay, mult),
+					getSign(changeExpDisplay) + formatNum(changeExpDisplay),
+					getMultWithExpChangeColor(changeMultWithExpDisplay, mult),
 					getSign(changeMultWithExpDisplay) + formatNum(changeMultWithExpDisplay * 100));
 		}
 

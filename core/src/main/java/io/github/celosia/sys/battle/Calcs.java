@@ -30,8 +30,7 @@ public class Calcs {
 		if (bloomNew != bloomOld) {
 			team.setBloom(bloomNew);
 			return lang.format("log.change_bloom", side.getId(), c_bloom + formatNum(bloomOld),
-					c_bloom + formatNum(bloomNew),
-					getColor(change) + getSign(change) + (bloomNew - bloomOld));
+					c_bloom + formatNum(bloomNew), getColor(change) + getSign(change) + (bloomNew - bloomOld));
 		} else {
 			return "";
 		}

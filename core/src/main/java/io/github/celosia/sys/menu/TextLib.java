@@ -83,14 +83,15 @@ public class TextLib {
 		return formatName(name, pos, true);
 	}
 
-	// Returns the color a number should be displayed based on if it's positive or negative
+	// Returns the color a number should be displayed based on if it's positive or
+	// negative
 	public static String getColor(long num) {
 		return (num > 0) ? c_pos : (num < 0) ? c_neg : c_num;
 	}
 
-    public static String getSign(double num) {
-        return (num > 0) ? "+" : "";
-    }
+	public static String getSign(double num) {
+		return (num > 0) ? "+" : "";
+	}
 
 	// Returns the color a mult should be based on its relation to 100% and whether
 	// higher is better
