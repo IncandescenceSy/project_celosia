@@ -34,6 +34,16 @@ public class Stats {
 		this.agi = stats.agi;
 	}
 
+    public Stats(long stats) {
+        hp = stats;
+        str = stats;
+        mag = stats;
+        fth = stats;
+        amr = stats;
+        res = stats;
+        agi = stats;
+    }
+
 	public void setHp(long hp) {
 		this.hp = hp;
 	}
@@ -163,6 +173,10 @@ public class Stats {
 		};
 	}
 
+    public long getRealHp(long lvl) {
+        return (hp + (hp / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN;
+    }
+
 	public Stats getRealStats(long lvl) {
 		return new Stats((hp + (hp / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN,
 				(str + (str / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN,
@@ -172,4 +186,27 @@ public class Stats {
 				(res + (res / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN,
 				(agi + (agi / 2) * lvl) * STAT_MULT_VISIBLE * STAT_MULT_HIDDEN);
 	}
+
+    public void addToStat(Stat stat, long change) {
+        switch (stat) {
+            case STR :
+                this.str += change;
+                break;
+            case MAG :
+                this.mag += change;
+                break;
+            case FTH :
+                this.fth += change;
+                break;
+            case AMR :
+                this.amr += change;
+                break;
+            case RES :
+                this.res += change;
+                break;
+            case AGI :
+                this.agi += change;
+                break;
+        }
+    }
 }

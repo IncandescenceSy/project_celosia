@@ -22,10 +22,14 @@ public class Unit {
 	private final UnitType unitType;
 	private final long lvl; // Level
 
-	// Current and default stats
+	// Stats
+    // statsMult is treated as multipliers applied to statsDefault, in 10ths of a % (1000 = 100%). Is never treated as less than 10%
 	// HP, Str, Mag, Amr, Res, and Agi
 	private final Stats statsDefault;
-	private final Stats statsCur;
+    private final Stats statsMult;
+
+    // Current HP needs to be separate
+    private long hp;
 
 	// Skills
 	private final SkillInstance[] skillInstances;
@@ -167,7 +171,8 @@ public class Unit {
 		this.unitType = unitType;
 		this.lvl = lvl;
 		statsDefault = unitType.statsBase().getRealStats(lvl);
-		statsCur = new Stats(statsDefault);
+        statsMult = new Stats(1000);
+        hp = statsDefault.getHp();
 		// streams have bad perf, so make sure this doesn't become an issue. but this is
 		// called so infrequently that it shouldn't
 		skillInstances = Arrays.stream(skills).map(Skill::toSkillInstance).toArray(SkillInstance[]::new);
@@ -265,9 +270,94 @@ public class Unit {
 		return statsDefault;
 	}
 
-	public Stats getStatsCur() {
-		return statsCur;
+	public Stats getStatsMult() {
+		return statsMult;
 	}
+
+    public void setHp(long hp) {
+        this.hp = hp;
+    }
+
+    public long getHp() {
+        return hp;
+    }
+
+    public long getDisplayHp() {
+        return hp / STAT_MULT_HIDDEN;
+    }
+
+    public long getMaxHp() {
+        return statsDefault.getHp();
+    }
+
+    public long getDisplayMaxHp() {
+        return statsDefault.getDisplayHp();
+    }
+
+    public long getStr() {
+        return this.getStat(Stat.STR);
+    }
+
+    public long getMag() {
+        return this.getStat(Stat.MAG);
+    }
+
+    public long getFth() {
+        return this.getStat(Stat.FTH);
+    }
+
+    public long getAmr() {
+        return this.getStat(Stat.AMR);
+    }
+
+    public long getRes() {
+        return this.getStat(Stat.RES);
+    }
+
+    public long getAgi() {
+        return this.getStat(Stat.AGI);
+    }
+
+    public long getStat(Stat stat) {
+        long val = (long) (statsDefault.getStat(stat) * (Math.max(statsMult.getStat(stat), 100) / 1000d));
+
+        // Only way for val to be negative is if an overflow happened, so set it to max long just to be safe
+        if (val < 0) {
+            val = Long.MAX_VALUE;
+        } else if (val == 0) {
+            val = 1;
+        }
+
+        return val;
+    }
+
+    public long getDisplayStr() {
+        return this.getStr() / STAT_MULT_HIDDEN;
+    }
+
+    public long getDisplayMag() {
+        return this.getMag() / STAT_MULT_HIDDEN;
+    }
+
+    public long getDisplayFth() {
+        return this.getFth() / STAT_MULT_HIDDEN;
+    }
+
+    public long getDisplayAmr() {
+        return this.getAmr() / STAT_MULT_HIDDEN;
+    }
+
+    public long getDisplayRes() {
+        return this.getRes() / STAT_MULT_HIDDEN;
+    }
+
+    public long getDisplayAgi() {
+        return this.getAgi() / STAT_MULT_HIDDEN;
+    }
+
+    public long getDisplayStat(Stat stat) {
+        return this.getStat(stat) / STAT_MULT_HIDDEN;
+    }
 
 	public SkillInstance[] getSkillInstances() {
 		return skillInstances;
@@ -406,59 +496,59 @@ public class Unit {
 	}
 
 	public long getStrWithStage() {
-		return Math.max(statsCur.getStr()
+		return Math.max(this.getStr()
 				+ (long) (statsDefault.getStr() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1))), 1);
 	}
 
 	public long getMagWithStage() {
-		return Math.max(statsCur.getMag()
+		return Math.max(this.getMag()
 				+ (long) (statsDefault.getMag() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1))), 1);
 	}
 
 	public long getFthWithStage() {
-		return Math.max(statsCur.getFth()
+		return Math.max(this.getFth()
 				+ (long) (statsDefault.getFth() * (((double) stageFth / 10) / ((stageFth < 0) ? 2 : 1))), 1);
 	}
 
 	public long getAmrWithStage() {
-		return Math.max(statsCur.getAmr()
+		return Math.max(this.getAmr()
 				+ (long) (statsDefault.getAmr() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1))), 1);
 	}
 
 	public long getResWithStage() {
-		return Math.max(statsCur.getRes()
+		return Math.max(this.getRes()
 				+ (long) (statsDefault.getRes() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1))), 1);
 	}
 
 	public long getAgiWithStage() {
-		return Math.max(statsCur.getAgi()
+		return Math.max(this.getAgi()
 				+ (long) (statsDefault.getAgi() * (((double) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1))), 1);
 	}
 
 	public long getStatWithStage(Stat stat) {
 		return switch (stat) {
 			case STR -> Math.max(
-					statsCur.getStr()
+                this.getStr()
 							+ (long) (statsDefault.getStr() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1))),
 					1);
 			case MAG -> Math.max(
-					statsCur.getMag()
+                this.getMag()
 							+ (long) (statsDefault.getMag() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1))),
 					1);
 			case FTH -> Math.max(
-					statsCur.getFth()
+                this.getFth()
 							+ (long) (statsDefault.getFth() * (((double) stageFth / 10) / ((stageFth < 0) ? 2 : 1))),
 					1);
 			case AMR -> Math.max(
-					statsCur.getAmr()
+                this.getAmr()
 							+ (long) (statsDefault.getAmr() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1))),
 					1);
 			case RES -> Math.max(
-					statsCur.getRes()
+                this.getRes()
 							+ (long) (statsDefault.getRes() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1))),
 					1);
 			case AGI -> Math.max(
-					statsCur.getAgi()
+                this.getAgi()
 							+ (long) (statsDefault.getAgi() * (((double) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1))),
 					1);
 		};
@@ -466,34 +556,34 @@ public class Unit {
 
 	public long getStatWithStage(Stat stat, int stage) {
 		return switch (stat) {
-			case STR -> Math.max(statsCur.getStr()
+			case STR -> Math.max(this.getStr()
 					+ (long) (statsDefault.getStr() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))), 1);
-			case MAG -> Math.max(statsCur.getMag()
+			case MAG -> Math.max(this.getMag()
 					+ (long) (statsDefault.getMag() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))), 1);
-			case FTH -> Math.max(statsCur.getFth()
+			case FTH -> Math.max(this.getFth()
 					+ (long) (statsDefault.getFth() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))), 1);
-			case AMR -> Math.max(statsCur.getAmr()
+			case AMR -> Math.max(this.getAmr()
 					+ (long) (statsDefault.getAmr() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))), 1);
-			case RES -> Math.max(statsCur.getRes()
+			case RES -> Math.max(this.getRes()
 					+ (long) (statsDefault.getRes() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))), 1);
-			case AGI -> Math.max(statsCur.getAgi()
+			case AGI -> Math.max(this.getAgi()
 					+ (long) (statsDefault.getAgi() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))), 1);
 		};
 	}
 
 	public long getDisplayStatWithStage(Stat stat) {
 		return switch (stat) {
-			case STR -> Math.max(statsCur.getDisplayStr()
+			case STR -> Math.max(this.getDisplayStr()
 					+ (long) (statsDefault.getDisplayStr() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1))), 1);
-			case MAG -> Math.max(statsCur.getDisplayMag()
+			case MAG -> Math.max(this.getDisplayMag()
 					+ (long) (statsDefault.getDisplayMag() * (((double) stageAtk / 10) / ((stageAtk < 0) ? 2 : 1))), 1);
-			case FTH -> Math.max(statsCur.getDisplayFth()
+			case FTH -> Math.max(this.getDisplayFth()
 					+ (long) (statsDefault.getDisplayFth() * (((double) stageFth / 10) / ((stageFth < 0) ? 2 : 1))), 1);
-			case AMR -> Math.max(statsCur.getDisplayAmr()
+			case AMR -> Math.max(this.getDisplayAmr()
 					+ (long) (statsDefault.getDisplayAmr() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1))), 1);
-			case RES -> Math.max(statsCur.getDisplayRes()
+			case RES -> Math.max(this.getDisplayRes()
 					+ (long) (statsDefault.getDisplayRes() * (((double) stageDef / 10) / ((stageDef < 0) ? 2 : 1))), 1);
-			case AGI -> Math.max(statsCur.getDisplayAgi()
+			case AGI -> Math.max(this.getDisplayAgi()
 					+ (long) (statsDefault.getDisplayAgi() * (((double) stageAgi / 10) / ((stageAgi < 0) ? 2 : 1))), 1);
 		};
 	}
@@ -501,27 +591,27 @@ public class Unit {
 	public long getDisplayStatWithStage(Stat stat, int stage) {
 		return switch (stat) {
 			case STR -> Math.max(
-					statsCur.getDisplayStr()
+                this.getDisplayStr()
 							+ (long) (statsDefault.getDisplayStr() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))),
 					1);
 			case MAG -> Math.max(
-					statsCur.getDisplayMag()
+                this.getDisplayMag()
 							+ (long) (statsDefault.getDisplayMag() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))),
 					1);
 			case FTH -> Math.max(
-					statsCur.getDisplayFth()
+                this.getDisplayFth()
 							+ (long) (statsDefault.getDisplayFth() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))),
 					1);
 			case AMR -> Math.max(
-					statsCur.getDisplayAmr()
+                this.getDisplayAmr()
 							+ (long) (statsDefault.getDisplayAmr() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))),
 					1);
 			case RES -> Math.max(
-					statsCur.getDisplayRes()
+                this.getDisplayRes()
 							+ (long) (statsDefault.getDisplayRes() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))),
 					1);
 			case AGI -> Math.max(
-					statsCur.getDisplayAgi()
+                this.getDisplayAgi()
 							+ (long) (statsDefault.getDisplayAgi() * (((double) stage / 10) / ((stage < 0) ? 2 : 1))),
 					1);
 		};
@@ -1623,26 +1713,26 @@ public class Unit {
 	public void decrementTurns() {
 		// Stages
 		if (stageAtk != 0 && --stageAtkTurns <= 0) {
-			appendToLog(lang.format("log.lose.stage", formatName(unitType.name(), pos, false),
+			appendToLog(lang.format("log.lose.stage", formatName(unitType.name(), pos, false), stageAtk,
 					getColor(stageAtk) + stageAtk, c_buff + StageType.ATK.getName(),
 					getStageStatString(this, StageType.ATK, 0)));
 			// Remove stages
 			stageAtk = 0;
 		}
 		if (stageDef != 0 && --stageDefTurns <= 0) {
-			appendToLog(lang.format("log.lose.stage", formatName(unitType.name(), pos, false),
+			appendToLog(lang.format("log.lose.stage", formatName(unitType.name(), pos, false), stageDef,
 					getColor(stageDef) + stageDef, c_buff + StageType.DEF.getName(),
 					getStageStatString(this, StageType.DEF, 0)));
 			stageDef = 0;
 		}
 		if (stageFth != 0 && --stageFthTurns <= 0) {
-			appendToLog(lang.format("log.lose.stage", formatName(unitType.name(), pos, false),
+			appendToLog(lang.format("log.lose.stage", formatName(unitType.name(), pos, false), stageFth,
 					getColor(stageFth) + stageFth, c_buff + StageType.FTH.getName(),
 					getStageStatString(this, StageType.FTH, 0)));
 			stageFth = 0;
 		}
 		if (stageAgi != 0 && --stageAgiTurns <= 0) {
-			appendToLog(lang.format("log.lose.stage", formatName(unitType.name(), pos, false),
+			appendToLog(lang.format("log.lose.stage", formatName(unitType.name(), pos, false), stageAgi,
 					getColor(stageAgi) + stageAgi, c_buff + StageType.AGI.getName(),
 					getStageStatString(this, StageType.AGI, 0)));
 			stageAgi = 0;
@@ -1747,11 +1837,10 @@ public class Unit {
 		}
 
 		// Lower HP
-		long hpOld = statsCur.getHp();
-		long hpOldDisp = statsCur.getDisplayHp();
-		long hpNew = Math.clamp(hpOld - dmg, 0, statsDefault.getHp());
-		statsCur.setHp(hpNew);
-		long hpNewDisp = statsCur.getDisplayHp();
+		long hpOldDisp = this.getDisplayHp();
+        hp = Math.clamp(hp - dmg, 0, statsDefault.getHp());
+		long hpNewDisp = this.getDisplayHp();
+
 		msg.add(lang.format("log.change_hp", name_s, c_hp + formatNum(hpOldDisp), c_hp + formatNum(hpNewDisp),
 				c_hp + formatNum(statsDefault.getDisplayHp()), c_neg + "-" + formatNum(dmg / STAT_MULT_HIDDEN)));
 

@@ -82,11 +82,11 @@ public class BattleControllerLib {
 	static List<TypingLabel> skillsL = new ArrayList<>();
 
 	// temp
-	static Skill[] skills = new Skill[]{Skills.STAR_RULER, Skills.ATTACK_UP, Skills.SHIELD, Skills.THUNDERBOLT,
+	static Skill[] skills = new Skill[]{Skills.FIREBALL, Skills.ATTACK_UP, Skills.SHIELD, Skills.THUNDERBOLT,
 			Skills.ICE_AGE, Skills.DEFEND};
-	static Skill[] skills2 = new Skill[]{Skills.STAR_RULER, Skills.FIREBALL, Skills.ATTACK_UP_GROUP, Skills.SHIELD,
+	static Skill[] skills2 = new Skill[]{Skills.FIREBALL, Skills.FIREBALL, Skills.ATTACK_UP_GROUP, Skills.SHIELD,
 			Skills.ICE_AGE, Skills.DEFEND};
-	static Skill[] skills3 = new Skill[]{Skills.DEFENSE_DOWN, Skills.FIREBALL, Skills.HEAT_WAVE, Skills.PROTECT,
+	static Skill[] skills3 = new Skill[]{Skills.FIREBALL, Skills.FIREBALL, Skills.HEAT_WAVE, Skills.PROTECT,
 			Skills.ICE_AGE, Skills.DEFEND};
 
 	// Battle log
@@ -360,7 +360,7 @@ public class BattleControllerLib {
 
 						prevResults = new Int2ObjectOpenHashMap<>();
 					} else {
-						String msg = lang.format("log.skill_fail.no_sp", getTriesToUseString(move),
+						String msg = lang.format("log.skill_fail.sp", getTriesToUseString(move),
 								lang.format("log.but_doesnt_have_enough", booleanToInt(skill.isBloom())));
 						appendToLog(msg);
 					}
@@ -633,7 +633,7 @@ public class BattleControllerLib {
 				// c_stat + lang.get("hp") + "[WHITE]: " + c_hp + String.format("%,d",
 				// unit.getStatsCur().getHp()) +
 				// shieldStr + "[WHITE]/" + c_hp + String.format("%,d",
-				// unit.getStatsDefault().getHp()) + "\n" + c_stat + lang.get("sp") + "[WHITE]:
+				// unit.getMaxHp()) + "\n" + c_stat + lang.get("sp") + "[WHITE]:
 				// " + c_sp + spStr +
 				// //"\nStr: " + unit.getStrWithStage() + "/" + unit.getStatsDefault().getStr()
 				// + "\nMag:" + unit.getMagWithStage() + "/" + unit.getStatsDefault().getMag() +
@@ -644,8 +644,8 @@ public class BattleControllerLib {
 				String shieldStr = (shield > 0) ? "[CYAN]+" + formatNum(shield) + "[WHITE]" : "";
 				String spStr = (!unit.isInfiniteSp()) ? formatNum(unit.getSp()) + "/" + formatNum(1000) : "∞";
 				StringBuilder text = new StringBuilder(unit.getUnitType().name() + "\n" + lang.get("hp") + ": "
-						+ formatNum(unit.getStatsCur().getDisplayHp()) + shieldStr + "/"
-						+ formatNum(unit.getStatsDefault().getDisplayHp()) + "\n" + lang.get("sp") + ": " + spStr
+						+ formatNum(unit.getDisplayHp()) + shieldStr + "/"
+						+ formatNum(unit.getDisplayMaxHp()) + "\n" + lang.get("sp") + ": " + spStr
 						+ "\nStr: " + formatNum(unit.getStrWithStage()) + "/"
 						+ formatNum(unit.getStatsDefault().getStr()) +
 						// "\nMag:" + unit.getMagWithStage() + "/" + unit.getStatsDefault().getMag() +

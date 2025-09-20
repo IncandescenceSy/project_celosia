@@ -97,7 +97,7 @@ public class Heal implements SkillEffect {
 				self.onDealShield(unit, turnsMod, heal);
 				unit.onTakeShield(unit, turnsMod, heal);
 
-				long hpMax = unit.getStatsDefault().getHp();
+				long hpMax = unit.getMaxHp();
 				long shieldOld = unit.getShield();
 				long shieldNew = (shieldOld + unit.getDefend() + heal > hpMax)
 						? hpMax - unit.getDefend()
@@ -109,7 +109,7 @@ public class Heal implements SkillEffect {
 
 					unit.setShield(shieldNew);
 
-					long hpMaxDisp = unit.getStatsDefault().getDisplayHp();
+					long hpMaxDisp = unit.getDisplayMaxHp();
 					long shieldNewDisp = unit.getDisplayShield();
 
 					str = lang.format("log.change_shield", formatName(unit.getUnitType().name(), unit.getPos()),
@@ -139,19 +139,19 @@ public class Heal implements SkillEffect {
 				self.onDealHeal(unit, heal, overHeal);
 				unit.onTakeHeal(self, heal, overHeal);
 
-				long hpCur = unit.getStatsCur().getHp();
-				long hpMax = unit.getStatsDefault().getHp();
+				long hpCur = unit.getHp();
+				long hpMax = unit.getMaxHp();
 				// Picks the lower of (current HP + heal amount) and (maximum allowed overHeal
 				// of this skill), and then the higher between that and current HP
 				long hpNew = Math.max(hpCur, Math.min(hpCur + heal, (long) (hpMax * (1 + (overHeal / 1000d)))));
 
 				if (hpNew > hpCur) {
-					long hpOldDisp = unit.getStatsCur().getDisplayHp();
+					long hpOldDisp = unit.getDisplayHp();
 
-					unit.getStatsCur().setHp(hpNew);
+					unit.setHp(hpNew);
 
-					long hpNewDisp = unit.getStatsCur().getDisplayHp();
-					long hpMaxDisp = unit.getStatsDefault().getDisplayHp();
+					long hpNewDisp = unit.getDisplayHp();
+					long hpMaxDisp = unit.getDisplayMaxHp();
 
 					msg.add(lang.format("log.change_hp", formatName(unit.getUnitType().name(), self.getPos()),
 							c_hp + formatNum(hpOldDisp), c_hp + formatNum(hpNewDisp), c_hp + formatNum(hpMaxDisp),

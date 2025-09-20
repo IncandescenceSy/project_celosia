@@ -86,7 +86,6 @@ public class Main extends ApplicationAdapter {
 		spriteBatch = new SpriteBatch();
 		polygonSpriteBatch = new PolygonSpriteBatch();
 
-		// todo figure out how to support changing window size and resolution
 		stage1 = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));
 		stage2 = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));
 		stage3 = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));

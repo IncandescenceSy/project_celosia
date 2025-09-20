@@ -1,5 +1,6 @@
 package io.github.celosia.sys.battle;
 
+// todo change to Map<Element, int> for prospective modders?
 public class Affinities {
 	private int ignis;
 	private int glacies;
