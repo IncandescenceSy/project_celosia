@@ -421,7 +421,7 @@ public class BattleControllerLib {
 				// todo delete killed units
 			} else {
 				appendToLog(lang.format("log.skill_fail.cooldown", getTriesToUseString(move),
-						lang.format("log.but_its_on_cooldown", c_cd + cd)));
+						lang.format("log.but_its_on_cooldown", cd)));
 				endMove();
 			}
 		} else {

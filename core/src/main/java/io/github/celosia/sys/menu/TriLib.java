@@ -33,8 +33,9 @@ public class TriLib {
 
 				// Skip the rest if the width is to be near 0
 				// todo better fix for the inexplicable tallness
-				if (prog <= 0.02f)
-					continue;
+				if (prog <= 0.02f) {
+                    continue;
+                }
 
 				float height = rect.getT() - rect.getB();
 
@@ -103,8 +104,9 @@ public class TriLib {
 
 					// Skip the rest if the width is to be near 0
 					// todo is this needed
-					if (prog <= 0.02f)
-						continue;
+					if (prog <= 0.02f) {
+                        continue;
+                    }
 
 					Color color = path.getColor();
 					drawer.setColor(color.r, color.g, color.b, 1);

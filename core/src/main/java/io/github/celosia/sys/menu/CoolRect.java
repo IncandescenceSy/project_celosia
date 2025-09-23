@@ -38,15 +38,14 @@ public class CoolRect {
 	}
 
 	public static class Builder {
-		private final int l; // Left
-		private final int t; // Top
-		private final int r; // Right
-		private final int b; // Bottom
-		private int dir = -1; // 1 = unfolding; -1 = collapsing
-		private Color color = Color.BLACK; // Core color
-		private boolean hasOutline = false; // Whether to draw an outline
-		private float speed = 2; // Speed multiplier. 1f = animation completes in 1s. Speed is doubled when
-									// closing
+		private final int l;
+		private final int t;
+		private final int r;
+		private final int b;
+		private int dir = -1;
+		private Color color = Color.BLACK;
+		private boolean hasOutline = false;
+		private float speed = 2;
 		private int angL = 15;
 		private int angR = 15;
 		private int prio = 0;
