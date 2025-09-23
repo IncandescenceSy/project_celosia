@@ -60,23 +60,23 @@ public class Fonts {
 		genKoruri.dispose();
 	}
 
-    public static class FontSize {
-        private final Font font;
-        private final int size;
+	public static class FontSize {
+		private final Font font;
+		private final int size;
 
-        FontSize(Font font, int size) {
-            this.font = font;
-            this.size = size;
-        }
+		FontSize(Font font, int size) {
+			this.font = font;
+			this.size = size;
+		}
 
-        public Font getFont() {
-            return font;
-        }
+		public Font getFont() {
+			return font;
+		}
 
-        public int getSize() {
-            return size;
-        }
-    }
+		public int getSize() {
+			return size;
+		}
+	}
 
 	public enum FontType {
 		KORURI(koruri20, koruri30, koruri40, koruri60, koruri80);
@@ -84,14 +84,14 @@ public class Fonts {
 		private final Int2ObjectMap<Font> sizes = new Int2ObjectOpenHashMap<>();
 
 		FontType(FontSize... fonts) {
-            for(FontSize font : fonts) {
-                font.getFont().addAtlas(atlasPrompt);
-                sizes.put(font.getSize(), font.getFont());
-            }
+			for (FontSize font : fonts) {
+				font.getFont().addAtlas(atlasPrompt);
+				sizes.put(font.getSize(), font.getFont());
+			}
 		}
 
-        public Font get(int size) {
-            return sizes.get(size);
-        }
+		public Font get(int size) {
+			return sizes.get(size);
+		}
 	}
 }

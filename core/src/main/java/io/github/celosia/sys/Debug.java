@@ -10,7 +10,8 @@ public class Debug {
 	public static boolean showDebugInfo = false;
 
 	// A <-> B; X <-> Y
-	// Emulates NSW controller. Results in incorrect glyphs when using non-NSW controller
+	// Emulates NSW controller. Results in incorrect glyphs when using non-NSW
+	// controller
 	public static boolean alwaysUseNSWLayout = false;
 
 	// Select opponent moves

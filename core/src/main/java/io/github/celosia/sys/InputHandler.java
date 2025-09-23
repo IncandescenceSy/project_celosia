@@ -16,15 +16,15 @@ public class InputHandler extends InputAdapter implements ControllerListener {
 	private static Controller controller;
 
 	// The kind of controller the last input came from
-    // NONE means the last input came from a keyboard
+	// NONE means the last input came from a keyboard
 	private static ControllerType lastUsedController = NONE;
 
 	// Get mappings of and set current controller
 	public static void checkController() {
 		controller = Controllers.getCurrent();
 		if (controller != null) {
-            InputLib.setupController(controller);
-        }
+			InputLib.setupController(controller);
+		}
 	}
 
 	// Keyboard input events

@@ -141,7 +141,7 @@ public class MenuLib {
 	// The different menus in the game
 	// todo fix magic numbers
 	public enum MenuType {
-        // spotless:off
+		// spotless:off
 		NONE(),
         POPUP(),
         MAIN(

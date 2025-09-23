@@ -73,9 +73,10 @@ public class Main extends ApplicationAdapter {
 	public static List<Path> paths = new ArrayList<>();
 	public static Stage stage3;
 
-    // Atlases
-    // Key/Button prompt images courtesy https://juliocacko.itch.io/free-input-prompts
-    public static TextureAtlas atlasPrompt;
+	// Atlases
+	// Key/Button prompt images courtesy
+	// https://juliocacko.itch.io/free-input-prompts
+	public static TextureAtlas atlasPrompt;
 
 	// Menu option labels
 	List<TypingLabel> optLabels = new ArrayList<>();
@@ -88,8 +89,8 @@ public class Main extends ApplicationAdapter {
 	// todo move
 	Texture texBg;
 
-    // Input guide
-    public static TextraLabel inputGuide;
+	// Input guide
+	public static TextraLabel inputGuide;
 
 	@Override
 	public void create() {
@@ -100,7 +101,7 @@ public class Main extends ApplicationAdapter {
 		stage2 = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));
 		stage3 = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));
 
-        atlasPrompt = new TextureAtlas("prompt.atlas");
+		atlasPrompt = new TextureAtlas("prompt.atlas");
 
 		// Handle detecting whether a keyboard or a controller is being used, and
 		// finding the currently in-use controller
@@ -167,7 +168,7 @@ public class Main extends ApplicationAdapter {
 
 		Debug.enableDebugHotkeys = true;
 		Debug.showDebugInfo = true;
-		//Debug.alwaysUseNSWLayout = true;
+		// Debug.alwaysUseNSWLayout = true;
 		// Debug.selectOpponentMoves = true;
 		// Debug.displayRealStats = true;
 
@@ -182,11 +183,11 @@ public class Main extends ApplicationAdapter {
 		debug.setPosition(10, World.HEIGHT - 80);
 		stage3.addActor(debug);
 
-        // todo outline
-        inputGuide = new TextraLabel("", FontType.KORURI.get(20));
-        inputGuide.setPosition(0, 0);
-        inputGuide.setAlignment(Align.bottomRight);
-        stage3.addActor(inputGuide);
+		// todo outline
+		inputGuide = new TextraLabel("", FontType.KORURI.get(20));
+		inputGuide.setPosition(0, 0);
+		inputGuide.setAlignment(Align.bottomRight);
+		stage3.addActor(inputGuide);
 
 		// Setup main menu
 		menuList.add(MenuType.MAIN);
@@ -204,7 +205,7 @@ public class Main extends ApplicationAdapter {
 
 	private void input() {
 		// debug
-        debug.setVisible(Debug.showDebugInfo);
+		debug.setVisible(Debug.showDebugInfo);
 
 		if (Debug.showDebugInfo) {
 			debug.setText("actors on stage1: " + stage1.getActors().size + "\nactors on stage2: "
@@ -222,10 +223,10 @@ public class Main extends ApplicationAdapter {
 
 		switch (menuList.getLast()) {
 			case MAIN :
-                // Debug menu
-                if(Gdx.input.isKeyJustPressed(Input.Keys.T)) {
-                    menuList.add(MenuType.DEBUG);
-                }
+				// Debug menu
+				if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+					menuList.add(MenuType.DEBUG);
+				}
 
 				// Handle menu navigation
 				index = MenuLib.checkMovement1D(index, MenuType.MAIN.getOptCount());
@@ -261,8 +262,8 @@ public class Main extends ApplicationAdapter {
 						// Quit game
 						Gdx.app.exit();
 					} else {
-                        index = MenuType.MAIN.getOptCount() - 1;
-                    }
+						index = MenuType.MAIN.getOptCount() - 1;
+					}
 				}
 				break;
 			case POPUP :
@@ -277,24 +278,24 @@ public class Main extends ApplicationAdapter {
 				BattleControllerLib.updateStatDisplay();
 				BattleController.input();
 				break;
-            case DEBUG :
-                if(InputLib.checkInput(Keybind.BACK)) {
-                    menuList.removeLast();
-                } else if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
-                    Debug.showDebugInfo ^= true; // Invert boolean
-                } else if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
-                    MenuDebug.create(MenuType.DEBUG_TEXT);
-                    menuList.add(MenuType.DEBUG_TEXT);
-                }
-            case DEBUG_TEXT :
-                MenuDebug.input(MenuType.DEBUG_TEXT);
+			case DEBUG :
+				if (InputLib.checkInput(Keybind.BACK)) {
+					menuList.removeLast();
+				} else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
+					Debug.showDebugInfo ^= true; // Invert boolean
+				} else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
+					MenuDebug.create(MenuType.DEBUG_TEXT);
+					menuList.add(MenuType.DEBUG_TEXT);
+				}
+			case DEBUG_TEXT :
+				MenuDebug.input(MenuType.DEBUG_TEXT);
 		}
 
-        // Input guide
-        if (Settings.showInputGuide) {
-            InputLib.setInputGuideText(menuList.getLast());
-            inputGuide.setX(World.WIDTH - inputGuide.getWidth());
-        }
+		// Input guide
+		if (Settings.showInputGuide) {
+			InputLib.setInputGuideText(menuList.getLast());
+			inputGuide.setX(World.WIDTH - inputGuide.getWidth());
+		}
 	}
 
 	private void draw() {

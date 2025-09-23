@@ -154,10 +154,8 @@ Thumbs.db
 *#*#
 /.kotlin/
 /assets/assets.txt
-/ideas/
-/indev/
+/non_game_files/
 *.txt
-/misc_code/
 
 ## Special cases:
 
