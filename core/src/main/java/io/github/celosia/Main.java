@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Align;
@@ -72,6 +73,10 @@ public class Main extends ApplicationAdapter {
 	public static List<Path> paths = new ArrayList<>();
 	public static Stage stage3;
 
+    // Atlases
+    // Key/Button prompt images courtesy https://juliocacko.itch.io/free-input-prompts
+    public static TextureAtlas atlasPrompt;
+
 	// Menu option labels
 	List<TypingLabel> optLabels = new ArrayList<>();
 
@@ -83,6 +88,9 @@ public class Main extends ApplicationAdapter {
 	// todo move
 	Texture texBg;
 
+    // Input guide
+    public static TextraLabel inputGuide;
+
 	@Override
 	public void create() {
 		spriteBatch = new SpriteBatch();
@@ -91,6 +99,8 @@ public class Main extends ApplicationAdapter {
 		stage1 = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));
 		stage2 = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));
 		stage3 = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));
+
+        atlasPrompt = new TextureAtlas("prompt.atlas");
 
 		// Handle detecting whether a keyboard or a controller is being used, and
 		// finding the currently in-use controller
@@ -157,7 +167,7 @@ public class Main extends ApplicationAdapter {
 
 		Debug.enableDebugHotkeys = true;
 		Debug.showDebugInfo = true;
-		Debug.alwaysUseNintendoLayout = true;
+		//Debug.alwaysUseNSWLayout = true;
 		// Debug.selectOpponentMoves = true;
 		// Debug.displayRealStats = true;
 
@@ -171,6 +181,12 @@ public class Main extends ApplicationAdapter {
 		debug = new TextraLabel("", FontType.KORURI.get(20));
 		debug.setPosition(10, World.HEIGHT - 80);
 		stage3.addActor(debug);
+
+        // todo outline
+        inputGuide = new TextraLabel("", FontType.KORURI.get(20));
+        inputGuide.setPosition(0, 0);
+        inputGuide.setAlignment(Align.bottomRight);
+        stage3.addActor(inputGuide);
 
 		// Setup main menu
 		menuList.add(MenuType.MAIN);
@@ -273,6 +289,12 @@ public class Main extends ApplicationAdapter {
             case DEBUG_TEXT :
                 MenuDebug.input(MenuType.DEBUG_TEXT);
 		}
+
+        // Input guide
+        if (Settings.showInputGuide) {
+            InputLib.setInputGuideText(menuList.getLast());
+            inputGuide.setX(World.WIDTH - inputGuide.getWidth());
+        }
 	}
 
 	private void draw() {

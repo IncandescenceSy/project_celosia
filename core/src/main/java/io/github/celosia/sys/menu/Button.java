@@ -4,41 +4,53 @@ import static io.github.celosia.sys.settings.Lang.lang;
 
 // Controller button and stick mappings
 public enum Button {
-	// spotless:off
-	B(lang.get("button.b")),
-    A(lang.get("button.a")),
-    Y(lang.get("button.y")),
-    X(lang.get("button.x")),
-    DL(lang.get("key.left")), // Dpad left
-	DR(lang.get("key.right")), // Dpad right
-	DU(lang.get("key.up")), // Dpad up
-	DD(lang.get("key.down")), // Dpad down
-	L1(lang.get("button.l1")),
-    R1(lang.get("button.r1")),
-    L2(lang.get("button.l2")),
-    R2(lang.get("button.r2")),
-    LX(""), // Left stick X-axis
-	LY(""), // Left stick Y-axis
-	RX(""), // Right stick X-axis
-	RY(""); // Right stick Y-axis
+    // spotless:off
+    B(lang.get("button.b"), "B"),
+    A(lang.get("button.a"), "A"),
+    Y(lang.get("button.y"), "Y"),
+    X(lang.get("button.x"), "X"),
+    DL(lang.get("key.left"), "DL"), // Dpad left
+    DR(lang.get("key.right"), "DR"), // Dpad right
+    DU(lang.get("key.up"), "DU"), // Dpad up
+    DD(lang.get("key.down"), "DD"), // Dpad down
+    LB(lang.get("button.l1"), "LB"),
+    RB(lang.get("button.r1"), "RB"),
+    LT(lang.get("button.l2"), "LT"),
+    RT(lang.get("button.r2"), "RT"),
+    LM(lang.get("button.lm"), "LM"), // Left menu / - / share / 2 boxes
+    RM(lang.get("button.rm"), "RM"), // Right menu / + / options / hamburger
+
+    // Non-remappable
+    LX("LX", "LX"), // Left stick X-axis
+    LY("LY", "LY"), // Left stick Y-axis
+    RX("RX", "RX"), // Right stick X-axis
+    RY("RY", "RY"); // Right stick Y-axis
     // spotless:on
 
-	private int mapping = -1;
-	private final String name;
+    private int mapping = -1;
+    private final String name;
 
-	Button(String name) {
-		this.name = name;
-	}
+    // NSW, PS, XB
+    private final String[] glyphs;
 
-	public void setMapping(int mapping) {
-		this.mapping = mapping;
-	}
+    Button(String name, String glyph) {
+        this.name = name;
+        this.glyphs = new String[]{"[+NSW_" + glyph + "]", "[+PS_" + glyph + "]", "[+XB_" + glyph + "]"};
+    }
 
-	public int getMapping() {
-		return mapping;
-	}
+    public void setMapping(int mapping) {
+        this.mapping = mapping;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public int getMapping() {
+        return mapping;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String[] getGlyphs() {
+        return glyphs;
+    }
 }

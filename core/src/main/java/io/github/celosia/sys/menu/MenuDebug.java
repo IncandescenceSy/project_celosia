@@ -10,7 +10,7 @@ import static io.github.celosia.Main.stage3;
 import static io.github.celosia.sys.menu.MenuLib.setTextIfChanged;
 
 public class MenuDebug {
-    static TypingLabel text = new TypingLabel("", Fonts.FontType.KORURI.get(30));
+    private final static TypingLabel text = new TypingLabel("", Fonts.FontType.KORURI.get(30));
 
     public static void create(MenuLib.MenuType menuType) {
         if(menuType == MenuLib.MenuType.DEBUG_TEXT) {

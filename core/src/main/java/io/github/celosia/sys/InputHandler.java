@@ -4,64 +4,62 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.Controllers;
+import io.github.celosia.sys.menu.ControllerType;
 import io.github.celosia.sys.menu.InputLib;
 
-import static io.github.celosia.sys.menu.InputLib.isNintendoController;
+import static io.github.celosia.sys.menu.ControllerType.NONE;
+import static io.github.celosia.sys.menu.InputLib.getControllerType;
 
 // Handle detecting whether a keyboard or a controller is being used, and finding the currently in-use controller
 public class InputHandler extends InputAdapter implements ControllerListener {
 	// Currently in-use controller
 	private static Controller controller;
 
-	// Whether the last input came from a controller
-	private static boolean lastUsedController = false;
-
-	// Whether the last input came from a Nintendo controller
-	private static boolean lastUsedNintendoController = false;
+	// The kind of controller the last input came from
+    // NONE means the last input came from a keyboard
+	private static ControllerType lastUsedController = NONE;
 
 	// Get mappings of and set current controller
 	public static void checkController() {
 		controller = Controllers.getCurrent();
-		if (controller != null)
-			InputLib.setupController(controller);
+		if (controller != null) {
+            InputLib.setupController(controller);
+        }
 	}
 
 	// Keyboard input events
 	@Override
 	public boolean keyDown(int keycode) {
-		lastUsedController = false;
+		lastUsedController = NONE;
 		return super.keyDown(keycode);
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
-		lastUsedController = false;
+		lastUsedController = NONE;
 		return super.keyDown(keycode);
 	}
 
 	// Controller input events
 	@Override
 	public void connected(Controller controller) {
-		lastUsedController = true;
-		lastUsedNintendoController = isNintendoController(controller);
+		lastUsedController = getControllerType(controller);
 	}
 
 	@Override
 	public void disconnected(Controller controller) {
-		lastUsedController = false;
+		lastUsedController = NONE;
 	}
 
 	@Override
 	public boolean buttonDown(Controller controller, int buttonCode) {
-		lastUsedController = true;
-		lastUsedNintendoController = isNintendoController(controller);
+		lastUsedController = getControllerType(controller);
 		return false;
 	}
 
 	@Override
 	public boolean buttonUp(Controller controller, int buttonCode) {
-		lastUsedController = true;
-		lastUsedNintendoController = isNintendoController(controller);
+		lastUsedController = getControllerType(controller);
 		return false;
 	}
 
@@ -69,8 +67,7 @@ public class InputHandler extends InputAdapter implements ControllerListener {
 	public boolean axisMoved(Controller controller, int axisCode, float value) {
 		// Ignore small stick movement
 		if (Math.abs(value) > 0.2f) {
-			lastUsedController = true;
-			lastUsedNintendoController = isNintendoController(controller);
+			lastUsedController = getControllerType(controller);
 		}
 		return false;
 	}
@@ -80,10 +77,10 @@ public class InputHandler extends InputAdapter implements ControllerListener {
 	}
 
 	public static boolean isLastUsedController() {
-		return lastUsedController;
+		return lastUsedController != NONE;
 	}
 
-	public static boolean isLastUsedNintendoController() {
-		return lastUsedNintendoController;
+	public static ControllerType getLastUsedController() {
+		return lastUsedController;
 	}
 }

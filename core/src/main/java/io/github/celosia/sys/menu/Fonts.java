@@ -8,6 +8,8 @@ import com.github.tommyettinger.textra.Font;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
+import static io.github.celosia.Main.atlasPrompt;
+
 // todo refactor
 public class Fonts {
 	static FontSize koruri20;
@@ -31,7 +33,7 @@ public class Fonts {
 		// for(char c = 0x30a0; c <= 0x30ff; c++) builder.append(c);
 
 		// Additional symbols
-		builder.append("∞").append("→");
+		builder.append("∞←→↑↓");
 
 		parameter.characters += builder;
 
@@ -83,6 +85,7 @@ public class Fonts {
 
 		FontType(FontSize... fonts) {
             for(FontSize font : fonts) {
+                font.getFont().addAtlas(atlasPrompt);
                 sizes.put(font.getSize(), font.getFont());
             }
 		}
