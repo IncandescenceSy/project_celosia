@@ -64,13 +64,13 @@ public class BattleControllerLib {
 	// Display
 	// Turn display
 	static TypingLabel turn = new TypingLabel("{SPEED=0.1}{FADE}{SLIDE}" + c_turn + lang.get("turn") + " 1",
-			Fonts.FontType.KORURI.getSize60());
+			Fonts.FontType.KORURI.get(60));
 
 	// Bloom displays for both teams
 	static List<TypingLabel> bloomL = new ArrayList<>();
 
 	// Queue (move order) display
-	static TypingLabel queue = new TypingLabel("", Fonts.FontType.KORURI.getSize30());
+	static TypingLabel queue = new TypingLabel("", Fonts.FontType.KORURI.get(30));
 
 	// Stat displays for all units
 	static List<TypingLabel> statsL = new ArrayList<>();
@@ -91,7 +91,7 @@ public class BattleControllerLib {
 
 	// Battle log
 	// todo fix positioning
-	static TextraLabel battleLog = new TextraLabel("", Fonts.FontType.KORURI.getSize20());
+	static TextraLabel battleLog = new TextraLabel("", Fonts.FontType.KORURI.get(20));
 
 	// Actions being made this turn
 	static List<Move> moves = new ArrayList<>();
@@ -170,7 +170,7 @@ public class BattleControllerLib {
 			// Bloom displays for both teams
 			TypingLabel bloom = new TypingLabel(
 					c_stat + lang.get("bloom") + "[WHITE]: " + c_bloom + "100[WHITE]/" + c_bloom + "1,000",
-					Fonts.FontType.KORURI.getSize40());
+					Fonts.FontType.KORURI.get(40));
 			bloomL.add(bloom);
 			bloom.setY(World.HEIGHT - 90);
 			stage2.addActor(bloom);
@@ -186,13 +186,13 @@ public class BattleControllerLib {
 			int y = (i >= 4) ? World.HEIGHT - 300 - 300 * (i - 4) : World.HEIGHT - 300 - 300 * i;
 
 			// Stat displays for all units
-			TypingLabel stats = new TypingLabel("", Fonts.FontType.KORURI.getSize30());
+			TypingLabel stats = new TypingLabel("", Fonts.FontType.KORURI.get(30));
 			statsL.add(stats);
 			stats.setPosition((i >= 4) ? World.WIDTH - 350 : 50, y);
 			stage2.addActor(stats);
 
 			// Move selection displays
-			TypingLabel moves = new TypingLabel("", Fonts.FontType.KORURI.getSize30());
+			TypingLabel moves = new TypingLabel("", Fonts.FontType.KORURI.get(30));
 			movesL.add(moves);
 			moves.setPosition((i >= 4) ? World.WIDTH - 550 : 400, y);
 			stage2.addActor(moves);
@@ -201,7 +201,7 @@ public class BattleControllerLib {
 		// Skill menu display
 		// todo support arbitrary size
 		for (int i = 0; i < 6; i++) {
-			skillsL.add(new TypingLabel("", Fonts.FontType.KORURI.getSize30()));
+			skillsL.add(new TypingLabel("", Fonts.FontType.KORURI.get(30)));
 			stage2.addActor(skillsL.get(i));
 		}
 

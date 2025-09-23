@@ -141,17 +141,26 @@ public class MenuLib {
 	// The different menus in the game
 	// todo fix magic numbers
 	public enum MenuType {
-		NONE(), POPUP(), MAIN(
-				new MenuOpt(MenuOptType.START, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.start"), 1900 + 80,
-						230 + 400),
-				new MenuOpt(MenuOptType.MANUAL, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.manual"), 1900 + 60,
-						230 + 300),
-				new MenuOpt(MenuOptType.OPTIONS, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.options"), 1900 + 40,
-						230 + 200),
-				new MenuOpt(MenuOptType.CREDITS, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.credits"), 1900 + 20,
-						230 + 100),
-				new MenuOpt(MenuOptType.QUIT, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.quit"), 1900,
-						230)), BATTLE(), TARGETING(), LOG();
+        // spotless:off
+		NONE(),
+        POPUP(),
+        MAIN(
+            new MenuOpt(MenuOptType.START, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.start"), 1900 + 80,
+                230 + 400),
+            new MenuOpt(MenuOptType.MANUAL, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.manual"), 1900 + 60,
+                230 + 300),
+            new MenuOpt(MenuOptType.OPTIONS, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.options"), 1900 + 40,
+                230 + 200),
+            new MenuOpt(MenuOptType.CREDITS, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.credits"), 1900 + 20,
+                230 + 100),
+            new MenuOpt(MenuOptType.QUIT, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.quit"), 1900,
+                230)),
+        BATTLE(),
+        TARGETING(),
+        LOG(),
+        DEBUG(),
+        DEBUG_TEXT();
+        // spotless:on
 
 		private MenuOpt[] opts = new MenuOpt[]{new MenuOpt(MenuOptType.NONE, "", 0, 0)};
 

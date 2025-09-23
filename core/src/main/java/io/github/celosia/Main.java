@@ -2,6 +2,7 @@ package io.github.celosia;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Color;
@@ -28,6 +29,7 @@ import io.github.celosia.sys.menu.Fonts;
 import io.github.celosia.sys.menu.Fonts.FontType;
 import io.github.celosia.sys.menu.InputLib;
 import io.github.celosia.sys.menu.LabelStyles;
+import io.github.celosia.sys.menu.MenuDebug;
 import io.github.celosia.sys.menu.MenuLib;
 import io.github.celosia.sys.menu.MenuLib.MenuOptType;
 import io.github.celosia.sys.menu.MenuLib.MenuType;
@@ -162,11 +164,11 @@ public class Main extends ApplicationAdapter {
 		Settings.showFpsCounter = true;
 		Settings.battleSpeed = 0.1f;
 
-		fps = new TextraLabel("", FontType.KORURI.getSize20());
+		fps = new TextraLabel("", FontType.KORURI.get(20));
 		fps.setPosition(10, World.HEIGHT - 15);
 		stage3.addActor(fps);
 
-		debug = new TextraLabel("", FontType.KORURI.getSize20());
+		debug = new TextraLabel("", FontType.KORURI.get(20));
 		debug.setPosition(10, World.HEIGHT - 80);
 		stage3.addActor(debug);
 
@@ -186,10 +188,13 @@ public class Main extends ApplicationAdapter {
 
 	private void input() {
 		// debug
-		if (Debug.showDebugInfo)
+        debug.setVisible(Debug.showDebugInfo);
+
+		if (Debug.showDebugInfo) {
 			debug.setText("actors on stage1: " + stage1.getActors().size + "\nactors on stage2: "
 					+ stage2.getActors().size + "\nactors on stage3: " + stage3.getActors().size + "\nmenuList = "
 					+ menuList.toString().replace("[", "").replace("]", ""));
+		}
 
 		// Display FPS counter
 		if (Settings.showFpsCounter) {
@@ -201,6 +206,11 @@ public class Main extends ApplicationAdapter {
 
 		switch (menuList.getLast()) {
 			case MAIN :
+                // Debug menu
+                if(Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+                    menuList.add(MenuType.DEBUG);
+                }
+
 				// Handle menu navigation
 				index = MenuLib.checkMovement1D(index, MenuType.MAIN.getOptCount());
 
@@ -225,9 +235,7 @@ public class Main extends ApplicationAdapter {
 						case QUIT :
 							// Quit game
 							Gdx.app.exit();
-						case MANUAL :
-						case OPTIONS :
-						case CREDITS :
+						case MANUAL, OPTIONS, CREDITS :
 							createPopup("WIP",
 									"This isn't finished yet!\n{WAVE=0.25;0.5;0.5}{GRADIENT=pink;violet}{SPIN}Girls are now praying, please wait warmly...");
 							break;
@@ -236,8 +244,9 @@ public class Main extends ApplicationAdapter {
 					if (index == MenuType.MAIN.getOptCount() - 1) {
 						// Quit game
 						Gdx.app.exit();
-					} else
-						index = MenuType.MAIN.getOptCount() - 1;
+					} else {
+                        index = MenuType.MAIN.getOptCount() - 1;
+                    }
 				}
 				break;
 			case POPUP :
@@ -248,12 +257,21 @@ public class Main extends ApplicationAdapter {
 					menuList.removeLast();
 				}
 				break;
-			case BATTLE :
-			case TARGETING :
-			case LOG :
+			case BATTLE, TARGETING, LOG :
 				BattleControllerLib.updateStatDisplay();
 				BattleController.input();
 				break;
+            case DEBUG :
+                if(InputLib.checkInput(Keybind.BACK)) {
+                    menuList.removeLast();
+                } else if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
+                    Debug.showDebugInfo ^= true; // Invert boolean
+                } else if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
+                    MenuDebug.create(MenuType.DEBUG_TEXT);
+                    menuList.add(MenuType.DEBUG_TEXT);
+                }
+            case DEBUG_TEXT :
+                MenuDebug.input(MenuType.DEBUG_TEXT);
 		}
 	}
 
@@ -303,17 +321,17 @@ public class Main extends ApplicationAdapter {
 	private void createMenuMain() {
 		// Create options
 		optLabels = new ArrayList<>();
-		MenuLib.createOpts(optLabels, FontType.KORURI.getSize80(), stage2);
+		MenuLib.createOpts(optLabels, FontType.KORURI.get(80), stage2);
 	}
 
 	public static void createPopup(String name, String desc) {
 		menuList.add(MenuType.POPUP);
 
-		popup = new TypingLabel(TextLib.tags + name, FontType.KORURI.getSize80());
+		popup = new TypingLabel(TextLib.tags + name, FontType.KORURI.get(80));
 		popup.setPosition(World.WIDTH_2, World.HEIGHT_2 + 120, Align.center);
 		stage3.addActor(popup);
 
-		popup2 = new TypingLabel(TextLib.tags + desc, FontType.KORURI.getSize30());
+		popup2 = new TypingLabel(TextLib.tags + desc, FontType.KORURI.get(30));
 		popup2.setPosition(World.WIDTH_2 - 440, World.HEIGHT_2 + 20, Align.left);
 		stage3.addActor(popup2);
 

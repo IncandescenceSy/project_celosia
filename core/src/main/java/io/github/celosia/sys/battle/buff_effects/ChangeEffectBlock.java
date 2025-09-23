@@ -30,7 +30,8 @@ public class ChangeEffectBlock implements BuffEffect {
 		int effectBlockNew = effectBlockOld + changeFull;
 		self.setEffectBlock(effectBlockNew);
 		if (self.getShield() == 0 && self.getDefend() == 0) {
-			appendToLog(lang.format("log.change_effect_block", formatName(self.getUnitType().name(), self.getPos(), false), effectBlockNew));
+			appendToLog(lang.format("log.change_effect_block",
+					formatName(self.getUnitType().name(), self.getPos(), false), effectBlockNew));
 		}
 	}
 }
