@@ -32,4 +32,8 @@ public class Debug {
 	// tools work)
 	// I haven't tried any other controller that has binary triggers
 	public static boolean treatTriggersAsAxes = true;
+
+	// Generate bitmap fonts on startup instead of reading from file
+	// Expects to find fnt/koruri.ttf
+	public static boolean generateFonts = true;
 }

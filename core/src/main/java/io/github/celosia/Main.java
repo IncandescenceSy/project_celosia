@@ -74,8 +74,8 @@ public class Main extends ApplicationAdapter {
 	public static Stage stage3;
 
 	// Atlases
-	// Key/Button prompt images courtesy
-	// https://juliocacko.itch.io/free-input-prompts
+	// Key/Button prompt images
+	// From https://juliocacko.itch.io/free-input-prompts
 	public static TextureAtlas atlasPrompt;
 
 	// Menu option labels
@@ -144,7 +144,13 @@ public class Main extends ApplicationAdapter {
 
 		drawer = new ShapeDrawer(polygonSpriteBatch, region);
 
-		Fonts.createFonts();
+		if (Debug.generateFonts) {
+			Fonts.createFonts();
+		} else {
+			// todo fix (doesnt work well)
+			Fonts.loadFonts();
+		}
+
 		LabelStyles.createStyles();
 
 		// Background
@@ -184,7 +190,7 @@ public class Main extends ApplicationAdapter {
 		stage3.addActor(debug);
 
 		// todo outline
-		inputGuide = new TextraLabel("", FontType.KORURI.get(20));
+		inputGuide = new TextraLabel("", FontType.KORURI_BORDER.get(20));
 		inputGuide.setPosition(0, 0);
 		inputGuide.setAlignment(Align.bottomRight);
 		stage3.addActor(inputGuide);

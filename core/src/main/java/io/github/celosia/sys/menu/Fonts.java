@@ -11,16 +11,23 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import static io.github.celosia.Main.atlasPrompt;
 
 // todo refactor
+// todo save fonts to file after generation without it being hideous looking maybe??
 public class Fonts {
+	// Battle log
 	static FontSize koruri20;
+
+	// Most normal text
 	static FontSize koruri30;
-	static FontSize koruri40;
-	static FontSize koruri60;
+
+	// Main menu, popup title, turn label
 	static FontSize koruri80;
 
+	// Input guide
+	// todo is the outline actually needed? just dont have light backgrounds,
+	static FontSize koruriBorder20;
+
 	public static void createFonts() {
-		// todo pregen fonts for performance (try using libGDX itself to pregen them)
-		FreeTypeFontGenerator genKoruri = new FreeTypeFontGenerator(Gdx.files.internal("fnt/koruri.ttf"));
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fnt/koruri.ttf"));
 		FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 
 		StringBuilder builder = new StringBuilder();
@@ -42,22 +49,82 @@ public class Fonts {
 
 		parameter.color = Color.WHITE;
 
+		// parameter.gamma = 2f;
+		// parameter.renderCount = 3;
+
+		// parameter.packer = new PixmapPacker(1024, 1024, Pixmap.Format.RGBA8888, 2,
+		// false, new PixmapPacker.SkylineStrategy());
+		// BitmapFontWriter.FontInfo info = new BitmapFontWriter.FontInfo();
+		// info.padding = new BitmapFontWriter.Padding(1, 1, 1, 1);
+
+		// long t1 = System.currentTimeMillis();
 		parameter.size = 20;
-		koruri20 = new FontSize(new Font(genKoruri.generateFont(parameter)), 20);
-
+		koruri20 = new FontSize(new Font(generator.generateFont(parameter)), 20); // ~68-80ms
+		// long t2 = System.currentTimeMillis();
+		// Gdx.app.log("koruri20 gen in ", (t2 - t1) + "ms");
+		parameter.borderWidth = 2;
+		koruriBorder20 = new FontSize(new Font(generator.generateFont(parameter)), 20); // ~20-25ms
+		// t1 = System.currentTimeMillis();
+		// Gdx.app.log("koruriBorder20 gen in ", (t1 - t2) + "ms");
+		parameter.borderWidth = 0;
 		parameter.size = 30;
-		koruri30 = new FontSize(new Font(genKoruri.generateFont(parameter)), 30);
-
-		parameter.size = 40;
-		koruri40 = new FontSize(new Font(genKoruri.generateFont(parameter)), 40);
-
-		parameter.size = 60;
-		koruri60 = new FontSize(new Font(genKoruri.generateFont(parameter)), 60);
-
+		koruri30 = new FontSize(new Font(generator.generateFont(parameter)), 30); // ~10-12ms
+		// t2 = System.currentTimeMillis();
+		// Gdx.app.log("koruri30 gen in ", (t2 - t1) + "ms");
 		parameter.size = 80;
-		koruri80 = new FontSize(new Font(genKoruri.generateFont(parameter)), 80);
+		koruri80 = new FontSize(new Font(generator.generateFont(parameter)), 80); // ~18-23ms
+		// t1 = System.currentTimeMillis();
+		// Gdx.app.log("koruri80 gen in ", (t1 - t2) + "ms");
 
-		genKoruri.dispose();
+		// Save to file
+
+		/*
+		 * parameter.size = 20; FreeTypeFontGenerator.FreeTypeBitmapFontData data =
+		 * generator.generateData(parameter); BitmapFontWriter.writeFont(data, new
+		 * String[] {"fnt/koruri_20.png"}, Gdx.files.absolute("fnt/koruri_20.fnt"),
+		 * info, 512, 512); BitmapFontWriter.writePixmaps(parameter.packer.getPages(),
+		 * Gdx.files.absolute("fnt"), "koruri_20");
+		 */
+
+		/*
+		 * parameter.size = 20; parameter.borderWidth = 2;
+		 * FreeTypeFontGenerator.FreeTypeBitmapFontData data =
+		 * generator.generateData(parameter); BitmapFontWriter.writeFont(data, new
+		 * String[] {"fnt/koruri_border_20.png"},
+		 * Gdx.files.absolute("fnt/koruri_border_20.fnt"), info, 512, 512);
+		 * BitmapFontWriter.writePixmaps(parameter.packer.getPages(),
+		 * Gdx.files.absolute("fnt"), "koruri_border_20");
+		 */
+
+		/*
+		 * parameter.size = 30; FreeTypeFontGenerator.FreeTypeBitmapFontData data =
+		 * generator.generateData(parameter); BitmapFontWriter.writeFont(data, new
+		 * String[] {"fnt/koruri_30.png"}, Gdx.files.absolute("fnt/koruri_30.fnt"),
+		 * info, 1024, 1024); BitmapFontWriter.writePixmaps(parameter.packer.getPages(),
+		 * Gdx.files.absolute("fnt"), "koruri_30");
+		 */
+
+		/*
+		 * parameter.size = 80; FreeTypeFontGenerator.FreeTypeBitmapFontData data =
+		 * generator.generateData(parameter); BitmapFontWriter.writeFont(data, new
+		 * String[] {"fnt/koruri_80.png"}, Gdx.files.absolute("fnt/koruri_80.fnt"),
+		 * info, 2048, 2048); BitmapFontWriter.writePixmaps(parameter.packer.getPages(),
+		 * Gdx.files.absolute("fnt"), "koruri_80");
+		 */
+
+		// data.dispose();
+		generator.dispose();
+		// parameter.packer.dispose();
+
+		// loadFonts();
+	}
+
+	public static void loadFonts() {
+		koruriBorder20 = new FontSize(new Font("fnt/koruri_border_20.fnt"), 20);
+
+		koruri20 = new FontSize(new Font("fnt/koruri_20.fnt"), 20);
+		koruri30 = new FontSize(new Font("fnt/koruri_30.fnt"), 30);
+		koruri80 = new FontSize(new Font("fnt/koruri_80.fnt"), 80);
 	}
 
 	public static class FontSize {
@@ -79,7 +146,7 @@ public class Fonts {
 	}
 
 	public enum FontType {
-		KORURI(koruri20, koruri30, koruri40, koruri60, koruri80);
+		KORURI(koruri20, koruri30, koruri80), KORURI_BORDER(koruriBorder20);
 
 		private final Int2ObjectMap<Font> sizes = new Int2ObjectOpenHashMap<>();
 

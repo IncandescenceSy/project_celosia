@@ -156,10 +156,11 @@ public class InputLib {
 						InputPrompts.BACK_LOG));
 				break;
 			case DEBUG :
-				inputGuide.setText("1 Toggle Debug Info  2 Text Debug Menu  " + getInputString(InputPrompts.BACK));
+				inputGuide.setText(
+						"[+KB_ONE] Toggle Debug Info [+KB_TWO] Text Debug Menu  " + getInputString(InputPrompts.BACK));
 				break;
 			case DEBUG_TEXT :
-				inputGuide.setText("←→↑↓ Alignment  " + getInputString(InputPrompts.BACK));
+				inputGuide.setText(getInputString(InputPrompts.MOVE) + getInputString(InputPrompts.BACK));
 				break;
 			default :
 				inputGuide.setText("");

@@ -64,7 +64,7 @@ public class BattleControllerLib {
 	// Display
 	// Turn display
 	static TypingLabel turn = new TypingLabel("{SPEED=0.1}{FADE}{SLIDE}" + c_turn + lang.get("turn") + " 1",
-			Fonts.FontType.KORURI.get(60));
+			Fonts.FontType.KORURI.get(80));
 
 	// Bloom displays for both teams
 	static List<TypingLabel> bloomL = new ArrayList<>();
@@ -170,7 +170,7 @@ public class BattleControllerLib {
 			// Bloom displays for both teams
 			TypingLabel bloom = new TypingLabel(
 					c_stat + lang.get("bloom") + "[WHITE]: " + c_bloom + "100[WHITE]/" + c_bloom + "1,000",
-					Fonts.FontType.KORURI.get(40));
+					Fonts.FontType.KORURI.get(30));
 			bloomL.add(bloom);
 			bloom.setY(World.HEIGHT - 90);
 			stage2.addActor(bloom);

@@ -10,9 +10,10 @@ public class InputPrompts {
 			Keybind.CONFIRM.getButton().getGlyphs());
 	static InputPrompt BACK = new InputPrompt(lang.get("input.back"), toGlyph(Keybind.BACK.getKey()),
 			Keybind.BACK.getButton().getGlyphs());
-	// todo should this say BY (as is) or B/Y or just B?
-	static InputPrompt BACK_LOG = new InputPrompt(lang.get("input.back"), toGlyph(Keybind.BACK.getKey()),
-			Keybind.BACK.getButton().getGlyphs(), Keybind.MENU.getButton().getGlyphs());
+	// todo should this say BY (as is) or B/Y or just B
+	static InputPrompt BACK_LOG = new InputPrompt(lang.get("input.back"),
+			toGlyph(Keybind.BACK.getKey()) + toGlyph(Keybind.MENU.getKey()), Keybind.BACK.getButton().getGlyphs(),
+			Keybind.MENU.getButton().getGlyphs());
 	static InputPrompt MOVE = new InputPrompt(lang.get("input.move"),
 			toGlyph(Keybind.UP.getKey()) + toGlyph(Keybind.DOWN.getKey()) + toGlyph(Keybind.LEFT.getKey())
 					+ toGlyph(Keybind.RIGHT.getKey()),
@@ -21,6 +22,10 @@ public class InputPrompts {
 	static InputPrompt MOVE_UD = new InputPrompt(lang.get("input.move"),
 			toGlyph(Keybind.UP.getKey()) + toGlyph(Keybind.DOWN.getKey()), Keybind.UP.getButton().getGlyphs(),
 			Keybind.DOWN.getButton().getGlyphs());
+	static InputPrompt MOVE_LR = new InputPrompt(lang.get("input.move"),
+			toGlyph(Keybind.LEFT.getKey()) + toGlyph(Keybind.RIGHT.getKey()), Keybind.LEFT.getButton().getGlyphs(),
+			Keybind.RIGHT.getButton().getGlyphs());
+	// todo should this say AB (as is) or A/B or just A or just B
 	static InputPrompt CLOSE = new InputPrompt(lang.get("input.close"),
 			toGlyph(Keybind.CONFIRM.getKey()) + toGlyph(Keybind.BACK.getKey()), Keybind.CONFIRM.getButton().getGlyphs(),
 			Keybind.BACK.getButton().getGlyphs());

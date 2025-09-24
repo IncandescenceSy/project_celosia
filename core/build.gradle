@@ -17,6 +17,7 @@ api "com.badlogicgames.gdx:gdx:$gdxVersion"
 api "it.unimi.dsi:fastutil:8.5.16"
 implementation "com.github.tommyettinger:textratypist:2.0.3"
 implementation "space.earlygrey:shapedrawer:$shapedrawerVersion"
+implementation "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
 
 if (enableGraalNative == 'true') {
 	implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
