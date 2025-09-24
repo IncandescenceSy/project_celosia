@@ -1808,7 +1808,7 @@ public class Unit {
 					defend = 0;
 					// todo this should come after the dmg message
 					if (shield == 0 && effectBlock <= 0) {
-						msg.add(lang.format(name, 0));
+						msg.add(lang.format("log.change_effect_block", name, 0));
 					}
 				}
 			}
@@ -1832,7 +1832,7 @@ public class Unit {
 					shield = 0;
 					shieldTurns = 0;
 					if (effectBlock <= 0) {
-						msg.add(lang.format(name, 0));
+						msg.add(lang.format("log.change_effect_block", name, 0));
 					}
 				}
 			}

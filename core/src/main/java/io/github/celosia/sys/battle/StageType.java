@@ -5,7 +5,7 @@ import static io.github.celosia.sys.settings.Lang.lang;
 public enum StageType {
 	// spotless:off
 	ATK(lang.get("stage.atk"), "[LIGHT RED][+energy-sword]"),
-    DEF(lang.get("stage.def"), "[LIGHT azure][+rosa-shield]"),
+    DEF(lang.get("stage.def"), "[#006eff][+rosa-shield]"),
     FTH(lang.get("stat.fth"), "[LIGHT PURPLE][+star-altar]"),
     AGI(lang.get("stat.agi"), "[LIGHT GREEN][+walking-boot]");
     // spotless:on
