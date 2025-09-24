@@ -18,30 +18,32 @@ import static io.github.celosia.sys.battle.PosLib.getSide;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class TextLib {
-	public static String tags = "{FADE}{SLIDE}";
+	public static final String TAGS = "{FADE}{SLIDE}";
 
 	/// Colors
-	public static String c_ally = "[#2d74f5]";
-	public static String c_ally_l = "[#528cf5]";
-	public static String c_opp = "[#ff4545]";
-	public static String c_opp_l = "[#ff6060]";
-	public static String c_turn = "[#a034ff]";
+	public static final String C_ALLY = "[#2d74f5]";
+	public static final String C_ALLY_L = "[#528cf5]";
+	public static final String C_OPP = "[#ff4545]";
+	public static final String C_OPP_L = "[#ff6060]";
+	public static final String C_TURN = "[#a034ff]";
 
-	public static String c_pos = "[#00ff00]"; // Positive numbers
-	public static String c_neg = "[#ff0000]"; // Negative numbers
-	public static String c_num = "[#ffff00]"; // General numbers (turns, stacks)
+	public static final String C_POS = "[#00ff00]"; // Positive numbers
+	public static final String C_NEG = "[#ff0000]"; // Negative numbers
+	public static final String C_NUM = "[#ffff00]"; // General numbers (turns, stacks)
 
-	public static String c_hp = "[#1ae132]";
-	public static String c_sp = "[#bb00ff]";
-	public static String c_shield = "[#00ffff]";
-	public static String c_bloom = "[#ff00ff]";
+	public static final String C_HP = "[#1ae132]";
+	public static final String C_SP = "[#bb00ff]";
+	public static final String C_SHIELD = "[#00ffff]";
+	public static final String C_BLOOM = "[#ff00ff]";
 
-	public static String c_buff = "[#c6a1ff]";
-	public static String c_skill = "[#95c9ff]";
-	public static String c_passive = "[#c6a1ff]";
-	public static String c_stat = "[#deff81]";
-	public static String c_exp = "[#a034ff]"; // Calculated exponent parenthesis
-	public static String c_cd = "[#1898ff]"; // Cooldown
+	public static final String C_BUFF = "[#c6a1ff]";
+	public static final String C_SKILL = "[#95c9ff]";
+	public static final String C_PASSIVE = "[#c6a1ff]";
+	public static final String C_STAT = "[#deff81]";
+	public static final String C_EXP = "[#a034ff]"; // Calculated exponent parenthesis
+	public static final String C_CD = "[#1898ff]"; // Cooldown
+
+    public static final String SHIELD_ICON = C_SHIELD + "[+vibrating-shield]";
 
 	/// Formatters
 	// Decimal formatter for scientific notation
@@ -75,7 +77,7 @@ public class TextLib {
 	// todo other language support
 	public static String formatName(String name, int pos, boolean possessive) {
 		String suffix = (possessive) ? name.toLowerCase().endsWith("s") ? "'" : "'s" : "";
-		String color = (getSide(pos) == Side.ALLY) ? c_ally : c_opp;
+		String color = (getSide(pos) == Side.ALLY) ? C_ALLY : C_OPP;
 		return color + String.format("%s%s", name, suffix) + "[WHITE]";
 	}
 
@@ -86,7 +88,7 @@ public class TextLib {
 	// Returns the color a number should be displayed based on if it's positive or
 	// negative
 	public static String getColor(long num) {
-		return (num > 0) ? c_pos : (num < 0) ? c_neg : c_num;
+		return (num > 0) ? C_POS : (num < 0) ? C_NEG : C_NUM;
 	}
 
 	public static String getSign(double num) {
@@ -100,14 +102,14 @@ public class TextLib {
 		String c2; // Decreased
 
 		if (multType.isPositive()) {
-			c1 = c_pos;
-			c2 = c_neg;
+			c1 = C_POS;
+			c2 = C_NEG;
 		} else {
-			c1 = c_neg;
-			c2 = c_pos;
+			c1 = C_NEG;
+			c2 = C_POS;
 		}
 
-		return (mult > 1000) ? c1 : (mult < 1000) ? c2 : c_num;
+		return (mult > 1000) ? c1 : (mult < 1000) ? c2 : C_NUM;
 	}
 
 	// Returns the color a mult exponent should be based on its relation to 1,
@@ -117,11 +119,11 @@ public class TextLib {
 		String c2;
 
 		if (multType.isPositive()) {
-			c1 = c_pos;
-			c2 = c_neg;
+			c1 = C_POS;
+			c2 = C_NEG;
 		} else {
-			c1 = c_neg;
-			c2 = c_pos;
+			c1 = C_NEG;
+			c2 = C_POS;
 		}
 
 		if (mult > 1000) {
@@ -130,16 +132,16 @@ public class TextLib {
 			else if (exp < 100)
 				return c2;
 			else
-				return c_num;
+				return C_NUM;
 		} else if (mult < 1000) {
 			if (exp > 100)
 				return c2;
 			else if (exp < 100)
 				return c1;
 			else
-				return c_num;
+				return C_NUM;
 		} else
-			return c_num;
+			return C_NUM;
 	}
 
 	public static String getMultChangeColor(int multChange, Mult multType) {
@@ -147,14 +149,14 @@ public class TextLib {
 		String c2;
 
 		if (multType.isPositive()) {
-			c1 = c_pos;
-			c2 = c_neg;
+			c1 = C_POS;
+			c2 = C_NEG;
 		} else {
-			c1 = c_neg;
-			c2 = c_pos;
+			c1 = C_NEG;
+			c2 = C_POS;
 		}
 
-		return (multChange > 0) ? c1 : (multChange < 0) ? c2 : c_num;
+		return (multChange > 0) ? c1 : (multChange < 0) ? c2 : C_NUM;
 	}
 
 	public static String getExpChangeColor(int expChange, int mult, Mult multType) {
@@ -162,11 +164,11 @@ public class TextLib {
 		String c2;
 
 		if (multType.isPositive()) {
-			c1 = c_pos;
-			c2 = c_neg;
+			c1 = C_POS;
+			c2 = C_NEG;
 		} else {
-			c1 = c_neg;
-			c2 = c_pos;
+			c1 = C_NEG;
+			c2 = C_POS;
 		}
 
 		if (mult > 1000) {
@@ -175,7 +177,7 @@ public class TextLib {
 			} else if (expChange < 0) {
 				return c2;
 			} else {
-				return c_num;
+				return C_NUM;
 			}
 		} else if (mult < 1000) {
 			if (expChange > 0) {
@@ -183,10 +185,10 @@ public class TextLib {
 			} else if (expChange < 0) {
 				return c1;
 			} else {
-				return c_num;
+				return C_NUM;
 			}
 		} else {
-			return c_num;
+			return C_NUM;
 		}
 	}
 
@@ -195,14 +197,14 @@ public class TextLib {
 		String c2;
 
 		if (multType.isPositive()) {
-			c1 = c_pos;
-			c2 = c_neg;
+			c1 = C_POS;
+			c2 = C_NEG;
 		} else {
-			c1 = c_neg;
-			c2 = c_pos;
+			c1 = C_NEG;
+			c2 = C_POS;
 		}
 
-		return (multWithExp > 1) ? c1 : (multWithExp < 1) ? c2 : c_num;
+		return (multWithExp > 1) ? c1 : (multWithExp < 1) ? c2 : C_NUM;
 	}
 
 	public static String getMultWithExpChangeColor(double multWithExpChange, Mult multType) {
@@ -210,14 +212,14 @@ public class TextLib {
 		String c2;
 
 		if (multType.isPositive()) {
-			c1 = c_pos;
-			c2 = c_neg;
+			c1 = C_POS;
+			c2 = C_NEG;
 		} else {
-			c1 = c_neg;
-			c2 = c_pos;
+			c1 = C_NEG;
+			c2 = C_POS;
 		}
 
-		return (multWithExpChange > 0) ? c1 : (multWithExpChange < 0) ? c2 : c_num;
+		return (multWithExpChange > 0) ? c1 : (multWithExpChange < 0) ? c2 : C_NUM;
 	}
 
 	public static String getModColor(int mod, Mod modType) {
@@ -225,14 +227,14 @@ public class TextLib {
 		String c2;
 
 		if (modType.isPositive()) {
-			c1 = c_pos;
-			c2 = c_neg;
+			c1 = C_POS;
+			c2 = C_NEG;
 		} else {
-			c1 = c_neg;
-			c2 = c_pos;
+			c1 = C_NEG;
+			c2 = C_POS;
 		}
 
-		return (mod > 0) ? c1 : (mod < 0) ? c2 : c_num;
+		return (mod > 0) ? c1 : (mod < 0) ? c2 : C_NUM;
 	}
 
 	public static String formatMod(int mod, Mod modType) {
@@ -240,7 +242,7 @@ public class TextLib {
 	}
 
 	public static String getStatColor(long stat, long statBase) {
-		return (stat > statBase) ? c_pos : (stat < statBase) ? c_neg : c_num;
+		return (stat > statBase) ? C_POS : (stat < statBase) ? C_NEG : C_NUM;
 	}
 
 	public static String getStageStatString(Unit unit, StageType stageType, int stageNew) {
@@ -254,9 +256,9 @@ public class TextLib {
 			long statOld = unit.getDisplayStatWithStage(stat);
 			long statNew = unit.getDisplayStatWithStage(stat, stageNew);
 			long change = statNew - statOld;
-			builder.append(lang.format("log.stage_stat", c_stat + stat.getName(),
+			builder.append(lang.format("log.stage_stat", C_STAT + stat.getName(),
 					getStatColor(statOld, statDefault) + formatNum(statOld),
-					getStatColor(statNew, statDefault) + formatNum(statNew), c_num + formatNum(statDefault),
+					getStatColor(statNew, statDefault) + formatNum(statNew), C_NUM + formatNum(statDefault),
 					getColor(change) + ((change >= 0) ? "+" : "") + formatNum(statNew - statOld)));
 
 			if (i == statCount - 1) {
@@ -274,7 +276,7 @@ public class TextLib {
 		Unit self = move.self();
 
 		String msg = lang.format("log.tries_to_use.1", formatName(self.getUnitType().name(), self.getPos(), false),
-				c_skill + skill.getName());
+				C_SKILL + skill.getName());
 
 		if (!skill.isRangeSelf()) {
 			msg += lang.format("log.tries_to_use.2",

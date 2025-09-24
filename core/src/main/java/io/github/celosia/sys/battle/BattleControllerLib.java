@@ -37,18 +37,19 @@ import static io.github.celosia.sys.battle.BattleController.wait;
 import static io.github.celosia.sys.battle.PosLib.getSide;
 import static io.github.celosia.sys.battle.PosLib.getStartingIndex;
 import static io.github.celosia.sys.menu.MenuLib.setTextIfChanged;
-import static io.github.celosia.sys.menu.TextLib.c_ally;
-import static io.github.celosia.sys.menu.TextLib.c_ally_l;
-import static io.github.celosia.sys.menu.TextLib.c_bloom;
-import static io.github.celosia.sys.menu.TextLib.c_buff;
-import static io.github.celosia.sys.menu.TextLib.c_cd;
-import static io.github.celosia.sys.menu.TextLib.c_opp;
-import static io.github.celosia.sys.menu.TextLib.c_opp_l;
-import static io.github.celosia.sys.menu.TextLib.c_passive;
-import static io.github.celosia.sys.menu.TextLib.c_skill;
-import static io.github.celosia.sys.menu.TextLib.c_sp;
-import static io.github.celosia.sys.menu.TextLib.c_stat;
-import static io.github.celosia.sys.menu.TextLib.c_turn;
+import static io.github.celosia.sys.menu.TextLib.C_ALLY;
+import static io.github.celosia.sys.menu.TextLib.C_ALLY_L;
+import static io.github.celosia.sys.menu.TextLib.C_BLOOM;
+import static io.github.celosia.sys.menu.TextLib.C_BUFF;
+import static io.github.celosia.sys.menu.TextLib.C_CD;
+import static io.github.celosia.sys.menu.TextLib.C_OPP;
+import static io.github.celosia.sys.menu.TextLib.C_OPP_L;
+import static io.github.celosia.sys.menu.TextLib.C_PASSIVE;
+import static io.github.celosia.sys.menu.TextLib.C_SKILL;
+import static io.github.celosia.sys.menu.TextLib.C_SP;
+import static io.github.celosia.sys.menu.TextLib.C_STAT;
+import static io.github.celosia.sys.menu.TextLib.C_TURN;
+import static io.github.celosia.sys.menu.TextLib.SHIELD_ICON;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.menu.TextLib.getColor;
@@ -63,7 +64,7 @@ public class BattleControllerLib {
 
 	// Display
 	// Turn display
-	static TypingLabel turn = new TypingLabel("{SPEED=0.1}{FADE}{SLIDE}" + c_turn + lang.get("turn") + " 1",
+	static TypingLabel turn = new TypingLabel("{SPEED=0.1}{FADE}{SLIDE}" + C_TURN + lang.get("turn") + " 1",
 			Fonts.FontType.KORURI.get(80));
 
 	// Bloom displays for both teams
@@ -172,7 +173,7 @@ public class BattleControllerLib {
 		for (int i = 0; i < 2; i++) {
 			// Bloom displays for both teams
 			TypingLabel bloom = new TypingLabel(
-					c_stat + lang.get("bloom") + "[WHITE]: " + c_bloom + "100[WHITE]/" + c_bloom + "1,000",
+					C_STAT + lang.get("bloom") + "[WHITE]: " + C_BLOOM + "100[WHITE]/" + C_BLOOM + "1,000",
 					Fonts.FontType.KORURI.get(30));
 			bloomL.add(bloom);
 			bloom.setY(World.HEIGHT - 90);
@@ -224,7 +225,7 @@ public class BattleControllerLib {
 		}
 
 		// Log
-		appendToLog(c_turn + lang.get("turn") + " " + 1 + "[WHITE]");
+		appendToLog(C_TURN + lang.get("turn") + " " + 1 + "[WHITE]");
 		appendToLog(lang.get("log.gain_sp_bloom"));
 	}
 
@@ -261,7 +262,7 @@ public class BattleControllerLib {
 						battle.getPlayerTeam().getUnits()[selectingMove].getSkillInstances()[i].getSkill()
 								// temp
 								// todo real skill description display
-								.getName() + "(" + c_cd
+								.getName() + "(" + C_CD
 								+ battle.getPlayerTeam().getUnits()[selectingMove].getSkillInstances()[i].getCooldown()
 								+ "[WHITE])");
 				skillsL.get(i).skipToTheEnd();
@@ -342,19 +343,19 @@ public class BattleControllerLib {
 						if (skill.isBloom() && newSp != team.getBloom()) {
 							appendToLog(lang.format("log.skill_use",
 									formatName(self.getUnitType().name(), self.getPos(), false),
-									c_skill + skill.getName(),
+									C_SKILL + skill.getName(),
 									formatName(target.getUnitType().name(), move.targetPos(), false),
-									booleanToInt(skill.isRangeSelf()), 1, c_bloom + formatNum(team.getBloom()),
-									c_bloom + formatNum(newSp),
+									booleanToInt(skill.isRangeSelf()), 1, C_BLOOM + formatNum(team.getBloom()),
+									C_BLOOM + formatNum(newSp),
 									getColor(change) + getSign(change) + formatNum(change)));
 							team.setBloom(newSp);
 						} else if (!skill.isBloom() && newSp != self.getSp()) {
 							appendToLog(lang.format("log.skill_use",
 									formatName(self.getUnitType().name(), self.getPos(), false),
-									c_skill + skill.getName(),
+									C_SKILL + skill.getName(),
 									formatName(target.getUnitType().name(), move.targetPos(), false),
-									booleanToInt(skill.isRangeSelf()), 0, c_sp + formatNum(self.getSp()),
-									c_sp + formatNum(newSp), getColor(change) + getSign(change) + change));
+									booleanToInt(skill.isRangeSelf()), 0, C_SP + formatNum(self.getSp()),
+									C_SP + formatNum(newSp), getColor(change) + getSign(change) + change));
 							self.setSp(newSp);
 						}
 
@@ -513,7 +514,7 @@ public class BattleControllerLib {
 		battle.setTurn(battle.getTurn() + 1);
 
 		// Update turn display
-		turn.setText(c_turn + lang.get("turn") + " " + (battle.getTurn() + 1));
+		turn.setText(C_TURN + lang.get("turn") + " " + (battle.getTurn() + 1));
 
 		// Reset stat/move displays to normal
 		for (int i = 0; i < 8; i++) {
@@ -531,7 +532,7 @@ public class BattleControllerLib {
 			for (Passive passive : unit.getPassives()) {
 				StringBuilder turnEnd1 = new StringBuilder();
 				turnEnd1.append(lang.format("log.turn_end_effect", formatName(unit.getUnitType().name(), unit.getPos()),
-						c_passive + passive.name())).append(" ");
+						C_PASSIVE + passive.name())).append(" ");
 
 				for (BuffEffect buffEffect : passive.buffEffects()) {
 					StringBuilder turnEnd2 = new StringBuilder();
@@ -549,7 +550,7 @@ public class BattleControllerLib {
 			for (BuffInstance buffInstance : unit.getBuffInstances()) {
 				StringBuilder turnEnd1 = new StringBuilder();
 				turnEnd1.append(lang.format("log.turn_end_effect", formatName(unit.getUnitType().name(), unit.getPos()),
-						c_buff + buffInstance.getBuff().name())).append(" ");
+						buffInstance.getBuff().icon() + C_BUFF + buffInstance.getBuff().name())).append(" ");
 
 				for (BuffEffect buffEffect : buffInstance.getBuff().buffEffects()) {
 					StringBuilder turnEnd2 = new StringBuilder();
@@ -568,7 +569,7 @@ public class BattleControllerLib {
 		}
 
 		// Log
-		appendToLog(c_turn + lang.get("turn") + " " + (battle.getTurn() + 1) + "[WHITE]"); // todo is trailing white
+		appendToLog(C_TURN + lang.get("turn") + " " + (battle.getTurn() + 1) + "[WHITE]"); // todo is trailing white
 		// needed
 		appendToLog(lang.get("log.gain_sp_bloom"));
 
@@ -618,9 +619,9 @@ public class BattleControllerLib {
 			boolean active = pos == selectingMove;
 			if (!active && usingMove > 0 && moves2.size() >= unitsAll.size())
 				active = (moves2.get(usingMove - 1).self() == unitsAll.get(i));
-			queueText.append((getSide(pos) == Side.ALLY) ? c_ally : c_opp);
+			queueText.append((getSide(pos) == Side.ALLY) ? C_ALLY : C_OPP);
 			if (active)
-				queueText.append((getSide(pos) == Side.ALLY) ? c_ally_l : c_opp_l).append("[[");
+				queueText.append((getSide(pos) == Side.ALLY) ? C_ALLY_L : C_OPP_L).append("[[");
 			queueText.append(unitsAll.get(i).getUnitType().name());
 			if (active)
 				queueText.append("][WHITE]");
@@ -700,7 +701,7 @@ public class BattleControllerLib {
 					}
 					buffCount++;
 
-					text.append("[CYAN][+vibrating-shield][WHITE]").append(formatNum(shield)).append("(")
+					text.append(SHIELD_ICON).append("[WHITE]").append(formatNum(shield)).append("(")
 							.append(unit.getShieldTurns()).append(") ");
 				}
 
@@ -861,8 +862,7 @@ public class BattleControllerLib {
 		// Move selected
 		if (InputLib.checkInput(Keybind.CONFIRM)) {
 			selectedSkillInstance = battle.getPlayerTeam().getUnits()[selectingMove].getSkillInstances()[indexSkill];
-			setTextIfChanged(movesL.get(selectingMove),
-					lang.get("skill") + ": " + selectedSkillInstance.getSkill().getName());
+			setTextIfChanged(movesL.get(selectingMove), selectedSkillInstance.getSkill().getName());
 
 			// Reset for next time
 			for (TypingLabel skill : skillsL) {

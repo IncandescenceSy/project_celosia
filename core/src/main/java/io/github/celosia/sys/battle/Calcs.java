@@ -1,8 +1,8 @@
 package io.github.celosia.sys.battle;
 
 import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_HIDDEN;
-import static io.github.celosia.sys.menu.TextLib.c_bloom;
-import static io.github.celosia.sys.menu.TextLib.c_sp;
+import static io.github.celosia.sys.menu.TextLib.C_BLOOM;
+import static io.github.celosia.sys.menu.TextLib.C_SP;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.menu.TextLib.getColor;
@@ -17,7 +17,7 @@ public class Calcs {
 		if (spNew != spOld) {
 			unit.setSp(spNew);
 			return lang.format("log.change_sp", formatName(unit.getUnitType().name(), unit.getPos()),
-					c_sp + formatNum(spOld), c_sp + formatNum(spNew),
+					C_SP + formatNum(spOld), C_SP + formatNum(spNew),
 					getColor(change) + getSign(change) + (spNew - spOld));
 		} else
 			return "";
@@ -29,8 +29,8 @@ public class Calcs {
 
 		if (bloomNew != bloomOld) {
 			team.setBloom(bloomNew);
-			return lang.format("log.change_bloom", side.getId(), c_bloom + formatNum(bloomOld),
-					c_bloom + formatNum(bloomNew), getColor(change) + getSign(change) + (bloomNew - bloomOld));
+			return lang.format("log.change_bloom", side.getId(), C_BLOOM + formatNum(bloomOld),
+					C_BLOOM + formatNum(bloomNew), getColor(change) + getSign(change) + (bloomNew - bloomOld));
 		} else {
 			return "";
 		}

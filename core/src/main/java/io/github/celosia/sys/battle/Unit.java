@@ -6,11 +6,11 @@ import java.util.List;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_HIDDEN;
-import static io.github.celosia.sys.menu.TextLib.c_buff;
-import static io.github.celosia.sys.menu.TextLib.c_hp;
-import static io.github.celosia.sys.menu.TextLib.c_neg;
-import static io.github.celosia.sys.menu.TextLib.c_num;
-import static io.github.celosia.sys.menu.TextLib.c_shield;
+import static io.github.celosia.sys.menu.TextLib.C_BUFF;
+import static io.github.celosia.sys.menu.TextLib.C_HP;
+import static io.github.celosia.sys.menu.TextLib.C_NEG;
+import static io.github.celosia.sys.menu.TextLib.C_NUM;
+import static io.github.celosia.sys.menu.TextLib.C_SHIELD;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.menu.TextLib.getColor;
@@ -1716,26 +1716,26 @@ public class Unit {
 		// Stages
 		if (stageAtk != 0 && --stageAtkTurns <= 0) {
 			appendToLog(lang.format("log.lose.stage", formatName(unitType.name(), pos, false), stageAtk,
-					getColor(stageAtk) + stageAtk, c_buff + StageType.ATK.getName(),
+					getColor(stageAtk) + stageAtk, StageType.ATK.getIcon() + C_BUFF + StageType.ATK.getName(),
 					getStageStatString(this, StageType.ATK, 0)));
 			// Remove stages
 			stageAtk = 0;
 		}
 		if (stageDef != 0 && --stageDefTurns <= 0) {
 			appendToLog(lang.format("log.lose.stage", formatName(unitType.name(), pos, false), stageDef,
-					getColor(stageDef) + stageDef, c_buff + StageType.DEF.getName(),
+					getColor(stageDef) + stageDef, StageType.DEF.getIcon() + C_BUFF + StageType.DEF.getName(),
 					getStageStatString(this, StageType.DEF, 0)));
 			stageDef = 0;
 		}
 		if (stageFth != 0 && --stageFthTurns <= 0) {
 			appendToLog(lang.format("log.lose.stage", formatName(unitType.name(), pos, false), stageFth,
-					getColor(stageFth) + stageFth, c_buff + StageType.FTH.getName(),
+					getColor(stageFth) + stageFth, StageType.FTH.getIcon() + C_BUFF + StageType.FTH.getName(),
 					getStageStatString(this, StageType.FTH, 0)));
 			stageFth = 0;
 		}
 		if (stageAgi != 0 && --stageAgiTurns <= 0) {
 			appendToLog(lang.format("log.lose.stage", formatName(unitType.name(), pos, false), stageAgi,
-					getColor(stageAgi) + stageAgi, c_buff + StageType.AGI.getName(),
+					getColor(stageAgi) + stageAgi, StageType.AGI.getIcon() + C_BUFF + StageType.AGI.getName(),
 					getStageStatString(this, StageType.AGI, 0)));
 			stageAgi = 0;
 		}
@@ -1744,15 +1744,15 @@ public class Unit {
 		if (shield != 0 && --shieldTurns <= 0) {
 			if (defend == 0) {
 				appendToLog(lang.format("log.lose.shield", formatName(unitType.name(), pos, false),
-						c_shield + formatNum(shield / STAT_MULT_HIDDEN)));
+						C_SHIELD + formatNum(shield / STAT_MULT_HIDDEN)));
 				if (effectBlock <= 0) {
 					appendToLog(lang.format("log.change_effect_block", formatName(unitType.name(), pos, false), 0));
 				}
 			} else {
 				appendToLog(lang.format("log.change_shield", formatName(unitType.name(), pos),
-						c_shield + formatNum((shield + defend) / STAT_MULT_HIDDEN),
-						c_shield + formatNum(defend / STAT_MULT_HIDDEN), c_hp + formatNum(statsDefault.getHp()),
-						c_neg + "-" + formatNum(shield / STAT_MULT_HIDDEN)));
+						C_SHIELD + formatNum((shield + defend) / STAT_MULT_HIDDEN),
+						C_SHIELD + formatNum(defend / STAT_MULT_HIDDEN), C_HP + formatNum(statsDefault.getHp()),
+						C_NEG + "-" + formatNum(shield / STAT_MULT_HIDDEN)));
 			}
 			shield = 0;
 		}
@@ -1766,8 +1766,8 @@ public class Unit {
 				buffInstance.setTurns(turns - 1);
 			} else {
 				appendToLog(lang.format("log.lose.buff", formatName(unitType.name(), pos, false),
-						buffInstance.getBuff().maxStacks(), c_num + buffInstance.getStacks(),
-						c_buff + buffInstance.getBuff().name(), lang.format("log.stack_s", buffInstance.getStacks())));
+						buffInstance.getBuff().maxStacks(), C_NUM + buffInstance.getStacks(),
+						buffInstance.getBuff().icon() + C_BUFF + buffInstance.getBuff().name(), lang.format("log.stack_s", buffInstance.getStacks())));
 
 				// Remove effects
 				for (BuffEffect buffEffect : buffInstance.getBuff().buffEffects()) {
@@ -1799,10 +1799,10 @@ public class Unit {
 					defend -= dmg;
 					return new Result(ResultType.HIT_SHIELD,
 							lang.format("log.change_shield", name_s,
-									c_shield + formatNum((defendOld + shield) / STAT_MULT_HIDDEN),
-									c_shield + formatNum((defend + shield) / STAT_MULT_HIDDEN),
-									c_hp + formatNum(statsDefault.getDisplayHp()),
-									c_neg + "-" + formatNum(dmgFull / STAT_MULT_HIDDEN)));
+									C_SHIELD + formatNum((defendOld + shield) / STAT_MULT_HIDDEN),
+									C_SHIELD + formatNum((defend + shield) / STAT_MULT_HIDDEN),
+									C_HP + formatNum(statsDefault.getDisplayHp()),
+									C_NEG + "-" + formatNum(dmgFull / STAT_MULT_HIDDEN)));
 				} else { // Destroy Defend and proceed to Shield
 					dmg -= defend;
 					defend = 0;
@@ -1819,15 +1819,15 @@ public class Unit {
 					shield -= dmg;
 					return new Result(ResultType.HIT_SHIELD,
 							lang.format("log.change_shield", name_s,
-									c_shield + formatNum((defendOld + shieldOld) / STAT_MULT_HIDDEN),
-									c_shield + formatNum(shield / STAT_MULT_HIDDEN),
-									c_hp + formatNum(statsDefault.getDisplayHp()),
-									c_neg + "-" + formatNum(dmgFull / STAT_MULT_HIDDEN)));
+									C_SHIELD + formatNum((defendOld + shieldOld) / STAT_MULT_HIDDEN),
+									C_SHIELD + formatNum(shield / STAT_MULT_HIDDEN),
+									C_HP + formatNum(statsDefault.getDisplayHp()),
+									C_NEG + "-" + formatNum(dmgFull / STAT_MULT_HIDDEN)));
 				} else { // Destroy Shield and proceed to HP
 					msg.add(lang.format("log.change_shield", name_s,
-							c_shield + formatNum((defendOld + shield) / STAT_MULT_HIDDEN), c_shield + 0,
-							c_hp + formatNum(statsDefault.getDisplayHp()),
-							c_neg + "-" + formatNum((defendOld + shield) / STAT_MULT_HIDDEN)));
+							C_SHIELD + formatNum((defendOld + shield) / STAT_MULT_HIDDEN), C_SHIELD + 0,
+							C_HP + formatNum(statsDefault.getDisplayHp()),
+							C_NEG + "-" + formatNum((defendOld + shield) / STAT_MULT_HIDDEN)));
 					dmg -= shield;
 					shield = 0;
 					shieldTurns = 0;
@@ -1843,8 +1843,8 @@ public class Unit {
 		hp = Math.clamp(hp - dmg, 0, statsDefault.getHp());
 		long hpNewDisp = this.getDisplayHp();
 
-		msg.add(lang.format("log.change_hp", name_s, c_hp + formatNum(hpOldDisp), c_hp + formatNum(hpNewDisp),
-				c_hp + formatNum(statsDefault.getDisplayHp()), c_neg + "-" + formatNum(dmg / STAT_MULT_HIDDEN)));
+		msg.add(lang.format("log.change_hp", name_s, C_HP + formatNum(hpOldDisp), C_HP + formatNum(hpNewDisp),
+				C_HP + formatNum(statsDefault.getDisplayHp()), C_NEG + "-" + formatNum(dmg / STAT_MULT_HIDDEN)));
 
 		if (effectBlock > 0) { // todo should this be a separate result from hitting shield
 			return new Result(ResultType.HIT_SHIELD, msg);

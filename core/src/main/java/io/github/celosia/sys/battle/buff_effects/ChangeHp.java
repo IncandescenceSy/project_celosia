@@ -6,7 +6,7 @@ import io.github.celosia.sys.battle.Result;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.c_hp;
+import static io.github.celosia.sys.menu.TextLib.C_HP;
 import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.menu.TextLib.getColor;
 import static io.github.celosia.sys.menu.TextLib.getSign;
@@ -96,8 +96,8 @@ public class ChangeHp implements BuffEffect {
 				long hpMaxDisp = self.getDisplayMaxHp();
 				long changeFullDisp = Math.max(hpNewDisp - hpOldDisp, 0);
 
-				return new String[]{lang.format("log.change_hp", "", c_hp + formatNum(hpOldDisp),
-						c_hp + formatNum(hpNewDisp), c_hp + formatNum(hpMaxDisp),
+				return new String[]{lang.format("log.change_hp", "", C_HP + formatNum(hpOldDisp),
+						C_HP + formatNum(hpNewDisp), C_HP + formatNum(hpMaxDisp),
 						getColor(changeFullDisp) + getSign(changeFullDisp) + formatNum(changeFullDisp))};
 			} else
 				return new String[]{""};

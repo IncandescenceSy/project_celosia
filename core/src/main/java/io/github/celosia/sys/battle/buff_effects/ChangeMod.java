@@ -5,7 +5,7 @@ import io.github.celosia.sys.battle.Mod;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.c_stat;
+import static io.github.celosia.sys.menu.TextLib.C_STAT;
 import static io.github.celosia.sys.menu.TextLib.formatMod;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.settings.Lang.lang;
@@ -35,6 +35,6 @@ public class ChangeMod implements BuffEffect {
 
 		self.setMod(mod, modNew);
 		appendToLog(lang.format("log.change_mod", formatName(self.getUnitType().name(), self.getPos()),
-				c_stat + mod.getName(), formatMod(modOld, mod), formatMod(modNew, mod)));
+				C_STAT + mod.getName(), formatMod(modOld, mod), formatMod(modNew, mod)));
 	}
 }

@@ -5,7 +5,7 @@ import io.github.celosia.sys.battle.Mult;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.c_stat;
+import static io.github.celosia.sys.menu.TextLib.C_STAT;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.menu.TextLib.getExpChangeColor;
@@ -86,7 +86,7 @@ public class ChangeMult implements BuffEffect {
 		}
 
 		appendToLog(lang.format("log.change_mult", formatName(self.getUnitType().name(), self.getPos()),
-				c_stat + mult.getName(), getMultColor(multOld, mult) + formatNum(Math.max(multOld, multMin) / 10d),
+				C_STAT + mult.getName(), getMultColor(multOld, mult) + formatNum(Math.max(multOld, multMin) / 10d),
 				calcedOld, getMultColor(multNew, mult) + formatNum(Math.max(multNew, multMin) / 10d), calcedNew,
 				getMultChangeColor(changeMultFull, mult) + getSign(changeMultDisplay) + formatNum(changeMultDisplay),
 				calcedChange));

@@ -396,11 +396,11 @@ public class Main extends ApplicationAdapter {
 	public static void createPopup(String name, String desc) {
 		menuList.add(MenuType.POPUP);
 
-		popup = new TypingLabel(TextLib.tags + name, FontType.KORURI.get(80));
+		popup = new TypingLabel(TextLib.TAGS + name, FontType.KORURI.get(80));
 		popup.setPosition(World.WIDTH_2, World.HEIGHT_2 + 120, Align.center);
 		stage3.addActor(popup);
 
-		popup2 = new TypingLabel(TextLib.tags + desc, FontType.KORURI.get(30));
+		popup2 = new TypingLabel(TextLib.TAGS + desc, FontType.KORURI.get(30));
 		popup2.setPosition(World.WIDTH_2 - 440, World.HEIGHT_2 + 20, Align.left);
 		stage3.addActor(popup2);
 

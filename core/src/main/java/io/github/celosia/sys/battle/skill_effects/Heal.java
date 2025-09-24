@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.c_hp;
-import static io.github.celosia.sys.menu.TextLib.c_num;
-import static io.github.celosia.sys.menu.TextLib.c_pos;
-import static io.github.celosia.sys.menu.TextLib.c_shield;
+import static io.github.celosia.sys.menu.TextLib.C_HP;
+import static io.github.celosia.sys.menu.TextLib.C_NUM;
+import static io.github.celosia.sys.menu.TextLib.C_POS;
+import static io.github.celosia.sys.menu.TextLib.C_SHIELD;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.menu.TextLib.getColor;
@@ -113,19 +113,19 @@ public class Heal implements SkillEffect {
 					long shieldNewDisp = unit.getDisplayShield();
 
 					str = lang.format("log.change_shield", formatName(unit.getUnitType().name(), unit.getPos()),
-							c_shield + formatNum((shieldOldDisp + unit.getDisplayDefend())),
-							c_shield + formatNum((shieldNewDisp + unit.getDisplayDefend())),
-							c_hp + formatNum(hpMaxDisp),
+							C_SHIELD + formatNum((shieldOldDisp + unit.getDisplayDefend())),
+							C_SHIELD + formatNum((shieldNewDisp + unit.getDisplayDefend())),
+							C_HP + formatNum(hpMaxDisp),
 							getColor(shieldNewDisp - shieldOldDisp) + "+" + formatNum((shieldNewDisp - shieldOldDisp)));
 				}
 
 				if (turnsMod > turnsOld) {
 					unit.setShieldTurns(turnsMod);
 					if (shieldNew > shieldOld) {
-						msg.add(str + lang.format("log.turns.nameless", c_num + turnsOld, c_num + turnsMod));
+						msg.add(str + lang.format("log.turns.nameless", C_NUM + turnsOld, C_NUM + turnsMod));
 					} else {
 						msg.add(lang.format("log.shield.turns", formatName(unit.getUnitType().name(), unit.getPos()),
-								c_num + turnsOld, c_num + turnsMod));
+								C_NUM + turnsOld, C_NUM + turnsMod));
 					}
 				}
 
@@ -154,8 +154,8 @@ public class Heal implements SkillEffect {
 					long hpMaxDisp = unit.getDisplayMaxHp();
 
 					msg.add(lang.format("log.change_hp", formatName(unit.getUnitType().name(), self.getPos()),
-							c_hp + formatNum(hpOldDisp), c_hp + formatNum(hpNewDisp), c_hp + formatNum(hpMaxDisp),
-							c_pos + "+" + formatNum((hpNewDisp - hpOldDisp))));
+							C_HP + formatNum(hpOldDisp), C_HP + formatNum(hpNewDisp), C_HP + formatNum(hpMaxDisp),
+							C_POS + "+" + formatNum((hpNewDisp - hpOldDisp))));
 				}
 			}
 

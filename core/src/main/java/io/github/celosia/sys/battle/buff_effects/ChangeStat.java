@@ -6,7 +6,7 @@ import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.battle.Calcs.getDisplayStatWithStage;
-import static io.github.celosia.sys.menu.TextLib.c_stat;
+import static io.github.celosia.sys.menu.TextLib.C_STAT;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.menu.TextLib.getColor;
@@ -44,7 +44,7 @@ public class ChangeStat implements BuffEffect {
 				self.getStage(stat.getMatchingStageType()));
 
 		appendToLog(lang.format("log.change_stat", formatName(self.getUnitType().name(), self.getPos()),
-				c_stat + stat.getName(),
+				C_STAT + stat.getName(),
 				getStatColor(statOldDispWithStage, statDefaultDisp) + formatNum(statOldDispWithStage),
 				getStatColor(statNewDispWithStage, statDefaultDisp) + formatNum(statNewDispWithStage),
 				formatNum(self.getStatsDefault().getDisplayStat(stat)),

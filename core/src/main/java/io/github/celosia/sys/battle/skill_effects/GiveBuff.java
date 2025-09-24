@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.c_buff;
-import static io.github.celosia.sys.menu.TextLib.c_num;
+import static io.github.celosia.sys.menu.TextLib.C_BUFF;
+import static io.github.celosia.sys.menu.TextLib.C_NUM;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.settings.Lang.lang;
 
@@ -108,7 +108,7 @@ public class GiveBuff implements SkillEffect {
 				if (stacksNew != stacksOld) {
 					buffInstance.setStacks(stacksNew);
 					str = lang.format("log.give_buff.stacks", formatName(unit.getUnitType().name(), unit.getPos()),
-							c_buff + buff.name(), c_num + stacksOld, c_num + stacksNew);
+							buff.icon() + C_BUFF + buff.name(), C_NUM + stacksOld, C_NUM + stacksNew);
 				}
 
 				// Refresh turns
@@ -117,10 +117,10 @@ public class GiveBuff implements SkillEffect {
 					buffInstance.setTurns(turnsMod);
 
 					if (stacksNew != stacksOld) {
-						msg.add(str + lang.format("log.turns.nameless", c_num + turnsOld, c_num + turnsMod));
+						msg.add(str + lang.format("log.turns.nameless", C_NUM + turnsOld, C_NUM + turnsMod));
 					} else {
 						msg.add(lang.format("log.give_buff.turns", formatName(unit.getUnitType().name(), unit.getPos()),
-								c_buff + buff.name(), c_num + turnsOld, c_num + turnsMod));
+								buff.icon() + C_BUFF + buff.name(), C_NUM + turnsOld, C_NUM + turnsMod));
 					}
 				}
 
@@ -134,7 +134,7 @@ public class GiveBuff implements SkillEffect {
 
 			} else { // Doesn't have buff
 				msg.add(lang.format("log.give_buff.gain", formatName(unit.getUnitType().name(), unit.getPos(), false),
-						c_buff + buff.name(), buff.maxStacks(), stacksMod, lang.format("log.stack_s", stacksMod),
+						buff.icon() + C_BUFF + buff.name(), buff.maxStacks(), stacksMod, lang.format("log.stack_s", stacksMod),
 						turnsMod));
 				unit.addBuffInstance(new BuffInstance(buff, turnsMod, stacksMod));
 				buffInstance = buffInstances.getLast();
@@ -143,8 +143,9 @@ public class GiveBuff implements SkillEffect {
 
 				// Apply
 				BuffEffect[] buffEffects = buffInstance.getBuff().buffEffects();
-				for (BuffEffect buffEffect : buffEffects)
-					buffEffect.onGive(unit, buffInstance.getStacks());
+				for (BuffEffect buffEffect : buffEffects) {
+                    buffEffect.onGive(unit, buffInstance.getStacks());
+                }
 
 			}
 		}

@@ -4,8 +4,8 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.c_hp;
-import static io.github.celosia.sys.menu.TextLib.c_shield;
+import static io.github.celosia.sys.menu.TextLib.C_HP;
+import static io.github.celosia.sys.menu.TextLib.C_SHIELD;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.settings.Lang.lang;
@@ -33,9 +33,9 @@ public class ChangeDefend implements BuffEffect {
 		long shieldDisp = self.getDisplayShield();
 
 		appendToLog(lang.format("log.change_shield", formatName(self.getUnitType().name(), self.getPos()),
-				c_shield + formatNum((shieldDisp + defendOldDisp)), c_shield + formatNum((shieldDisp + defendNewDisp)),
-				c_hp + formatNum(self.getDisplayMaxHp()),
-				c_shield + "+" + formatNum(((shieldDisp + defendNewDisp) - (shieldDisp + defendOldDisp)))));
+				C_SHIELD + formatNum((shieldDisp + defendOldDisp)), C_SHIELD + formatNum((shieldDisp + defendNewDisp)),
+				C_HP + formatNum(self.getDisplayMaxHp()),
+				C_SHIELD + "+" + formatNum(((shieldDisp + defendNewDisp) - (shieldDisp + defendOldDisp)))));
 
 		if (!self.isEffectBlock() && self.getShield() == 0 && defendOld == 0) {
 			appendToLog(lang.format("log.change_effect_block",
@@ -51,11 +51,11 @@ public class ChangeDefend implements BuffEffect {
 
 		if (self.getShield() > 0) {
 			appendToLog(lang.format("log.change_shield", formatName(self.getUnitType().name(), self.getPos()),
-					c_shield + formatNum((shieldDisp + defendOldDisp)), c_shield + formatNum((shieldDisp)),
-					c_hp + formatNum(self.getDisplayMaxHp()), c_shield + formatNum(defendOldDisp * -1)));
+					C_SHIELD + formatNum((shieldDisp + defendOldDisp)), C_SHIELD + formatNum((shieldDisp)),
+					C_HP + formatNum(self.getDisplayMaxHp()), C_SHIELD + formatNum(defendOldDisp * -1)));
 		} else {
 			appendToLog(lang.format("log.lose_shield", formatName(self.getUnitType().name(), self.getPos(), false),
-					c_shield + formatNum(defendOldDisp)));
+					C_SHIELD + formatNum(defendOldDisp)));
 		}
 		if (!self.isEffectBlock() && self.getShield() == 0) {
 			appendToLog(lang.format("log.change_effect_block",

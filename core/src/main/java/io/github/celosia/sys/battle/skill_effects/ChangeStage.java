@@ -10,8 +10,8 @@ import java.util.List;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.battle.BattleLib.getStageBuffType;
-import static io.github.celosia.sys.menu.TextLib.c_buff;
-import static io.github.celosia.sys.menu.TextLib.c_num;
+import static io.github.celosia.sys.menu.TextLib.C_BUFF;
+import static io.github.celosia.sys.menu.TextLib.C_NUM;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.menu.TextLib.getColor;
 import static io.github.celosia.sys.menu.TextLib.getSign;
@@ -92,7 +92,7 @@ public class ChangeStage implements SkillEffect {
 
 			if (stageNew != stageOld) {
 				str = lang.format("log.change_stage.stacks", formatName(unit.getUnitType().name(), unit.getPos()),
-						c_buff + stageType.getName(), getColor(stageOld) + getSign(stageOld) + stageOld,
+                    stageType.getIcon() + C_BUFF + stageType.getName(), getColor(stageOld) + getSign(stageOld) + stageOld,
 						getColor(stageNew) + getSign(stageNew) + stageNew);
 				str2 = getStageStatString(unit, stageType, stageNew);
 
@@ -105,11 +105,11 @@ public class ChangeStage implements SkillEffect {
 				if (turnsMod > turnsOld) {
 					unit.setStageTurns(stageType, turnsMod);
 					if (stageNew != stageOld) {
-						msg.add(str + lang.format("log.turns.nameless", c_num + turnsOld, c_num + turnsMod) + str2);
+						msg.add(str + lang.format("log.turns.nameless", C_NUM + turnsOld, C_NUM + turnsMod) + str2);
 					} else {
 						msg.add(lang.format("log.change_stage.turns",
-								formatName(unit.getUnitType().name(), unit.getPos()), c_buff + stageType.getName(),
-								c_num + turnsOld, c_num + turnsMod));
+								formatName(unit.getUnitType().name(), unit.getPos()), stageType.getIcon() + C_BUFF + stageType.getName(),
+								C_NUM + turnsOld, C_NUM + turnsMod));
 					}
 				} else if (stageNew != stageOld) {
 					msg.add(str + str2);
