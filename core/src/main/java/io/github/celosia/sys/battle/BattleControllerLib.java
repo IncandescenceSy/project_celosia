@@ -75,6 +75,9 @@ public class BattleControllerLib {
 	// Stat displays for all units
 	static List<TypingLabel> statsL = new ArrayList<>();
 
+	// Buff displays
+	static List<TextraLabel> buffsL = new ArrayList<>();
+
 	// Move selection displays
 	static List<TypingLabel> movesL = new ArrayList<>();
 
@@ -82,11 +85,11 @@ public class BattleControllerLib {
 	static List<TypingLabel> skillsL = new ArrayList<>();
 
 	// temp
-	static Skill[] skills = new Skill[]{Skills.FIREBALL, Skills.ATTACK_UP, Skills.SHIELD, Skills.THUNDERBOLT,
-			Skills.ICE_AGE, Skills.DEFEND};
-	static Skill[] skills2 = new Skill[]{Skills.FIREBALL, Skills.FIREBALL, Skills.ATTACK_UP_GROUP, Skills.SHIELD,
-			Skills.ICE_AGE, Skills.DEFEND};
-	static Skill[] skills3 = new Skill[]{Skills.FIREBALL, Skills.FIREBALL, Skills.HEAT_WAVE, Skills.PROTECT,
+	static Skill[] skills = new Skill[]{Skills.FIREBALL, Skills.FAITH_DOWN, Skills.RASETU_FEAST,
+			Skills.AGILITY_UP_GROUP, Skills.ICE_AGE, Skills.DEFEND};
+	static Skill[] skills2 = new Skill[]{Skills.ICE_BEAM, Skills.DEMON_SCYTHE, Skills.ATTACK_UP_GROUP,
+			Skills.RASETU_FEAST, Skills.ICE_AGE, Skills.DEFEND};
+	static Skill[] skills3 = new Skill[]{Skills.THUNDERBOLT, Skills.DEFENSE_DOWN, Skills.HEAT_WAVE, Skills.PROTECT,
 			Skills.ICE_AGE, Skills.DEFEND};
 
 	// Battle log
@@ -190,6 +193,13 @@ public class BattleControllerLib {
 			statsL.add(stats);
 			stats.setPosition((i >= 4) ? World.WIDTH - 350 : 50, y);
 			stage2.addActor(stats);
+
+			// Buff displays
+			TextraLabel buffs = new TextraLabel("", Fonts.FontType.KORURI.get(20));
+			buffsL.add(buffs);
+			buffs.setAlignment(Align.topLeft);
+			buffs.setPosition((i >= 4) ? World.WIDTH - 350 : 50, y - 70);
+			stage2.addActor(buffs);
 
 			// Move selection displays
 			TypingLabel moves = new TypingLabel("", Fonts.FontType.KORURI.get(30));
@@ -451,8 +461,9 @@ public class BattleControllerLib {
 	static void handleTargeting() {
 		if (InputLib.checkInput(Keybind.BACK)) {
 			// Reset for next time
-			for (TypingLabel stat : statsL)
+			for (TypingLabel stat : statsL) {
 				stat.setColor(Color.WHITE);
+			}
 			movesL.get(selectingMove).setText("");
 
 			menuList.removeLast();
@@ -558,7 +569,7 @@ public class BattleControllerLib {
 
 		// Log
 		appendToLog(c_turn + lang.get("turn") + " " + (battle.getTurn() + 1) + "[WHITE]"); // todo is trailing white
-																							// needed
+		// needed
 		appendToLog(lang.get("log.gain_sp_bloom"));
 
 		// Increase bloom
@@ -627,6 +638,10 @@ public class BattleControllerLib {
 			Unit unit = (i >= 4) ? battle.getOpponentTeam().getUnits()[i - 4] : battle.getPlayerTeam().getUnits()[i];
 			if (unit != null) {
 				long shield = unit.getDisplayShield() + unit.getDisplayDefend();
+				// Account for overflow
+				if (shield < 0) {
+					shield = Long.MAX_VALUE;
+				}
 				// todo colors
 				// String shieldStr = (shield > 0) ? c_shield + "+" + String.format("%,d",
 				// shield) : "";
@@ -644,57 +659,86 @@ public class BattleControllerLib {
 				// + "\nRes: " + unit.getResWithStage() + "/" + unit.getStatsDefault().getRes()
 				// +
 				// "\n");
+				/// Stat display
 				String shieldStr = (shield > 0) ? "[CYAN]+" + formatNum(shield) + "[WHITE]" : "";
 				String spStr = (!unit.isInfiniteSp()) ? formatNum(unit.getSp()) + "/" + formatNum(1000) : "∞";
 				StringBuilder text = new StringBuilder(unit.getUnitType().name() + "\n" + lang.get("hp") + ": "
 						+ formatNum(unit.getDisplayHp()) + shieldStr + "/" + formatNum(unit.getDisplayMaxHp()) + "\n"
-						+ lang.get("sp") + ": " + spStr + "\nStr: " + formatNum(unit.getStrWithStage()) + "/"
-						+ formatNum(unit.getStatsDefault().getStr()) +
-						// "\nMag:" + unit.getMagWithStage() + "/" + unit.getStatsDefault().getMag() +
-						// "\nAmr: " + unit.getAmrWithStage() + "/" + unit.getStatsDefault().getAmr() +
-						// "\nRes: " + unit.getResWithStage() + "/" + unit.getStatsDefault().getRes() +
-						"\n");
+						+ lang.get("sp") + ": " + spStr); // + "\nStr: " + formatNum(unit.getStrWithStage()) + "/"
+				// + formatNum(unit.getStatsDefault().getStr()) +
+				// "\nMag:" + unit.getMagWithStage() + "/" + unit.getStatsDefault().getMag() +
+				// "\nAmr: " + unit.getAmrWithStage() + "/" + unit.getStatsDefault().getAmr() +
+				// "\nRes: " + unit.getResWithStage() + "/" + unit.getStatsDefault().getRes() +
+				// "\n");
+
+				setTextIfChanged(statsL.get(i), text.toString());
+
+				/// Buff display
+
+				int buffCount = 0;
+				text = new StringBuilder();
 
 				// List stage changes
 				for (StageType stageType : StageType.values()) {
 					int stage = unit.getStage(stageType);
 					if (stage != 0) {
-						text.append(stageType.getName()).append((stage >= 1) ? "+" : "").append(stage).append("(")
-								.append(unit.getStageTurns(stageType)).append(") ");
+						if (buffCount > 0 && buffCount % 4 == 0) {
+							text.append("\n");
+						}
+						buffCount++;
+
+						text.append(stageType.getIcon()).append("[WHITE]").append((stage >= 1) ? "+" : "").append(stage)
+								.append("(").append(unit.getStageTurns(stageType)).append(") ");
 					}
 				}
 
 				// Shield
 				shield = unit.getDisplayShield();
-				if (shield > 0)
-					text.append(lang.get("shield")).append("x").append(formatNum(shield)).append("(")
+				if (shield > 0) {
+					if (buffCount > 0 && buffCount % 4 == 0) {
+						text.append("\n");
+					}
+					buffCount++;
+
+					text.append("[CYAN][+vibrating-shield][WHITE]").append(formatNum(shield)).append("(")
 							.append(unit.getShieldTurns()).append(") ");
+				}
 
 				// List buffs
 				List<BuffInstance> buffInstances = unit.getBuffInstances();
 				if (!buffInstances.isEmpty()) {
 					for (BuffInstance buffInstance : buffInstances) {
+						if (buffCount > 0 && buffCount % 4 == 0) {
+							text.append("\n");
+						}
+						buffCount++;
+
 						if (buffInstance.getBuff() == Buffs.DEFEND) {
-							text.append(buffInstance.getBuff().name()).append("x")
+							text.append(buffInstance.getBuff().icon()).append("[WHITE]")
 									.append(formatNum(unit.getDisplayDefend())).append("(")
 									.append(buffInstance.getTurns()).append(") ");
 						} else {
-							text.append(buffInstance.getBuff().name());
-							if (buffInstance.getBuff().maxStacks() > 1)
-								text.append("x").append(buffInstance.getStacks());
+							text.append(buffInstance.getBuff().icon()).append("[WHITE]");
+							if (buffInstance.getBuff().maxStacks() > 1) {
+								text.append(buffInstance.getStacks());
+							}
 							// 1000+ turns = infinite
 							text.append("(");
-							if (buffInstance.getTurns() < 1000)
+							if (buffInstance.getTurns() < 1000) {
 								text.append(buffInstance.getTurns());
-							else
+							} else {
 								text.append("∞");
+							}
 							text.append(") ");
 						}
 					}
 				}
-				setTextIfChanged(statsL.get(i), text.toString());
-			} else
+
+				buffsL.get(i).setText(text.toString());
+			} else {
 				statsL.get(i).setText("");
+				buffsL.get(i).setText("");
+			}
 		}
 	}
 

@@ -3,7 +3,11 @@ package io.github.celosia.sys;
 // Debug
 public class Debug {
 	// Enables debug hotkeys
+	// Main menu:
+	// Q: Open Debug menu
+	// In battle:
 	// Q: Prints battle log to console
+	// W: Test popup
 	public static boolean enableDebugHotkeys = false;
 
 	// Shows some extra info

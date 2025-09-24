@@ -157,10 +157,11 @@ public class InputLib {
 				break;
 			case DEBUG :
 				inputGuide.setText(
-						"[+KB_ONE] Toggle Debug Info [+KB_TWO] Text Debug Menu  " + getInputString(InputPrompts.BACK));
+						"[+KB_ONE] Toggle Debug Info [+KB_TWO] Text Debug Menu " + getInputString(InputPrompts.BACK));
 				break;
 			case DEBUG_TEXT :
-				inputGuide.setText(getInputString(InputPrompts.MOVE) + getInputString(InputPrompts.BACK));
+				inputGuide.setText(
+						"[+KB_ONE] Add line " + getInputString(InputPrompts.MOVE) + getInputString(InputPrompts.BACK));
 				break;
 			default :
 				inputGuide.setText("");

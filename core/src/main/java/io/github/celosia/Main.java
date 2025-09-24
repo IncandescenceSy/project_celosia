@@ -76,7 +76,46 @@ public class Main extends ApplicationAdapter {
 	// Atlases
 	// Key/Button prompt images
 	// From https://juliocacko.itch.io/free-input-prompts
-	public static TextureAtlas atlasPrompt;
+	public static TextureAtlas atlasPrompts;
+
+	// Icons
+	// From https://github.com/tommyettinger/game-icons-net-atlas
+	// Icons by:
+	// Lorc, http://lorcblog.blogspot.com
+	// Delapouite, https://delapouite.com
+	// John Colburn, http://ninmunanmu.com
+	// Felbrigg, http://blackdogofdoom.blogspot.co.uk
+	// John Redman, http://www.uniquedicetowers.com
+	// Carl Olsen, https://twitter.com/unstoppableCarl
+	// Sbed, http://opengameart.org/content/95-game-icons
+	// PriorBlue
+	// Willdabeast, http://wjbstories.blogspot.com
+	// Viscious Speed, http://viscious-speed.deviantart.com
+	// Lord Berandas, http://berandas.deviantart.com
+	// Irongamer, http://ecesisllc.wix.com/home
+	// HeavenlyDog, http://www.gnomosygoblins.blogspot.com
+	// Lucas
+	// Faithtoken, http://fungustoken.deviantart.com
+	// Skoll
+	// Andy Meneely, http://www.se.rit.edu/~andy/
+	// Cathelineau
+	// Kier Heyl
+	// Aussiesim
+	// Sparker, http://citizenparker.com
+	// Zeromancer
+	// Rihlsul
+	// Quoting
+	// Guard13007, https://guard13007.com
+	// DarkZaitzev, http://darkzaitzev.deviantart.com
+	// SpencerDub
+	// GeneralAce135
+	// Zajkonur
+	// Catsu
+	// Starseeker
+	// Pepijn Poolman
+	// Pierre Leducq
+	// Caro Asercion
+	public static TextureAtlas atlasIcons;
 
 	// Menu option labels
 	List<TypingLabel> optLabels = new ArrayList<>();
@@ -101,7 +140,8 @@ public class Main extends ApplicationAdapter {
 		stage2 = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));
 		stage3 = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));
 
-		atlasPrompt = new TextureAtlas("prompt.atlas");
+		atlasPrompts = new TextureAtlas("prompts.atlas");
+		atlasIcons = new TextureAtlas("icons.atlas");
 
 		// Handle detecting whether a keyboard or a controller is being used, and
 		// finding the currently in-use controller
@@ -179,7 +219,7 @@ public class Main extends ApplicationAdapter {
 		// Debug.displayRealStats = true;
 
 		Settings.showFpsCounter = true;
-		Settings.battleSpeed = 0.1f;
+		Settings.battleSpeed = 0.5f;
 
 		fps = new TextraLabel("", FontType.KORURI.get(20));
 		fps.setPosition(10, World.HEIGHT - 15);
@@ -230,7 +270,7 @@ public class Main extends ApplicationAdapter {
 		switch (menuList.getLast()) {
 			case MAIN :
 				// Debug menu
-				if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+				if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
 					menuList.add(MenuType.DEBUG);
 				}
 

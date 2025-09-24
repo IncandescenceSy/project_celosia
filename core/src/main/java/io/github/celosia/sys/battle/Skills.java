@@ -11,6 +11,10 @@ import static io.github.celosia.sys.settings.Lang.lang;
 
 public class Skills {
 	// Temp testing skills
+	static Skill RASETU_FEAST = new Skill.Builder("Rasetu Feast", "", Element.VIS, Ranges.OTHER_3R_OR_SELF, 1)
+			.effects(new GiveBuff.Builder(Buffs.BURN, 3).build(), new GiveBuff.Builder(Buffs.FROSTBITE, 3).build(),
+					new GiveBuff.Builder(Buffs.SHOCK, 3).build(), new GiveBuff.Builder(Buffs.TREMOR, 3).build())
+			.build();
 	static Skill GET_EXA = new Skill.Builder("Get ExA", "", Element.VIS, Ranges.OTHER_3R_OR_SELF, 1)
 			.effect(new GiveBuff.Builder(Buffs.EXTRA_ACTION, 3).build()).build();
 	static Skill STAR_RULER = new Skill.Builder("Star Ruler", "", Element.IGNIS, Ranges.OTHER_2R, 0).cooldown(6).bloom()

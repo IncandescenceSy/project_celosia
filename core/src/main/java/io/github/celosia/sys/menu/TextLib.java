@@ -291,12 +291,12 @@ public class TextLib {
 	public static String mergeDpadGlyphs(String glyphs, String type) {
 		// Replace Dpad UpDownLeftRight With Dpad
 		glyphs = glyphs
-				.replace("[+" + type + "_DU][+" + type + "_DD][+" + type + "_DL][+" + type + "_DR]",
+				.replace("[+" + type + "_DU]/[+" + type + "_DD]/[+" + type + "_DL]/[+" + type + "_DR]",
 						"[+" + type + "_D]")
 				// Replace Dpad UpDown with Dpad Y
-				.replace("[+" + type + "_DU][+" + type + "_DD]", "[+" + type + "_DY]")
+				.replace("[+" + type + "_DU]/[+" + type + "_DD]", "[+" + type + "_DY]")
 				// Replace Dpad LeftRight with Dpad X
-				.replace("[+" + type + "_DL][+" + type + "_DR]", "[+" + type + "_DX]");
+				.replace("[+" + type + "_DL]/[+" + type + "_DR]", "[+" + type + "_DX]");
 		return glyphs;
 	}
 }

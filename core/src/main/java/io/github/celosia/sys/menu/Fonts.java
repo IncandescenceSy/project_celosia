@@ -8,7 +8,8 @@ import com.github.tommyettinger.textra.Font;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
-import static io.github.celosia.Main.atlasPrompt;
+import static io.github.celosia.Main.atlasIcons;
+import static io.github.celosia.Main.atlasPrompts;
 
 // todo refactor
 // todo save fonts to file after generation without it being hideous looking maybe??
@@ -27,7 +28,7 @@ public class Fonts {
 	static FontSize koruriBorder20;
 
 	public static void createFonts() {
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fnt/koruri.ttf"));
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("koruri.ttf"));
 		FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 
 		StringBuilder builder = new StringBuilder();
@@ -152,7 +153,8 @@ public class Fonts {
 
 		FontType(FontSize... fonts) {
 			for (FontSize font : fonts) {
-				font.getFont().addAtlas(atlasPrompt);
+				font.getFont().addAtlas(atlasPrompts);
+				font.getFont().addAtlas(atlasIcons);
 				sizes.put(font.getSize(), font.getFont());
 			}
 		}

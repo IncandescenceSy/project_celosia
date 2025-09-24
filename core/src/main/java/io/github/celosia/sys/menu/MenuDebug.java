@@ -1,5 +1,7 @@
 package io.github.celosia.sys.menu;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.utils.Align;
 import com.github.tommyettinger.textra.TypingLabel;
 import io.github.celosia.sys.World;
@@ -10,19 +12,28 @@ import static io.github.celosia.Main.stage3;
 import static io.github.celosia.sys.menu.MenuLib.setTextIfChanged;
 
 public class MenuDebug {
+	private static int lines;
 	private final static TypingLabel text = new TypingLabel("", Fonts.FontType.KORURI.get(30));
 
 	public static void create(MenuLib.MenuType menuType) {
 		if (menuType == MenuLib.MenuType.DEBUG_TEXT) {
-			text.setPosition(0, 0);
+			lines = 1;
+			text.setPosition(World.WIDTH_2, World.HEIGHT_2);
 			stage3.addActor(text);
 		}
 	}
 
 	public static void input(MenuLib.MenuType menuType) {
 		if (menuType == MenuLib.MenuType.DEBUG_TEXT) {
-			setTextIfChanged(text, "omg its hatsune miku " + text.getAlignment());
+			StringBuilder str = new StringBuilder("omg its hatsune miku!");
+			str.append("\nomg miku!!!".repeat(Math.max(0, lines + 1)));
+			setTextIfChanged(text, str.toString());
+
 			text.setX(World.WIDTH - text.getWidth());
+
+			if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
+				lines++;
+			}
 
 			if (InputLib.checkInput(Keybind.LEFT)) {
 				if (InputLib.checkInput(Keybind.UP)) {

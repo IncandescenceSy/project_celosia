@@ -22,8 +22,11 @@ public class InputPrompt {
 		if (lastUsedController == ControllerType.NONE) {
 			glyphBuilder = new StringBuilder(glyphKey);
 		} else
-			for (String[] glyphButton : glyphsButton) {
-				glyphBuilder.append(glyphButton[lastUsedController.ordinal() - 1]);
+			for (int i = 0; i < glyphsButton.length; i++) {
+				glyphBuilder.append(glyphsButton[i][lastUsedController.ordinal() - 1]);
+				if (i != glyphsButton.length - 1) {
+					glyphBuilder.append("/");
+				}
 			}
 
 		return mergeGlyphs(glyphBuilder.toString()) + " " + text;
