@@ -29,15 +29,17 @@ public class BattleController {
 			handleDebug();
 		}
 
-		if (menuList.getLast() == MenuType.LOG) { // Fullscreen log
+        MenuType curMenu = menuList.getLast();
+
+		if (curMenu == MenuType.LOG) { // Fullscreen log
 			handleLog();
 		} else if (InputLib.checkInput(Keybind.MENU)) { // Create fullscreen log
 			createFullLog();
 		} else if (wait > 0f) {
 			wait -= Gdx.graphics.getDeltaTime();
-		} else if (menuList.getLast() == MenuType.BATTLE) { // Selecting and executing moves
+		} else if (curMenu == MenuType.BATTLE) { // Selecting and executing moves
 			handleBattle();
-		} else if (menuList.getLast() == MenuType.TARGETING) { // Picking a target
+		} else if (curMenu == MenuType.TARGETING) { // Picking a target
 			handleTargeting();
 		}
 	}

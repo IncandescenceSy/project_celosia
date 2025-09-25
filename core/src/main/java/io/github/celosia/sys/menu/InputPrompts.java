@@ -2,7 +2,7 @@ package io.github.celosia.sys.menu;
 
 import io.github.celosia.sys.settings.Keybind;
 
-import static io.github.celosia.sys.menu.InputLib.toGlyph;
+import static io.github.celosia.sys.menu.MenuLib.toGlyph;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class InputPrompts {

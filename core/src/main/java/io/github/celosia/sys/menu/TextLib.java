@@ -43,7 +43,7 @@ public class TextLib {
 	public static final String C_EXP = "[#a034ff]"; // Calculated exponent parenthesis
 	public static final String C_CD = "[#1898ff]"; // Cooldown
 
-    public static final String SHIELD_ICON = C_SHIELD + "[+vibrating-shield]";
+	public static final String SHIELD_ICON = C_SHIELD + "[+vibrating-shield]";
 
 	/// Formatters
 	// Decimal formatter for scientific notation

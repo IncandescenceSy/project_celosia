@@ -293,7 +293,6 @@ public class Main extends ApplicationAdapter {
 							// Start game
 							BattleController.create();
 							menuList.add(MenuType.BATTLE);
-
 							break;
 						case QUIT :
 							// Quit game
@@ -333,13 +332,15 @@ public class Main extends ApplicationAdapter {
 					MenuDebug.create(MenuType.DEBUG_TEXT);
 					menuList.add(MenuType.DEBUG_TEXT);
 				}
+                break;
 			case DEBUG_TEXT :
 				MenuDebug.input(MenuType.DEBUG_TEXT);
+                break;
 		}
 
 		// Input guide
 		if (Settings.showInputGuide) {
-			InputLib.setInputGuideText(menuList.getLast());
+			MenuLib.setInputGuideText(menuList.getLast());
 			inputGuide.setX(World.WIDTH - inputGuide.getWidth());
 		}
 	}

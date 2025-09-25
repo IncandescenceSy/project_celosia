@@ -174,8 +174,6 @@ public class Unit {
 		statsDefault = unitType.statsBase().getRealStats(lvl);
 		statsMult = new Stats(1000);
 		hp = statsDefault.getHp();
-		// streams have bad perf, so make sure this doesn't become an issue. but this is
-		// called so infrequently that it shouldn't
 		skillInstances = Arrays.stream(skills).map(Skill::toSkillInstance).toArray(SkillInstance[]::new);
 		passives = List.of(unitType.passives());
 		sp = 200;
@@ -1767,7 +1765,8 @@ public class Unit {
 			} else {
 				appendToLog(lang.format("log.lose.buff", formatName(unitType.name(), pos, false),
 						buffInstance.getBuff().maxStacks(), C_NUM + buffInstance.getStacks(),
-						buffInstance.getBuff().icon() + C_BUFF + buffInstance.getBuff().name(), lang.format("log.stack_s", buffInstance.getStacks())));
+						buffInstance.getBuff().icon() + C_BUFF + buffInstance.getBuff().name(),
+						lang.format("log.stack_s", buffInstance.getStacks())));
 
 				// Remove effects
 				for (BuffEffect buffEffect : buffInstance.getBuff().buffEffects()) {

@@ -12,7 +12,8 @@ public enum Keybind {
 	BACK(lang.get("key.back"), Input.Keys.X, Button.B), // (Right button)
 	MENU(lang.get("key.menu"), Input.Keys.C, Button.Y), // (Top button) Also Open Full Log
 	MAP(lang.get("key.map"), Input.Keys.V, Button.X), // (Left button) Also Inspect
-	PAGE_L1(lang.get("key.page_l1"), Input.Keys.F, Button.LB), PAGE_R1(lang.get("key.page_r1"), Input.Keys.G, Button.RB),
+	PAGE_L1(lang.get("key.page_l1"), Input.Keys.F, Button.LB),
+    PAGE_R1(lang.get("key.page_r1"), Input.Keys.G, Button.RB),
     PAGE_L2(lang.get("key.page_l2"), Input.Keys.S, Button.LT),
     PAGE_R2(lang.get("key.page_r2"), Input.Keys.D, Button.RT),
     LEFT(lang.get("key.left"), Input.Keys.LEFT, Button.DL),

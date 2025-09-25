@@ -90,9 +90,11 @@ public class ChangeStage implements SkillEffect {
 			int stageOld = target.getStage(stageType);
 			int stageNew = Math.clamp(stageOld + stacksMod, -5, 5);
 
+			String stageName = stageType.getIcon() + C_BUFF + stageType.getName();
+
 			if (stageNew != stageOld) {
 				str = lang.format("log.change_stage.stacks", formatName(unit.getUnitType().name(), unit.getPos()),
-                    stageType.getIcon() + C_BUFF + stageType.getName(), getColor(stageOld) + getSign(stageOld) + stageOld,
+						stageName, getColor(stageOld) + getSign(stageOld) + stageOld,
 						getColor(stageNew) + getSign(stageNew) + stageNew);
 				str2 = getStageStatString(unit, stageType, stageNew);
 
@@ -108,8 +110,8 @@ public class ChangeStage implements SkillEffect {
 						msg.add(str + lang.format("log.turns.nameless", C_NUM + turnsOld, C_NUM + turnsMod) + str2);
 					} else {
 						msg.add(lang.format("log.change_stage.turns",
-								formatName(unit.getUnitType().name(), unit.getPos()), stageType.getIcon() + C_BUFF + stageType.getName(),
-								C_NUM + turnsOld, C_NUM + turnsMod));
+								formatName(unit.getUnitType().name(), unit.getPos()), stageName, C_NUM + turnsOld,
+								C_NUM + turnsMod));
 					}
 				} else if (stageNew != stageOld) {
 					msg.add(str + str2);

@@ -100,6 +100,8 @@ public class GiveBuff implements SkillEffect {
 			List<BuffInstance> buffInstances = unit.getBuffInstances();
 			BuffInstance buffInstance = unit.findBuff(buff);
 
+			String buffName = buff.icon() + C_BUFF + buff.name();
+
 			if (buffInstance != null) { // Already has buff
 				String str = "";
 				// Add stacks
@@ -108,7 +110,7 @@ public class GiveBuff implements SkillEffect {
 				if (stacksNew != stacksOld) {
 					buffInstance.setStacks(stacksNew);
 					str = lang.format("log.give_buff.stacks", formatName(unit.getUnitType().name(), unit.getPos()),
-							buff.icon() + C_BUFF + buff.name(), C_NUM + stacksOld, C_NUM + stacksNew);
+							buffName, C_NUM + stacksOld, C_NUM + stacksNew);
 				}
 
 				// Refresh turns
@@ -120,7 +122,7 @@ public class GiveBuff implements SkillEffect {
 						msg.add(str + lang.format("log.turns.nameless", C_NUM + turnsOld, C_NUM + turnsMod));
 					} else {
 						msg.add(lang.format("log.give_buff.turns", formatName(unit.getUnitType().name(), unit.getPos()),
-								buff.icon() + C_BUFF + buff.name(), C_NUM + turnsOld, C_NUM + turnsMod));
+								buffName, C_NUM + turnsOld, C_NUM + turnsMod));
 					}
 				}
 
@@ -134,8 +136,7 @@ public class GiveBuff implements SkillEffect {
 
 			} else { // Doesn't have buff
 				msg.add(lang.format("log.give_buff.gain", formatName(unit.getUnitType().name(), unit.getPos(), false),
-						buff.icon() + C_BUFF + buff.name(), buff.maxStacks(), stacksMod, lang.format("log.stack_s", stacksMod),
-						turnsMod));
+						buffName, buff.maxStacks(), stacksMod, lang.format("log.stack_s", stacksMod), turnsMod));
 				unit.addBuffInstance(new BuffInstance(buff, turnsMod, stacksMod));
 				buffInstance = buffInstances.getLast();
 
@@ -144,8 +145,8 @@ public class GiveBuff implements SkillEffect {
 				// Apply
 				BuffEffect[] buffEffects = buffInstance.getBuff().buffEffects();
 				for (BuffEffect buffEffect : buffEffects) {
-                    buffEffect.onGive(unit, buffInstance.getStacks());
-                }
+					buffEffect.onGive(unit, buffInstance.getStacks());
+				}
 
 			}
 		}

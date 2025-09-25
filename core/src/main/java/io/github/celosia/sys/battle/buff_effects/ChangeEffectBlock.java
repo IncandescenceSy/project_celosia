@@ -24,7 +24,6 @@ public class ChangeEffectBlock implements BuffEffect {
 		calc(self, (change * stacks) * -1);
 	}
 
-	// todo test
 	public void calc(Unit self, int changeFull) {
 		int effectBlockOld = self.getEffectBlock();
 		int effectBlockNew = effectBlockOld + changeFull;
