@@ -58,20 +58,23 @@ public class TextLib {
 
 		// Use scientific notation
 		// todo is this a good threshold?
-		if (digitCount >= 9)
+		if (digitCount >= 9) {
 			return sf.format(num);
-		else
-			return rf.format(num);
+		}
+
+		return rf.format(num);
 	}
 
+	// todo: does having separate for double and long actually matter? theoretically
+	// it keeps more precision but idk if it ever matters
 	public static String formatNum(double num) {
 		int digitCount = String.valueOf(Math.abs(num)).length();
 
-		// Use scientific notation
-		if (digitCount >= 9)
+		if (digitCount >= 9) {
 			return sf.format(num);
-		else
-			return rf.format(num);
+		}
+
+		return rf.format(num);
 	}
 
 	// todo other language support
@@ -127,21 +130,14 @@ public class TextLib {
 		}
 
 		if (mult > 1000) {
-			if (exp > 100)
-				return c1;
-			else if (exp < 100)
-				return c2;
-			else
-				return C_NUM;
-		} else if (mult < 1000) {
-			if (exp > 100)
-				return c2;
-			else if (exp < 100)
-				return c1;
-			else
-				return C_NUM;
-		} else
-			return C_NUM;
+			return (exp > 100) ? c1 : (exp < 100) ? c2 : C_NUM;
+		}
+
+		if (mult < 1000) {
+			return (exp > 100) ? c2 : (exp < 100) ? c1 : C_NUM;
+		}
+
+		return C_NUM;
 	}
 
 	public static String getMultChangeColor(int multChange, Mult multType) {
@@ -172,24 +168,14 @@ public class TextLib {
 		}
 
 		if (mult > 1000) {
-			if (expChange > 0) {
-				return c1;
-			} else if (expChange < 0) {
-				return c2;
-			} else {
-				return C_NUM;
-			}
-		} else if (mult < 1000) {
-			if (expChange > 0) {
-				return c2;
-			} else if (expChange < 0) {
-				return c1;
-			} else {
-				return C_NUM;
-			}
-		} else {
-			return C_NUM;
+			return (expChange > 0) ? c1 : (expChange < 0) ? c2 : C_NUM;
 		}
+
+		if (mult < 1000) {
+			return (expChange > 0) ? c2 : (expChange < 0) ? c1 : C_NUM;
+		}
+
+		return C_NUM;
 	}
 
 	public static String getMultWithExpColor(double multWithExp, Mult multType) {

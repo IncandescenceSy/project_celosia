@@ -332,10 +332,10 @@ public class Main extends ApplicationAdapter {
 					MenuDebug.create(MenuType.DEBUG_TEXT);
 					menuList.add(MenuType.DEBUG_TEXT);
 				}
-                break;
+				break;
 			case DEBUG_TEXT :
 				MenuDebug.input(MenuType.DEBUG_TEXT);
-                break;
+				break;
 		}
 
 		// Input guide

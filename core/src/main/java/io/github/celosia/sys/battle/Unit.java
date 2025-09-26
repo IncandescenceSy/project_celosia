@@ -1480,10 +1480,11 @@ public class Unit {
 	}
 
 	public void setDurationModBuffTypeDealt(BuffType buffType, int durationModBuffTypeDealt) {
-		if (buffType == BuffType.BUFF)
+		if (buffType == BuffType.BUFF) {
 			modDurationBuffDealt = durationModBuffTypeDealt;
-		else
+		} else {
 			modDurationDebuffDealt = durationModBuffTypeDealt;
+		}
 	}
 
 	public int getDurationModBuffTypeDealt(BuffType buffType) {
@@ -1491,10 +1492,11 @@ public class Unit {
 	}
 
 	public void setDurationModBuffTypeTaken(BuffType buffType, int durationModBuffTypeTaken) {
-		if (buffType == BuffType.BUFF)
+		if (buffType == BuffType.BUFF) {
 			modDurationBuffTaken = durationModBuffTypeTaken;
-		else
+		} else {
 			modDurationDebuffTaken = durationModBuffTypeTaken;
+		}
 	}
 
 	public int getDurationModBuffTypeTaken(BuffType buffType) {
@@ -1534,10 +1536,11 @@ public class Unit {
 	}
 
 	public void setStacksModBuffTypeDealt(BuffType buffType, int StacksModBuffTypeDealt) {
-		if (buffType == BuffType.BUFF)
+		if (buffType == BuffType.BUFF) {
 			modStacksBuffDealt = StacksModBuffTypeDealt;
-		else
+		} else {
 			modStacksDebuffDealt = StacksModBuffTypeDealt;
+		}
 	}
 
 	public int getStacksModBuffTypeDealt(BuffType buffType) {
@@ -1545,10 +1548,11 @@ public class Unit {
 	}
 
 	public void setStacksModBuffTypeTaken(BuffType buffType, int StacksModBuffTypeTaken) {
-		if (buffType == BuffType.BUFF)
+		if (buffType == BuffType.BUFF) {
 			modStacksBuffTaken = StacksModBuffTypeTaken;
-		else
+		} else {
 			modStacksDebuffTaken = StacksModBuffTypeTaken;
+		}
 	}
 
 	public int getStacksModBuffTypeTaken(BuffType buffType) {

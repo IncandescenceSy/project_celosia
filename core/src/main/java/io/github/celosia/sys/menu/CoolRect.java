@@ -59,10 +59,12 @@ public class CoolRect {
 		}
 
 		public Builder dir(int dir) {
-			if (dir == -1 || dir == 1)
+			if (dir == -1 || dir == 1) {
 				this.dir = dir;
-			else
+			} else {
 				this.dir = -1;
+			}
+
 			return this;
 		}
 

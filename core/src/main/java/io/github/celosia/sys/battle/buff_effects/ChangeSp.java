@@ -22,15 +22,17 @@ public class ChangeSp implements BuffEffect {
 
 	@Override
 	public void onGive(Unit self, int stacks) {
-		if (isImmediate)
+		if (isImmediate) {
 			appendToLog(Calcs.changeSp(self, change * stacks));
+		}
 	}
 
 	@Override
 	public String[] onTurnEnd(Unit self, int stacks) {
-		if (!isImmediate)
+		if (!isImmediate) {
 			return new String[]{Calcs.changeSp(self, change * stacks)};
-		else
-			return new String[]{""};
+		}
+
+		return new String[]{""};
 	}
 }

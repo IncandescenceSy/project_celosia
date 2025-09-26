@@ -286,8 +286,10 @@ public class BattleControllerLib {
 				moves.add(new Move(selectedSkillInstance, battle.getOpponentTeam().getUnits()[selectingMove - 4],
 						target.getPos())); // todo AI
 				selectingMove++;
-			} else
-				selectingMove = 100; // Jump to move execution
+			} else {
+				// Jump to move execution
+				selectingMove = 100;
+			}
 		} else {
 			selectMove();
 		}
@@ -368,8 +370,9 @@ public class BattleControllerLib {
 							// 200 : (i >= 4) ? World.WIDTH - 250 : 150);
 							if (self.getPos() == i) {
 								movesL.get(i).setColor(Color.PINK);
-							} else
+							} else {
 								movesL.get(i).setColor(Color.WHITE);
+							}
 						}
 
 						prevResults = new Int2ObjectOpenHashMap<>();
@@ -590,10 +593,11 @@ public class BattleControllerLib {
 			// bloomL.get(i).skipToTheEnd();
 			setTextIfChanged(bloomL.get(i), "{SPEED=0.1}{FADE}{SLIDE}" + lang.get("bloom") + ": "
 					+ formatNum(battle.getTeam(i).getBloom()) + "/" + formatNum(1000));
-			if (i == 0)
+			if (i == 0) {
 				bloomL.get(i).setX(bloomL.get(i).getWidth() / 3, Align.left);
-			else
+			} else {
 				bloomL.get(i).setX(World.WIDTH - bloomL.get(i).getWidth() / 3, Align.right);
+			}
 		}
 
 		// Queue
@@ -603,14 +607,15 @@ public class BattleControllerLib {
 
 		// Copy and sort moves
 		// Only copy if it hasn't started emptying yet
-		if (selectingMove == 8)
+		if (selectingMove == 8) {
 			moves2 = new ArrayList<>(moves);
-		else if (selectingMove == 100) {
+		} else if (selectingMove == 100) {
 			moves2.sort(Comparator.comparingInt((Move entry) -> entry.skillInstance().getSkill().getPrio())
 					.thenComparingLong(entry -> entry.self().getAgiWithStage()).reversed());
 			// todo will thenComparingInt(pos.reversed) work
-		} else
+		} else {
 			moves2 = new ArrayList<>();
+		}
 
 		StringBuilder queueText = new StringBuilder().append(lang.get("queue")).append(": ");
 
@@ -810,18 +815,23 @@ public class BattleControllerLib {
 			points.addAll(new Vector2(sx, sy), new Vector2(ex, ey));
 			scrollbar.setPoints(points);
 
-		} else
+		} else {
 			battleLog.setPosition(World.WIDTH_2 - 200, World.HEIGHT - 270, Align.left);
+		}
 	}
 
 	static String formatLog() {
 		int lines = (menuList.getLast() == MenuLib.MenuType.LOG) ? 48 : 8;
 		int scroll = (menuList.getLast() == MenuLib.MenuType.LOG) ? logScroll : 0;
-		if (logText == null || logText.isEmpty())
+
+		if (logText == null || logText.isEmpty()) {
 			return "";
+		}
+
 		int start = Math.max(0, logText.size() - lines - scroll);
 		int end = Math.min(start + lines, logText.size());
 		List<String> subList = logText.subList(start, end);
+
 		return String.join("\n", subList);
 	}
 

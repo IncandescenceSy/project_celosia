@@ -24,65 +24,86 @@ public class MenuLib {
 	public static int checkMovement1D(int index, int optCount) {
 		if (InputLib.checkInput(true, Keybind.UP, Keybind.LEFT)) {
 			return --index < 0 ? optCount - 1 : index;
-		} else if (InputLib.checkInput(true, Keybind.DOWN, Keybind.RIGHT)) {
+		}
+
+		if (InputLib.checkInput(true, Keybind.DOWN, Keybind.RIGHT)) {
 			return ++index >= optCount ? 0 : index;
-		} else
-			return index;
+		}
+
+		return index;
 	}
 
 	// Check menu movement input (targeting) and handle wrapping
 	public static int checkMovementTargeting(int index, int selectingMove, Range range) {
 		// Lock cursor to self for self Ranges
-		if (range != Ranges.SELF && range != Ranges.SELF_UP_DOWN) {
-			int newIndex = index;
-
-			// Move selection
-			if (InputLib.checkInput(true, Keybind.UP)) {
-				if (index < 4) { // On player side
-					newIndex = (index - 1) < 0 ? 3 : index - 1;
-				} else
-					newIndex = (index - 1) < 4 ? 7 : index - 1;
-			} else if (InputLib.checkInput(true, Keybind.DOWN)) {
-				if (index < 4) { // On player side
-					newIndex = (index + 1) >= 4 ? 0 : index + 1;
-				} else
-					newIndex = (index + 1) >= 8 ? 4 : index + 1;
-			} else if (InputLib.checkInput(true, Keybind.LEFT, Keybind.RIGHT)) {
-				newIndex = (index < 4) ? index + 4 : index - 4;
-			}
-
-			// Lock cursor to valid side
-			if (range.side() == Side.BOTH)
-				return newIndex;
-			else if (range.side() == getRelativeSide(selectingMove, newIndex))
-				return newIndex;
-			else
-				return index;
-		} else
+		if (range == Ranges.SELF || range == Ranges.SELF_UP_DOWN) {
 			return selectingMove;
+		}
+
+		int newIndex = index;
+
+		// Move selection
+		if (InputLib.checkInput(true, Keybind.UP)) {
+			if (index < 4) { // On player side
+				newIndex = (index - 1) < 0 ? 3 : index - 1;
+			} else {
+				newIndex = (index - 1) < 4 ? 7 : index - 1;
+			}
+		} else if (InputLib.checkInput(true, Keybind.DOWN)) {
+			if (index < 4) { // On player side
+				newIndex = (index + 1) >= 4 ? 0 : index + 1;
+			} else {
+				newIndex = (index + 1) >= 8 ? 4 : index + 1;
+			}
+		} else if (InputLib.checkInput(true, Keybind.LEFT, Keybind.RIGHT)) {
+			newIndex = (index < 4) ? index + 4 : index - 4;
+		}
+
+		// Lock cursor to valid side
+		if (range.side() == Side.BOTH) {
+			return newIndex;
+		}
+
+		if (range.side() == getRelativeSide(selectingMove, newIndex)) {
+			return newIndex;
+		}
+
+		return index;
 	}
 
 	// Check for scrolling the battle log
 	public static int checkLogScroll(int logScroll, int lines, int off) {
-		if (InputLib.checkInput(true, 0.005f, Keybind.UP)) { // Up
+		// Up
+		if (InputLib.checkInput(true, 0.005f, Keybind.UP)) {
 			return Math.min(++logScroll, Math.max(lines - off, 0));
-		} else if (InputLib.checkInput(true, 0.005f, Keybind.DOWN)) { // Down
+		}
+
+		// Down
+		if (InputLib.checkInput(true, 0.005f, Keybind.DOWN)) {
 			return Math.max(--logScroll, 0);
-		} else if (InputLib.checkInput(false, Keybind.PAGE_L2)) { // To top
+		}
+
+		// To top
+		if (InputLib.checkInput(false, Keybind.PAGE_L2)) {
 			return Math.max(lines - off, 0);
-		} else if (InputLib.checkInput(false, Keybind.PAGE_R2)) { // To bottom
+		}
+
+		// To bottom
+		if (InputLib.checkInput(false, Keybind.PAGE_R2)) {
 			return 0;
-		} else
-			return logScroll;
+		}
+
+		return logScroll;
 	}
 
 	// Change menu option colors to indicate selection
 	public static void handleOptColor(List<TypingLabel> opts, int index) {
 		for (int i = 0; i < opts.size(); i++) {
-			if (index == i)
+			if (index == i) {
 				opts.get(i).setColor(Color.PINK);
-			else
+			} else {
 				opts.get(i).setColor(Color.WHITE);
+			}
 		}
 	}
 
@@ -136,45 +157,46 @@ public class MenuLib {
 	}
 
 	public static void setTextIfChanged(TypingLabel label, String text) {
-		if (!label.getOriginalText().toString().equals("{NORMAL}" + text))
+		if (!label.getOriginalText().toString().equals("{NORMAL}" + text)) {
 			label.setText(text); // todo idk if this works on text with tokens
+		}
 	}
 
-    public static void setInputGuideText(MenuType menuType) {
-        switch (menuType) {
-            case POPUP :
-                inputGuide.setText(getInputString(InputPrompts.CLOSE));
-                break;
-            case MAIN :
-                inputGuide.setText(getInputString(InputPrompts.CONFIRM, InputPrompts.MOVE_UD));
-                break;
-            case BATTLE :
-                inputGuide.setText(getInputString(InputPrompts.MOVE_UD, InputPrompts.CONFIRM, InputPrompts.BACK,
-                        InputPrompts.LOG, InputPrompts.INSPECT));
-                break;
-            case TARGETING :
-                inputGuide.setText(
-                        getInputString(InputPrompts.MOVE, InputPrompts.CONFIRM, InputPrompts.BACK, InputPrompts.LOG));
-                break;
-            case LOG :
-                inputGuide.setText(getInputString(InputPrompts.MOVE_UD, InputPrompts.TOP, InputPrompts.BOTTOM,
-                        InputPrompts.BACK_LOG));
-                break;
-            case DEBUG :
-                inputGuide.setText(
-                        "[+KB_ONE] Toggle Debug Info  [+KB_TWO] Text Debug Menu  " + getInputString(InputPrompts.BACK));
-                break;
-            case DEBUG_TEXT :
-                inputGuide.setText(
-                        "[+KB_ONE] Add line  " + getInputString(InputPrompts.MOVE) + getInputString(InputPrompts.BACK));
-                break;
-            default :
-                inputGuide.setText("");
-                break;
-        }
-    }
+	public static void setInputGuideText(MenuType menuType) {
+		switch (menuType) {
+			case POPUP :
+				inputGuide.setText(getInputString(InputPrompts.CLOSE));
+				break;
+			case MAIN :
+				inputGuide.setText(getInputString(InputPrompts.CONFIRM, InputPrompts.MOVE_UD));
+				break;
+			case BATTLE :
+				inputGuide.setText(getInputString(InputPrompts.MOVE_UD, InputPrompts.CONFIRM, InputPrompts.BACK,
+						InputPrompts.LOG, InputPrompts.INSPECT));
+				break;
+			case TARGETING :
+				inputGuide.setText(
+						getInputString(InputPrompts.MOVE, InputPrompts.CONFIRM, InputPrompts.BACK, InputPrompts.LOG));
+				break;
+			case LOG :
+				inputGuide.setText(getInputString(InputPrompts.MOVE_UD, InputPrompts.TOP, InputPrompts.BOTTOM,
+						InputPrompts.BACK_LOG));
+				break;
+			case DEBUG :
+				inputGuide.setText(
+						"[+KB_ONE] Toggle Debug Info  [+KB_TWO] Text Debug Menu  " + getInputString(InputPrompts.BACK));
+				break;
+			case DEBUG_TEXT :
+				inputGuide.setText(
+						"[+KB_ONE] Add line  " + getInputString(InputPrompts.MOVE) + getInputString(InputPrompts.BACK));
+				break;
+			default :
+				inputGuide.setText("");
+				break;
+		}
+	}
 
-    public static String getInputString(InputPrompt... inputPrompts) {
+	public static String getInputString(InputPrompt... inputPrompts) {
 		StringBuilder inputs = new StringBuilder();
 
 		for (InputPrompt inputPrompt : inputPrompts) {
@@ -185,7 +207,7 @@ public class MenuLib {
 		return inputs.toString();
 	}
 
-    // Converts a keycode to a glyph
+	// Converts a keycode to a glyph
 	public static String toGlyph(int keycode) {
 		if (keycode < 0) {
 			throw new IllegalArgumentException("keycode cannot be negative, keycode: " + keycode);
@@ -352,7 +374,7 @@ public class MenuLib {
 		};
 	}
 
-    // The different menus in the game
+	// The different menus in the game
 	// todo fix magic numbers
 	public enum MenuType {
 		// spotless:off

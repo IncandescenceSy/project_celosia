@@ -22,15 +22,17 @@ public class ChangeBloom implements BuffEffect {
 
 	@Override
 	public void onGive(Unit self, int stacks) {
-		if (isImmediate)
+		if (isImmediate) {
 			appendToLog(Calcs.changeBloom(battle.getTeamAtPos(self.getPos()), self.getSide(), change));
+		}
 	}
 
 	@Override
 	public String[] onTurnEnd(Unit self, int stacks) {
-		if (isImmediate)
+		if (isImmediate) {
 			return new String[]{Calcs.changeBloom(battle.getTeamAtPos(self.getPos()), self.getSide(), change)};
-		else
-			return new String[]{""};
+		}
+
+		return new String[]{""};
 	}
 }

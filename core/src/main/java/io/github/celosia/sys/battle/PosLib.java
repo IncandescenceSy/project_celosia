@@ -8,12 +8,16 @@ public class PosLib {
 	// Returns the pos off spaces below this one, or -1 if it's invalid
 	public static int getUpDown(int pos, int off) {
 		int posNew = pos + off;
-		if (pos < 4 && (posNew < 0 || posNew > 3))
+
+		if (pos < 4 && (posNew < 0 || posNew > 3)) {
 			return -1;
-		else if (pos >= 4 && (posNew < 4 || posNew > 7))
+		}
+
+		if (pos >= 4 && (posNew < 4 || posNew > 7)) {
 			return -1;
-		else
-			return posNew;
+		}
+
+		return posNew;
 	}
 
 	// Returns the pos directly across from this one

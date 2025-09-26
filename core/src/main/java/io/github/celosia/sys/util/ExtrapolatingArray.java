@@ -38,8 +38,8 @@ public record ExtrapolatingArray(int[] core, int offset, int stepUp, int stepDow
 
 		if (maxTo0) {
 			return Math.max(value, 0);
-		} else {
-			return value;
 		}
+
+		return value;
 	}
 }

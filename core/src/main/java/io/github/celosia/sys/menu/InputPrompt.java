@@ -21,13 +21,14 @@ public class InputPrompt {
 
 		if (lastUsedController == ControllerType.NONE) {
 			glyphBuilder = new StringBuilder(glyphKey);
-		} else
+		} else {
 			for (int i = 0; i < glyphsButton.length; i++) {
 				glyphBuilder.append(glyphsButton[i][lastUsedController.ordinal() - 1]);
 				if (i != glyphsButton.length - 1) {
 					glyphBuilder.append("/");
 				}
 			}
+		}
 
 		return mergeGlyphs(glyphBuilder.toString()) + " " + text;
 	}

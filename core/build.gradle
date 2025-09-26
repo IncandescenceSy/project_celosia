@@ -35,7 +35,7 @@ format 'misc', {
 	endWithNewline()
 }
 java {
-	eclipse('4.19.0')
+	eclipse('4.19')//.configFile("formatter.xml")
 toggleOffOn()
 	formatAnnotations()
 }

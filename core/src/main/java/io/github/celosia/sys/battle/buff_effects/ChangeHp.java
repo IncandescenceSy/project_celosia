@@ -67,13 +67,14 @@ public class ChangeHp implements BuffEffect {
 	public String[] onTurnEnd(Unit self, int stacks) {
 		if (!isImmediate) {
 			return calc(self, stacks);
-		} else {
-			return new String[]{""};
 		}
+
+		return new String[]{""};
 	}
 
 	private String[] calc(Unit self, int stacks) {
-		if (change < 0) { // Damage
+		// Damage
+		if (change < 0) {
 			double multDoTDmgTaken = ((isImmediate) ? 1 : self.getMultWithExpDoTDmgTaken());
 			long dmg = (isPercentage)
 					? (long) Math.abs(((self.getMaxHp() * (change / 1000d)) * stacks) * self.getMultWithExpDmgTaken()
@@ -82,25 +83,29 @@ public class ChangeHp implements BuffEffect {
 			self.onTakeDamage(self, dmg, Element.VIS);
 			Result result = self.damage(dmg, isPierce, false);
 			return result.messages().toArray(String[]::new);
-		} else { // Healing
-			long hpOld = self.getHp();
-			long hpMax = self.getMaxHp();
-			long heal = (long) (change * ((isPercentage) ? hpMax : 1) * stacks * self.getMultWithExpHealingTaken());
-			long hpNew = Math.max(hpOld, Math.min(hpOld + heal, hpMax));
-			if (hpNew > hpOld) {
-				self.onTakeHeal(self, heal, 0);
-
-				long hpOldDisp = self.getDisplayHp();
-				self.setHp(hpNew);
-				long hpNewDisp = self.getDisplayHp();
-				long hpMaxDisp = self.getDisplayMaxHp();
-				long changeFullDisp = Math.max(hpNewDisp - hpOldDisp, 0);
-
-				return new String[]{lang.format("log.change_hp", "", C_HP + formatNum(hpOldDisp),
-						C_HP + formatNum(hpNewDisp), C_HP + formatNum(hpMaxDisp),
-						getColor(changeFullDisp) + getSign(changeFullDisp) + formatNum(changeFullDisp))};
-			} else
-				return new String[]{""};
 		}
+
+		// Healing
+		long hpOld = self.getHp();
+		long hpMax = self.getMaxHp();
+		long heal = (long) (change * ((isPercentage) ? hpMax : 1) * stacks * self.getMultWithExpHealingTaken());
+		long hpNew = Math.max(hpOld, Math.min(hpOld + heal, hpMax));
+
+		if (hpNew > hpOld) {
+			self.onTakeHeal(self, heal, 0);
+
+			long hpOldDisp = self.getDisplayHp();
+			self.setHp(hpNew);
+			long hpNewDisp = self.getDisplayHp();
+			long hpMaxDisp = self.getDisplayMaxHp();
+			long changeFullDisp = Math.max(hpNewDisp - hpOldDisp, 0);
+
+			return new String[]{lang.format("log.change_hp", "", C_HP + formatNum(hpOldDisp),
+					C_HP + formatNum(hpNewDisp), C_HP + formatNum(hpMaxDisp),
+					getColor(changeFullDisp) + getSign(changeFullDisp) + formatNum(changeFullDisp))};
+		}
+
+		return new String[]{""};
+
 	}
 }

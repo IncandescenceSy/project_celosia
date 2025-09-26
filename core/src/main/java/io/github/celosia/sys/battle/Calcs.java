@@ -19,8 +19,9 @@ public class Calcs {
 			return lang.format("log.change_sp", formatName(unit.getUnitType().name(), unit.getPos()),
 					C_SP + formatNum(spOld), C_SP + formatNum(spNew),
 					getColor(change) + getSign(change) + (spNew - spOld));
-		} else
-			return "";
+		}
+
+		return "";
 	}
 
 	public static String changeBloom(Team team, Side side, int change) {
@@ -31,9 +32,9 @@ public class Calcs {
 			team.setBloom(bloomNew);
 			return lang.format("log.change_bloom", side.getId(), C_BLOOM + formatNum(bloomOld),
 					C_BLOOM + formatNum(bloomNew), getColor(change) + getSign(change) + (bloomNew - bloomOld));
-		} else {
-			return "";
 		}
+
+		return "";
 	}
 
 	public static long getStatWithStage(long stat, long statDefault, int stage) {

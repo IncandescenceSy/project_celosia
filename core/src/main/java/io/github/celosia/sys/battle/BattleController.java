@@ -29,7 +29,7 @@ public class BattleController {
 			handleDebug();
 		}
 
-        MenuType curMenu = menuList.getLast();
+		MenuType curMenu = menuList.getLast();
 
 		if (curMenu == MenuType.LOG) { // Fullscreen log
 			handleLog();

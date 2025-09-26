@@ -53,9 +53,11 @@ public class InputLib {
 
 	// Checks for input between the keyboard and the currently in-use controller
 	public static boolean checkInput(boolean allowHold, float holdDelay, Keybind... keybinds) {
-		for (Keybind keybind : keybinds)
-			if (isKeybindPressed(keybind, allowHold, holdDelay))
+		for (Keybind keybind : keybinds) {
+			if (isKeybindPressed(keybind, allowHold, holdDelay)) {
 				return true;
+			}
+		}
 		return false;
 	}
 
