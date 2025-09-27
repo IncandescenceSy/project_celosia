@@ -15,10 +15,8 @@ dependencies {
     api "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
     api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
     api "com.badlogicgames.gdx:gdx:$gdxVersion"
-    api "it.unimi.dsi:fastutil:8.5.16"
-    implementation "com.github.tommyettinger:textratypist:2.0.3"
-    implementation "space.earlygrey:shapedrawer:$shapedrawerVersion"
-    implementation "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+    api "com.github.tommyettinger:textratypist:2.0.3"
+    api "space.earlygrey:shapedrawer:$shapedrawerVersion"
 
     if (enableGraalNative == 'true') {
         implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
@@ -34,7 +32,7 @@ spotless {
         endWithNewline()
     }
     java {
-        eclipse('4.19')//.configFile("formatter.xml")
+        eclipse('4.19')
         toggleOffOn()
         formatAnnotations()
     }

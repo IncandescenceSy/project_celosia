@@ -19,8 +19,6 @@ import io.github.celosia.sys.menu.Path;
 import io.github.celosia.sys.menu.Paths;
 import io.github.celosia.sys.settings.Keybind;
 import io.github.celosia.sys.settings.Settings;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -111,8 +109,7 @@ public class BattleControllerLib {
 	static int applyingEffect = 0;
 
 	// Previous SkillEffect resultTypes for each pos
-	// todo is it better if this just an 8-len array
-	static Int2ObjectMap<ResultType> prevResults;
+	static ResultType[] prevResults = new ResultType[8];
 
 	// Amount of non-fail results for this skill
 	static int nonFails = 0;
@@ -374,7 +371,8 @@ public class BattleControllerLib {
 							}
 						}
 
-						prevResults = new Int2ObjectOpenHashMap<>();
+						// Reset prevResults
+						prevResults = new ResultType[8];
 					} else {
 						String msg = lang.format("log.skill_fail.sp", getTriesToUseString(move),
 								lang.format("log.but_doesnt_have_enough", booleanToInt(skill.isBloom())));
@@ -397,21 +395,21 @@ public class BattleControllerLib {
 							Unit targetCur = battle.getUnitAtPos(targetPos);
 							if (applyingEffect == 0) { // First effect
 								// Initialize prevResults
-								prevResults.put(targetPos, ResultType.SUCCESS);
+								prevResults[targetPos] = ResultType.SUCCESS;
 
 								// Apply onTargetedBySkill BuffEffects
 								targetCur.onTargetedBySkill(move.self(), skill);
 							}
 
 							// Hasn't failed on this target yet
-							if (prevResults.get(targetPos) != ResultType.FAIL) {
+							if (prevResults[targetPos] != ResultType.FAIL) {
 								// Not a fail
 								nonFails++;
 
 								// Apply effect and track result
 								ResultType resultType = skillEffects.get(applyingEffect).apply(move.self(), targetCur,
-										targetCur == targetMain, prevResults.get(targetPos));
-								prevResults.put(targetPos, resultType);
+										targetCur == targetMain, prevResults[targetPos]);
+								prevResults[targetPos] = resultType;
 							}
 						}
 					}

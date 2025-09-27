@@ -5,8 +5,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.github.tommyettinger.textra.Font;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static io.github.celosia.Main.atlasIcons;
 import static io.github.celosia.Main.atlasPrompts;
@@ -149,7 +150,8 @@ public class Fonts {
 	public enum FontType {
 		KORURI(koruri20, koruri30, koruri80), KORURI_BORDER(koruriBorder20);
 
-		private final Int2ObjectMap<Font> sizes = new Int2ObjectOpenHashMap<>();
+		private final Map<Integer, Font> sizes = new HashMap<>();
+		// private final Int2ObjectMap<Font> sizes = new Int2ObjectOpenHashMap<>();
 
 		FontType(FontSize... fonts) {
 			for (FontSize font : fonts) {
