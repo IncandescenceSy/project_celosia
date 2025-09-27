@@ -1,5 +1,6 @@
 package io.github.celosia.sys.battle.skill_effects;
 
+import io.github.celosia.sys.battle.AffLib;
 import io.github.celosia.sys.battle.Element;
 import io.github.celosia.sys.battle.Result;
 import io.github.celosia.sys.battle.ResultType;
@@ -7,8 +8,6 @@ import io.github.celosia.sys.battle.SkillEffect;
 import io.github.celosia.sys.battle.SkillType;
 import io.github.celosia.sys.battle.Unit;
 
-import static io.github.celosia.sys.battle.AffLib.affDmgDealt;
-import static io.github.celosia.sys.battle.AffLib.affDmgTaken;
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_HIDDEN;
 import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_VISIBLE;
@@ -105,8 +104,8 @@ public class Damage implements SkillEffect {
 				affMultDmgDealt = 1000;
 				affMultDmgTaken = 1000;
 			} else {
-				affMultDmgDealt = affDmgDealt.get(self.getAffsCur().getAff(element));
-				affMultDmgTaken = affDmgTaken.get(target.getAffsCur().getAff(element));
+				affMultDmgDealt = AffLib.DMG_DEALT.get(self.getAffsCur().getAff(element));
+				affMultDmgTaken = AffLib.DMG_TAKEN.get(target.getAffsCur().getAff(element));
 
 				if (target.isWeakTo(element)) {
 					multWeakDmgDealt = self.getMultWithExpWeakDmgDealt();

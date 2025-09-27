@@ -32,7 +32,6 @@ import static io.github.celosia.Main.menuList;
 import static io.github.celosia.Main.paths;
 import static io.github.celosia.Main.stage2;
 import static io.github.celosia.Main.stage3;
-import static io.github.celosia.sys.battle.AffLib.affSpCost;
 import static io.github.celosia.sys.battle.BattleController.wait;
 import static io.github.celosia.sys.battle.PosLib.getSide;
 import static io.github.celosia.sys.battle.PosLib.getStartingIndex;
@@ -332,7 +331,7 @@ public class BattleControllerLib {
 					int cost = (self.isInfiniteSp() && !skill.isBloom()) ? 0 : skill.getCost();
 					// Make sure cost doesn't go below 1 unless the skill has a base 0 SP cost
 					int costMod = (cost > 0)
-							? (int) Math.max(cost * (affSpCost.get(self.getAffsCur().getAff(element)) / 1000d), 1)
+							? (int) Math.max(cost * (AffLib.SP_COST.get(self.getAffsCur().getAff(element)) / 1000d), 1)
 							: 0;
 					int change = skill.isBloom() ? costMod : (int) (costMod * self.getMultWithExpSpUse());
 					newSp = skill.isBloom() ? team.getBloom() - change : self.getSp() - change;
@@ -691,6 +690,7 @@ public class BattleControllerLib {
 						if (buffCount > 0 && buffCount % 4 == 0) {
 							text.append("\n");
 						}
+
 						buffCount++;
 
 						text.append(stageType.getIcon()).append("[WHITE]").append((stage >= 1) ? "+" : "").append(stage)

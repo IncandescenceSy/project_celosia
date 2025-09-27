@@ -1,42 +1,51 @@
 plugins {
-id 'com.diffplug.spotless' version '7.2.1'
+    id 'com.diffplug.spotless' version '7.2.1'
+    id 'checkstyle'
 }
 
 repositories {
-mavenCentral()
+    mavenCentral()
 }
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 eclipse.project.name = appName + '-core'
 
 dependencies {
-api "com.badlogicgames.ashley:ashley:$ashleyVersion"
-api "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
-api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-api "com.badlogicgames.gdx:gdx:$gdxVersion"
-api "it.unimi.dsi:fastutil:8.5.16"
-implementation "com.github.tommyettinger:textratypist:2.0.3"
-implementation "space.earlygrey:shapedrawer:$shapedrawerVersion"
-implementation "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+    api "com.badlogicgames.ashley:ashley:$ashleyVersion"
+    api "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
+    api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+    api "com.badlogicgames.gdx:gdx:$gdxVersion"
+    api "it.unimi.dsi:fastutil:8.5.16"
+    implementation "com.github.tommyettinger:textratypist:2.0.3"
+    implementation "space.earlygrey:shapedrawer:$shapedrawerVersion"
+    implementation "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
 
-if (enableGraalNative == 'true') {
-	implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
-}
+    if (enableGraalNative == 'true') {
+        implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
+    }
 }
 
 spotless {
-format 'misc', {
-	// define the files to apply `misc` to
-	target '*.gradle', '.gitattributes', '.gitignore'
+    format 'misc', {
+        target '*.gradle', '.gitattributes', '.gitignore'
 
-	// define the steps to apply to those files
-	trimTrailingWhitespace()
-	leadingSpacesToTabs()
-	endWithNewline()
+        trimTrailingWhitespace()
+        leadingTabsToSpaces()
+        endWithNewline()
+    }
+    java {
+        eclipse('4.19')//.configFile("formatter.xml")
+        toggleOffOn()
+        formatAnnotations()
+    }
 }
-java {
-	eclipse('4.19')//.configFile("formatter.xml")
-toggleOffOn()
-	formatAnnotations()
+
+checkstyle {
+    configFile = file('checkstyle.xml')
+    toolVersion = '10.17.0'
+    ignoreFailures = false
 }
+
+tasks.named('check') {
+    dependsOn 'checkstyleMain', 'spotlessCheck'
 }

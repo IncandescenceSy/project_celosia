@@ -55,6 +55,7 @@ public class ChangeSp implements SkillEffect {
 		if (!mainTargetOnly || isMainTarget) {
 			appendToLog(Calcs.changeSp((giveToSelf) ? self : target, change));
 		}
+
 		return ResultType.SUCCESS;
 	}
 

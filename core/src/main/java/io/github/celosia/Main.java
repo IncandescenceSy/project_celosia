@@ -297,6 +297,7 @@ public class Main extends ApplicationAdapter {
 						case QUIT :
 							// Quit game
 							Gdx.app.exit();
+							break;
 						case MANUAL, OPTIONS, CREDITS :
 							createPopup("WIP",
 									"This isn't finished yet!\n{WAVE=0.25;0.5;0.5}{GRADIENT=pink;violet}{SPIN}Girls are now praying, please wait warmly...");

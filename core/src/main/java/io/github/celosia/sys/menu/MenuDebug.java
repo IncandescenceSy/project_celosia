@@ -13,13 +13,13 @@ import static io.github.celosia.sys.menu.MenuLib.setTextIfChanged;
 
 public class MenuDebug {
 	private static int lines;
-	private final static TypingLabel text = new TypingLabel("", Fonts.FontType.KORURI.get(30));
+	private final static TypingLabel TEXT = new TypingLabel("", Fonts.FontType.KORURI.get(30));
 
 	public static void create(MenuLib.MenuType menuType) {
 		if (menuType == MenuLib.MenuType.DEBUG_TEXT) {
 			lines = 1;
-			text.setPosition(World.WIDTH_2, World.HEIGHT_2);
-			stage3.addActor(text);
+			TEXT.setPosition(World.WIDTH_2, World.HEIGHT_2);
+			stage3.addActor(TEXT);
 		}
 	}
 
@@ -27,9 +27,9 @@ public class MenuDebug {
 		if (menuType == MenuLib.MenuType.DEBUG_TEXT) {
 			StringBuilder str = new StringBuilder("omg its hatsune miku!");
 			str.append("\nomg miku!!!".repeat(Math.max(0, lines + 1)));
-			setTextIfChanged(text, str.toString());
+			setTextIfChanged(TEXT, str.toString());
 
-			text.setX(World.WIDTH - text.getWidth());
+			TEXT.setX(World.WIDTH - TEXT.getWidth());
 
 			if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
 				lines++;
@@ -37,28 +37,28 @@ public class MenuDebug {
 
 			if (InputLib.checkInput(Keybind.LEFT)) {
 				if (InputLib.checkInput(Keybind.UP)) {
-					text.setAlignment(Align.topLeft);
+					TEXT.setAlignment(Align.topLeft);
 				} else if (InputLib.checkInput(Keybind.DOWN)) {
-					text.setAlignment(Align.bottomLeft);
+					TEXT.setAlignment(Align.bottomLeft);
 				} else {
-					text.setAlignment(Align.left);
+					TEXT.setAlignment(Align.left);
 				}
 			} else if (InputLib.checkInput(Keybind.RIGHT)) {
 				if (InputLib.checkInput(Keybind.UP)) {
-					text.setAlignment(Align.topRight);
+					TEXT.setAlignment(Align.topRight);
 				} else if (InputLib.checkInput(Keybind.DOWN)) {
-					text.setAlignment(Align.bottomRight);
+					TEXT.setAlignment(Align.bottomRight);
 				} else {
-					text.setAlignment(Align.right);
+					TEXT.setAlignment(Align.right);
 				}
 			} else if (InputLib.checkInput(Keybind.UP)) {
-				text.setAlignment(Align.top);
+				TEXT.setAlignment(Align.top);
 			} else if (InputLib.checkInput(Keybind.DOWN)) {
-				text.setAlignment(Align.bottom);
+				TEXT.setAlignment(Align.bottom);
 			} else if (InputLib.checkInput(Keybind.MENU)) {
-				text.setAlignment(Align.center);
+				TEXT.setAlignment(Align.center);
 			} else if (InputLib.checkInput(Keybind.BACK)) {
-				stage3.getRoot().removeActor(text);
+				stage3.getRoot().removeActor(TEXT);
 				menuList.removeLast();
 			}
 		}

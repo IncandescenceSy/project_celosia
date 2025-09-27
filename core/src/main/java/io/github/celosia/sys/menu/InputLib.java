@@ -10,7 +10,7 @@ import io.github.celosia.sys.settings.Settings;
 
 public class InputLib {
 	// How long each keybind has been held down for
-	private static final double[] held = new double[12];
+	private static final double[] HELD = new double[12];
 
 	// Default holdDelay (time between triggers when holding keybind down)
 	private static final float HOLD_DELAY = 0.1f;
@@ -70,20 +70,20 @@ public class InputLib {
 	}
 
 	public static boolean isKeybindPressed(Keybind keybind, boolean allowHold, float holdDelay) {
-		if (held[keybind.ordinal()] == 0f) { // Keybind wasn't pressed last frame or has been held
+		if (HELD[keybind.ordinal()] == 0f) { // Keybind wasn't pressed last frame or has been held
 			if (checkKeybind(keybind)) { // Keybind is pressed now
-				held[keybind.ordinal()] += Gdx.graphics.getDeltaTime();
+				HELD[keybind.ordinal()] += Gdx.graphics.getDeltaTime();
 				return true;
 			}
-		} else if (allowHold && held[keybind.ordinal()] >= 0.3f) { // Keybind has been held
+		} else if (allowHold && HELD[keybind.ordinal()] >= 0.3f) { // Keybind has been held
 			if (checkKeybind(keybind)) { // Keybind is pressed now
-				held[keybind.ordinal()] = 0.3f - holdDelay; // Make it take a moment
+				HELD[keybind.ordinal()] = 0.3f - holdDelay; // Make it take a moment
 				return true;
 			}
 		} else if (checkKeybind(keybind)) { // Keybind has been held, but not for long enough
-			held[keybind.ordinal()] += Gdx.graphics.getDeltaTime();
+			HELD[keybind.ordinal()] += Gdx.graphics.getDeltaTime();
 		} else { // Keybind isn't pressed
-			held[keybind.ordinal()] = 0;
+			HELD[keybind.ordinal()] = 0;
 		}
 
 		return false;
