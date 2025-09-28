@@ -31,17 +31,17 @@ public class ChangeSp implements SkillEffect {
 		}
 
 		public Builder notInstant() {
-			this.isInstant = false;
+			isInstant = false;
 			return this;
 		}
 
 		public Builder giveToSelf() {
-			this.giveToSelf = true;
+			giveToSelf = true;
 			return this;
 		}
 
 		public Builder mainTargetOnly() {
-			this.mainTargetOnly = true;
+			mainTargetOnly = true;
 			return this;
 		}
 

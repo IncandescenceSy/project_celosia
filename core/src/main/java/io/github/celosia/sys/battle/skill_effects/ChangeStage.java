@@ -39,9 +39,9 @@ public class ChangeStage implements SkillEffect {
 		private final StageType stageType;
 		private final int turns;
 		private final int stacks;
-		private boolean isInstant;
-		private boolean giveToSelf;
-		private boolean mainTargetOnly;
+		private boolean isInstant = true;
+		private boolean giveToSelf = false;
+		private boolean mainTargetOnly = false;
 
 		public Builder(StageType stageType, int turns, int stacks) {
 			this.stageType = stageType;
@@ -50,17 +50,17 @@ public class ChangeStage implements SkillEffect {
 		}
 
 		public Builder notInstant() {
-			this.isInstant = false;
+			isInstant = false;
 			return this;
 		}
 
 		public Builder giveToSelf() {
-			this.giveToSelf = true;
+			giveToSelf = true;
 			return this;
 		}
 
 		public Builder mainTargetOnly() {
-			this.mainTargetOnly = true;
+			mainTargetOnly = true;
 			return this;
 		}
 

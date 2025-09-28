@@ -55,22 +55,22 @@ public class Damage implements SkillEffect {
 		}
 
 		public Builder pierce() {
-			this.isPierce = true;
+			isPierce = true;
 			return this;
 		}
 
 		public Builder instant() {
-			this.isInstant = true;
+			isInstant = true;
 			return this;
 		}
 
 		public Builder mainTargetOnly() {
-			this.mainTargetOnly = true;
+			mainTargetOnly = true;
 			return this;
 		}
 
 		public Builder followUp() {
-			this.isFollowUp = true;
+			isFollowUp = true;
 			return this;
 		}
 

@@ -33,17 +33,17 @@ public class ChangeBloom implements SkillEffect {
 		}
 
 		public Builder notInstant() {
-			this.isInstant = false;
+			isInstant = false;
 			return this;
 		}
 
 		public Builder giveToTarget() {
-			this.giveToSelf = false;
+			giveToSelf = false;
 			return this;
 		}
 
 		public Builder mainTargetOnly() {
-			this.mainTargetOnly = true;
+			mainTargetOnly = true;
 			return this;
 		}
 

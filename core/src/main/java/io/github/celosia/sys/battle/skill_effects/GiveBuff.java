@@ -60,17 +60,17 @@ public class GiveBuff implements SkillEffect {
 		}
 
 		public Builder giveToSelf() {
-			this.giveToSelf = true;
+			giveToSelf = true;
 			return this;
 		}
 
 		public Builder mainTargetOnly() {
-			this.mainTargetOnly = true;
+			mainTargetOnly = true;
 			return this;
 		}
 
 		public Builder notInstant() {
-			this.isInstant = false;
+			isInstant = false;
 			return this;
 		}
 

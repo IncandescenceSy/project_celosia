@@ -57,17 +57,17 @@ public class Heal implements SkillEffect {
 		}
 
 		public Builder instant() {
-			this.isInstant = true;
+			isInstant = true;
 			return this;
 		}
 
 		public Builder giveToSelf() {
-			this.giveToSelf = true;
+			giveToSelf = true;
 			return this;
 		}
 
 		public Builder mainTargetOnly() {
-			this.mainTargetOnly = true;
+			mainTargetOnly = true;
 			return this;
 		}
 

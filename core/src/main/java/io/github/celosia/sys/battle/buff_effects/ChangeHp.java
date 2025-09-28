@@ -36,17 +36,17 @@ public class ChangeHp implements BuffEffect {
 		}
 
 		public Builder immediate() {
-			this.isImmediate = true;
+			isImmediate = true;
 			return this;
 		}
 
 		public Builder notPercentage() {
-			this.isPercentage = false;
+			isPercentage = false;
 			return this;
 		}
 
 		public Builder pierce() {
-			this.isPierce = true;
+			isPierce = true;
 			return this;
 		}
 
