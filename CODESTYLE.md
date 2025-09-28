@@ -30,6 +30,6 @@ It is strongly recommended to use Intellij IDEA
 * Split big logic into separate functions
 * Comment when necessary, but don't over-comment self-explanatory code
 * Logic statements must have {}
-  * Normally I'd allow them to be omitted if confined to 1 line, but spotless forces a newline. That can be turned off, but I couldn't figure out how
+  * I'd allow bracketless if inlined, but spotless forces a newline. That can be turned off, but I couldn't figure out how
 * Only write strings directly in code if they will only ever appear in 1 place, or if getting them wrong causes a crash that cannot go unnoticed
 * General coding conventions
