@@ -14,8 +14,8 @@ import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeHp implements BuffEffect {
 	private final int change; // Amount to change HP by. If isPercentage, 1000 = +100%
-	private final boolean isImmediate; // If true, happens onGive. If false, happens onTurnEnd
-	private final boolean isPercentage; // If false, uses the raw number of change instead
+	private final boolean isImmediate;
+	private final boolean isPercentage;
 	private final boolean isPierce;
 
 	public ChangeHp(Builder builder) {

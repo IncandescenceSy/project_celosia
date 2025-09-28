@@ -7,7 +7,7 @@ public class Team {
 
 	Unit[] units;
 
-	int bloom; // Bloom
+	int bloom;
 
 	// Todo: field effects
 

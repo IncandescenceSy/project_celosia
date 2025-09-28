@@ -51,7 +51,6 @@ public class InputLib {
 		Button.RY.setMapping(mapping.axisRightY);
 	}
 
-	// Checks for input between the keyboard and the currently in-use controller
 	public static boolean checkInput(boolean allowHold, float holdDelay, Keybind... keybinds) {
 		for (Keybind keybind : keybinds) {
 			if (isKeybindPressed(keybind, allowHold, holdDelay)) {
@@ -70,22 +69,22 @@ public class InputLib {
 	}
 
 	public static boolean isKeybindPressed(Keybind keybind, boolean allowHold, float holdDelay) {
-		if (HELD[keybind.ordinal()] == 0f) { // Keybind wasn't pressed last frame or has been held
-			if (checkKeybind(keybind)) { // Keybind is pressed now
-				HELD[keybind.ordinal()] += Gdx.graphics.getDeltaTime();
-				return true;
-			}
-		} else if (allowHold && HELD[keybind.ordinal()] >= 0.3f) { // Keybind has been held
-			if (checkKeybind(keybind)) { // Keybind is pressed now
-				HELD[keybind.ordinal()] = 0.3f - holdDelay; // Make it take a moment
-				return true;
-			}
-		} else if (checkKeybind(keybind)) { // Keybind has been held, but not for long enough
-			HELD[keybind.ordinal()] += Gdx.graphics.getDeltaTime();
-		} else { // Keybind isn't pressed
+		if (!checkKeybind(keybind)) {
 			HELD[keybind.ordinal()] = 0;
+			return false;
 		}
 
+		if (HELD[keybind.ordinal()] == 0f && checkKeybind(keybind)) {
+			HELD[keybind.ordinal()] += Gdx.graphics.getDeltaTime();
+			return true;
+		}
+
+		if (allowHold && HELD[keybind.ordinal()] >= 0.3f && checkKeybind(keybind)) {
+			HELD[keybind.ordinal()] = 0.3f - holdDelay;
+			return true;
+		}
+
+		HELD[keybind.ordinal()] += Gdx.graphics.getDeltaTime();
 		return false;
 	}
 
@@ -111,15 +110,12 @@ public class InputLib {
 		};
 	}
 
-	// Checks a stick axis to see if it's tilted further than a specified value
 	public static boolean checkAxis(int mapping, float dist) {
 		return InputHandler.getController() != null && (dist > 0f
 				? InputHandler.getController().getAxis(mapping) > dist
 				: InputHandler.getController().getAxis(mapping) < dist);
 	}
 
-	// Tries to determine what kind of controller is in use via its name. Defaults
-	// to XB
 	public static ControllerType getControllerType(Controller controller) {
 		String name = controller.getName().toLowerCase();
 

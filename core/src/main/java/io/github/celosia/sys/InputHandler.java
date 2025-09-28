@@ -10,16 +10,14 @@ import io.github.celosia.sys.menu.InputLib;
 import static io.github.celosia.sys.menu.ControllerType.NONE;
 import static io.github.celosia.sys.menu.InputLib.getControllerType;
 
-// Handle detecting whether a keyboard or a controller is being used, and finding the currently in-use controller
 public class InputHandler extends InputAdapter implements ControllerListener {
-	// Currently in-use controller
+	// The controller the last input came from
 	private static Controller controller;
 
 	// The kind of controller the last input came from
 	// NONE means the last input came from a keyboard
 	private static ControllerType lastUsedController = NONE;
 
-	// Get mappings of and set current controller
 	public static void checkController() {
 		controller = Controllers.getCurrent();
 		if (controller != null) {
@@ -65,7 +63,7 @@ public class InputHandler extends InputAdapter implements ControllerListener {
 
 	@Override
 	public boolean axisMoved(Controller controller, int axisCode, float value) {
-		// Ignore small stick movement
+		// Ignore small movement
 		if (Math.abs(value) > 0.2f) {
 			lastUsedController = getControllerType(controller);
 		}

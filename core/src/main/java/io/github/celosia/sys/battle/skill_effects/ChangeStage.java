@@ -19,9 +19,9 @@ import static io.github.celosia.sys.menu.TextLib.getStageStatString;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeStage implements SkillEffect {
-	private final StageType stageType; // Stage to change
-	private final int turns; // How many turns to change it for
-	private final int stacks; // How much to change it by
+	private final StageType stageType;
+	private final int turns;
+	private final int stacks;
 	private final boolean isInstant;
 	private final boolean giveToSelf;
 	private final boolean mainTargetOnly;
@@ -71,58 +71,54 @@ public class ChangeStage implements SkillEffect {
 
 	@Override
 	public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
-		if (!mainTargetOnly || isMainTarget) {
-			List<String> msg = new ArrayList<>();
-			String str = "";
-			String str2 = "";
+		if (mainTargetOnly && !isMainTarget) {
+			return ResultType.SUCCESS;
+		}
+		List<String> msg = new ArrayList<>();
+		String str = "";
+		String str2 = "";
 
-			Unit unit = (giveToSelf) ? self : target;
+		Unit unit = (giveToSelf) ? self : target;
 
-			// Apply self's mods
-			int turnsMod = turns + self.getDurationModBuffTypeDealt(getStageBuffType(stacks))
-					+ unit.getDurationModBuffTypeTaken(getStageBuffType(stacks));
+		// Apply self's mods
+		int turnsMod = turns + self.getDurationModBuffTypeDealt(getStageBuffType(stacks))
+				+ unit.getDurationModBuffTypeTaken(getStageBuffType(stacks));
 
-			int stacksMod = stacks + self.getStacksModBuffTypeDealt(getStageBuffType(stacks))
-					+ unit.getStacksModBuffTypeTaken(getStageBuffType(stacks));
+		int stacksMod = stacks + self.getStacksModBuffTypeDealt(getStageBuffType(stacks))
+				+ unit.getStacksModBuffTypeTaken(getStageBuffType(stacks));
 
-			self.onChangeStage(target, stageType, turnsMod, stacksMod);
+		self.onChangeStage(target, stageType, turnsMod, stacksMod);
 
-			int stageOld = target.getStage(stageType);
-			int stageNew = Math.clamp(stageOld + stacksMod, -5, 5);
+		int stageOld = target.getStage(stageType);
+		int stageNew = Math.clamp(stageOld + stacksMod, -5, 5);
 
-			String stageName = stageType.getIcon() + C_BUFF + stageType.getName();
+		String stageName = stageType.getIcon() + C_BUFF + stageType.getName();
 
+		if (stageNew != stageOld) {
+			str = lang.format("log.change_stage.stacks", formatName(unit.getUnitType().name(), unit.getPos()),
+					stageName, getColor(stageOld) + getSign(stageOld) + stageOld,
+					getColor(stageNew) + getSign(stageNew) + stageNew);
+			str2 = getStageStatString(unit, stageType, stageNew);
+
+			unit.setStage(stageType, stageNew);
+		}
+
+		// Refresh turns
+		int turnsOld = unit.getStageTurns(stageType);
+		if ((stageOld >= 0 && stacksMod >= 0) || (stageOld <= 0 && stacksMod <= 0) && turnsMod > turnsOld) {
+			unit.setStageTurns(stageType, turnsMod);
 			if (stageNew != stageOld) {
-				str = lang.format("log.change_stage.stacks", formatName(unit.getUnitType().name(), unit.getPos()),
-						stageName, getColor(stageOld) + getSign(stageOld) + stageOld,
-						getColor(stageNew) + getSign(stageNew) + stageNew);
-				str2 = getStageStatString(unit, stageType, stageNew);
-
-				unit.setStage(stageType, stageNew);
+				msg.add(str + lang.format("log.turns.nameless", C_NUM + turnsOld, C_NUM + turnsMod) + str2);
+			} else {
+				msg.add(lang.format("log.change_stage.turns", formatName(unit.getUnitType().name(), unit.getPos()),
+						stageName, C_NUM + turnsOld, C_NUM + turnsMod));
 			}
+		} else if (stageNew != stageOld) {
+			msg.add(str + str2);
+		}
 
-			// Refresh turns
-			if ((stageOld >= 0 && stacksMod >= 0) || (stageOld <= 0 && stacksMod <= 0)) {
-				int turnsOld = unit.getStageTurns(stageType);
-				if (turnsMod > turnsOld) {
-					unit.setStageTurns(stageType, turnsMod);
-					if (stageNew != stageOld) {
-						msg.add(str + lang.format("log.turns.nameless", C_NUM + turnsOld, C_NUM + turnsMod) + str2);
-					} else {
-						msg.add(lang.format("log.change_stage.turns",
-								formatName(unit.getUnitType().name(), unit.getPos()), stageName, C_NUM + turnsOld,
-								C_NUM + turnsMod));
-					}
-				} else if (stageNew != stageOld) {
-					msg.add(str + str2);
-				}
-			} else if (stageNew != stageOld) {
-				msg.add(str + str2);
-			}
-
-			if (!msg.isEmpty()) {
-				appendToLog(msg);
-			}
+		if (!msg.isEmpty()) {
+			appendToLog(msg);
 		}
 
 		return ResultType.SUCCESS;

@@ -9,7 +9,7 @@ import static io.github.celosia.sys.menu.TextLib.getColor;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeExtraActions implements BuffEffect {
-	private final int change; // Amount to add
+	private final int change;
 
 	public ChangeExtraActions(int change) {
 		this.change = change;

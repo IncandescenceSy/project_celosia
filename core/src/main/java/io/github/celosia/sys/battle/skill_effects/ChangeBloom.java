@@ -60,6 +60,7 @@ public class ChangeBloom implements SkillEffect {
 
 			appendToLog(Calcs.changeBloom(team, unit.getSide(), change));
 		}
+
 		return ResultType.SUCCESS;
 	}
 

@@ -1,10 +1,9 @@
 package io.github.celosia.sys.battle;
 
-// ResultType of the previous SkillEffect
 public enum ResultType {
 	// spotless:off
 	FAIL,
-    HIT_SHIELD, // Only damaged Shield or Protect
+    HIT_SHIELD, // Also counts EffectBlock
 	SUCCESS;
     // spotless:on
 }

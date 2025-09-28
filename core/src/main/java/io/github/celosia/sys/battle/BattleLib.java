@@ -1,6 +1,5 @@
 package io.github.celosia.sys.battle;
 
-// Misc stuff for battles
 public class BattleLib {
 	// Basic stats are all multiplied by these numbers
 	// Hidden mult multiplies them in secret while displaying unmultiplied to the

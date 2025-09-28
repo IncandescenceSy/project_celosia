@@ -2,8 +2,11 @@ package io.github.celosia.sys.battle;
 
 import static io.github.celosia.sys.settings.Lang.lang;
 
-// Multipliers -- measured in 10ths of a %, default 1000
-// Each comes with an exponent measured in 100ths, default 100
+// Multiplies the corresponding numbers
+// In 10ths of a % (1000 = *100%)
+// Raised to the corresponding exponent
+// Exps are in hundredths (100 = ^1, 150 = ^1.5, etc)
+// Calculations are performed on max(mult^exp, 10%)
 public enum Mult {
 	// spotless:off
 	DMG_DEALT(lang.get("mult.dmg_dealt"), true),
@@ -35,7 +38,7 @@ public enum Mult {
     // spotless:on
 
 	private final String name;
-	private final boolean isPositive; // true means more = better
+	private final boolean isPositive;
 
 	Mult(String name, boolean isPositive) {
 		this.name = name;

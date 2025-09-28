@@ -81,81 +81,78 @@ public class Damage implements SkillEffect {
 
 	@Override
 	public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
-		// Multi-hit attacks should continue unless they hit an immunity
-		if (resultPrev.ordinal() >= minResult.ordinal() && (!mainTargetOnly || isMainTarget)) {
-			long atk = 1;
-			long def = 1;
-
-			if (type == SkillType.STR) {
-				atk = self.getStrWithStage();
-				def = target.getAmrWithStage();
-			} else if (type == SkillType.MAG) {
-				atk = self.getMagWithStage();
-				def = target.getResWithStage();
-			}
-
-			int affMultDmgDealt;
-			int affMultDmgTaken;
-
-			double multWeakDmgDealt = 1;
-			double multWeakDmgTaken = 1;
-
-			if (element == Element.VIS) {
-				affMultDmgDealt = 1000;
-				affMultDmgTaken = 1000;
-			} else {
-				affMultDmgDealt = AffLib.DMG_DEALT.get(self.getAffsCur().getAff(element));
-				affMultDmgTaken = AffLib.DMG_TAKEN.get(target.getAffsCur().getAff(element));
-
-				if (target.isWeakTo(element)) {
-					multWeakDmgDealt = self.getMultWithExpWeakDmgDealt();
-					multWeakDmgTaken = target.getMultWithExpWeakDmgTaken();
-				}
-			}
-
-			double multFollowUpDmgDealt = 1;
-			double multFollowUpDmgTaken = 1;
-
-			if (isFollowUp) {
-				multFollowUpDmgDealt = self.getMultWithExpFollowUpDmgDealt();
-				multFollowUpDmgTaken = target.getMultWithExpFollowUpDmgTaken();
-			}
-
-			long dmg;
-
-			// No damage on affinity immunity
-			if (affMultDmgTaken == 0) {
-				dmg = 0;
-			} else {
-				dmg = STAT_MULT_HIDDEN * STAT_MULT_VISIBLE
-						* (long) (((double) atk / def) * pow * (affMultDmgDealt / 1000d) * (affMultDmgTaken / 1000d)
-								* self.getMultWithExpDmgDealt() * target.getMultWithExpDmgTaken()
-								* self.getMultWithExpElementDmgDealt(element)
-								* target.getMultWithExpElementDmgTaken(element) * multWeakDmgDealt * multWeakDmgTaken
-								* multFollowUpDmgDealt * multFollowUpDmgTaken);
-
-				// Only way for dmg to be negative is if an overflow happened, so set it to max
-				// long just to be safe
-				if (dmg < 0) {
-					dmg = Long.MAX_VALUE;
-				} else if (dmg == 0) {
-					dmg = 1;
-				}
-
-				self.onDealDamage(target, dmg, element);
-				target.onTakeDamage(self, dmg, element);
-			}
-
-			// Deal damage
-			Result result = target.damage(dmg, isPierce);
-			appendToLog(result.messages());
-			return result.resultType();
-		} else {
-			// If the previous hit failed entirely, this one wouldn't have been reached. If
-			// this return statement is ever reached, it's under special circumstances (such
-			// as a main target only effect), so let the attack continue just to be safe
+		// If the previous hit failed entirely, this one wouldn't have been reached. If
+		// this return statement is ever reached, it's under special circumstances (such
+		// as a main target only effect), so let the attack continue just to be safe
+		if (resultPrev.ordinal() < minResult.ordinal() || (mainTargetOnly && !isMainTarget)) {
 			return ResultType.SUCCESS;
 		}
+
+		long atk = 1;
+		long def = 1;
+
+		if (type == SkillType.STR) {
+			atk = self.getStrWithStage();
+			def = target.getAmrWithStage();
+		} else if (type == SkillType.MAG) {
+			atk = self.getMagWithStage();
+			def = target.getResWithStage();
+		}
+
+		int affMultDmgDealt;
+		int affMultDmgTaken;
+
+		double multWeakDmgDealt = 1;
+		double multWeakDmgTaken = 1;
+
+		if (element == Element.VIS) {
+			affMultDmgDealt = 1000;
+			affMultDmgTaken = 1000;
+		} else {
+			affMultDmgDealt = AffLib.DMG_DEALT.get(self.getAffsCur().getAff(element));
+			affMultDmgTaken = AffLib.DMG_TAKEN.get(target.getAffsCur().getAff(element));
+
+			if (target.isWeakTo(element)) {
+				multWeakDmgDealt = self.getMultWithExpWeakDmgDealt();
+				multWeakDmgTaken = target.getMultWithExpWeakDmgTaken();
+			}
+		}
+
+		double multFollowUpDmgDealt = 1;
+		double multFollowUpDmgTaken = 1;
+
+		if (isFollowUp) {
+			multFollowUpDmgDealt = self.getMultWithExpFollowUpDmgDealt();
+			multFollowUpDmgTaken = target.getMultWithExpFollowUpDmgTaken();
+		}
+
+		long dmg;
+
+		// No damage on affinity immunity
+		if (affMultDmgTaken == 0) {
+			dmg = 0;
+		} else {
+			dmg = STAT_MULT_HIDDEN * STAT_MULT_VISIBLE * (long) (((double) atk / def) * pow * (affMultDmgDealt / 1000d)
+					* (affMultDmgTaken / 1000d) * self.getMultWithExpDmgDealt() * target.getMultWithExpDmgTaken()
+					* self.getMultWithExpElementDmgDealt(element) * target.getMultWithExpElementDmgTaken(element)
+					* multWeakDmgDealt * multWeakDmgTaken * multFollowUpDmgDealt * multFollowUpDmgTaken);
+
+			// Only way for dmg to be negative is if an overflow happened, so set it to max
+			// long just to be safe
+			if (dmg < 0) {
+				dmg = Long.MAX_VALUE;
+			} else if (dmg == 0) {
+				dmg = 1;
+			}
+
+			self.onDealDamage(target, dmg, element);
+			target.onTakeDamage(self, dmg, element);
+		}
+
+		// Deal damage
+		Result result = target.damage(dmg, isPierce);
+		appendToLog(result.messages());
+		return result.resultType();
 	}
 
 	@Override

@@ -14,7 +14,7 @@ public class Buffs {
 	// Temp testing
 	static Buff STAR_RULER = new Buff("Star Ruler", "", "", BuffType.BUFF, new ChangeInfiniteSp(1));
 
-	// Basic
+	/// Basic
 	static Buff DEFEND = new Buff(lang.get("skill.defend"), lang.get("buff.defend.desc"), "[azure][+shield]",
 			BuffType.BUFF, new ChangeDefend(200), new ChangeMult(Mult.DMG_TAKEN, -200));
 
@@ -76,4 +76,6 @@ public class Buffs {
 			"[GREEN][+heart-plus]", BuffType.BUFF, 5, new ChangeHp.Builder(500).build());
 	static Buff EXTRA_ACTION = new Buff(lang.get("buff.extra_action"), lang.get("buff.extra_action.desc"),
 			"[RED][+echo-ripples]", BuffType.BUFF, new ChangeExtraActions(1));
+
+	/// Unique
 }

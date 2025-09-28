@@ -29,7 +29,6 @@ import io.github.celosia.sys.menu.CoolRects;
 import io.github.celosia.sys.menu.Fonts;
 import io.github.celosia.sys.menu.Fonts.FontType;
 import io.github.celosia.sys.menu.InputLib;
-import io.github.celosia.sys.menu.LabelStyles;
 import io.github.celosia.sys.menu.MenuDebug;
 import io.github.celosia.sys.menu.MenuLib;
 import io.github.celosia.sys.menu.MenuLib.MenuOptType;
@@ -58,7 +57,6 @@ import static io.github.celosia.sys.menu.TriLib.drawPaths;
 public class Main extends ApplicationAdapter {
 	InputHandler inputHandler;
 
-	// Current menu info
 	int index = 0;
 	public static List<MenuType> menuList = new ArrayList<>();
 	MenuOptType optSelected;
@@ -74,53 +72,15 @@ public class Main extends ApplicationAdapter {
 	public static Stage stage3;
 
 	// Atlases
-	// Key/Button prompt images
 	// From https://juliocacko.itch.io/free-input-prompts
 	public static TextureAtlas atlasPrompts;
 
-	// Icons
 	// From https://github.com/tommyettinger/game-icons-net-atlas
-	// Icons by:
-	// Lorc, http://lorcblog.blogspot.com
-	// Delapouite, https://delapouite.com
-	// John Colburn, http://ninmunanmu.com
-	// Felbrigg, http://blackdogofdoom.blogspot.co.uk
-	// John Redman, http://www.uniquedicetowers.com
-	// Carl Olsen, https://twitter.com/unstoppableCarl
-	// Sbed, http://opengameart.org/content/95-game-icons
-	// PriorBlue
-	// Willdabeast, http://wjbstories.blogspot.com
-	// Viscious Speed, http://viscious-speed.deviantart.com
-	// Lord Berandas, http://berandas.deviantart.com
-	// Irongamer, http://ecesisllc.wix.com/home
-	// HeavenlyDog, http://www.gnomosygoblins.blogspot.com
-	// Lucas
-	// Faithtoken, http://fungustoken.deviantart.com
-	// Skoll
-	// Andy Meneely, http://www.se.rit.edu/~andy/
-	// Cathelineau
-	// Kier Heyl
-	// Aussiesim
-	// Sparker, http://citizenparker.com
-	// Zeromancer
-	// Rihlsul
-	// Quoting
-	// Guard13007, https://guard13007.com
-	// DarkZaitzev, http://darkzaitzev.deviantart.com
-	// SpencerDub
-	// GeneralAce135
-	// Zajkonur
-	// Catsu
-	// Starseeker
-	// Pepijn Poolman
-	// Pierre Leducq
-	// Caro Asercion
 	public static TextureAtlas atlasIcons;
 
-	// Menu option labels
 	List<TypingLabel> optLabels = new ArrayList<>();
 
-	TextraLabel fps; // FPS counter
+	TextraLabel fps;
 	static TypingLabel popup;
 	static TypingLabel popup2;
 	TextraLabel debug;
@@ -128,7 +88,6 @@ public class Main extends ApplicationAdapter {
 	// todo move
 	Texture texBg;
 
-	// Input guide
 	public static TextraLabel inputGuide;
 
 	@Override
@@ -143,8 +102,6 @@ public class Main extends ApplicationAdapter {
 		atlasPrompts = new TextureAtlas("prompts.atlas");
 		atlasIcons = new TextureAtlas("icons.atlas");
 
-		// Handle detecting whether a keyboard or a controller is being used, and
-		// finding the currently in-use controller
 		inputHandler = new InputHandler();
 		InputMultiplexer multiplexer = new InputMultiplexer();
 		multiplexer.addProcessor(inputHandler);
@@ -164,7 +121,7 @@ public class Main extends ApplicationAdapter {
 		// Disappearing menu cursor
 		coolRects.add(CoolRects.CURSOR_2.ordinal(),
 				new CoolRect.Builder(0, 0, 0, 0).color(Color.PURPLE).prio(2).build());
-		// Triangle that covers most of the left half of the screen
+		// Full log
 		coolRects.add(CoolRects.COVER_LEFT.ordinal(),
 				new CoolRect.Builder(5, World.HEIGHT + 100, 1300, -100).hasOutline().speed(4).angL(0).prio(3).build());
 		// Centered popup bg
@@ -191,15 +148,11 @@ public class Main extends ApplicationAdapter {
 			Fonts.loadFonts();
 		}
 
-		LabelStyles.createStyles();
-
-		// Background
 		texBg = new Texture("bg.png");
 
-		// Internal config
 		TypingConfig.DEFAULT_SPEED_PER_CHAR = 0.01f;
 
-		// Lang
+		/// Lang
 		// Default (US English)
 		Lang.createBundle();
 		// Lang.createBundle(new Locale("ja", "JP"))
@@ -208,7 +161,6 @@ public class Main extends ApplicationAdapter {
 		rf.setMaximumFractionDigits(2);
 		rf.setMinimumFractionDigits(0);
 
-		// Debug
 		// Make sure the log can interpret special characters
 		System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
 
@@ -229,13 +181,11 @@ public class Main extends ApplicationAdapter {
 		debug.setPosition(10, World.HEIGHT - 80);
 		stage3.addActor(debug);
 
-		// todo outline
 		inputGuide = new TextraLabel("", FontType.KORURI_BORDER.get(20));
 		inputGuide.setPosition(0, 0);
 		inputGuide.setAlignment(Align.bottomRight);
 		stage3.addActor(inputGuide);
 
-		// Setup main menu
 		menuList.add(MenuType.MAIN);
 		createMenuMain();
 
@@ -250,7 +200,6 @@ public class Main extends ApplicationAdapter {
 	}
 
 	private void input() {
-		// debug
 		debug.setVisible(Debug.showDebugInfo);
 
 		if (Debug.showDebugInfo) {
@@ -259,30 +208,24 @@ public class Main extends ApplicationAdapter {
 					+ menuList.toString().replace("[", "").replace("]", ""));
 		}
 
-		// Display FPS counter
 		if (Settings.showFpsCounter) {
 			fps.setText((int) (1d / Gdx.graphics.getDeltaTime()) + " FPS");
 		}
 
-		// Get mappings of current controller
 		InputHandler.checkController();
 
 		switch (menuList.getLast()) {
 			case MAIN :
-				// Debug menu
 				if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
 					menuList.add(MenuType.DEBUG);
 				}
 
-				// Handle menu navigation
 				index = MenuLib.checkMovement1D(index, MenuType.MAIN.getOptCount());
 
-				// Handle option color
 				MenuLib.handleCursor(coolRects.get(CoolRects.CURSOR_1.ordinal()),
 						coolRects.get(CoolRects.CURSOR_2.ordinal()), index, World.WIDTH - 700 + 75,
 						World.WIDTH - 175 - 92 + 75 - 10, 230 + 475, 100 + 4);
 
-				// Handle menu confirmation
 				if (InputLib.checkInput(Keybind.CONFIRM)) {
 					optSelected = MenuOptType.values()[MenuType.MAIN.getOpt(index).getType().ordinal()];
 					switch (optSelected) {
@@ -290,12 +233,11 @@ public class Main extends ApplicationAdapter {
 							coolRects.get(CoolRects.MENU_MAIN.ordinal()).setDir(-1);
 							coolRects.get(CoolRects.CURSOR_1.ordinal()).setDir(-1).setSpeed(2f);
 							MenuLib.removeOpts(optLabels, stage2);
-							// Start game
+
 							BattleController.create();
 							menuList.add(MenuType.BATTLE);
 							break;
 						case QUIT :
-							// Quit game
 							Gdx.app.exit();
 							break;
 						case MANUAL, OPTIONS, CREDITS :
@@ -305,7 +247,6 @@ public class Main extends ApplicationAdapter {
 					}
 				} else if (InputLib.checkInput(Keybind.BACK)) {
 					if (index == MenuType.MAIN.getOptCount() - 1) {
-						// Quit game
 						Gdx.app.exit();
 					} else {
 						index = MenuType.MAIN.getOptCount() - 1;
@@ -339,7 +280,6 @@ public class Main extends ApplicationAdapter {
 				break;
 		}
 
-		// Input guide
 		if (Settings.showInputGuide) {
 			MenuLib.setInputGuideText(menuList.getLast());
 			inputGuide.setX(World.WIDTH - inputGuide.getWidth());
@@ -390,7 +330,6 @@ public class Main extends ApplicationAdapter {
 	}
 
 	private void createMenuMain() {
-		// Create options
 		optLabels = new ArrayList<>();
 		MenuLib.createOpts(optLabels, FontType.KORURI.get(80), stage2);
 	}
@@ -409,6 +348,8 @@ public class Main extends ApplicationAdapter {
 		coolRects.get(CoolRects.POPUP_CENTERED.ordinal()).setDir(1);
 	}
 
+	// todo fix bugs that arise from being resized (freezing, black screen) or
+	// remove resizing
 	@Override
 	public void resize(int width, int height) {
 		stage1.getViewport().update(width, height, true);

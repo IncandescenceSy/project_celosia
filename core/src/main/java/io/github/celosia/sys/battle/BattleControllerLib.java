@@ -56,30 +56,16 @@ import static io.github.celosia.sys.settings.Lang.lang;
 import static io.github.celosia.sys.util.MiscLib.booleanToInt;
 
 public class BattleControllerLib {
-	// Battle
 	public static Battle battle;
 
-	// Display
-	// Turn display
+	/// Display
 	static TypingLabel turn = new TypingLabel("{SPEED=0.1}{FADE}{SLIDE}" + C_TURN + lang.get("turn") + " 1",
 			Fonts.FontType.KORURI.get(80));
-
-	// Bloom displays for both teams
 	static List<TypingLabel> bloomL = new ArrayList<>();
-
-	// Queue (move order) display
 	static TypingLabel queue = new TypingLabel("", Fonts.FontType.KORURI.get(30));
-
-	// Stat displays for all units
 	static List<TypingLabel> statsL = new ArrayList<>();
-
-	// Buff displays
 	static List<TextraLabel> buffsL = new ArrayList<>();
-
-	// Move selection displays
 	static List<TypingLabel> movesL = new ArrayList<>();
-
-	// Skill menu display
 	static List<TypingLabel> skillsL = new ArrayList<>();
 
 	// temp
@@ -89,29 +75,37 @@ public class BattleControllerLib {
 			Skills.RASETU_FEAST, Skills.ICE_AGE, Skills.DEFEND};
 	static Skill[] skills3 = new Skill[]{Skills.THUNDERBOLT, Skills.DEFENSE_DOWN, Skills.HEAT_WAVE, Skills.PROTECT,
 			Skills.ICE_AGE, Skills.DEFEND};
+	static SkillInstance nothingInstanceTemp = new SkillInstance(Skills.NOTHING);
 
-	// Battle log
 	// todo fix positioning
 	static TextraLabel battleLog = new TextraLabel("", Fonts.FontType.KORURI.get(20));
+	static List<String> logText = new ArrayList<>();
 
-	// Actions being made this turn
+	// Amount of lines scrolled upwards
+	static int logScroll = 0;
+
 	static List<Move> moves = new ArrayList<>();
-	// Copy for queue
+	// Copy for queue reasons
 	static List<Move> moves2 = new ArrayList<>();
 
-	// How many extra actions have been used for the current combatant
+	// How many extra actions have been used for the currently acting Unit
 	static int extraActions = 0;
 
-	// Pos of the Unit that's currently using their move
+	// Pos of the Unit that's currently selecting their move. 100 = moves are
+	// executing
+	// todo make less messy
+	static int selectingMove = 0;
+
+	// Pos of the Unit that's currently using their Move
 	static int usingMove = 0;
 
-	// Index of the SkillEffect of the current skill that's currently being applied
+	// Index of the currently-applying SkillEffect of the current Move
 	static int applyingEffect = 0;
 
 	// Previous SkillEffect resultTypes for each pos
 	static ResultType[] prevResults = new ResultType[8];
 
-	// Amount of non-fail results for this skill
+	// Amount of non-fail results for the current Move so far
 	static int nonFails = 0;
 
 	// Menu navigation
@@ -120,18 +114,6 @@ public class BattleControllerLib {
 
 	// Currently selected skill
 	static SkillInstance selectedSkillInstance;
-
-	// Who's currently selecting their move. 0-3 = player; 4-8 = opponent; 100 =
-	// moves are executing
-	static int selectingMove = 0;
-
-	// temp
-	static SkillInstance nothingInstanceTemp = new SkillInstance(Skills.NOTHING);
-
-	static List<String> logText = new ArrayList<>();
-
-	// Amount of lines scrolled upwards in the log
-	static int logScroll = 0;
 
 	static void handleSetup() {
 		// Setup teams (temp)
@@ -162,12 +144,10 @@ public class BattleControllerLib {
 
 		battle = new Battle(player, opponent);
 
-		// Turn display
 		turn.setPosition(World.WIDTH_2, World.HEIGHT - 60, Align.center);
 		stage2.addActor(turn);
 
 		for (int i = 0; i < 2; i++) {
-			// Bloom displays for both teams
 			TypingLabel bloom = new TypingLabel(
 					C_STAT + lang.get("bloom") + "[WHITE]: " + C_BLOOM + "100[WHITE]/" + C_BLOOM + "1,000",
 					Fonts.FontType.KORURI.get(30));
@@ -176,43 +156,35 @@ public class BattleControllerLib {
 			stage2.addActor(bloom);
 		}
 
-		// Queue (move order) display
 		stage2.addActor(queue);
-
-		// Log
 		stage3.addActor(battleLog);
 
 		for (int i = 0; i < 8; i++) {
 			int y = (i >= 4) ? World.HEIGHT - 300 - 300 * (i - 4) : World.HEIGHT - 300 - 300 * i;
 
-			// Stat displays for all units
 			TypingLabel stats = new TypingLabel("", Fonts.FontType.KORURI.get(30));
 			statsL.add(stats);
 			stats.setPosition((i >= 4) ? World.WIDTH - 350 : 50, y);
 			stage2.addActor(stats);
 
-			// Buff displays
 			TextraLabel buffs = new TextraLabel("", Fonts.FontType.KORURI.get(20));
 			buffsL.add(buffs);
 			buffs.setAlignment(Align.topLeft);
 			buffs.setPosition((i >= 4) ? World.WIDTH - 350 : 50, y - 70);
 			stage2.addActor(buffs);
 
-			// Move selection displays
 			TypingLabel moves = new TypingLabel("", Fonts.FontType.KORURI.get(30));
 			movesL.add(moves);
 			moves.setPosition((i >= 4) ? World.WIDTH - 550 : 400, y);
 			stage2.addActor(moves);
 		}
 
-		// Skill menu display
 		// todo support arbitrary size
 		for (int i = 0; i < 6; i++) {
 			skillsL.add(new TypingLabel("", Fonts.FontType.KORURI.get(30)));
 			stage2.addActor(skillsL.get(i));
 		}
 
-		// Notify Passives onGive
 		for (Unit unit : battle.getAllUnits()) {
 			for (Passive passive : unit.getPassives()) {
 				for (BuffEffect buffEffect : passive.buffEffects())
@@ -220,7 +192,6 @@ public class BattleControllerLib {
 			}
 		}
 
-		// Log
 		appendToLog(C_TURN + lang.get("turn") + " " + 1 + "[WHITE]");
 		appendToLog(lang.get("log.gain_sp_bloom"));
 	}
@@ -238,18 +209,22 @@ public class BattleControllerLib {
 	}
 
 	static void handleBattle() {
-		if (selectingMove <= 3) { // Player's turn
+		// Player's turn
+		if (selectingMove <= 3) {
 			selectPlayerMove();
-		} else if (selectingMove <= 8) { // opponent's turn
+		}
+		// Opponent's turn
+		else if (selectingMove <= 8) {
 			selectOpponentMove();
-		} else if (selectingMove == 100) { // Moves play out
+		}
+		// Moves play out
+		else if (selectingMove == 100) {
 			executeMove();
 		}
 	}
 
 	static void selectPlayerMove() {
-		if (selectingMove < battle.getPlayerTeam().getUnits().length) { // if there are more allies yet to act
-			// Skill selection display
+		if (selectingMove < battle.getPlayerTeam().getUnits().length) {
 			// todo support arbitrary size
 			for (int i = 0; i < 6; i++) {
 				skillsL.get(i).setPosition(600, (World.HEIGHT - 400 - 250 * selectingMove) - ((i - 2) * 35));
@@ -269,8 +244,7 @@ public class BattleControllerLib {
 	}
 
 	static void selectOpponentMove() {
-		if (!Debug.selectOpponentMoves) {
-			// If there are more opponents yet to act
+		if (!Debug.selectOpponentMoves) { // todo make this actually work
 			if ((selectingMove - 4) < battle.getOpponentTeam().getUnits().length) {
 				// Skill selectedSkill = skills2[MathUtils.random(skills.length - 1)];
 				SkillInstance selectedSkillInstance = nothingInstanceTemp;
@@ -292,7 +266,6 @@ public class BattleControllerLib {
 	}
 
 	static void executeMove() {
-		// All moves have happened; end turn
 		if (moves.isEmpty()) {
 			endTurn();
 			return;
@@ -302,23 +275,18 @@ public class BattleControllerLib {
 		moves.sort(Comparator.comparingInt((Move entry) -> entry.skillInstance().getSkill().getPrio())
 				.thenComparingLong(entry -> entry.self().getAgiWithStage()).reversed());
 
-		// The next move plays out
 		Move move = moves.getFirst();
 
+		// todo some inversion on this awful block
 		if (move.isInRange()) {
 			int cd = move.skillInstance().getCooldown();
-			// Only check cooldown at the start
 			if (cd == 0 || applyingEffect > 0) {
-				// Invalid newSp will cancel move
+				// SP after move executes. Invalid newSp will cancel move
 				int newSp = 0;
 
-				// Execute move
-				// Setup at start of execution
 				if (applyingEffect == 0) {
-					// Set cooldown
 					move.skillInstance().setCooldown(cd);
 
-					// Set newSp
 					Unit self = move.self();
 					Skill skill = move.skillInstance().getSkill();
 
@@ -326,10 +294,12 @@ public class BattleControllerLib {
 					boolean isPlayerTeam = self.getPos() < 4;
 					Team team = (isPlayerTeam) ? battle.getPlayerTeam() : battle.getOpponentTeam();
 					int cost = (self.isInfiniteSp() && !skill.isBloom()) ? 0 : skill.getCost();
+
 					// Make sure cost doesn't go below 1 unless the skill has a base 0 SP cost
 					int costMod = (cost > 0)
 							? (int) Math.max(cost * (AffLib.SP_COST.get(self.getAffsCur().getAff(element)) / 1000d), 1)
 							: 0;
+
 					int change = skill.isBloom() ? costMod : (int) (costMod * self.getMultWithExpSpUse());
 					newSp = skill.isBloom() ? team.getBloom() - change : self.getSp() - change;
 
@@ -357,13 +327,10 @@ public class BattleControllerLib {
 							self.setSp(newSp);
 						}
 
-						// Apply on-skill use BuffEffects
 						self.onUseSkill(target, skill);
 
 						// Color move for currently acting combatant (temp)
 						for (int i = 0; i < 8; i++) {
-							// statsL.get(i).setX(((self.getPos()) == i) ? (i >= 4) ? World.WIDTH - 300 :
-							// 200 : (i >= 4) ? World.WIDTH - 250 : 150);
 							if (self.getPos() == i) {
 								movesL.get(i).setColor(Color.PINK);
 							} else {
@@ -371,7 +338,6 @@ public class BattleControllerLib {
 							}
 						}
 
-						// Reset prevResults
 						prevResults = new ResultType[8];
 					} else {
 						String msg = lang.format("log.skill_fail.sp", getTriesToUseString(move),
@@ -385,45 +351,34 @@ public class BattleControllerLib {
 
 				Unit targetMain = battle.getUnitAtPos(move.targetPos());
 
-				// Make sure newSp is valid
-				// Apply SkillEffects one at a time
-				// Looking for at least 1 non-fail to continue the skill after the first effect
 				if (newSp >= 0 && applyingEffect < skillEffects.size() && (nonFails > 0 || applyingEffect == 0)) {
-					// Apply to all targets
 					for (int targetPos : skill.getRange().getTargetPositions(move.self().getPos(), move.targetPos())) {
-						if (targetPos != -1) { // Target's position is valid
+						if (targetPos != -1) {
 							Unit targetCur = battle.getUnitAtPos(targetPos);
-							if (applyingEffect == 0) { // First effect
-								// Initialize prevResults
+							if (applyingEffect == 0) {
 								prevResults[targetPos] = ResultType.SUCCESS;
 
-								// Apply onTargetedBySkill BuffEffects
 								targetCur.onTargetedBySkill(move.self(), skill);
 							}
 
-							// Hasn't failed on this target yet
 							if (prevResults[targetPos] != ResultType.FAIL) {
-								// Not a fail
 								nonFails++;
 
-								// Apply effect and track result
 								ResultType resultType = skillEffects.get(applyingEffect).apply(move.self(), targetCur,
 										targetCur == targetMain, prevResults[targetPos]);
 								prevResults[targetPos] = resultType;
 							}
 						}
 					}
-					// Wait a bit before next SkillEffect
+
 					if (!skillEffects.get(applyingEffect).isInstant()) {
 						wait += 0.25f * Settings.battleSpeed;
 					}
 
 					applyingEffect++;
 
-					// Just finished applying the last effect
 					if (skillEffects.size() == applyingEffect) {
 						endMove();
-						// Set cooldown
 						move.skillInstance().setCooldown(move.skillInstance().getSkill().getCooldown());
 					}
 				} else {
@@ -442,7 +397,6 @@ public class BattleControllerLib {
 	}
 
 	static void handleLog() {
-		// Go back
 		if (InputLib.checkInput(Keybind.BACK, Keybind.MENU)) {
 			menuList.removeLast();
 			updateLog();
@@ -450,7 +404,6 @@ public class BattleControllerLib {
 			paths.get(Paths.SCROLLBAR.ordinal()).setDir(-1);
 		}
 
-		// Scroll
 		int logScrollNew = MenuLib.checkLogScroll(logScroll, logText.size(),
 				(menuList.getLast() == MenuLib.MenuType.LOG) ? 48 : 8);
 		if (logScroll != logScrollNew) {
@@ -461,7 +414,6 @@ public class BattleControllerLib {
 
 	static void handleTargeting() {
 		if (InputLib.checkInput(Keybind.BACK)) {
-			// Reset for next time
 			for (TypingLabel stat : statsL) {
 				stat.setColor(Color.WHITE);
 			}
@@ -471,14 +423,11 @@ public class BattleControllerLib {
 			return;
 		}
 
-		// Handle menu navigation
 		indexTarget = MenuLib.checkMovementTargeting(indexTarget, selectingMove,
 				selectedSkillInstance.getSkill().getRange());
 
-		// Handle option colors
 		MenuLib.handleOptColor(statsL, indexTarget);
 
-		// Add selection to move queue
 		if (InputLib.checkInput(Keybind.CONFIRM)) {
 			Unit self = battle.getPlayerTeam().getUnits()[selectingMove];
 			Unit target = (indexTarget < 4)
@@ -489,12 +438,11 @@ public class BattleControllerLib {
 			setTextIfChanged(movesL.get(selectingMove),
 					movesL.get(selectingMove).getOriginalText() + " → " + target.getUnitType().name());
 
-			// Reset for next time
-			for (TypingLabel stat : statsL)
+			for (TypingLabel stat : statsL) {
 				stat.setColor(Color.WHITE);
+			}
 
-			// Move on to next combatant to select a move for unless this one has extra
-			// actions
+			// Move on to next Unit unless this one has extra actions
 			if (extraActions < self.getExtraActions()) {
 				extraActions++;
 			} else {
@@ -513,22 +461,18 @@ public class BattleControllerLib {
 		usingMove = 0;
 		battle.setTurn(battle.getTurn() + 1);
 
-		// Update turn display
 		turn.setText(C_TURN + lang.get("turn") + " " + (battle.getTurn() + 1));
 
-		// Reset stat/move displays to normal
 		for (int i = 0; i < 8; i++) {
-			// statsL.get(i).setX((i >= 4) ? World.WIDTH - 250 : 150);
 			movesL.get(i).setText("");
 			movesL.get(i).setColor(Color.WHITE);
 		}
 
 		for (Unit unit : battle.getAllUnits()) {
-			// Increase SP
-			if (!unit.isInfiniteSp())
+			if (!unit.isInfiniteSp()) {
 				unit.setSp(Math.min((int) (unit.getSp() + (100 * unit.getMultWithExpSpGain())), 1000));
+			}
 
-			// Apply turn end BuffEffects
 			for (Passive passive : unit.getPassives()) {
 				StringBuilder turnEnd1 = new StringBuilder();
 				turnEnd1.append(lang.format("log.turn_end_effect", formatName(unit.getUnitType().name(), unit.getPos()),
@@ -537,13 +481,16 @@ public class BattleControllerLib {
 				for (BuffEffect buffEffect : passive.buffEffects()) {
 					StringBuilder turnEnd2 = new StringBuilder();
 					String[] effectMsgs = buffEffect.onTurnEnd(unit, 1);
-					for (String effectMsg : effectMsgs)
-						if (!effectMsg.isEmpty())
-							turnEnd2.append(effectMsg);
 
-					// Only have turn end message if both have messages
-					if (!turnEnd2.isEmpty())
+					for (String effectMsg : effectMsgs) {
+						if (!effectMsg.isEmpty()) {
+							turnEnd2.append(effectMsg);
+						}
+					}
+
+					if (!turnEnd2.isEmpty()) {
 						appendToLog(turnEnd1 + turnEnd2.toString());
+					}
 				}
 			}
 
@@ -555,12 +502,15 @@ public class BattleControllerLib {
 				for (BuffEffect buffEffect : buffInstance.getBuff().buffEffects()) {
 					StringBuilder turnEnd2 = new StringBuilder();
 					String[] effectMsgs = buffEffect.onTurnEnd(unit, buffInstance.getStacks());
-					for (String effectMsg : effectMsgs)
-						if (!effectMsg.isEmpty())
+					for (String effectMsg : effectMsgs) {
+						if (!effectMsg.isEmpty()) {
 							turnEnd2.append(effectMsg);
+						}
+					}
 
-					if (!turnEnd2.isEmpty())
+					if (!turnEnd2.isEmpty()) {
 						appendToLog(turnEnd1 + turnEnd2.toString());
+					}
 				}
 			}
 
@@ -568,9 +518,8 @@ public class BattleControllerLib {
 			unit.decrementTurns();
 		}
 
-		// Log
-		appendToLog(C_TURN + lang.get("turn") + " " + (battle.getTurn() + 1) + "[WHITE]"); // todo is trailing white
-		// needed
+		// todo is trailing white needed
+		appendToLog(C_TURN + lang.get("turn") + " " + (battle.getTurn() + 1) + "[WHITE]");
 		appendToLog(lang.get("log.gain_sp_bloom"));
 
 		// Increase bloom
@@ -579,7 +528,6 @@ public class BattleControllerLib {
 	}
 
 	public static void updateStatDisplay() {
-		// Bloom displays
 		for (int i = 0; i < 2; i++) {
 			// todo colors
 			// it seems [] and {} tags cant be mixed
@@ -598,7 +546,6 @@ public class BattleControllerLib {
 		}
 
 		// Queue
-		// Sort units by Agi
 		List<Unit> unitsAll = battle.getAllUnits();
 		unitsAll.sort((a, b) -> Long.compare(b.getAgiWithStage(), a.getAgiWithStage()));
 
@@ -610,6 +557,8 @@ public class BattleControllerLib {
 			moves2.sort(Comparator.comparingInt((Move entry) -> entry.skillInstance().getSkill().getPrio())
 					.thenComparingLong(entry -> entry.self().getAgiWithStage()).reversed());
 			// todo will thenComparingInt(pos.reversed) work
+			// todo is this supposed to change queue order? cuz it doesnt. probably remove
+			// this or make it work
 		} else {
 			moves2 = new ArrayList<>();
 		}
@@ -619,19 +568,30 @@ public class BattleControllerLib {
 		for (int i = 0; i < unitsAll.size(); i++) {
 			int pos = unitsAll.get(i).getPos();
 			boolean active = pos == selectingMove;
-			if (!active && usingMove > 0 && moves2.size() >= unitsAll.size())
+
+			if (!active && usingMove > 0 && moves2.size() >= unitsAll.size()) {
 				active = (moves2.get(usingMove - 1).self() == unitsAll.get(i));
+			}
+
 			queueText.append((getSide(pos) == Side.ALLY) ? C_ALLY : C_OPP);
-			if (active)
+
+			if (active) {
 				queueText.append((getSide(pos) == Side.ALLY) ? C_ALLY_L : C_OPP_L).append("[[");
+			}
+
 			queueText.append(unitsAll.get(i).getUnitType().name());
-			if (active)
+
+			if (active) {
 				queueText.append("][WHITE]");
-			if (i != unitsAll.size() - 1)
+			}
+
+			if (i != unitsAll.size() - 1) {
 				queueText.append(", ");
+			}
 		}
 		queue.setText(queueText.toString());
-		queue.setPosition(World.WIDTH_2, World.HEIGHT - 120, Align.center); // Must be set here so it aligns properly
+		// Must be set here so it aligns properly
+		queue.setPosition(World.WIDTH_2, World.HEIGHT - 120, Align.center);
 		queue.skipToTheEnd();
 
 		// Update combatant stat display
@@ -747,8 +707,6 @@ public class BattleControllerLib {
 	}
 
 	public static void appendToLog(String... entries) {
-		// If logText exceeds 2500 lines, remove ~500 lines (so this doesn't have to get
-		// called again soon)
 		// todo figure out a good size limit
 		if (logText.size() > 2500) {
 			logText.subList(0, 500).clear();
@@ -757,10 +715,7 @@ public class BattleControllerLib {
 		for (String entry : entries) {
 			if (!entry.isEmpty()) {
 				logText.add(entry);
-
-				// Reset scroll to bottom
 				logScroll = 0;
-
 				updateLog();
 			}
 		}
@@ -772,17 +727,13 @@ public class BattleControllerLib {
 		}
 
 		logText.addAll(entry);
-
-		// Reset scroll to bottom
 		logScroll = 0;
-
 		updateLog();
 	}
 
 	static void updateLog() {
 		battleLog.setText(formatLog());
 
-		// Scrollbar
 		if (menuList.getLast() == MenuLib.MenuType.LOG) {
 			battleLog.setPosition(20, World.HEIGHT_2, Align.topLeft);
 
@@ -812,7 +763,6 @@ public class BattleControllerLib {
 			Array<Vector2> points = new Array<>(false, 2);
 			points.addAll(new Vector2(sx, sy), new Vector2(ex, ey));
 			scrollbar.setPoints(points);
-
 		} else {
 			battleLog.setPosition(World.WIDTH_2 - 200, World.HEIGHT - 270, Align.left);
 		}
@@ -821,10 +771,6 @@ public class BattleControllerLib {
 	static String formatLog() {
 		int lines = (menuList.getLast() == MenuLib.MenuType.LOG) ? 48 : 8;
 		int scroll = (menuList.getLast() == MenuLib.MenuType.LOG) ? logScroll : 0;
-
-		if (logText == null || logText.isEmpty()) {
-			return "";
-		}
 
 		int start = Math.max(0, logText.size() - lines - scroll);
 		int end = Math.min(start + lines, logText.size());
@@ -841,9 +787,7 @@ public class BattleControllerLib {
 	}
 
 	static void selectMove() {
-		// Go back
 		if (InputLib.checkInput(Keybind.BACK) && selectingMove != 0) {
-			// Reset for next time
 			for (TypingLabel skill : skillsL) {
 				skill.setText("");
 				skill.setColor(Color.WHITE);
@@ -853,34 +797,27 @@ public class BattleControllerLib {
 			indexSkill = 0;
 			movesL.get(selectingMove).setText("");
 
-			// Remove all selected moves
-			for (int i = 0; i <= battle.getPlayerTeam().getUnits()[selectingMove].getExtraActions(); i++)
+			for (int i = 0; i <= battle.getPlayerTeam().getUnits()[selectingMove].getExtraActions(); i++) {
 				moves.removeLast();
+			}
 
-			// menuList.removeLast();
 			return;
 		}
 
-		// Handle menu navigation
 		indexSkill = MenuLib.checkMovement1D(indexSkill, skillsL.size());
 
-		// Handle option colors
 		MenuLib.handleOptColor(skillsL, indexSkill);
 
-		// Move selected
 		if (InputLib.checkInput(Keybind.CONFIRM)) {
 			selectedSkillInstance = battle.getPlayerTeam().getUnits()[selectingMove].getSkillInstances()[indexSkill];
 			setTextIfChanged(movesL.get(selectingMove), selectedSkillInstance.getSkill().getName());
 
-			// Reset for next time
 			for (TypingLabel skill : skillsL) {
 				skill.setText("");
 				skill.setColor(Color.WHITE);
 			}
 
-			// Prepare menus
 			indexTarget = getStartingIndex(selectedSkillInstance.getSkill());
-
 			menuList.add(MenuLib.MenuType.TARGETING);
 		}
 	}

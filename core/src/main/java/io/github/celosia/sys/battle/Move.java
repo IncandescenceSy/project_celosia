@@ -3,10 +3,8 @@ package io.github.celosia.sys.battle;
 import static io.github.celosia.sys.battle.PosLib.getHeight;
 import static io.github.celosia.sys.battle.PosLib.getRelativeSide;
 
-// A skill with self and target attached
 public record Move(SkillInstance skillInstance, Unit self, int targetPos) {
 	public boolean isInRange() {
-		// Range checks
 		Range range = skillInstance.getSkill().getRange();
 
 		// Check for disallowed self-targeting

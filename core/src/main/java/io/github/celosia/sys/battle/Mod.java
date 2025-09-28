@@ -2,7 +2,6 @@ package io.github.celosia.sys.battle;
 
 import static io.github.celosia.sys.settings.Lang.lang;
 
-// Modifiers -- default 0
 public enum Mod {
 	// spotless:off
     DURATION_BUFF_DEALT(lang.get("mod.duration_buff_dealt"), true),

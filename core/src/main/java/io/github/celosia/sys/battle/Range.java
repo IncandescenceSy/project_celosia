@@ -7,7 +7,6 @@ import static io.github.celosia.sys.battle.PosLib.getAcross;
 import static io.github.celosia.sys.battle.PosLib.getTeamWithout;
 import static io.github.celosia.sys.battle.PosLib.getUpDown;
 
-// Range that skills can have
 public record Range(String name, int rangeVertical, Side side, boolean canTargetSelf, int targetCount,
 		Target... targets) {
 	Range(String name, int rangeVertical, Side side, boolean canTargetSelf, Target... targets) {

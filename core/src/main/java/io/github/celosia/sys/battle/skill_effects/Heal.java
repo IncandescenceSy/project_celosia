@@ -78,90 +78,90 @@ public class Heal implements SkillEffect {
 
 	@Override
 	public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
-		if (!mainTargetOnly || isMainTarget) {
-			List<String> msg = new ArrayList<>();
+		if (mainTargetOnly && !isMainTarget) {
+			return ResultType.SUCCESS;
+		}
 
-			Unit unit = (giveToSelf) ? self : target;
+		List<String> msg = new ArrayList<>();
 
-			// Heals by pow% of user's Fth
-			long heal = (long) (self.getFthWithStage() * (pow / 100d) * self.getMultWithExpHealingDealt()
-					* unit.getMultWithExpHealingTaken());
+		Unit unit = (giveToSelf) ? self : target;
 
-			// Adds shield (shield + defend cannot exceed max HP)
-			if (shieldTurns > 0) {
-				String str = "";
+		// Heals by pow% of user's Fth
+		long heal = (long) (self.getFthWithStage() * (pow / 100d) * self.getMultWithExpHealingDealt()
+				* unit.getMultWithExpHealingTaken());
 
-				// Apply self's durationMod
-				int turnsMod = shieldTurns + self.getModDurationBuffDealt() + unit.getModDurationBuffTaken();
+		// Adds shield (shield + defend cannot exceed max HP)
+		if (shieldTurns > 0) {
+			String str = "";
 
-				self.onDealShield(unit, turnsMod, heal);
-				unit.onTakeShield(unit, turnsMod, heal);
+			// Apply self's durationMod
+			int turnsMod = shieldTurns + self.getModDurationBuffDealt() + unit.getModDurationBuffTaken();
 
-				long hpMax = unit.getMaxHp();
-				long shieldOld = unit.getShield();
-				long shieldNew = (shieldOld + unit.getDefend() + heal > hpMax)
-						? hpMax - unit.getDefend()
-						: shieldOld + heal;
-				int turnsOld = unit.getShieldTurns();
+			self.onDealShield(unit, turnsMod, heal);
+			unit.onTakeShield(unit, turnsMod, heal);
 
+			long hpMax = unit.getMaxHp();
+			long shieldOld = unit.getShield();
+			long shieldNew = (shieldOld + unit.getDefend() + heal > hpMax)
+					? hpMax - unit.getDefend()
+					: shieldOld + heal;
+			int turnsOld = unit.getShieldTurns();
+
+			if (shieldNew > shieldOld) {
+				long shieldOldDisp = unit.getDisplayShield();
+
+				unit.setShield(shieldNew);
+
+				long hpMaxDisp = unit.getDisplayMaxHp();
+				long shieldNewDisp = unit.getDisplayShield();
+
+				str = lang.format("log.change_shield", formatName(unit.getUnitType().name(), unit.getPos()),
+						C_SHIELD + formatNum((shieldOldDisp + unit.getDisplayDefend())),
+						C_SHIELD + formatNum((shieldNewDisp + unit.getDisplayDefend())), C_HP + formatNum(hpMaxDisp),
+						getColor(shieldNewDisp - shieldOldDisp) + "+" + formatNum((shieldNewDisp - shieldOldDisp)));
+			}
+
+			if (turnsMod > turnsOld) {
+				unit.setShieldTurns(turnsMod);
 				if (shieldNew > shieldOld) {
-					long shieldOldDisp = unit.getDisplayShield();
-
-					unit.setShield(shieldNew);
-
-					long hpMaxDisp = unit.getDisplayMaxHp();
-					long shieldNewDisp = unit.getDisplayShield();
-
-					str = lang.format("log.change_shield", formatName(unit.getUnitType().name(), unit.getPos()),
-							C_SHIELD + formatNum((shieldOldDisp + unit.getDisplayDefend())),
-							C_SHIELD + formatNum((shieldNewDisp + unit.getDisplayDefend())),
-							C_HP + formatNum(hpMaxDisp),
-							getColor(shieldNewDisp - shieldOldDisp) + "+" + formatNum((shieldNewDisp - shieldOldDisp)));
-				}
-
-				if (turnsMod > turnsOld) {
-					unit.setShieldTurns(turnsMod);
-					if (shieldNew > shieldOld) {
-						msg.add(str + lang.format("log.turns.nameless", C_NUM + turnsOld, C_NUM + turnsMod));
-					} else {
-						msg.add(lang.format("log.shield.turns", formatName(unit.getUnitType().name(), unit.getPos()),
-								C_NUM + turnsOld, C_NUM + turnsMod));
-					}
-				}
-
-				// Effect block message
-				if (shieldOld == 0 && shieldNew > 0 && !unit.isEffectBlock() && unit.getDefend() == 0) {
-					msg.add(lang.format("log.change_effect_block",
-							formatName(unit.getUnitType().name(), unit.getPos(), false), 1));
-				}
-
-			} else { // Heals
-				self.onDealHeal(unit, heal, overHeal);
-				unit.onTakeHeal(self, heal, overHeal);
-
-				long hpCur = unit.getHp();
-				long hpMax = unit.getMaxHp();
-				// Picks the lower of (current HP + heal amount) and (maximum allowed overHeal
-				// of this skill), and then the higher between that and current HP
-				long hpNew = Math.max(hpCur, Math.min(hpCur + heal, (long) (hpMax * (1 + (overHeal / 1000d)))));
-
-				if (hpNew > hpCur) {
-					long hpOldDisp = unit.getDisplayHp();
-
-					unit.setHp(hpNew);
-
-					long hpNewDisp = unit.getDisplayHp();
-					long hpMaxDisp = unit.getDisplayMaxHp();
-
-					msg.add(lang.format("log.change_hp", formatName(unit.getUnitType().name(), self.getPos()),
-							C_HP + formatNum(hpOldDisp), C_HP + formatNum(hpNewDisp), C_HP + formatNum(hpMaxDisp),
-							C_POS + "+" + formatNum((hpNewDisp - hpOldDisp))));
+					msg.add(str + lang.format("log.turns.nameless", C_NUM + turnsOld, C_NUM + turnsMod));
+				} else {
+					msg.add(lang.format("log.shield.turns", formatName(unit.getUnitType().name(), unit.getPos()),
+							C_NUM + turnsOld, C_NUM + turnsMod));
 				}
 			}
 
-			appendToLog(msg);
+			// Effect block message
+			if (shieldOld == 0 && shieldNew > 0 && !unit.isEffectBlock() && unit.getDefend() == 0) {
+				msg.add(lang.format("log.change_effect_block",
+						formatName(unit.getUnitType().name(), unit.getPos(), false), 1));
+			}
+
+		} else { // Heals
+			self.onDealHeal(unit, heal, overHeal);
+			unit.onTakeHeal(self, heal, overHeal);
+
+			long hpCur = unit.getHp();
+			long hpMax = unit.getMaxHp();
+			// Picks the lower of (current HP + heal amount) and (maximum allowed overHeal
+			// of this skill), and then the higher between that and current HP
+			long hpNew = Math.max(hpCur, Math.min(hpCur + heal, (long) (hpMax * (1 + (overHeal / 1000d)))));
+
+			if (hpNew > hpCur) {
+				long hpOldDisp = unit.getDisplayHp();
+
+				unit.setHp(hpNew);
+
+				long hpNewDisp = unit.getDisplayHp();
+				long hpMaxDisp = unit.getDisplayMaxHp();
+
+				msg.add(lang.format("log.change_hp", formatName(unit.getUnitType().name(), self.getPos()),
+						C_HP + formatNum(hpOldDisp), C_HP + formatNum(hpNewDisp), C_HP + formatNum(hpMaxDisp),
+						C_POS + "+" + formatNum((hpNewDisp - hpOldDisp))));
+			}
 		}
 
+		appendToLog(msg);
 		return ResultType.SUCCESS;
 	}
 

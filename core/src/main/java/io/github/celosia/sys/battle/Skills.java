@@ -10,7 +10,7 @@ import io.github.celosia.sys.battle.skill_effects.Heal;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class Skills {
-	// Temp testing skills
+	///// Temp testing skills
 	static Skill RASETU_FEAST = new Skill.Builder("Rasetu Feast", "", Element.VIS, Ranges.OTHER_3R_OR_SELF, 1)
 			.effects(new GiveBuff.Builder(Buffs.BURN, 3).build(), new GiveBuff.Builder(Buffs.FROSTBITE, 3).build(),
 					new GiveBuff.Builder(Buffs.SHOCK, 3).build(), new GiveBuff.Builder(Buffs.TREMOR, 3).build())
@@ -22,7 +22,7 @@ public class Skills {
 					new GiveBuff.Builder(Buffs.STAR_RULER, 5).giveToSelf().build())
 			.build();
 
-	// Basic skills
+	////////// Basic skills
 	static Skill NOTHING = new Skill.Builder(lang.get("skill.nothing"), lang.get("skill.nothing.desc"), Element.VIS,
 			Ranges.SELF, 0).build();
 	static Skill DEFEND = new Skill.Builder(lang.get("skill.defend"), lang.get("skill.defend.desc"), Element.VIS,
@@ -109,8 +109,8 @@ public class Skills {
 			Element.VIS, Ranges.COLUMN_OF_3_1R, 450).role(SkillRole.SHIELD)
 					.effect(new Heal.Builder(60).shieldTurns(5).build()).build();
 
-	// Attacks
-	// Ignis
+	///// Attacks
+	/// Ignis
 	// Str
 	// Mag
 	static Skill FIREBALL = new Skill.Builder(lang.get("skill.fireball"), lang.get("skill.fireball.desc"),
@@ -124,7 +124,7 @@ public class Skills {
 							new GiveBuff.Builder(Buffs.BURN, 2).build())
 					.build();
 
-	// Glacies
+	/// Glacies
 	// Str
 	// Mag
 	static Skill ICE_BEAM = new Skill.Builder(lang.get("skill.ice_beam"), lang.get("skill.ice_beam.desc"),
@@ -133,7 +133,7 @@ public class Skills {
 							new GiveBuff.Builder(Buffs.FROSTBITE, 3).build())
 					.build();
 
-	// Fulgur
+	/// Fulgur
 	// Str
 	// Mag
 	static Skill THUNDERBOLT = new Skill.Builder(lang.get("skill.thunderbolt"), lang.get("skill.thunderbolt.desc"),
@@ -142,22 +142,22 @@ public class Skills {
 							new GiveBuff.Builder(Buffs.SHOCK, 3).build())
 					.build();
 
-	// Ventus
+	/// Ventus
 	// Str
 	static Skill JET_STREAM = new Skill.Builder(lang.get("skill.jet_stream"), lang.get("skill.jet_stream.desc"),
 			Element.VENTUS, Ranges.OTHER_1R, 120).role(SkillRole.ATTACK).prio(1)
 					.effect(new Damage.Builder(SkillType.STR, Element.VENTUS, 55).build()).build();
 	// Mag
 
-	// Terra
+	/// Terra
 	// Str
 	// Mag
 
-	// Lux
+	/// Lux
 	// Str
 	// Mag
 
-	// Malum
+	/// Malum
 	// Str
 	// Mag
 	// todo a way to build multihits that's less repetitive?
@@ -171,19 +171,19 @@ public class Skills {
 							new GiveBuff.Builder(Buffs.CURSE, 2).build())
 					.build();
 
-	// Unique skills
+	////////// Unique skills
 
-	// Bloom skills
+	///// Bloom skills
 	// Stages
 
 	// Heals
 
 	// Shields
 
-	// Attacks
-	// Ignis
+	///// Attacks
+	/// Ignis
 
-	// Glacies
+	/// Glacies
 	static Skill ICE_AGE = new Skill.Builder(lang.get("skill.ice_age"), lang.get("skill.ice_age.desc"), Element.GLACIES,
 			Ranges.OTHER_2R, 600)
 					.bloom().role(SkillRole.ATTACK)
@@ -192,15 +192,15 @@ public class Skills {
 							new GiveBuff.Builder(Buffs.FROSTBOUND, 3).build())
 					.build();
 
-	// Fulgur
+	/// Fulgur
 
-	// Ventus
+	/// Ventus
 
-	// Terra
+	/// Terra
 
-	// Lux
+	/// Lux
 
-	// Malum
+	/// Malum
 
-	// Unique
+	/// Unique
 }

@@ -8,8 +8,8 @@ import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 
 // Todo heavily limit %-based damage on bosses
 public class ChangeSp implements BuffEffect {
-	private final int change; // Amount to change SP by
-	private final boolean isImmediate; // If true, happens onGive. If false, happens onTurnEnd
+	private final int change;
+	private final boolean isImmediate;
 
 	public ChangeSp(int change, boolean isImmediate) {
 		this.change = change;

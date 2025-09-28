@@ -18,7 +18,6 @@ public record ExtrapolatingArray(int[] core, int offset, int stepUp, int stepDow
 		// Real index
 		int i = index + offset;
 
-		// Value
 		int value;
 
 		// In bounds
@@ -26,12 +25,12 @@ public record ExtrapolatingArray(int[] core, int offset, int stepUp, int stepDow
 			value = core[i];
 		}
 
-		// Above bounds; return core[last] + (stepUp * amount of indices above bounds)
+		// Above bounds
 		else if (i >= core.length) {
 			value = core[core.length - 1] + (stepUp * i - (core.length - 1));
 		}
 
-		// Below bounds; return core[0] + (stepDown * amount of indices below bounds)
+		// Below bounds
 		else {
 			value = core[0] + (stepDown * Math.abs(i));
 		}

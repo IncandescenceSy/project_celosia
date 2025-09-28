@@ -10,7 +10,7 @@ import static io.github.celosia.sys.settings.Lang.lang;
 import static io.github.celosia.sys.util.MiscLib.isMatchingTruthiness;
 
 public class ChangeInfiniteSp implements BuffEffect {
-	private final int change; // Amount to add
+	private final int change;
 
 	public ChangeInfiniteSp(int change) {
 		this.change = change;

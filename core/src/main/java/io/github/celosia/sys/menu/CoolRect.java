@@ -16,7 +16,7 @@ public class CoolRect {
 	private float prog; // Animation progress
 	private int dir; // 1 = unfolding; -1 = collapsing
 	private Color color; // Core color
-	private boolean hasOutline; // Whether to draw an outline
+	private boolean hasOutline;
 	private float speed; // Speed multiplier. 1f = animation completes in 1s. 2f = 0.5s. Speed is doubled
 							// when closing
 	private int angL; // Not actually an angle. Don't worry about it

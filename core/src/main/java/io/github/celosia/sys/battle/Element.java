@@ -2,7 +2,6 @@ package io.github.celosia.sys.battle;
 
 import static io.github.celosia.sys.settings.Lang.lang;
 
-// Elements that skills can have
 public enum Element {
 	// spotless:off
 	VIS(lang.get("element.vis")),
@@ -14,7 +13,6 @@ public enum Element {
     LUX(lang.get("element.lux")),
     MALUM(lang.get("element.malum"));
     // spotless:on
-	// FULGUR_MALUM(lang.get("element.fulgur") + "/" + lang.get("element.malum"));
 
 	private final String name;
 

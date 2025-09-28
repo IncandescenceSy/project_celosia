@@ -13,7 +13,7 @@ import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeAff implements BuffEffect {
 	private final Element element;
-	private final int change; // Amount to add
+	private final int change;
 
 	public ChangeAff(Element element, int change) {
 		this.element = element;

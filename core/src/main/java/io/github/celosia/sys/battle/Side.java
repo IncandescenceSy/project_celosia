@@ -7,7 +7,7 @@ public enum Side {
     BOTH(2);
     // spotless:on
 
-	int id;
+	final int id;
 
 	Side(int id) {
 		this.id = id;

@@ -1,6 +1,5 @@
 package io.github.celosia.sys.battle;
 
-// Interface for applying buff effects
 public interface BuffEffect {
 	default void onGive(Unit self, int stacks) {
 	}

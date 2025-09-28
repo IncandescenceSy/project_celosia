@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-// Skills (any action that is attributed to a Unit and has impact on the battle)
 public class Skill {
 	private final String name;
 	private final String desc;
@@ -147,12 +146,10 @@ public class Skill {
 		return skillEffects;
 	}
 
-	// Returns true if the skill can only target Self
 	public boolean isRangeSelf() {
 		return range == Ranges.SELF || range == Ranges.SELF_UP_DOWN;
 	}
 
-	// Returns whether this skill would be expected to target the opponent
 	public boolean shouldTargetOpponent() {
 		return range.side() == Side.OPPONENT || this.hasRole(SkillRole.ATTACK)
 				|| this.hasRole(SkillRole.DEBUFF_DEFENSIVE) || this.hasRole(SkillRole.DEBUFF_OFFENSIVE);

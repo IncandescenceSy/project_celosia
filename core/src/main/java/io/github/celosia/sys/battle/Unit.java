@@ -32,14 +32,18 @@ public class Unit {
 	// Current HP needs to be separate
 	private long hp;
 
-	// Skills
 	private final SkillInstance[] skillInstances;
-
-	// Passives
 	private List<Passive> passives;
 
-	private int sp; // Skill Points
-	private int pos; // Position on the battlefield
+	// Skill Points
+	private int sp;
+
+	// Position on the battlefield
+	// 0 4
+	// 1 5
+	// 2 6
+	// 3 7
+	private int pos;
 
 	// Stat stages
 	// Increases/decreases corresponding stats by +10/-5% each level, between -5 and
@@ -66,13 +70,11 @@ public class Unit {
 	// Exps are in hundredths (100 = ^1, 150 = ^1.5, etc)
 	// Calculations are performed on max(mult^exp, 10%)
 
-	// Multiplies damage dealt/taken
 	private int multDmgDealt;
 	private int expDmgDealt;
 	private int multDmgTaken;
 	private int expDmgTaken;
 
-	// For each element
 	private int multIgnisDmgDealt;
 	private int expIgnisDmgDealt;
 	private int multIgnisDmgTaken;
@@ -102,13 +104,11 @@ public class Unit {
 	private int multMalumDmgTaken;
 	private int expMalumDmgTaken;
 
-	// For exclusively weakness damage
 	private int multWeakDmgDealt;
 	private int expWeakDmgDealt;
 	private int multWeakDmgTaken;
 	private int expWeakDmgTaken;
 
-	// For exclusively Follow-Up damage
 	private int multFollowUpDmgDealt;
 	private int expFollowUpDmgDealt;
 	private int multFollowUpDmgTaken;
@@ -123,26 +123,22 @@ public class Unit {
 	private int multPercentageDmgTaken;
 	private int expPercentageDmgTaken;
 
-	// For healing and shield
 	private int multHealingDealt;
 	private int expHealingDealt;
 	private int multHealingTaken;
 	private int expHealingTaken;
 
-	// Multiplies all SP gain/use
 	private int multSpGain;
 	private int expSpGain;
 	private int multSpUse;
 	private int expSpUse;
 
-	// Shield
 	private long shield;
 	private int shieldTurns;
 
 	// Defend (essentially a 2nd Shield with higher priority)
 	private long defend;
 
-	// Amount of extra actions
 	private int extraActions;
 
 	// Secondary effect block; >= 1 blocks secondary effects the same as Shield
@@ -151,19 +147,17 @@ public class Unit {
 	// >= 1 means SP is infinite
 	private int infiniteSp;
 
-	// Buff/debuff duration modifiers
+	/// Modifiers
 	private int modDurationBuffDealt;
 	private int modDurationBuffTaken;
 	private int modDurationDebuffDealt;
 	private int modDurationDebuffTaken;
 
-	// Buff/debuff stack modifiers
 	private int modStacksBuffDealt;
 	private int modStacksBuffTaken;
 	private int modStacksDebuffDealt;
 	private int modStacksDebuffTaken;
 
-	// Range modifier
 	private int modRange;
 
 	private List<BuffInstance> buffInstances = new ArrayList<>();
@@ -905,8 +899,6 @@ public class Unit {
 			case TERRA -> multTerraDmgDealt;
 			case LUX -> multLuxDmgDealt;
 			case MALUM -> multMalumDmgDealt;
-			// case FULGUR_MALUM -> 100 + ((multFulgurDmgDealt - 100) + (multMalumDmgDealt -
-			// 100));
 		};
 	}
 
@@ -1796,9 +1788,11 @@ public class Unit {
 		String name = (useName) ? formatName(unitType.name(), pos, false) + " " : "";
 		String name_s = (useName) ? formatName(unitType.name(), pos) + " " : "";
 
-		if (!pierce) { // Pierce skips Defend and Shield
-			if (defend > 0 && dmg > 0) { // There's Defend and dmg
-				if (defend > dmg) { // Only hit Defend
+		// Pierce skips Defend and Shield
+		if (!pierce) {
+			if (defend > 0 && dmg > 0) {
+				// Only hit Defend
+				if (defend > dmg) {
 					defend -= dmg;
 					return new Result(ResultType.HIT_SHIELD,
 							lang.format("log.change_shield", name_s,
@@ -1806,7 +1800,9 @@ public class Unit {
 									C_SHIELD + formatNum((defend + shield) / STAT_MULT_HIDDEN),
 									C_HP + formatNum(statsDefault.getDisplayHp()),
 									C_NEG + "-" + formatNum(dmgFull / STAT_MULT_HIDDEN)));
-				} else { // Destroy Defend and proceed to Shield
+				}
+				// Destroy Defend and proceed to Shield
+				else {
 					dmg -= defend;
 					defend = 0;
 					// todo this should come after the dmg message
@@ -1816,8 +1812,9 @@ public class Unit {
 				}
 			}
 
-			if (shield > 0 && dmg > 0) { // There's Shield and dmg
-				if (shield > dmg) { // Only hit Shield
+			if (shield > 0 && dmg > 0) {
+				// Only hit Shield
+				if (shield > dmg) {
 					long shieldOld = shield;
 					shield -= dmg;
 					return new Result(ResultType.HIT_SHIELD,
@@ -1826,7 +1823,9 @@ public class Unit {
 									C_SHIELD + formatNum(shield / STAT_MULT_HIDDEN),
 									C_HP + formatNum(statsDefault.getDisplayHp()),
 									C_NEG + "-" + formatNum(dmgFull / STAT_MULT_HIDDEN)));
-				} else { // Destroy Shield and proceed to HP
+				}
+				// Destroy Shield and proceed to HP
+				else {
 					msg.add(lang.format("log.change_shield", name_s,
 							C_SHIELD + formatNum((defendOld + shield) / STAT_MULT_HIDDEN), C_SHIELD + 0,
 							C_HP + formatNum(statsDefault.getDisplayHp()),
@@ -1841,7 +1840,6 @@ public class Unit {
 			}
 		}
 
-		// Lower HP
 		long hpOldDisp = this.getDisplayHp();
 		hp = Math.clamp(hp - dmg, 0, statsDefault.getHp());
 		long hpNewDisp = this.getDisplayHp();
@@ -1849,13 +1847,16 @@ public class Unit {
 		msg.add(lang.format("log.change_hp", name_s, C_HP + formatNum(hpOldDisp), C_HP + formatNum(hpNewDisp),
 				C_HP + formatNum(statsDefault.getDisplayHp()), C_NEG + "-" + formatNum(dmg / STAT_MULT_HIDDEN)));
 
-		if (effectBlock > 0) { // todo should this be a separate result from hitting shield
+		// todo should this be a separate result from hitting shield
+		if (effectBlock > 0) {
 			return new Result(ResultType.HIT_SHIELD, msg);
-		} else if (dmg > 0) { // Did damage
-			return new Result(ResultType.SUCCESS, msg);
-		} else { // Did no damage
-			return new Result(ResultType.FAIL, lang.format("log.no_effect", name));
 		}
+
+		if (dmg > 0) {
+			return new Result(ResultType.SUCCESS, msg);
+		}
+
+		return new Result(ResultType.FAIL, lang.format("log.no_effect", name));
 	}
 
 	public Result damage(long dmg, boolean pierce) {
