@@ -1,6 +1,6 @@
 package io.github.celosia.sys.battle;
 
-import io.github.celosia.sys.util.ExtrapolatingArray;
+import io.github.celosia.sys.lib.ExtrapolatingArray;
 
 // Utilities for dealing with Affinity
 public class AffLib {

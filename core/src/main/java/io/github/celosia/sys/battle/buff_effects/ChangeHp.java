@@ -6,10 +6,10 @@ import io.github.celosia.sys.battle.Result;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.C_HP;
-import static io.github.celosia.sys.menu.TextLib.formatNum;
-import static io.github.celosia.sys.menu.TextLib.getColor;
-import static io.github.celosia.sys.menu.TextLib.getSign;
+import static io.github.celosia.sys.render.TextLib.C_HP;
+import static io.github.celosia.sys.render.TextLib.formatNum;
+import static io.github.celosia.sys.render.TextLib.getColor;
+import static io.github.celosia.sys.render.TextLib.getSign;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeHp implements BuffEffect {

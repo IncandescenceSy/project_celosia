@@ -4,11 +4,11 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.Controllers;
-import io.github.celosia.sys.menu.ControllerType;
-import io.github.celosia.sys.menu.InputLib;
+import io.github.celosia.sys.input.ControllerType;
+import io.github.celosia.sys.input.InputLib;
 
-import static io.github.celosia.sys.menu.ControllerType.NONE;
-import static io.github.celosia.sys.menu.InputLib.getControllerType;
+import static io.github.celosia.sys.input.ControllerType.NONE;
+import static io.github.celosia.sys.input.InputLib.getControllerType;
 
 public class InputHandler extends InputAdapter implements ControllerListener {
 	// The controller the last input came from

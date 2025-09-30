@@ -1,8 +1,6 @@
 package io.github.celosia.sys.battle;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import io.github.celosia.sys.lib.ArrayLib;
 
 public class Skill {
 	private final String name;
@@ -25,8 +23,8 @@ public class Skill {
 
 	private final boolean isBloom;
 
-	private final List<SkillRole> skillRoles;
-	private final List<SkillEffect> skillEffects;
+	private final SkillRole[] skillRoles;
+	private final SkillEffect[] skillEffects;
 
 	Skill(Builder builder) {
 		name = builder.name;
@@ -51,8 +49,8 @@ public class Skill {
 		private int prio = 0;
 		private boolean isBloom = false;
 
-		private final List<SkillRole> skillRoles = new ArrayList<>();
-		private final List<SkillEffect> skillEffects = new ArrayList<>();
+		private SkillRole[] skillRoles = new SkillRole[]{};
+		private SkillEffect[] skillEffects = new SkillEffect[]{};
 
 		public Builder(String name, String desc, Element element, Range range, int cost) {
 			this.name = name;
@@ -78,22 +76,22 @@ public class Skill {
 		}
 
 		public Builder role(SkillRole skillRole) {
-			this.skillRoles.add(skillRole);
+			this.skillRoles = new SkillRole[]{skillRole};
 			return this;
 		}
 
 		public Builder roles(SkillRole... skillRoles) {
-			this.skillRoles.addAll(Arrays.asList(skillRoles));
+			this.skillRoles = skillRoles;
 			return this;
 		}
 
 		public Builder effect(SkillEffect skillEffect) {
-			this.skillEffects.add(skillEffect);
+			this.skillEffects = new SkillEffect[]{skillEffect};
 			return this;
 		}
 
 		public Builder effects(SkillEffect... skillEffects) {
-			this.skillEffects.addAll(Arrays.asList(skillEffects));
+			this.skillEffects = skillEffects;
 			return this;
 		}
 
@@ -134,15 +132,15 @@ public class Skill {
 		return isBloom;
 	}
 
-	public List<SkillRole> getSkillRoles() {
+	public SkillRole[] getSkillRoles() {
 		return skillRoles;
 	}
 
 	public boolean hasRole(SkillRole skillRole) {
-		return skillRoles.contains(skillRole);
+		return ArrayLib.contains(skillRoles, skillRole);
 	}
 
-	public List<SkillEffect> getSkillEffects() {
+	public SkillEffect[] getSkillEffects() {
 		return skillEffects;
 	}
 

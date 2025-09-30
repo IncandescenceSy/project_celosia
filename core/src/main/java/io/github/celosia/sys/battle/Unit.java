@@ -6,15 +6,15 @@ import java.util.List;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_HIDDEN;
-import static io.github.celosia.sys.menu.TextLib.C_BUFF;
-import static io.github.celosia.sys.menu.TextLib.C_HP;
-import static io.github.celosia.sys.menu.TextLib.C_NEG;
-import static io.github.celosia.sys.menu.TextLib.C_NUM;
-import static io.github.celosia.sys.menu.TextLib.C_SHIELD;
-import static io.github.celosia.sys.menu.TextLib.formatName;
-import static io.github.celosia.sys.menu.TextLib.formatNum;
-import static io.github.celosia.sys.menu.TextLib.getColor;
-import static io.github.celosia.sys.menu.TextLib.getStageStatString;
+import static io.github.celosia.sys.render.TextLib.C_BUFF;
+import static io.github.celosia.sys.render.TextLib.C_HP;
+import static io.github.celosia.sys.render.TextLib.C_NEG;
+import static io.github.celosia.sys.render.TextLib.C_NUM;
+import static io.github.celosia.sys.render.TextLib.C_SHIELD;
+import static io.github.celosia.sys.render.TextLib.formatName;
+import static io.github.celosia.sys.render.TextLib.formatNum;
+import static io.github.celosia.sys.render.TextLib.getColor;
+import static io.github.celosia.sys.render.TextLib.getStageStatString;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 // Species and current stats
@@ -1639,22 +1639,18 @@ public class Unit {
 	}
 
 	// Returns if the requested Passive is present
-	public boolean findPassive(Passive passiveTarget) {
-		for (Passive passive : passives) {
-			if (passive == passiveTarget) {
-				return true;
-			}
-		}
-		return false;
+	public boolean hasPassive(Passive passive) {
+		return passives.contains(passive);
 	}
 
 	// Returns the requested BuffInstance if present
-	public BuffInstance findBuff(Buff buff) {
+	public BuffInstance getBuffInstance(Buff buff) {
 		for (BuffInstance buffInstance : buffInstances) {
 			if (buffInstance.getBuff() == buff) {
 				return buffInstance;
 			}
 		}
+
 		return null;
 	}
 

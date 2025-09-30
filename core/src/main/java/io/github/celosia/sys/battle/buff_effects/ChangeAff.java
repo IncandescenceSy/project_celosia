@@ -5,10 +5,10 @@ import io.github.celosia.sys.battle.Element;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.formatName;
-import static io.github.celosia.sys.menu.TextLib.formatNum;
-import static io.github.celosia.sys.menu.TextLib.getColor;
-import static io.github.celosia.sys.menu.TextLib.getSign;
+import static io.github.celosia.sys.render.TextLib.formatName;
+import static io.github.celosia.sys.render.TextLib.formatNum;
+import static io.github.celosia.sys.render.TextLib.getColor;
+import static io.github.celosia.sys.render.TextLib.getSign;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeAff implements BuffEffect {

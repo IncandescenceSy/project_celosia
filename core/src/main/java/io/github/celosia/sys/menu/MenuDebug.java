@@ -5,7 +5,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.utils.Align;
 import com.github.tommyettinger.textra.TypingLabel;
 import io.github.celosia.sys.World;
-import io.github.celosia.sys.settings.Keybind;
+import io.github.celosia.sys.input.InputLib;
+import io.github.celosia.sys.input.Keybind;
+import io.github.celosia.sys.render.Fonts;
+import io.github.celosia.sys.render.RenderLib;
 
 import static io.github.celosia.Main.menuList;
 import static io.github.celosia.Main.stage3;
@@ -23,6 +26,7 @@ public class MenuDebug {
 		}
 	}
 
+	// todo cleanup
 	public static void input(MenuLib.MenuType menuType) {
 		if (menuType == MenuLib.MenuType.DEBUG_TEXT) {
 			StringBuilder str = new StringBuilder("omg its hatsune miku!");
@@ -60,6 +64,16 @@ public class MenuDebug {
 			} else if (InputLib.checkInput(Keybind.BACK)) {
 				stage3.getRoot().removeActor(TEXT);
 				menuList.removeLast();
+			}
+		} else if (menuType == MenuLib.MenuType.DEBUG_RES) {
+			if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
+				RenderLib.changeScale(1280, 720);
+			} else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
+				RenderLib.changeScale(1920, 1080);
+			} else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
+				RenderLib.changeScale(2560, 1440);
+			} else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) {
+				RenderLib.changeScale(3840, 2160);
 			}
 		}
 	}

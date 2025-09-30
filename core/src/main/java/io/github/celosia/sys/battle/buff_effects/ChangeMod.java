@@ -5,9 +5,9 @@ import io.github.celosia.sys.battle.Mod;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.C_STAT;
-import static io.github.celosia.sys.menu.TextLib.formatMod;
-import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.render.TextLib.C_STAT;
+import static io.github.celosia.sys.render.TextLib.formatMod;
+import static io.github.celosia.sys.render.TextLib.formatName;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeMod implements BuffEffect {

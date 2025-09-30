@@ -1,7 +1,6 @@
-package io.github.celosia.sys.settings;
+package io.github.celosia.sys.input;
 
 import com.badlogic.gdx.Input;
-import io.github.celosia.sys.menu.Button;
 
 import static io.github.celosia.sys.settings.Lang.lang;
 

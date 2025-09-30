@@ -11,13 +11,13 @@ import com.github.tommyettinger.textra.TextraLabel;
 import com.github.tommyettinger.textra.TypingLabel;
 import io.github.celosia.sys.Debug;
 import io.github.celosia.sys.World;
-import io.github.celosia.sys.menu.CoolRects;
-import io.github.celosia.sys.menu.Fonts;
-import io.github.celosia.sys.menu.InputLib;
+import io.github.celosia.sys.render.CoolRects;
+import io.github.celosia.sys.render.Fonts;
+import io.github.celosia.sys.input.InputLib;
 import io.github.celosia.sys.menu.MenuLib;
-import io.github.celosia.sys.menu.Path;
-import io.github.celosia.sys.menu.Paths;
-import io.github.celosia.sys.settings.Keybind;
+import io.github.celosia.sys.render.Path;
+import io.github.celosia.sys.render.Paths;
+import io.github.celosia.sys.input.Keybind;
 import io.github.celosia.sys.settings.Settings;
 
 import java.util.ArrayList;
@@ -34,23 +34,23 @@ import static io.github.celosia.sys.battle.BattleController.wait;
 import static io.github.celosia.sys.battle.PosLib.getSide;
 import static io.github.celosia.sys.battle.PosLib.getStartingIndex;
 import static io.github.celosia.sys.menu.MenuLib.setTextIfChanged;
-import static io.github.celosia.sys.menu.TextLib.C_ALLY;
-import static io.github.celosia.sys.menu.TextLib.C_ALLY_L;
-import static io.github.celosia.sys.menu.TextLib.C_BLOOM;
-import static io.github.celosia.sys.menu.TextLib.C_BUFF;
-import static io.github.celosia.sys.menu.TextLib.C_CD;
-import static io.github.celosia.sys.menu.TextLib.C_OPP;
-import static io.github.celosia.sys.menu.TextLib.C_OPP_L;
-import static io.github.celosia.sys.menu.TextLib.C_PASSIVE;
-import static io.github.celosia.sys.menu.TextLib.C_SKILL;
-import static io.github.celosia.sys.menu.TextLib.C_STAT;
-import static io.github.celosia.sys.menu.TextLib.C_TURN;
-import static io.github.celosia.sys.menu.TextLib.SHIELD_ICON;
-import static io.github.celosia.sys.menu.TextLib.formatName;
-import static io.github.celosia.sys.menu.TextLib.formatNum;
-import static io.github.celosia.sys.menu.TextLib.getTriesToUseString;
+import static io.github.celosia.sys.render.TextLib.C_ALLY;
+import static io.github.celosia.sys.render.TextLib.C_ALLY_L;
+import static io.github.celosia.sys.render.TextLib.C_BLOOM;
+import static io.github.celosia.sys.render.TextLib.C_BUFF;
+import static io.github.celosia.sys.render.TextLib.C_CD;
+import static io.github.celosia.sys.render.TextLib.C_OPP;
+import static io.github.celosia.sys.render.TextLib.C_OPP_L;
+import static io.github.celosia.sys.render.TextLib.C_PASSIVE;
+import static io.github.celosia.sys.render.TextLib.C_SKILL;
+import static io.github.celosia.sys.render.TextLib.C_STAT;
+import static io.github.celosia.sys.render.TextLib.C_TURN;
+import static io.github.celosia.sys.render.TextLib.SHIELD_ICON;
+import static io.github.celosia.sys.render.TextLib.formatName;
+import static io.github.celosia.sys.render.TextLib.formatNum;
+import static io.github.celosia.sys.render.TextLib.getTriesToUseString;
 import static io.github.celosia.sys.settings.Lang.lang;
-import static io.github.celosia.sys.util.MiscLib.booleanToInt;
+import static io.github.celosia.sys.lib.BoolLib.booleanToInt;
 
 public class BattleControllerLib {
 	public static Battle battle;
@@ -358,11 +358,13 @@ public class BattleControllerLib {
 		}
 
 		Skill skill = move.skillInstance().getSkill();
-		List<SkillEffect> skillEffects = skill.getSkillEffects();
+		SkillEffect[] skillEffects = skill.getSkillEffects();
 
 		Unit targetMain = battle.getUnitAtPos(move.targetPos());
 
-		if (spNew < 0 || applyingEffect >= skillEffects.size() || (nonFails == 0 && applyingEffect > 0)) {
+		// The check for reaching skillEffects.length will only apply here if the length
+		// is 0, because otherwise it'll be applied at the end
+		if (spNew < 0 || applyingEffect == skillEffects.length || (nonFails == 0 && applyingEffect > 0)) {
 			endMove();
 			return;
 		}
@@ -379,20 +381,20 @@ public class BattleControllerLib {
 				if (prevResults[targetPos] != ResultType.FAIL) {
 					nonFails++;
 
-					ResultType resultType = skillEffects.get(applyingEffect).apply(move.self(), targetCur,
+					ResultType resultType = skillEffects[applyingEffect].apply(move.self(), targetCur,
 							targetCur == targetMain, prevResults[targetPos]);
 					prevResults[targetPos] = resultType;
 				}
 			}
 		}
 
-		if (!skillEffects.get(applyingEffect).isInstant()) {
+		if (!skillEffects[applyingEffect].isInstant()) {
 			wait += 0.25f * Settings.battleSpeed;
 		}
 
 		applyingEffect++;
 
-		if (skillEffects.size() == applyingEffect) {
+		if (skillEffects.length == applyingEffect) {
 			endMove();
 			move.skillInstance().setCooldown(move.skillInstance().getSkill().getCooldown());
 		}

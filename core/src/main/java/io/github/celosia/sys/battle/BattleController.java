@@ -2,9 +2,9 @@ package io.github.celosia.sys.battle;
 
 import com.badlogic.gdx.Gdx;
 import io.github.celosia.sys.Debug;
-import io.github.celosia.sys.menu.InputLib;
+import io.github.celosia.sys.input.InputLib;
 import io.github.celosia.sys.menu.MenuLib.MenuType;
-import io.github.celosia.sys.settings.Keybind;
+import io.github.celosia.sys.input.Keybind;
 
 import static io.github.celosia.Main.menuList;
 import static io.github.celosia.sys.battle.BattleControllerLib.createFullLog;

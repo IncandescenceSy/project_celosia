@@ -125,6 +125,7 @@ construo {
     // Optional, defaults to project version property
     version.set("$projectVersion")
 
+    // todo update jdkUrls to make sure I'm using the latest versions (I am as of 27/09/2025)
     targets.configure {
       register("linuxX64", Target.Linux) {
         architecture.set(Target.Architecture.X86_64)

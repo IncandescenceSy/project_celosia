@@ -1,8 +1,8 @@
-package io.github.celosia.sys.menu;
+package io.github.celosia.sys.input;
 
 import io.github.celosia.sys.InputHandler;
 
-import static io.github.celosia.sys.menu.TextLib.mergeGlyphs;
+import static io.github.celosia.sys.render.TextLib.mergeGlyphs;
 
 public class InputPrompt {
 	private final String glyphKey;

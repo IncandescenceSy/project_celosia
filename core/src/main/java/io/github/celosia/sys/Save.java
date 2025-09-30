@@ -1,18 +1,15 @@
 package io.github.celosia.sys;
 
-// save data (todo)
+// Save data (todo)
 public class Save {
 	// Save file Name
 	public static String name = "";
 
-	// Route
+	// todo
 	public static int route = 0;
-
-	// Difficulty
 	public static int difficulty = 0;
-
-	// Level
 	public static int level = 0;
+	public static long playtimeMs = 0;
 
 	// Story progress
 

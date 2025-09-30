@@ -6,10 +6,15 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Align;
 import com.github.tommyettinger.textra.Font;
 import com.github.tommyettinger.textra.TypingLabel;
+import io.github.celosia.sys.Debug;
 import io.github.celosia.sys.battle.Range;
 import io.github.celosia.sys.battle.Ranges;
 import io.github.celosia.sys.battle.Side;
-import io.github.celosia.sys.settings.Keybind;
+import io.github.celosia.sys.input.InputPrompt;
+import io.github.celosia.sys.input.InputPrompts;
+import io.github.celosia.sys.render.CoolRect;
+import io.github.celosia.sys.input.Keybind;
+import io.github.celosia.sys.input.InputLib;
 
 import java.util.List;
 
@@ -168,7 +173,8 @@ public class MenuLib {
 				inputGuide.setText(getInputString(InputPrompts.CLOSE));
 				break;
 			case MAIN :
-				inputGuide.setText(getInputString(InputPrompts.CONFIRM, InputPrompts.MOVE_UD));
+				inputGuide.setText(getInputString(InputPrompts.CONFIRM, InputPrompts.MOVE_UD)
+						+ ((Debug.showDebugInfo && Debug.enableDebugHotkeys) ? "[+KB_ONE] Debug" : ""));
 				break;
 			case BATTLE :
 				inputGuide.setText(getInputString(InputPrompts.MOVE_UD, InputPrompts.CONFIRM, InputPrompts.BACK,
@@ -184,11 +190,16 @@ public class MenuLib {
 				break;
 			case DEBUG :
 				inputGuide.setText(
-						"[+KB_ONE] Toggle Debug Info  [+KB_TWO] Text Debug Menu  " + getInputString(InputPrompts.BACK));
+						"[+KB_ONE] Toggle Debug Info  [+KB_TWO] Text Debug Menu  [+KB_THREE] Resolution Debug Menu  "
+								+ getInputString(InputPrompts.BACK));
 				break;
 			case DEBUG_TEXT :
 				inputGuide.setText(
 						"[+KB_ONE] Add line  " + getInputString(InputPrompts.MOVE) + getInputString(InputPrompts.BACK));
+				break;
+			case DEBUG_RES :
+				inputGuide.setText("[+KB_ONE][+KB_TWO][+KB_THREE][+KB_FOUR] Change resolution  "
+						+ getInputString(InputPrompts.BACK));
 				break;
 			default :
 				inputGuide.setText("");
@@ -395,7 +406,8 @@ public class MenuLib {
         TARGETING(),
         LOG(),
         DEBUG(),
-        DEBUG_TEXT();
+        DEBUG_TEXT(),
+		DEBUG_RES();
         // spotless:on
 
 		private MenuOpt[] opts = new MenuOpt[]{new MenuOpt(MenuOptType.NONE, "", 0, 0)};

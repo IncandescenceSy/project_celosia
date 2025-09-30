@@ -21,8 +21,9 @@ It is strongly recommended to use Intellij IDEA
   * Do not prefix interface names with I
 * Global constants must be final
 * Only use this when necessary
-* no-arg Builder methods for booleans
+* Use no-arg Builder methods for booleans
   * For example, if isPierce defaults true, instead of isPierce(boolean), create pierce()
+* Do not add unused methods (unless they're for modders)
 * Setters before getters (only for consistency, not because it's a better order)
 * Early return whenever it can make code cleaner
 * Do not have >1 nested classes

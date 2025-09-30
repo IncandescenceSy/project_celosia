@@ -4,9 +4,9 @@ import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.render.TextLib.formatName;
 import static io.github.celosia.sys.settings.Lang.lang;
-import static io.github.celosia.sys.util.MiscLib.isMatchingTruthiness;
+import static io.github.celosia.sys.lib.BoolLib.isBothTruthy;
 
 public class ChangeEffectBlock implements BuffEffect {
 	private final int change;
@@ -29,7 +29,7 @@ public class ChangeEffectBlock implements BuffEffect {
 		int effectBlockOld = self.getEffectBlock();
 		int effectBlockNew = effectBlockOld + changeFull;
 		self.setEffectBlock(effectBlockNew);
-		if (self.getShield() == 0 && self.getDefend() == 0 && !isMatchingTruthiness(effectBlockOld, effectBlockNew)) {
+		if (self.getShield() == 0 && self.getDefend() == 0 && !isBothTruthy(effectBlockOld, effectBlockNew)) {
 			appendToLog(lang.format("log.change_effect_block",
 					formatName(self.getUnitType().name(), self.getPos(), false), effectBlockNew));
 		}

@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.C_HP;
-import static io.github.celosia.sys.menu.TextLib.C_NUM;
-import static io.github.celosia.sys.menu.TextLib.C_POS;
-import static io.github.celosia.sys.menu.TextLib.C_SHIELD;
-import static io.github.celosia.sys.menu.TextLib.formatName;
-import static io.github.celosia.sys.menu.TextLib.formatNum;
-import static io.github.celosia.sys.menu.TextLib.getColor;
+import static io.github.celosia.sys.render.TextLib.C_HP;
+import static io.github.celosia.sys.render.TextLib.C_NUM;
+import static io.github.celosia.sys.render.TextLib.C_POS;
+import static io.github.celosia.sys.render.TextLib.C_SHIELD;
+import static io.github.celosia.sys.render.TextLib.formatName;
+import static io.github.celosia.sys.render.TextLib.formatNum;
+import static io.github.celosia.sys.render.TextLib.getColor;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class Heal implements SkillEffect {

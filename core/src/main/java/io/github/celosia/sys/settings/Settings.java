@@ -27,9 +27,18 @@ public class Settings {
 
 	//// Display settings
 
-	// Resolution relative to 2560x1440
-	// Todo pull resolution options from easy-to-modify txt file
+	// Launch resolution relative to 2560x1440
+	// After the game has launched, this shouldn't change even if res changes
 	public static float scale = 1f;
+
+	// Whether to ignore windowScale and use the nearest fitting 16:9 to the
+	// display's resolution
+	// Hidden from the user. User is instead presented with 1 "Resolution" option
+	// with various choices and Auto
+	// Steam hardware survey Aug 2025:
+	// 54.44% 1920x1080, 20.19% 2560x1440, 5.09% 2560x1600, 4.59% 3840x2160, 2.85%
+	// 3440x1440, 2.49% 1366x768, 1.80% 1920x1200
+	public static boolean autoRes = true;
 
 	// Whether the application is in fullscreen
 	public static boolean isFullscreen = false;
@@ -40,11 +49,11 @@ public class Settings {
 	// Target FPS. Only used if Vsync is disabled
 	public static int targetFPS = 60;
 
-	// Whether to use the monitor's refresh rate + 1 as Target FPS
+	// Whether to ignore targetFPs use the display's refresh rate + 1 instead
 	// Hidden from the user. User is instead presented with 1 "Target FPS" option
-	// with choices of 60, 120, 144, 165, 240, and Auto (and maybe some other
-	// options idk what people have)
-	public static boolean useMonitor = true;
+	// with choices of 60, 120, 144, 165, 240, 360, and Auto (and maybe some others
+	// idk)
+	public static boolean autoFps = true;
 
 	// Whether to show an FPS counter
 	public static boolean showFpsCounter = false;

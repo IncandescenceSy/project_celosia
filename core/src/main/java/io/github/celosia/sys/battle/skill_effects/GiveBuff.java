@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.C_BUFF;
-import static io.github.celosia.sys.menu.TextLib.C_NUM;
-import static io.github.celosia.sys.menu.TextLib.formatName;
+import static io.github.celosia.sys.render.TextLib.C_BUFF;
+import static io.github.celosia.sys.render.TextLib.C_NUM;
+import static io.github.celosia.sys.render.TextLib.formatName;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class GiveBuff implements SkillEffect {
@@ -102,7 +102,7 @@ public class GiveBuff implements SkillEffect {
 		self.onGiveBuff(target, buff, turnsMod, stacksMod);
 
 		List<BuffInstance> buffInstances = unit.getBuffInstances();
-		BuffInstance buffInstance = unit.findBuff(buff);
+		BuffInstance buffInstance = unit.getBuffInstance(buff);
 
 		String buffName = buff.icon() + C_BUFF + buff.name();
 

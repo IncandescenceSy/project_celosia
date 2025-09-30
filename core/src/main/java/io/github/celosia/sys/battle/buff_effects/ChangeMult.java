@@ -5,16 +5,16 @@ import io.github.celosia.sys.battle.Mult;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.menu.TextLib.C_STAT;
-import static io.github.celosia.sys.menu.TextLib.formatName;
-import static io.github.celosia.sys.menu.TextLib.formatNum;
-import static io.github.celosia.sys.menu.TextLib.getExpChangeColor;
-import static io.github.celosia.sys.menu.TextLib.getExpColor;
-import static io.github.celosia.sys.menu.TextLib.getMultChangeColor;
-import static io.github.celosia.sys.menu.TextLib.getMultColor;
-import static io.github.celosia.sys.menu.TextLib.getMultWithExpChangeColor;
-import static io.github.celosia.sys.menu.TextLib.getMultWithExpColor;
-import static io.github.celosia.sys.menu.TextLib.getSign;
+import static io.github.celosia.sys.render.TextLib.C_STAT;
+import static io.github.celosia.sys.render.TextLib.formatName;
+import static io.github.celosia.sys.render.TextLib.formatNum;
+import static io.github.celosia.sys.render.TextLib.getExpChangeColor;
+import static io.github.celosia.sys.render.TextLib.getExpColor;
+import static io.github.celosia.sys.render.TextLib.getMultChangeColor;
+import static io.github.celosia.sys.render.TextLib.getMultColor;
+import static io.github.celosia.sys.render.TextLib.getMultWithExpChangeColor;
+import static io.github.celosia.sys.render.TextLib.getMultWithExpColor;
+import static io.github.celosia.sys.render.TextLib.getSign;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeMult implements BuffEffect {

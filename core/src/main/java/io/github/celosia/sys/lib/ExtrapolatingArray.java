@@ -1,4 +1,4 @@
-package io.github.celosia.sys.util;
+package io.github.celosia.sys.lib;
 
 /**
  * int array that can be indexed out of bounds, extrapolating new values based

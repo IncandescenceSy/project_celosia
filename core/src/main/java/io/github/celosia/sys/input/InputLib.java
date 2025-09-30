@@ -1,11 +1,10 @@
-package io.github.celosia.sys.menu;
+package io.github.celosia.sys.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerMapping;
 import io.github.celosia.sys.Debug;
 import io.github.celosia.sys.InputHandler;
-import io.github.celosia.sys.settings.Keybind;
 import io.github.celosia.sys.settings.Settings;
 
 public class InputLib {

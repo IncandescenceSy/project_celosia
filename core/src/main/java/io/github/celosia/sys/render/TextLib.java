@@ -1,4 +1,4 @@
-package io.github.celosia.sys.menu;
+package io.github.celosia.sys.render;
 
 import io.github.celosia.sys.battle.Mod;
 import io.github.celosia.sys.battle.Move;

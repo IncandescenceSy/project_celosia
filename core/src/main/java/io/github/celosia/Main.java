@@ -24,19 +24,19 @@ import io.github.celosia.sys.InputHandler;
 import io.github.celosia.sys.World;
 import io.github.celosia.sys.battle.BattleController;
 import io.github.celosia.sys.battle.BattleControllerLib;
-import io.github.celosia.sys.menu.CoolRect;
-import io.github.celosia.sys.menu.CoolRects;
-import io.github.celosia.sys.menu.Fonts;
-import io.github.celosia.sys.menu.Fonts.FontType;
-import io.github.celosia.sys.menu.InputLib;
+import io.github.celosia.sys.input.InputLib;
+import io.github.celosia.sys.input.Keybind;
 import io.github.celosia.sys.menu.MenuDebug;
 import io.github.celosia.sys.menu.MenuLib;
 import io.github.celosia.sys.menu.MenuLib.MenuOptType;
 import io.github.celosia.sys.menu.MenuLib.MenuType;
-import io.github.celosia.sys.menu.Path;
-import io.github.celosia.sys.menu.Paths;
-import io.github.celosia.sys.menu.TextLib;
-import io.github.celosia.sys.settings.Keybind;
+import io.github.celosia.sys.render.CoolRect;
+import io.github.celosia.sys.render.CoolRects;
+import io.github.celosia.sys.render.Fonts;
+import io.github.celosia.sys.render.Fonts.FontType;
+import io.github.celosia.sys.render.Path;
+import io.github.celosia.sys.render.Paths;
+import io.github.celosia.sys.render.TextLib;
 import io.github.celosia.sys.settings.Lang;
 import io.github.celosia.sys.settings.Settings;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -46,9 +46,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.celosia.sys.menu.TextLib.rf;
-import static io.github.celosia.sys.menu.TriLib.drawCoolRects;
-import static io.github.celosia.sys.menu.TriLib.drawPaths;
+import static io.github.celosia.sys.render.RenderLib.changeScale;
+import static io.github.celosia.sys.render.TextLib.rf;
+import static io.github.celosia.sys.render.TriLib.drawCoolRects;
+import static io.github.celosia.sys.render.TriLib.drawPaths;
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all
@@ -62,6 +63,7 @@ public class Main extends ApplicationAdapter {
 	MenuOptType optSelected;
 
 	// Rendering (in order)
+	public static FitViewport viewPort;
 	public static SpriteBatch spriteBatch;
 	public static Stage stage1;
 	public static List<CoolRect> coolRects = new ArrayList<>();
@@ -95,9 +97,10 @@ public class Main extends ApplicationAdapter {
 		spriteBatch = new SpriteBatch();
 		polygonSpriteBatch = new PolygonSpriteBatch();
 
-		stage1 = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));
-		stage2 = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));
-		stage3 = new Stage(new FitViewport(World.WIDTH, World.HEIGHT));
+		viewPort = new FitViewport(World.WIDTH, World.HEIGHT);
+		stage1 = new Stage(viewPort);
+		stage2 = new Stage(viewPort);
+		stage3 = new Stage(viewPort);
 
 		atlasPrompts = new TextureAtlas("prompts.atlas");
 		atlasIcons = new TextureAtlas("icons.atlas");
@@ -109,8 +112,6 @@ public class Main extends ApplicationAdapter {
 		Controllers.addListener(inputHandler);
 
 		// CoolRects
-		// temp
-		// todo less magic numbers
 		// Main menu bg
 		coolRects.add(CoolRects.MENU_MAIN.ordinal(),
 				new CoolRect.Builder(World.WIDTH - 700, 230 + 475 + 5, World.WIDTH - 175 - 92, 230 - 75 + 25).dir(1)
@@ -191,6 +192,19 @@ public class Main extends ApplicationAdapter {
 
 		// todo if using SteamInput, initial warning popup abt incorrect glyphs
 		// recommending using ingame remapping instead
+
+		/// Initialize settings
+		// Sets resolution based on Settings.scale
+		// The game always initially launches at the closest 16:9 res to the display res
+		// The game can't launch already scaled because Settings won't be loaded yet,
+		/// and Settings.scale can exceed display res, and if the game launches at >
+		/// display res, it causes problems
+		if (!Settings.autoRes) {
+			changeScale(Settings.scale);
+		}
+
+		// todo set target fps and vsync based off of settings (cant set in launcher bc
+		// settings wont be loaded yet)
 	}
 
 	@Override
@@ -216,7 +230,7 @@ public class Main extends ApplicationAdapter {
 
 		switch (menuList.getLast()) {
 			case MAIN :
-				if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+				if (Debug.enableDebugHotkeys && Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
 					menuList.add(MenuType.DEBUG);
 				}
 
@@ -265,18 +279,25 @@ public class Main extends ApplicationAdapter {
 				BattleControllerLib.updateStatDisplay();
 				BattleController.input();
 				break;
+			// todo cleanup
 			case DEBUG :
 				if (InputLib.checkInput(Keybind.BACK)) {
 					menuList.removeLast();
 				} else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
-					Debug.showDebugInfo ^= true; // Invert boolean
+					Debug.showDebugInfo = !Debug.showDebugInfo;
 				} else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
 					MenuDebug.create(MenuType.DEBUG_TEXT);
 					menuList.add(MenuType.DEBUG_TEXT);
+				} else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
+					MenuDebug.create(MenuType.DEBUG_RES);
+					menuList.add(MenuType.DEBUG_RES);
 				}
 				break;
 			case DEBUG_TEXT :
 				MenuDebug.input(MenuType.DEBUG_TEXT);
+				break;
+			case DEBUG_RES :
+				MenuDebug.input(MenuType.DEBUG_RES);
 				break;
 		}
 
@@ -348,13 +369,12 @@ public class Main extends ApplicationAdapter {
 		coolRects.get(CoolRects.POPUP_CENTERED.ordinal()).setDir(1);
 	}
 
-	// todo fix bugs that arise from being resized (freezing, black screen) or
+	// todo fix bugs that arise from being resized (temporary input rejection) or
 	// remove resizing
+	// and handle monitor res changes while the game is running
 	@Override
 	public void resize(int width, int height) {
-		stage1.getViewport().update(width, height, true);
-		stage2.getViewport().update(width, height, true);
-		stage3.getViewport().update(width, height, true);
+		viewPort.update(width, height, true);
 	}
 
 	@Override

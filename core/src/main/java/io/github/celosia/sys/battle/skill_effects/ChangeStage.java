@@ -10,12 +10,12 @@ import java.util.List;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.battle.BattleLib.getStageBuffType;
-import static io.github.celosia.sys.menu.TextLib.C_BUFF;
-import static io.github.celosia.sys.menu.TextLib.C_NUM;
-import static io.github.celosia.sys.menu.TextLib.formatName;
-import static io.github.celosia.sys.menu.TextLib.getColor;
-import static io.github.celosia.sys.menu.TextLib.getSign;
-import static io.github.celosia.sys.menu.TextLib.getStageStatString;
+import static io.github.celosia.sys.render.TextLib.C_BUFF;
+import static io.github.celosia.sys.render.TextLib.C_NUM;
+import static io.github.celosia.sys.render.TextLib.formatName;
+import static io.github.celosia.sys.render.TextLib.getColor;
+import static io.github.celosia.sys.render.TextLib.getSign;
+import static io.github.celosia.sys.render.TextLib.getStageStatString;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeStage implements SkillEffect {
