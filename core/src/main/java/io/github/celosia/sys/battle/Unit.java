@@ -147,6 +147,9 @@ public class Unit {
 	// >= 1 means SP is infinite
 	private int infiniteSp;
 
+	// >= 1 removes ability to move
+	private int unableToAct;
+
 	/// Modifiers
 	private int modDurationBuffDealt;
 	private int modDurationBuffTaken;
@@ -1437,6 +1440,18 @@ public class Unit {
 
 	public boolean isInfiniteSp() {
 		return infiniteSp > 0;
+	}
+
+	public void setUnableToAct(int unableToAct) {
+		this.unableToAct = unableToAct;
+	}
+
+	public int getUnableToAct() {
+		return unableToAct;
+	}
+
+	public boolean isUnableToAct() {
+		return unableToAct > 0;
 	}
 
 	public void setModDurationBuffDealt(int modDurationBuffDealt) {

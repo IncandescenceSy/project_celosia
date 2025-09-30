@@ -43,14 +43,11 @@ import static io.github.celosia.sys.menu.TextLib.C_OPP;
 import static io.github.celosia.sys.menu.TextLib.C_OPP_L;
 import static io.github.celosia.sys.menu.TextLib.C_PASSIVE;
 import static io.github.celosia.sys.menu.TextLib.C_SKILL;
-import static io.github.celosia.sys.menu.TextLib.C_SP;
 import static io.github.celosia.sys.menu.TextLib.C_STAT;
 import static io.github.celosia.sys.menu.TextLib.C_TURN;
 import static io.github.celosia.sys.menu.TextLib.SHIELD_ICON;
 import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.menu.TextLib.formatNum;
-import static io.github.celosia.sys.menu.TextLib.getColor;
-import static io.github.celosia.sys.menu.TextLib.getSign;
 import static io.github.celosia.sys.menu.TextLib.getTriesToUseString;
 import static io.github.celosia.sys.settings.Lang.lang;
 import static io.github.celosia.sys.util.MiscLib.booleanToInt;
@@ -276,124 +273,130 @@ public class BattleControllerLib {
 				.thenComparingLong(entry -> entry.self().getAgiWithStage()).reversed());
 
 		Move move = moves.getFirst();
+		Unit self = move.self();
 
-		// todo some inversion on this awful block
-		if (move.isInRange()) {
-			int cd = move.skillInstance().getCooldown();
-			if (cd == 0 || applyingEffect > 0) {
-				// SP after move executes. Invalid newSp will cancel move
-				int newSp = 0;
+		if (self.isUnableToAct()) {
+			appendToLog(lang.format("log.skill_fail.unable_to_act", getTriesToUseString(move),
+					lang.format("log.but_is_unable_to_act", self.getUnableToAct())));
+			endMove();
+			return;
+		}
 
-				if (applyingEffect == 0) {
-					move.skillInstance().setCooldown(cd);
+		int cd = move.skillInstance().getCooldown();
+		if (cd > 0 && applyingEffect == 0) {
+			appendToLog(lang.format("log.skill_fail.cooldown", getTriesToUseString(move),
+					lang.format("log.but_its_on_cooldown", cd)));
+			endMove();
+			return;
+		}
 
-					Unit self = move.self();
-					Skill skill = move.skillInstance().getSkill();
-
-					Element element = skill.getElement();
-					boolean isPlayerTeam = self.getPos() < 4;
-					Team team = (isPlayerTeam) ? battle.getPlayerTeam() : battle.getOpponentTeam();
-					int cost = (self.isInfiniteSp() && !skill.isBloom()) ? 0 : skill.getCost();
-
-					// Make sure cost doesn't go below 1 unless the skill has a base 0 SP cost
-					int costMod = (cost > 0)
-							? (int) Math.max(cost * (AffLib.SP_COST.get(self.getAffsCur().getAff(element)) / 1000d), 1)
-							: 0;
-
-					int change = skill.isBloom() ? costMod : (int) (costMod * self.getMultWithExpSpUse());
-					newSp = skill.isBloom() ? team.getBloom() - change : self.getSp() - change;
-
-					if (newSp >= 0) {
-						Unit target = battle.getUnitAtPos(move.targetPos());
-
-						change *= -1;
-
-						if (skill.isBloom() && newSp != team.getBloom()) {
-							appendToLog(lang.format("log.skill_use",
-									formatName(self.getUnitType().name(), self.getPos(), false),
-									C_SKILL + skill.getName(),
-									formatName(target.getUnitType().name(), move.targetPos(), false),
-									booleanToInt(skill.isRangeSelf()), 1, C_BLOOM + formatNum(team.getBloom()),
-									C_BLOOM + formatNum(newSp),
-									getColor(change) + getSign(change) + formatNum(change)));
-							team.setBloom(newSp);
-						} else if (!skill.isBloom() && newSp != self.getSp()) {
-							appendToLog(lang.format("log.skill_use",
-									formatName(self.getUnitType().name(), self.getPos(), false),
-									C_SKILL + skill.getName(),
-									formatName(target.getUnitType().name(), move.targetPos(), false),
-									booleanToInt(skill.isRangeSelf()), 0, C_SP + formatNum(self.getSp()),
-									C_SP + formatNum(newSp), getColor(change) + getSign(change) + change));
-							self.setSp(newSp);
-						}
-
-						self.onUseSkill(target, skill);
-
-						// Color move for currently acting combatant (temp)
-						for (int i = 0; i < 8; i++) {
-							if (self.getPos() == i) {
-								movesL.get(i).setColor(Color.PINK);
-							} else {
-								movesL.get(i).setColor(Color.WHITE);
-							}
-						}
-
-						prevResults = new ResultType[8];
-					} else {
-						String msg = lang.format("log.skill_fail.sp", getTriesToUseString(move),
-								lang.format("log.but_doesnt_have_enough", booleanToInt(skill.isBloom())));
-						appendToLog(msg);
-					}
-				}
-
-				Skill skill = move.skillInstance().getSkill();
-				List<SkillEffect> skillEffects = skill.getSkillEffects();
-
-				Unit targetMain = battle.getUnitAtPos(move.targetPos());
-
-				if (newSp >= 0 && applyingEffect < skillEffects.size() && (nonFails > 0 || applyingEffect == 0)) {
-					for (int targetPos : skill.getRange().getTargetPositions(move.self().getPos(), move.targetPos())) {
-						if (targetPos != -1) {
-							Unit targetCur = battle.getUnitAtPos(targetPos);
-							if (applyingEffect == 0) {
-								prevResults[targetPos] = ResultType.SUCCESS;
-
-								targetCur.onTargetedBySkill(move.self(), skill);
-							}
-
-							if (prevResults[targetPos] != ResultType.FAIL) {
-								nonFails++;
-
-								ResultType resultType = skillEffects.get(applyingEffect).apply(move.self(), targetCur,
-										targetCur == targetMain, prevResults[targetPos]);
-								prevResults[targetPos] = resultType;
-							}
-						}
-					}
-
-					if (!skillEffects.get(applyingEffect).isInstant()) {
-						wait += 0.25f * Settings.battleSpeed;
-					}
-
-					applyingEffect++;
-
-					if (skillEffects.size() == applyingEffect) {
-						endMove();
-						move.skillInstance().setCooldown(move.skillInstance().getSkill().getCooldown());
-					}
-				} else {
-					endMove();
-				}
-				// todo delete killed units
-			} else {
-				appendToLog(lang.format("log.skill_fail.cooldown", getTriesToUseString(move),
-						lang.format("log.but_its_on_cooldown", cd)));
-				endMove();
-			}
-		} else {
+		if (!move.isInRange()) {
 			appendToLog(lang.format("log.skill_fail.range", getTriesToUseString(move), lang.get("log.but_cant_reach")));
 			endMove();
+			return;
 		}
+
+		// SP after move executes. Invalid spNew will cancel move
+		int spNew = 0;
+
+		if (applyingEffect == 0) {
+			move.skillInstance().setCooldown(cd);
+			Skill skill = move.skillInstance().getSkill();
+
+			Element element = skill.getElement();
+			boolean isPlayerTeam = self.getPos() < 4;
+			Team team = (isPlayerTeam) ? battle.getPlayerTeam() : battle.getOpponentTeam();
+			int cost = (self.isInfiniteSp() && !skill.isBloom()) ? 0 : skill.getCost();
+
+			// Make sure cost doesn't go below 1 unless the skill has a base 0 SP cost
+			int costMod = (cost > 0)
+					? (int) Math.max(cost * (AffLib.SP_COST.get(self.getAffsCur().getAff(element)) / 1000d), 1)
+					: 0;
+
+			int change = skill.isBloom() ? costMod : (int) (costMod * self.getMultWithExpSpUse());
+			spNew = skill.isBloom() ? team.getBloom() - change : self.getSp() - change;
+
+			if (spNew < 0) {
+				String msg = lang.format("log.skill_fail.sp", getTriesToUseString(move),
+						lang.format("log.but_doesnt_have_enough", booleanToInt(skill.isBloom())));
+				appendToLog(msg);
+			} else {
+				Unit target = battle.getUnitAtPos(move.targetPos());
+
+				boolean isBloom = skill.isBloom();
+				int spOld = (isBloom) ? team.getBloom() : self.getSp();
+				change *= -1;
+				String changeSp = "";
+
+				if (spOld != spNew) {
+					lang.format("log.skill_use.change_sp_bloom", booleanToInt(isBloom), spOld, spNew, change);
+				}
+
+				if (isBloom) {
+					team.setBloom(spNew);
+				} else {
+					self.setSp(spNew);
+				}
+
+				appendToLog(lang.format("log.skill_use", formatName(self.getUnitType().name(), self.getPos(), false),
+						C_SKILL + skill.getName(), formatName(target.getUnitType().name(), move.targetPos(), false),
+						booleanToInt(skill.isRangeSelf()), changeSp));
+
+				self.onUseSkill(target, skill);
+
+				// Color move for currently acting combatant (temp)
+				for (int i = 0; i < 8; i++) {
+					if (self.getPos() == i) {
+						movesL.get(i).setColor(Color.PINK);
+					} else {
+						movesL.get(i).setColor(Color.WHITE);
+					}
+				}
+
+				prevResults = new ResultType[8];
+			}
+		}
+
+		Skill skill = move.skillInstance().getSkill();
+		List<SkillEffect> skillEffects = skill.getSkillEffects();
+
+		Unit targetMain = battle.getUnitAtPos(move.targetPos());
+
+		if (spNew < 0 || applyingEffect >= skillEffects.size() || (nonFails == 0 && applyingEffect > 0)) {
+			endMove();
+			return;
+		}
+
+		for (int targetPos : skill.getRange().getTargetPositions(move.self().getPos(), move.targetPos())) {
+			if (targetPos != -1) {
+				Unit targetCur = battle.getUnitAtPos(targetPos);
+				if (applyingEffect == 0) {
+					prevResults[targetPos] = ResultType.SUCCESS;
+
+					targetCur.onTargetedBySkill(move.self(), skill);
+				}
+
+				if (prevResults[targetPos] != ResultType.FAIL) {
+					nonFails++;
+
+					ResultType resultType = skillEffects.get(applyingEffect).apply(move.self(), targetCur,
+							targetCur == targetMain, prevResults[targetPos]);
+					prevResults[targetPos] = resultType;
+				}
+			}
+		}
+
+		if (!skillEffects.get(applyingEffect).isInstant()) {
+			wait += 0.25f * Settings.battleSpeed;
+		}
+
+		applyingEffect++;
+
+		if (skillEffects.size() == applyingEffect) {
+			endMove();
+			move.skillInstance().setCooldown(move.skillInstance().getSkill().getCooldown());
+		}
+		// todo delete killed units
 	}
 
 	static void handleLog() {
@@ -825,6 +828,7 @@ public class BattleControllerLib {
 	static void endMove() {
 		usingMove++;
 		applyingEffect = 0;
+		nonFails = 0;
 		moves.removeFirst();
 		wait += 1 * Settings.battleSpeed;
 	}

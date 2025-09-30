@@ -13,7 +13,8 @@ import static io.github.celosia.sys.menu.TextLib.getSign;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeHp implements BuffEffect {
-	private final int change; // Amount to change HP by. If isPercentage, 1000 = +100%
+	// Amount to change HP by. If isPercentage, 1000 = +100%
+	private final int change;
 	private final boolean isImmediate;
 	private final boolean isPercentage;
 	private final boolean isPierce;

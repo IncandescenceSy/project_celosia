@@ -11,7 +11,8 @@ import static io.github.celosia.sys.menu.TextLib.formatNum;
 import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeDefend implements BuffEffect {
-	private final int change; // Defend to add in tenths of a % of max HP (1000 = +100%)
+	// Defend to add in tenths of a % of max HP (1000 = +100%)
+	private final int change;
 
 	public ChangeDefend(int change) {
 		this.change = change;

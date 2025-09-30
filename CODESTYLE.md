@@ -18,7 +18,6 @@ It is strongly recommended to use Intellij IDEA
 * Standard naming convention
   * UpperCamelCase classes
   * lowerCamelCase fields and methods
-  * SCREAMING_SNAKE_CASE constants
   * Do not prefix interface names with I
 * Global constants must be final
 * Only use this when necessary

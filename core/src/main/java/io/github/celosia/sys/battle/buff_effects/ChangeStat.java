@@ -16,7 +16,8 @@ import static io.github.celosia.sys.settings.Lang.lang;
 
 public class ChangeStat implements BuffEffect {
 	private final Stat stat;
-	private final int change; // Change in tenths of a %; 1000 = +100%
+	// Change in tenths of a %; 1000 = +100%
+	private final int change;
 
 	public ChangeStat(Stat stat, int change) {
 		this.stat = stat;

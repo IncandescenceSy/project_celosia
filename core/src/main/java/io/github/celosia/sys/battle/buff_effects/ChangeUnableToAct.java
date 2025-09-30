@@ -8,10 +8,10 @@ import static io.github.celosia.sys.menu.TextLib.formatName;
 import static io.github.celosia.sys.settings.Lang.lang;
 import static io.github.celosia.sys.util.MiscLib.isMatchingTruthiness;
 
-public class ChangeEffectBlock implements BuffEffect {
+public class ChangeUnableToAct implements BuffEffect {
 	private final int change;
 
-	public ChangeEffectBlock(int change) {
+	public ChangeUnableToAct(int change) {
 		this.change = change;
 	}
 
@@ -26,12 +26,12 @@ public class ChangeEffectBlock implements BuffEffect {
 	}
 
 	public void calc(Unit self, int changeFull) {
-		int effectBlockOld = self.getEffectBlock();
-		int effectBlockNew = effectBlockOld + changeFull;
-		self.setEffectBlock(effectBlockNew);
-		if (self.getShield() == 0 && self.getDefend() == 0 && !isMatchingTruthiness(effectBlockOld, effectBlockNew)) {
-			appendToLog(lang.format("log.change_effect_block",
-					formatName(self.getUnitType().name(), self.getPos(), false), effectBlockNew));
+		int unableToActOld = self.getEffectBlock();
+		int unableToActNew = unableToActOld + changeFull;
+		self.setEffectBlock(unableToActNew);
+		if (!isMatchingTruthiness(unableToActOld, unableToActNew)) {
+			appendToLog(lang.format("log.change_unable_to_act",
+					formatName(self.getUnitType().name(), self.getPos(), false), unableToActNew));
 		}
 	}
 }

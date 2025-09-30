@@ -19,7 +19,8 @@ import static io.github.celosia.sys.settings.Lang.lang;
 
 public class Heal implements SkillEffect {
 	private final int pow;
-	private final int overHeal; // Amount to heal over max HP in 10ths of a % (1000 = 100%)
+	// Amount to heal over max HP in 10ths of a % (1000 = 100%)
+	private final int overHeal;
 	private final int shieldTurns;
 	private final boolean isInstant;
 	private final boolean giveToSelf;

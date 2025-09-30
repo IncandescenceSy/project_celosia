@@ -7,6 +7,7 @@ import io.github.celosia.sys.battle.buff_effects.ChangeHp;
 import io.github.celosia.sys.battle.buff_effects.ChangeInfiniteSp;
 import io.github.celosia.sys.battle.buff_effects.ChangeMult;
 import io.github.celosia.sys.battle.buff_effects.ChangeStat;
+import io.github.celosia.sys.battle.buff_effects.ChangeUnableToAct;
 
 import static io.github.celosia.sys.settings.Lang.lang;
 
@@ -22,6 +23,9 @@ public class Buffs {
 	// this minimizes it
 	static Buff PROTECT = new Buff(lang.get("buff.protect"), lang.get("buff.protect.desc"), "[azure][+shieldcomb]",
 			BuffType.BUFF, new ChangeMult(Mult.DMG_TAKEN, -10_000_000), new ChangeEffectBlock(1));
+
+	static Buff STUNNED = new Buff(lang.get("buff.stunned"), lang.get("buff.stunned.desc"),
+			"[YELLOW][+knocked-out-stars]", BuffType.DEBUFF, new ChangeUnableToAct(1));
 
 	// todo: affinity should convey immunity to these
 	// Elemental debuffs
