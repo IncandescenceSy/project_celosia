@@ -1,15 +1,32 @@
 package io.github.celosia.sys.battle;
 
-/**
- * Monster species
- * 
- * @param statsBase
- *            Base stats
- * @param affsBase
- *            Affinities
- * @param passives
- *            Passives
- */
+import io.github.celosia.sys.entity.NamedEntity;
+
+import java.util.Map;
+
 // todo skills and stuff
-public record UnitType(String name, Stats statsBase, Affinities affsBase, Passive... passives) {
+public class UnitType extends NamedEntity {
+
+    private final Stats statsBase;
+    private final Map<Element, Integer> affinities;
+    private final Passive[] passives;
+
+    public UnitType(String name, String desc, Stats statsBase, Map<Element, Integer> affinities, Passive... passives) {
+        super(name, desc);
+        this.statsBase = statsBase;
+        this.affinities = affinities;
+        this.passives = passives;
+    }
+
+    public Stats getStatsBase() {
+        return statsBase;
+    }
+
+    public Map<Element, Integer> getAffinities() {
+        return affinities;
+    }
+
+    public Passive[] getPassives() {
+        return passives;
+    }
 }

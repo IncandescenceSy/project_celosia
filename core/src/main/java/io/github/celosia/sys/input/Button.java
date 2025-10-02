@@ -1,10 +1,10 @@
 package io.github.celosia.sys.input;
 
-import static io.github.celosia.sys.settings.Lang.lang;
+import static io.github.celosia.sys.save.Lang.lang;
 
 // Controller button and stick mappings
 public enum Button {
-	// spotless:off
+
     B(lang.get("button.b"), "B"),
     A(lang.get("button.a"), "A"),
     Y(lang.get("button.y"), "Y"),
@@ -25,32 +25,31 @@ public enum Button {
     LY("LY", "LY"), // Left stick Y-axis
     RX("RX", "RX"), // Right stick X-axis
     RY("RY", "RY"); // Right stick Y-axis
-    // spotless:on
 
-	private int mapping = -1;
-	private final String name;
+    private int mapping = -1;
+    private final String name;
 
-	// NSW, PS, XB
-	private final String[] glyphs;
+    // NSW, PS, XB
+    private final String[] glyphs;
 
-	Button(String name, String glyph) {
-		this.name = name;
-		this.glyphs = new String[]{"[+NSW_" + glyph + "]", "[+PS_" + glyph + "]", "[+XB_" + glyph + "]"};
-	}
+    Button(String name, String glyph) {
+        this.name = name;
+        this.glyphs = new String[] { "[+NSW_" + glyph + "]", "[+PS_" + glyph + "]", "[+XB_" + glyph + "]" };
+    }
 
-	public void setMapping(int mapping) {
-		this.mapping = mapping;
-	}
+    public void setMapping(int mapping) {
+        this.mapping = mapping;
+    }
 
-	public int getMapping() {
-		return mapping;
-	}
+    public int getMapping() {
+        return mapping;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String[] getGlyphs() {
-		return glyphs;
-	}
+    public String[] getGlyphs() {
+        return glyphs;
+    }
 }

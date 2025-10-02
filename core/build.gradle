@@ -32,7 +32,7 @@ spotless {
         endWithNewline()
     }
     java {
-        eclipse('4.19')
+        eclipse().configFile('spotless.xml')
         toggleOffOn()
         formatAnnotations()
     }

@@ -5,8 +5,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-import io.github.celosia.sys.settings.Settings;
+import com.badlogic.gdx.utils.Align;
+import com.github.tommyettinger.textra.TypingLabel;
+import io.github.celosia.Main;
+import io.github.celosia.sys.World;
+import io.github.celosia.sys.menu.MenuLib;
+import io.github.celosia.sys.save.Settings;
+import io.github.celosia.sys.util.ArrayX;
+import io.github.celosia.sys.util.TextLib;
 import space.earlygrey.shapedrawer.JoinType;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -17,121 +23,135 @@ import static io.github.celosia.Main.polygonSpriteBatch;
 
 public class TriLib {
 
-	// Draws cool rectangles with optionally slanted sides and an optional outline
-	public static void drawCoolRects(int prio) {
-		polygonSpriteBatch.begin();
+    // Draws cool rectangles with optionally slanted sides and an optional outline
+    public static void drawCoolRects(int prio) {
+        polygonSpriteBatch.begin();
 
-		float delta = Gdx.graphics.getDeltaTime();
+        float delta = Gdx.graphics.getDeltaTime();
 
-		Interpolation i = Interpolation.smooth2; // todo diff interpol for in vs out
+        Interpolation i = Interpolation.smooth2; // todo diff interpol for in vs out
 
-		for (CoolRect rect : coolRects) {
-			if (rect.getPrio() == prio) {
-				int dir = rect.getDir();
-				float prog = Math.clamp(rect.getProg() + (delta * dir * rect.getSpeed() * (dir == -1 ? 2 : 1)), 0f, 1f);
-				rect.setProg(prog);
+        for (CoolRect rect : coolRects) {
+            if (rect.getPrio() == prio) {
+                int dir = rect.getDir();
+                float prog = Math.clamp(rect.getProg() + (delta * dir * rect.getSpeed() * (dir == -1 ? 2 : 1)), 0f, 1f);
+                rect.setProg(prog);
 
-				// Skip the rest if the width is to be near 0
-				// todo better fix for the inexplicable tallness
-				if (prog <= 0.02f) {
-					continue;
-				}
+                // Skip the rest if the width is to be near 0
+                // todo better fix for the inexplicable tallness
+                if (prog <= 0.02f) {
+                    continue;
+                }
 
-				float height = rect.getT() - rect.getB();
+                float height = rect.getT() - rect.getB();
 
-				float angLOff = (rect.getAngL() > 0) ? (height / (90f / rect.getAngL())) : 0;
-				float angROff = (rect.getAngR() > 0) ? (height / (90f / rect.getAngR())) : 0;
+                float angLOff = (rect.getAngL() > 0) ? (height / (90f / rect.getAngL())) : 0;
+                float angROff = (rect.getAngR() > 0) ? (height / (90f / rect.getAngR())) : 0;
 
-				// Top left
-				float tlx = (rect.getL() + angLOff) * Settings.scale;
-				float tly = rect.getT() * Settings.scale;
+                // Top left
+                float tlx = (rect.getL() + angLOff) * Settings.scale;
+                float tly = rect.getT() * Settings.scale;
 
-				// Top right
-				float trx = i.apply(tlx, (rect.getR() + angROff) * Settings.scale, prog);
-				float try_ = rect.getT() * Settings.scale;
+                // Top right
+                float trx = i.apply(tlx, (rect.getR() + angROff) * Settings.scale, prog);
+                float try_ = rect.getT() * Settings.scale;
 
-				// Bottom left
-				float blx = rect.getL() * Settings.scale;
-				float bly = rect.getB() * Settings.scale;
+                // Bottom left
+                float blx = rect.getL() * Settings.scale;
+                float bly = rect.getB() * Settings.scale;
 
-				// Bottom right
-				float brx = i.apply(blx, rect.getR() * Settings.scale, prog);
-				float bry = rect.getB() * Settings.scale;
+                // Bottom right
+                float brx = i.apply(blx, rect.getR() * Settings.scale, prog);
+                float bry = rect.getB() * Settings.scale;
 
-				// Center
-				Color color = rect.getColor();
-				drawer.setColor(color.r, color.g, color.b, 1);
+                // Center
+                Color color = rect.getColor();
+                drawer.setColor(color.r, color.g, color.b, 1);
 
-				// Todo change to TriangleStrip Mesh to avoid duplicate vertices
-				drawer.filledTriangle(tlx, tly, blx, bly, trx, try_);
+                // Todo change to TriangleStrip Mesh to avoid duplicate vertices
+                drawer.filledTriangle(tlx, tly, blx, bly, trx, try_);
 
-				drawer.filledTriangle(blx, bly, trx, try_, brx, bry);
+                drawer.filledTriangle(blx, bly, trx, try_, brx, bry);
 
-				// Outline
-				if (rect.isHasOutline()) {
-					drawer.setColor(1, 1, 1, 1);
+                // Outline
+                if (rect.hasOutline()) {
+                    drawer.setColor(1, 1, 1, 1);
 
-					Array<Vector2> points = new Array<>(false, 4);
-					points.addAll(new Vector2(tlx, tly), new Vector2(blx, bly), new Vector2(brx, bry),
-							new Vector2(trx, try_));
-					drawer.path(points,
-							// Change line thickness near the start/end of the animation to make its
-							// appearance/disappearance smoother
-							i.apply(0, 10 * Settings.scale, Math.min(1f, prog * 3.5f)), JoinType.POINTY, false);
-				}
+                    ArrayX<Vector2> points = new ArrayX<>(false, 4);
+                    points.addAll(new Vector2(tlx, tly), new Vector2(blx, bly), new Vector2(brx, bry),
+                            new Vector2(trx, try_));
+                    drawer.path(points,
+                            // Change line thickness near the start/end of the animation to make its
+                            // appearance/disappearance smoother
+                            i.apply(0, 10 * Settings.scale, Math.min(1f, prog * 3.5f)), JoinType.POINTY, false);
+                }
 
-			}
-		}
+            }
+        }
 
-		polygonSpriteBatch.end();
-	}
+        polygonSpriteBatch.end();
+    }
 
-	public static void drawPaths(int prio) {
-		polygonSpriteBatch.begin();
+    public static void drawPaths(int prio) {
+        polygonSpriteBatch.begin();
 
-		float delta = Gdx.graphics.getDeltaTime();
+        float delta = Gdx.graphics.getDeltaTime();
 
-		Interpolation i = Interpolation.smooth2;
+        Interpolation i = Interpolation.smooth2;
 
-		for (Path path : paths) {
-			if (path.getPrio() == prio) {
-				Array<Vector2> points = path.getPoints();
-				if (points != null && !points.isEmpty()) {
-					int dir = path.getDir();
-					float prog = Math.clamp(path.getProg() + (delta * dir * path.getSpeed() * (dir == -1 ? 2 : 1)), 0f,
-							1f);
-					path.setProg(prog);
+        for (Path path : paths) {
+            if (path.getPrio() == prio) {
+                ArrayX<Vector2> points = path.getPoints();
+                if (points != null && !points.isEmpty()) {
+                    int dir = path.getDir();
+                    float prog = Math.clamp(path.getProg() + (delta * dir * path.getSpeed() * (dir == -1 ? 2 : 1)), 0f,
+                            1f);
+                    path.setProg(prog);
 
-					// Skip the rest if the width is to be near 0
-					// todo is this needed
-					if (prog <= 0.02f) {
-						continue;
-					}
+                    // Skip the rest if the width is to be near 0
+                    // todo is this needed
+                    if (prog <= 0.02f) {
+                        continue;
+                    }
 
-					Color color = path.getColor();
-					drawer.setColor(color.r, color.g, color.b, 1);
+                    Color color = path.getColor();
+                    drawer.setColor(color.r, color.g, color.b, 1);
 
-					drawer.path(points,
-							// Change line thickness near the start/end of the animation to make its
-							// appearance/disappearance smoother
-							i.apply(0, path.getThickness() * Settings.scale, Math.min(1f, prog)), JoinType.POINTY,
-							false);
-				}
-			}
-		}
+                    drawer.path(points,
+                            // Change line thickness near the start/end of the animation to make its
+                            // appearance/disappearance smoother
+                            i.apply(0, path.getThickness() * Settings.scale, Math.min(1f, prog)), JoinType.POINTY,
+                            false);
+                }
+            }
+        }
 
-		polygonSpriteBatch.end();
-	}
+        polygonSpriteBatch.end();
+    }
 
-	// Draws a regular triangle
-	// todo wip
-	public static void drawTri(PolygonSpriteBatch batch, ShapeDrawer drawer, int tlx, int tly, int blx, int bly,
-			int trx, int try_) {
-		batch.begin();
+    // Draws a regular triangle
+    // todo wip
+    public static void drawTri(PolygonSpriteBatch batch, ShapeDrawer drawer, int tlx, int tly, int blx, int bly,
+                               int trx, int try_) {
+        batch.begin();
 
-		drawer.filledTriangle(tlx * Settings.scale, tly * Settings.scale, blx * Settings.scale, bly * Settings.scale,
-				trx * Settings.scale, try_ * Settings.scale);
+        drawer.filledTriangle(tlx * Settings.scale, tly * Settings.scale, blx * Settings.scale, bly * Settings.scale,
+                trx * Settings.scale, try_ * Settings.scale);
 
-		batch.end();
-	}
+        batch.end();
+    }
+
+    public static void createPopup(String name, String desc) {
+        Main.MENU_LIST.add(MenuLib.MenuType.POPUP);
+
+        Main.popupTitle = new TypingLabel(TextLib.TAGS + name, Fonts.FontType.KORURI.get(80));
+        Main.popupTitle.setPosition(World.WIDTH_2, World.HEIGHT_2 + 120, Align.center);
+        Main.stage5.addActor(Main.popupTitle);
+
+        Main.popupText = new TypingLabel(TextLib.TAGS + desc, Fonts.FontType.KORURI.get(30));
+        Main.popupText.setPosition(World.WIDTH_2 - 440, World.HEIGHT_2 + 20, Align.left);
+        Main.stage5.addActor(Main.popupText);
+
+        coolRects[CoolRects.POPUP_CENTERED.ordinal()].setDir(1);
+    }
 }

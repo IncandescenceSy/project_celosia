@@ -1,6 +1,6 @@
 package io.github.celosia.sys.battle;
 
-import static io.github.celosia.sys.settings.Lang.lang;
+import static io.github.celosia.sys.save.Lang.lang;
 
 // Multiplies the corresponding numbers
 // In 10ths of a % (1000 = *100%)
@@ -8,8 +8,8 @@ import static io.github.celosia.sys.settings.Lang.lang;
 // Exps are in hundredths (100 = ^1, 150 = ^1.5, etc)
 // Calculations are performed on max(mult^exp, 10%)
 public enum Mult {
-	// spotless:off
-	DMG_DEALT(lang.get("mult.dmg_dealt"), true),
+
+    DMG_DEALT(lang.get("mult.dmg_dealt"), true),
     DMG_TAKEN(lang.get("mult.dmg_taken"), false),
     IGNIS_DMG_DEALT(lang.get("mult.ignis_dmg_dealt"), true),
     IGNIS_DMG_TAKEN(lang.get("mult.ignis_dmg_taken"), false),
@@ -35,21 +35,20 @@ public enum Mult {
     HEALING_TAKEN(lang.get("mult.healing_taken"), true),
     SP_GAIN(lang.get("mult.sp_gain"), true),
     SP_USE(lang.get("mult.sp_use"), false);
-    // spotless:on
 
-	private final String name;
-	private final boolean isPositive;
+    private final String name;
+    private final boolean isPositive;
 
-	Mult(String name, boolean isPositive) {
-		this.name = name;
-		this.isPositive = isPositive;
-	}
+    Mult(String name, boolean isPositive) {
+        this.name = name;
+        this.isPositive = isPositive;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public boolean isPositive() {
-		return isPositive;
-	}
+    public boolean isPositive() {
+        return isPositive;
+    }
 }

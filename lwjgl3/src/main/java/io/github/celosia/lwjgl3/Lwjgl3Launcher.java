@@ -4,7 +4,7 @@ import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import io.github.celosia.Main;
-import io.github.celosia.sys.settings.Settings;
+import io.github.celosia.sys.save.Settings;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {

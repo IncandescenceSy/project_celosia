@@ -11,74 +11,75 @@ import static io.github.celosia.sys.input.ControllerType.NONE;
 import static io.github.celosia.sys.input.InputLib.getControllerType;
 
 public class InputHandler extends InputAdapter implements ControllerListener {
-	// The controller the last input came from
-	private static Controller controller;
 
-	// The kind of controller the last input came from
-	// NONE means the last input came from a keyboard
-	private static ControllerType lastUsedController = NONE;
+    // The controller the last input came from
+    private static Controller controller;
 
-	public static void checkController() {
-		controller = Controllers.getCurrent();
-		if (controller != null) {
-			InputLib.setupController(controller);
-		}
-	}
+    // The kind of controller the last input came from
+    // NONE means the last input came from a keyboard
+    private static ControllerType lastUsedController = NONE;
 
-	// Keyboard input events
-	@Override
-	public boolean keyDown(int keycode) {
-		lastUsedController = NONE;
-		return super.keyDown(keycode);
-	}
+    public static void checkController() {
+        controller = Controllers.getCurrent();
+        if (controller != null) {
+            InputLib.setupController(controller);
+        }
+    }
 
-	@Override
-	public boolean keyUp(int keycode) {
-		lastUsedController = NONE;
-		return super.keyDown(keycode);
-	}
+    // Keyboard input events
+    @Override
+    public boolean keyDown(int keycode) {
+        lastUsedController = NONE;
+        return super.keyDown(keycode);
+    }
 
-	// Controller input events
-	@Override
-	public void connected(Controller controller) {
-		lastUsedController = getControllerType(controller);
-	}
+    @Override
+    public boolean keyUp(int keycode) {
+        lastUsedController = NONE;
+        return super.keyDown(keycode);
+    }
 
-	@Override
-	public void disconnected(Controller controller) {
-		lastUsedController = NONE;
-	}
+    // Controller input events
+    @Override
+    public void connected(Controller controller) {
+        lastUsedController = getControllerType(controller);
+    }
 
-	@Override
-	public boolean buttonDown(Controller controller, int buttonCode) {
-		lastUsedController = getControllerType(controller);
-		return false;
-	}
+    @Override
+    public void disconnected(Controller controller) {
+        lastUsedController = NONE;
+    }
 
-	@Override
-	public boolean buttonUp(Controller controller, int buttonCode) {
-		lastUsedController = getControllerType(controller);
-		return false;
-	}
+    @Override
+    public boolean buttonDown(Controller controller, int buttonCode) {
+        lastUsedController = getControllerType(controller);
+        return false;
+    }
 
-	@Override
-	public boolean axisMoved(Controller controller, int axisCode, float value) {
-		// Ignore small movement
-		if (Math.abs(value) > 0.2f) {
-			lastUsedController = getControllerType(controller);
-		}
-		return false;
-	}
+    @Override
+    public boolean buttonUp(Controller controller, int buttonCode) {
+        lastUsedController = getControllerType(controller);
+        return false;
+    }
 
-	public static Controller getController() {
-		return controller;
-	}
+    @Override
+    public boolean axisMoved(Controller controller, int axisCode, float value) {
+        // Ignore small movement
+        if (Math.abs(value) > 0.2f) {
+            lastUsedController = getControllerType(controller);
+        }
+        return false;
+    }
 
-	public static boolean isLastUsedController() {
-		return lastUsedController != NONE;
-	}
+    public static Controller getController() {
+        return controller;
+    }
 
-	public static ControllerType getLastUsedController() {
-		return lastUsedController;
-	}
+    public static boolean isLastUsedController() {
+        return lastUsedController != NONE;
+    }
+
+    public static ControllerType getLastUsedController() {
+        return lastUsedController;
+    }
 }

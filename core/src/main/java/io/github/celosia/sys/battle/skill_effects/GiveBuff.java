@@ -11,154 +11,156 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.render.TextLib.C_BUFF;
-import static io.github.celosia.sys.render.TextLib.C_NUM;
-import static io.github.celosia.sys.render.TextLib.formatName;
-import static io.github.celosia.sys.settings.Lang.lang;
+import static io.github.celosia.sys.save.Lang.lang;
+import static io.github.celosia.sys.util.TextLib.C_BUFF;
+import static io.github.celosia.sys.util.TextLib.C_NUM;
+import static io.github.celosia.sys.util.TextLib.formatName;
 
 public class GiveBuff implements SkillEffect {
-	private final Buff buff;
-	private final int turns;
-	private final int stacks;
-	private final ResultType minResult;
-	private final boolean giveToSelf;
-	private final boolean mainTargetOnly;
-	private final boolean isInstant;
 
-	public GiveBuff(Builder builder) {
-		buff = builder.buff;
-		turns = builder.turns;
-		stacks = builder.stacks;
-		minResult = builder.minResult;
-		isInstant = builder.isInstant;
-		giveToSelf = builder.giveToSelf;
-		mainTargetOnly = builder.mainTargetOnly;
-	}
+    private final Buff buff;
+    private final int turns;
+    private final int stacks;
+    private final ResultType minResult;
+    private final boolean giveToSelf;
+    private final boolean mainTargetOnly;
+    private final boolean isInstant;
 
-	public static class Builder {
-		private final Buff buff;
-		private final int turns;
-		private int stacks = 1;
-		private ResultType minResult = ResultType.SUCCESS;
-		private boolean giveToSelf = false;
-		private boolean mainTargetOnly = false;
-		private boolean isInstant = true;
+    public GiveBuff(Builder builder) {
+        buff = builder.buff;
+        turns = builder.turns;
+        stacks = builder.stacks;
+        minResult = builder.minResult;
+        isInstant = builder.isInstant;
+        giveToSelf = builder.giveToSelf;
+        mainTargetOnly = builder.mainTargetOnly;
+    }
 
-		public Builder(Buff buff, int turns) {
-			this.buff = buff;
-			this.turns = turns;
-		}
+    public static class Builder {
 
-		public Builder stacks(int stacks) {
-			this.stacks = stacks;
-			return this;
-		}
+        private final Buff buff;
+        private final int turns;
+        private int stacks = 1;
+        private ResultType minResult = ResultType.SUCCESS;
+        private boolean giveToSelf = false;
+        private boolean mainTargetOnly = false;
+        private boolean isInstant = true;
 
-		public Builder minResult(ResultType minResult) {
-			this.minResult = minResult;
-			return this;
-		}
+        public Builder(Buff buff, int turns) {
+            this.buff = buff;
+            this.turns = turns;
+        }
 
-		public Builder giveToSelf() {
-			giveToSelf = true;
-			return this;
-		}
+        public Builder stacks(int stacks) {
+            this.stacks = stacks;
+            return this;
+        }
 
-		public Builder mainTargetOnly() {
-			mainTargetOnly = true;
-			return this;
-		}
+        public Builder minResult(ResultType minResult) {
+            this.minResult = minResult;
+            return this;
+        }
 
-		public Builder notInstant() {
-			isInstant = false;
-			return this;
-		}
+        public Builder giveToSelf() {
+            giveToSelf = true;
+            return this;
+        }
 
-		public GiveBuff build() {
-			return new GiveBuff(this);
-		}
-	}
+        public Builder mainTargetOnly() {
+            mainTargetOnly = true;
+            return this;
+        }
 
-	@Override
-	public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
-		// Most attacks don't apply buffs if the previous hit was blocked by Shield or
-		// immunity
-		// Returns success even if nothing happened because failure to apply a buff as a
-		// secondary effect shouldn't fail the entire skill
-		if (resultPrev.ordinal() < minResult.ordinal() || (mainTargetOnly && !isMainTarget)) {
-			return ResultType.SUCCESS;
-		}
+        public Builder notInstant() {
+            isInstant = false;
+            return this;
+        }
 
-		List<String> msg = new ArrayList<>();
+        public GiveBuff build() {
+            return new GiveBuff(this);
+        }
+    }
 
-		Unit unit = (giveToSelf) ? self : target;
+    @Override
+    public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
+        // Most attacks don't apply buffs if the previous hit was blocked by Shield or
+        // immunity
+        // Returns success even if nothing happened because failure to apply a buff as a
+        // secondary effect shouldn't fail the entire skill
+        if (resultPrev.ordinal() < minResult.ordinal() || (mainTargetOnly && !isMainTarget)) {
+            return ResultType.SUCCESS;
+        }
 
-		int turnsMod = turns + self.getDurationModBuffTypeDealt(buff.buffType())
-				+ unit.getDurationModBuffTypeTaken(buff.buffType());
+        List<String> msg = new ArrayList<>();
 
-		int stacksMod = stacks + self.getStacksModBuffTypeDealt(buff.buffType())
-				+ unit.getStacksModBuffTypeTaken(buff.buffType());
+        Unit unit = (giveToSelf) ? self : target;
 
-		self.onGiveBuff(target, buff, turnsMod, stacksMod);
+        int turnsMod = turns + self.getDurationModBuffTypeDealt(buff.getBuffType()) +
+                unit.getDurationModBuffTypeTaken(buff.getBuffType());
 
-		List<BuffInstance> buffInstances = unit.getBuffInstances();
-		BuffInstance buffInstance = unit.getBuffInstance(buff);
+        int stacksMod = stacks + self.getStacksModBuffTypeDealt(buff.getBuffType()) +
+                unit.getStacksModBuffTypeTaken(buff.getBuffType());
 
-		String buffName = buff.icon() + C_BUFF + buff.name();
+        self.onGiveBuff(target, buff, turnsMod, stacksMod);
 
-		// Already has buff
-		if (buffInstance != null) {
-			String str = "";
+        List<BuffInstance> buffInstances = unit.getBuffInstances();
+        BuffInstance buffInstance = unit.getBuffInstance(buff);
 
-			int stacksOld = buffInstance.getStacks();
-			int stacksNew = Math.min(buffInstance.getBuff().maxStacks(), stacksOld + stacksMod);
-			if (stacksNew != stacksOld) {
-				buffInstance.setStacks(stacksNew);
-				str = lang.format("log.give_buff.stacks", formatName(unit.getUnitType().name(), unit.getPos()),
-						buffName, C_NUM + stacksOld, C_NUM + stacksNew);
-			}
+        String buffName = buff.getIcon() + C_BUFF + buff.getName();
 
-			int turnsOld = buffInstance.getTurns();
-			if (turnsMod > turnsOld) {
-				buffInstance.setTurns(turnsMod);
+        // Already has buff
+        if (buffInstance != null) {
+            String str = "";
 
-				if (stacksNew != stacksOld) {
-					msg.add(str + lang.format("log.turns.nameless", C_NUM + turnsOld, C_NUM + turnsMod));
-				} else {
-					msg.add(lang.format("log.give_buff.turns", formatName(unit.getUnitType().name(), unit.getPos()),
-							buffName, C_NUM + turnsOld, C_NUM + turnsMod));
-				}
-			}
+            int stacksOld = buffInstance.getStacks();
+            int stacksNew = Math.min(buffInstance.getBuff().getMaxStacks(), stacksOld + stacksMod);
+            if (stacksNew != stacksOld) {
+                buffInstance.setStacks(stacksNew);
+                str = lang.format("log.give_buff.stacks", formatName(unit.getUnitType().getName(), unit.getPos()),
+                        buffName, C_NUM + stacksOld, C_NUM + stacksNew);
+            }
 
-			appendToLog(msg);
+            int turnsOld = buffInstance.getTurns();
+            if (turnsMod > turnsOld) {
+                buffInstance.setTurns(turnsMod);
 
-			int stacksAdded = stacksNew - stacksOld;
-			if (stacksAdded > 0) {
-				for (BuffEffect buffEffect : buffInstance.getBuff().buffEffects()) {
-					buffEffect.onGive(unit, stacksAdded);
-				}
-			}
+                if (stacksNew != stacksOld) {
+                    msg.add(str + lang.format("log.turns.nameless", C_NUM + turnsOld, C_NUM + turnsMod));
+                } else {
+                    msg.add(lang.format("log.give_buff.turns", formatName(unit.getUnitType().getName(), unit.getPos()),
+                            buffName, C_NUM + turnsOld, C_NUM + turnsMod));
+                }
+            }
 
-		} else {
-			msg.add(lang.format("log.give_buff.gain", formatName(unit.getUnitType().name(), unit.getPos(), false),
-					buffName, buff.maxStacks(), stacksMod, lang.format("log.stack_s", stacksMod), turnsMod));
-			unit.addBuffInstance(new BuffInstance(buff, turnsMod, stacksMod));
-			buffInstance = buffInstances.getLast();
+            appendToLog(msg);
 
-			appendToLog(msg);
+            int stacksAdded = stacksNew - stacksOld;
+            if (stacksAdded > 0) {
+                for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
+                    buffEffect.onGive(unit, stacksAdded);
+                }
+            }
 
-			BuffEffect[] buffEffects = buffInstance.getBuff().buffEffects();
-			for (BuffEffect buffEffect : buffEffects) {
-				buffEffect.onGive(unit, buffInstance.getStacks());
-			}
+        } else {
+            msg.add(lang.format("log.give_buff.gain", formatName(unit.getUnitType().getName(), unit.getPos(), false),
+                    buffName, buff.getMaxStacks(), stacksMod, lang.format("log.stack_s", stacksMod), turnsMod));
+            unit.addBuffInstance(new BuffInstance(buff, turnsMod, stacksMod));
+            buffInstance = buffInstances.getLast();
 
-		}
+            appendToLog(msg);
 
-		return ResultType.SUCCESS;
-	}
+            BuffEffect[] buffEffects = buffInstance.getBuff().getBuffEffects();
+            for (BuffEffect buffEffect : buffEffects) {
+                buffEffect.onGive(unit, buffInstance.getStacks());
+            }
 
-	@Override
-	public boolean isInstant() {
-		return isInstant;
-	}
+        }
+
+        return ResultType.SUCCESS;
+    }
+
+    @Override
+    public boolean isInstant() {
+        return isInstant;
+    }
 }

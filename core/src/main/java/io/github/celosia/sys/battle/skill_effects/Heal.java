@@ -8,166 +8,167 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.render.TextLib.C_HP;
-import static io.github.celosia.sys.render.TextLib.C_NUM;
-import static io.github.celosia.sys.render.TextLib.C_POS;
-import static io.github.celosia.sys.render.TextLib.C_SHIELD;
-import static io.github.celosia.sys.render.TextLib.formatName;
-import static io.github.celosia.sys.render.TextLib.formatNum;
-import static io.github.celosia.sys.render.TextLib.getColor;
-import static io.github.celosia.sys.settings.Lang.lang;
+import static io.github.celosia.sys.save.Lang.lang;
+import static io.github.celosia.sys.util.TextLib.C_HP;
+import static io.github.celosia.sys.util.TextLib.C_NUM;
+import static io.github.celosia.sys.util.TextLib.C_POS;
+import static io.github.celosia.sys.util.TextLib.C_SHIELD;
+import static io.github.celosia.sys.util.TextLib.formatName;
+import static io.github.celosia.sys.util.TextLib.formatNum;
+import static io.github.celosia.sys.util.TextLib.getColor;
 
 public class Heal implements SkillEffect {
-	private final int pow;
-	// Amount to heal over max HP in 10ths of a % (1000 = 100%)
-	private final int overHeal;
-	private final int shieldTurns;
-	private final boolean isInstant;
-	private final boolean giveToSelf;
-	private final boolean mainTargetOnly;
 
-	public Heal(Builder builder) {
-		pow = builder.pow;
-		overHeal = builder.overHeal;
-		shieldTurns = builder.shieldTurns;
-		isInstant = builder.isInstant;
-		giveToSelf = builder.giveToSelf;
-		mainTargetOnly = builder.mainTargetOnly;
-	}
+    private final int pow;
+    // Amount to heal over max HP in 10ths of a % (1000 = 100%)
+    private final int overHeal;
+    private final int shieldTurns;
+    private final boolean isInstant;
+    private final boolean giveToSelf;
+    private final boolean mainTargetOnly;
 
-	public static class Builder {
-		private final int pow;
-		private int overHeal = 0;
-		private int shieldTurns = 0;
-		private boolean isInstant = false;
-		private boolean giveToSelf = false;
-		private boolean mainTargetOnly = false;
+    public Heal(Builder builder) {
+        pow = builder.pow;
+        overHeal = builder.overHeal;
+        shieldTurns = builder.shieldTurns;
+        isInstant = builder.isInstant;
+        giveToSelf = builder.giveToSelf;
+        mainTargetOnly = builder.mainTargetOnly;
+    }
 
-		public Builder(int pow) {
-			this.pow = pow;
-		}
+    public static class Builder {
 
-		public Builder overHeal(int overHeal) {
-			this.overHeal = overHeal;
-			return this;
-		}
+        private final int pow;
+        private int overHeal = 0;
+        private int shieldTurns = 0;
+        private boolean isInstant = false;
+        private boolean giveToSelf = false;
+        private boolean mainTargetOnly = false;
 
-		public Builder shieldTurns(int shieldTurns) {
-			this.shieldTurns = shieldTurns;
-			return this;
-		}
+        public Builder(int pow) {
+            this.pow = pow;
+        }
 
-		public Builder instant() {
-			isInstant = true;
-			return this;
-		}
+        public Builder overHeal(int overHeal) {
+            this.overHeal = overHeal;
+            return this;
+        }
 
-		public Builder giveToSelf() {
-			giveToSelf = true;
-			return this;
-		}
+        public Builder shieldTurns(int shieldTurns) {
+            this.shieldTurns = shieldTurns;
+            return this;
+        }
 
-		public Builder mainTargetOnly() {
-			mainTargetOnly = true;
-			return this;
-		}
+        public Builder instant() {
+            isInstant = true;
+            return this;
+        }
 
-		public Heal build() {
-			return new Heal(this);
-		}
-	}
+        public Builder giveToSelf() {
+            giveToSelf = true;
+            return this;
+        }
 
-	@Override
-	public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
-		if (mainTargetOnly && !isMainTarget) {
-			return ResultType.SUCCESS;
-		}
+        public Builder mainTargetOnly() {
+            mainTargetOnly = true;
+            return this;
+        }
 
-		List<String> msg = new ArrayList<>();
+        public Heal build() {
+            return new Heal(this);
+        }
+    }
 
-		Unit unit = (giveToSelf) ? self : target;
+    @Override
+    public ResultType apply(Unit self, Unit target, boolean isMainTarget, ResultType resultPrev) {
+        if (mainTargetOnly && !isMainTarget) {
+            return ResultType.SUCCESS;
+        }
 
-		// Heals by pow% of user's Fth
-		long heal = (long) (self.getFthWithStage() * (pow / 100d) * self.getMultWithExpHealingDealt()
-				* unit.getMultWithExpHealingTaken());
+        List<String> msg = new ArrayList<>();
 
-		// Adds shield (shield + defend cannot exceed max HP)
-		if (shieldTurns > 0) {
-			String str = "";
+        Unit unit = (giveToSelf) ? self : target;
 
-			// Apply self's durationMod
-			int turnsMod = shieldTurns + self.getModDurationBuffDealt() + unit.getModDurationBuffTaken();
+        // Heals by pow% of user's Fth
+        long heal = (long) (self.getFthWithStage() * (pow / 100d) * self.getMultWithExpHealingDealt() *
+                unit.getMultWithExpHealingTaken());
 
-			self.onDealShield(unit, turnsMod, heal);
-			unit.onTakeShield(unit, turnsMod, heal);
+        // Adds shield (shield + defend cannot exceed max HP)
+        if (shieldTurns > 0) {
+            String str = "";
 
-			long hpMax = unit.getMaxHp();
-			long shieldOld = unit.getShield();
-			long shieldNew = (shieldOld + unit.getDefend() + heal > hpMax)
-					? hpMax - unit.getDefend()
-					: shieldOld + heal;
-			int turnsOld = unit.getShieldTurns();
+            // Apply self's durationMod
+            int turnsMod = shieldTurns + self.getModDurationBuffDealt() + unit.getModDurationBuffTaken();
 
-			if (shieldNew > shieldOld) {
-				long shieldOldDisp = unit.getDisplayShield();
+            self.onDealShield(unit, turnsMod, heal);
+            unit.onTakeShield(unit, turnsMod, heal);
 
-				unit.setShield(shieldNew);
+            long hpMax = unit.getMaxHp();
+            long shieldOld = unit.getShield();
+            long shieldNew = (shieldOld + unit.getDefend() + heal > hpMax) ? hpMax - unit.getDefend() :
+                    shieldOld + heal;
+            int turnsOld = unit.getShieldTurns();
 
-				long hpMaxDisp = unit.getDisplayMaxHp();
-				long shieldNewDisp = unit.getDisplayShield();
+            if (shieldNew > shieldOld) {
+                long shieldOldDisp = unit.getDisplayShield();
 
-				str = lang.format("log.change_shield", formatName(unit.getUnitType().name(), unit.getPos()),
-						C_SHIELD + formatNum((shieldOldDisp + unit.getDisplayDefend())),
-						C_SHIELD + formatNum((shieldNewDisp + unit.getDisplayDefend())), C_HP + formatNum(hpMaxDisp),
-						getColor(shieldNewDisp - shieldOldDisp) + "+" + formatNum((shieldNewDisp - shieldOldDisp)));
-			}
+                unit.setShield(shieldNew);
 
-			if (turnsMod > turnsOld) {
-				unit.setShieldTurns(turnsMod);
-				if (shieldNew > shieldOld) {
-					msg.add(str + lang.format("log.turns.nameless", C_NUM + turnsOld, C_NUM + turnsMod));
-				} else {
-					msg.add(lang.format("log.shield.turns", formatName(unit.getUnitType().name(), unit.getPos()),
-							C_NUM + turnsOld, C_NUM + turnsMod));
-				}
-			}
+                long hpMaxDisp = unit.getDisplayMaxHp();
+                long shieldNewDisp = unit.getDisplayShield();
 
-			// Effect block message
-			if (shieldOld == 0 && shieldNew > 0 && !unit.isEffectBlock() && unit.getDefend() == 0) {
-				msg.add(lang.format("log.change_effect_block",
-						formatName(unit.getUnitType().name(), unit.getPos(), false), 1));
-			}
+                str = lang.format("log.change_shield", formatName(unit.getUnitType().getName(), unit.getPos()),
+                        C_SHIELD + formatNum((shieldOldDisp + unit.getDisplayDefend())),
+                        C_SHIELD + formatNum((shieldNewDisp + unit.getDisplayDefend())), C_HP + formatNum(hpMaxDisp),
+                        getColor(shieldNewDisp - shieldOldDisp) + "+" + formatNum((shieldNewDisp - shieldOldDisp)));
+            }
 
-		} else { // Heals
-			self.onDealHeal(unit, heal, overHeal);
-			unit.onTakeHeal(self, heal, overHeal);
+            if (turnsMod > turnsOld) {
+                unit.setShieldTurns(turnsMod);
+                if (shieldNew > shieldOld) {
+                    msg.add(str + lang.format("log.turns.nameless", C_NUM + turnsOld, C_NUM + turnsMod));
+                } else {
+                    msg.add(lang.format("log.shield.turns", formatName(unit.getUnitType().getName(), unit.getPos()),
+                            C_NUM + turnsOld, C_NUM + turnsMod));
+                }
+            }
 
-			long hpCur = unit.getHp();
-			long hpMax = unit.getMaxHp();
-			// Picks the lower of (current HP + heal amount) and (maximum allowed overHeal
-			// of this skill), and then the higher between that and current HP
-			long hpNew = Math.max(hpCur, Math.min(hpCur + heal, (long) (hpMax * (1 + (overHeal / 1000d)))));
+            // Effect block message
+            if (shieldOld == 0 && shieldNew > 0 && !unit.isEffectBlock() && unit.getDefend() == 0) {
+                msg.add(lang.format("log.change_effect_block",
+                        formatName(unit.getUnitType().getName(), unit.getPos(), false), 1));
+            }
 
-			if (hpNew > hpCur) {
-				long hpOldDisp = unit.getDisplayHp();
+        } else { // Heals
+            self.onDealHeal(unit, heal, overHeal);
+            unit.onTakeHeal(self, heal, overHeal);
 
-				unit.setHp(hpNew);
+            long hpCur = unit.getHp();
+            long hpMax = unit.getMaxHp();
+            // Picks the lower of (current HP + heal amount) and (maximum allowed overHeal
+            // of this skill), and then the higher between that and current HP
+            long hpNew = Math.max(hpCur, Math.min(hpCur + heal, (long) (hpMax * (1 + (overHeal / 1000d)))));
 
-				long hpNewDisp = unit.getDisplayHp();
-				long hpMaxDisp = unit.getDisplayMaxHp();
+            if (hpNew > hpCur) {
+                long hpOldDisp = unit.getDisplayHp();
 
-				msg.add(lang.format("log.change_hp", formatName(unit.getUnitType().name(), self.getPos()),
-						C_HP + formatNum(hpOldDisp), C_HP + formatNum(hpNewDisp), C_HP + formatNum(hpMaxDisp),
-						C_POS + "+" + formatNum((hpNewDisp - hpOldDisp))));
-			}
-		}
+                unit.setHp(hpNew);
 
-		appendToLog(msg);
-		return ResultType.SUCCESS;
-	}
+                long hpNewDisp = unit.getDisplayHp();
+                long hpMaxDisp = unit.getDisplayMaxHp();
 
-	@Override
-	public boolean isInstant() {
-		return isInstant;
-	}
+                msg.add(lang.format("log.change_hp", formatName(unit.getUnitType().getName(), self.getPos()),
+                        C_HP + formatNum(hpOldDisp), C_HP + formatNum(hpNewDisp), C_HP + formatNum(hpMaxDisp),
+                        C_POS + "+" + formatNum((hpNewDisp - hpOldDisp))));
+            }
+        }
+
+        appendToLog(msg);
+        return ResultType.SUCCESS;
+    }
+
+    @Override
+    public boolean isInstant() {
+        return isInstant;
+    }
 }

@@ -5,38 +5,39 @@ import io.github.celosia.sys.battle.Element;
 import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
-import static io.github.celosia.sys.render.TextLib.formatName;
-import static io.github.celosia.sys.render.TextLib.formatNum;
-import static io.github.celosia.sys.render.TextLib.getColor;
-import static io.github.celosia.sys.render.TextLib.getSign;
-import static io.github.celosia.sys.settings.Lang.lang;
+import static io.github.celosia.sys.save.Lang.lang;
+import static io.github.celosia.sys.util.TextLib.formatName;
+import static io.github.celosia.sys.util.TextLib.formatNum;
+import static io.github.celosia.sys.util.TextLib.getColor;
+import static io.github.celosia.sys.util.TextLib.getSign;
 
 public class ChangeAff implements BuffEffect {
-	private final Element element;
-	private final int change;
 
-	public ChangeAff(Element element, int change) {
-		this.element = element;
-		this.change = change;
-	}
+    private final Element element;
+    private final int change;
 
-	@Override
-	public void onGive(Unit self, int stacks) {
-		calc(self, change * stacks);
-	}
+    public ChangeAff(Element element, int change) {
+        this.element = element;
+        this.change = change;
+    }
 
-	@Override
-	public void onRemove(Unit self, int stacks) {
-		calc(self, (change * stacks) * -1);
-	}
+    @Override
+    public void onGive(Unit self, int stacks) {
+        calc(self, change * stacks);
+    }
 
-	public void calc(Unit self, int changeFull) {
-		int affOld = self.getAffsCur().getAff(element);
-		int affNew = affOld + changeFull;
-		self.getAffsCur().setAff(element, affNew);
+    @Override
+    public void onRemove(Unit self, int stacks) {
+        calc(self, (change * stacks) * -1);
+    }
 
-		appendToLog(lang.format("log.change_aff", formatName(self.getUnitType().name(), self.getPos()),
-				element.getName(), getColor(affOld) + getSign(affOld) + formatNum(affOld),
-				getColor(affNew) + getSign(affNew) + formatNum(affNew)));
-	}
+    public void calc(Unit self, int changeFull) {
+        int affOld = self.getAffinity(element);
+        int affNew = affOld + changeFull;
+        self.getAffinities().put(element, affNew);
+
+        appendToLog(lang.format("log.change_aff", formatName(self.getUnitType().getName(), self.getPos()),
+                element.getNameWithIcon(), getColor(affOld) + getSign(affOld) + formatNum(affOld),
+                getColor(affNew) + getSign(affNew) + formatNum(affNew)));
+    }
 }

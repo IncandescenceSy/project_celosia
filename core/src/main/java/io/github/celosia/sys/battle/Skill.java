@@ -1,159 +1,151 @@
 package io.github.celosia.sys.battle;
 
-import io.github.celosia.sys.lib.ArrayLib;
+import io.github.celosia.sys.entity.IconEntity;
+import io.github.celosia.sys.util.ArrayLib;
 
-public class Skill {
-	private final String name;
-	private final String desc;
-	private final Element element;
-	private final Range range;
-	private final int cost;
-	private final int cooldown;
+public class Skill extends IconEntity {
 
-	// Skills happen in order of prio, and in order of user Agi within each prio
-	// Prio brackets:
-	// -9: Always happens last (Slow Follow-Ups)
-	// -1: Happens late
-	// 0: Normal
-	// +1: Happens early (most prio skills)
-	// +2: Happens very early (certain special prio skills?)
-	// +3: Happens before attacks (Defend, Protect, Ally Switch)
-	// +9: Always happens immediately (Follow-Ups)
-	private final int prio;
+    private final Element element;
+    private final Range range;
+    private final int cost;
+    private final int cooldown;
 
-	private final boolean isBloom;
+    // Skills happen in order of prio, and in order of user Agi within each prio
+    // Prio brackets:
+    // -9: Always happens last (Slow Follow-Ups)
+    // -1: Happens late
+    // 0: Normal
+    // +1: Happens early (most prio skills)
+    // +2: Happens very early (certain special prio skills?)
+    // +3: Happens before attacks (Defend, Protect, Ally Switch)
+    // +9: Always happens immediately (Follow-Ups)
+    private final int prio;
 
-	private final SkillRole[] skillRoles;
-	private final SkillEffect[] skillEffects;
+    private final boolean isBloom;
 
-	Skill(Builder builder) {
-		name = builder.name;
-		desc = builder.desc;
-		element = builder.element;
-		range = builder.range;
-		cost = builder.cost;
-		cooldown = builder.cooldown;
-		prio = builder.prio;
-		isBloom = builder.isBloom;
-		skillRoles = builder.skillRoles;
-		skillEffects = builder.skillEffects;
-	}
+    private final SkillRole[] skillRoles;
+    private final SkillEffect[] skillEffects;
 
-	public static class Builder {
-		private final String name;
-		private final String desc;
-		private final Element element;
-		private final Range range;
-		private final int cost;
-		private int cooldown = 0;
-		private int prio = 0;
-		private boolean isBloom = false;
+    Skill(Builder builder) {
+        super(builder.name, builder.desc, builder.element.getIcon());
+        element = builder.element;
+        range = builder.range;
+        cost = builder.cost;
+        cooldown = builder.cooldown;
+        prio = builder.prio;
+        isBloom = builder.isBloom;
+        skillRoles = builder.skillRoles;
+        skillEffects = builder.skillEffects;
+    }
 
-		private SkillRole[] skillRoles = new SkillRole[]{};
-		private SkillEffect[] skillEffects = new SkillEffect[]{};
+    public static class Builder {
 
-		public Builder(String name, String desc, Element element, Range range, int cost) {
-			this.name = name;
-			this.desc = desc;
-			this.element = element;
-			this.range = range;
-			this.cost = cost;
-		}
+        private final String name;
+        private final String desc;
+        private final Element element;
+        private final Range range;
+        private final int cost;
+        private int cooldown = 0;
+        private int prio = 0;
+        private boolean isBloom = false;
 
-		public Builder cooldown(int cooldown) {
-			this.cooldown = cooldown;
-			return this;
-		}
+        private SkillRole[] skillRoles = new SkillRole[] {};
+        private SkillEffect[] skillEffects = new SkillEffect[] {};
 
-		public Builder prio(int prio) {
-			this.prio = prio;
-			return this;
-		}
+        public Builder(String name, String desc, Element element, Range range, int cost) {
+            this.name = name;
+            this.desc = desc;
+            this.element = element;
+            this.range = range;
+            this.cost = cost;
+        }
 
-		public Builder bloom() {
-			isBloom = true;
-			return this;
-		}
+        public Builder cooldown(int cooldown) {
+            this.cooldown = cooldown;
+            return this;
+        }
 
-		public Builder role(SkillRole skillRole) {
-			this.skillRoles = new SkillRole[]{skillRole};
-			return this;
-		}
+        public Builder prio(int prio) {
+            this.prio = prio;
+            return this;
+        }
 
-		public Builder roles(SkillRole... skillRoles) {
-			this.skillRoles = skillRoles;
-			return this;
-		}
+        public Builder bloom() {
+            isBloom = true;
+            return this;
+        }
 
-		public Builder effect(SkillEffect skillEffect) {
-			this.skillEffects = new SkillEffect[]{skillEffect};
-			return this;
-		}
+        public Builder role(SkillRole skillRole) {
+            this.skillRoles = new SkillRole[] { skillRole };
+            return this;
+        }
 
-		public Builder effects(SkillEffect... skillEffects) {
-			this.skillEffects = skillEffects;
-			return this;
-		}
+        public Builder roles(SkillRole... skillRoles) {
+            this.skillRoles = skillRoles;
+            return this;
+        }
 
-		public Skill build() {
-			return new Skill(this);
-		}
-	}
+        public Builder effect(SkillEffect skillEffect) {
+            this.skillEffects = new SkillEffect[] { skillEffect };
+            return this;
+        }
 
-	public String getName() {
-		return name;
-	}
+        public Builder effects(SkillEffect... skillEffects) {
+            this.skillEffects = skillEffects;
+            return this;
+        }
 
-	public String getDesc() {
-		return desc;
-	}
+        public Skill build() {
+            return new Skill(this);
+        }
+    }
 
-	public Element getElement() {
-		return element;
-	}
+    public Element getElement() {
+        return element;
+    }
 
-	public Range getRange() {
-		return range;
-	}
+    public Range getRange() {
+        return range;
+    }
 
-	public int getCost() {
-		return cost;
-	}
+    public int getCost() {
+        return cost;
+    }
 
-	public int getCooldown() {
-		return cooldown;
-	}
+    public int getCooldown() {
+        return cooldown;
+    }
 
-	public int getPrio() {
-		return prio;
-	}
+    public int getPrio() {
+        return prio;
+    }
 
-	public boolean isBloom() {
-		return isBloom;
-	}
+    public boolean isBloom() {
+        return isBloom;
+    }
 
-	public SkillRole[] getSkillRoles() {
-		return skillRoles;
-	}
+    public SkillRole[] getSkillRoles() {
+        return skillRoles;
+    }
 
-	public boolean hasRole(SkillRole skillRole) {
-		return ArrayLib.contains(skillRoles, skillRole);
-	}
+    public boolean hasRole(SkillRole skillRole) {
+        return ArrayLib.contains(skillRoles, skillRole);
+    }
 
-	public SkillEffect[] getSkillEffects() {
-		return skillEffects;
-	}
+    public SkillEffect[] getSkillEffects() {
+        return skillEffects;
+    }
 
-	public boolean isRangeSelf() {
-		return range == Ranges.SELF || range == Ranges.SELF_UP_DOWN;
-	}
+    public boolean isRangeSelf() {
+        return range == Ranges.SELF || range == Ranges.SELF_UP_DOWN;
+    }
 
-	public boolean shouldTargetOpponent() {
-		return range.side() == Side.OPPONENT || this.hasRole(SkillRole.ATTACK)
-				|| this.hasRole(SkillRole.DEBUFF_DEFENSIVE) || this.hasRole(SkillRole.DEBUFF_OFFENSIVE);
-	}
+    public boolean shouldTargetOpponent() {
+        return range.side() == Side.OPPONENT || this.hasRole(SkillRole.ATTACK) ||
+                this.hasRole(SkillRole.DEBUFF_DEFENSIVE) || this.hasRole(SkillRole.DEBUFF_OFFENSIVE);
+    }
 
-	public SkillInstance toSkillInstance() {
-		return new SkillInstance(this);
-	}
+    public SkillInstance toSkillInstance() {
+        return new SkillInstance(this);
+    }
 }

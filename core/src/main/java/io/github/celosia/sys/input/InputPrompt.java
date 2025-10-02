@@ -2,34 +2,35 @@ package io.github.celosia.sys.input;
 
 import io.github.celosia.sys.InputHandler;
 
-import static io.github.celosia.sys.render.TextLib.mergeGlyphs;
+import static io.github.celosia.sys.util.TextLib.mergeGlyphs;
 
 public class InputPrompt {
-	private final String glyphKey;
-	private final String[][] glyphsButton;
-	private final String text;
 
-	InputPrompt(String text, String glyphKey, String[]... glyphsButton) {
-		this.glyphKey = glyphKey;
-		this.glyphsButton = glyphsButton;
-		this.text = text;
-	}
+    private final String glyphKey;
+    private final String[][] glyphsButton;
+    private final String text;
 
-	public String getText() {
-		ControllerType lastUsedController = InputHandler.getLastUsedController();
-		StringBuilder glyphBuilder = new StringBuilder();
+    InputPrompt(String text, String glyphKey, String[]... glyphsButton) {
+        this.glyphKey = glyphKey;
+        this.glyphsButton = glyphsButton;
+        this.text = text;
+    }
 
-		if (lastUsedController == ControllerType.NONE) {
-			glyphBuilder = new StringBuilder(glyphKey);
-		} else {
-			for (int i = 0; i < glyphsButton.length; i++) {
-				glyphBuilder.append(glyphsButton[i][lastUsedController.ordinal() - 1]);
-				if (i != glyphsButton.length - 1) {
-					glyphBuilder.append("/");
-				}
-			}
-		}
+    public String getText() {
+        ControllerType lastUsedController = InputHandler.getLastUsedController();
+        StringBuilder glyphBuilder = new StringBuilder();
 
-		return mergeGlyphs(glyphBuilder.toString()) + " " + text;
-	}
+        if (lastUsedController == ControllerType.NONE) {
+            glyphBuilder = new StringBuilder(glyphKey);
+        } else {
+            for (int i = 0; i < glyphsButton.length; i++) {
+                glyphBuilder.append(glyphsButton[i][lastUsedController.ordinal() - 1]);
+                if (i != glyphsButton.length - 1) {
+                    glyphBuilder.append("/");
+                }
+            }
+        }
+
+        return mergeGlyphs(glyphBuilder.toString()) + " " + text;
+    }
 }

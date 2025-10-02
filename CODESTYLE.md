@@ -22,14 +22,19 @@ It is strongly recommended to use Intellij IDEA
 * Global constants must be final
 * Only use this when necessary
 * Use no-arg Builder methods for booleans
-  * For example, if isPierce defaults true, instead of isPierce(boolean), create pierce()
+  * For example, if isPierce defaults false, instead of isPierce(boolean), create pierce()
 * Do not add unused methods (unless they're for modders)
 * Setters before getters (only for consistency, not because it's a better order)
 * Early return whenever it can make code cleaner
 * Do not have >1 nested classes
 * Split big logic into separate functions
 * Comment when necessary, but don't over-comment self-explanatory code
-* Logic statements must have {}
-  * I'd allow bracketless if inlined, but spotless forces a newline. That can be turned off, but I couldn't figure out how
+* In expressions, use brackets to improve clarity even when not strictly necessary
+  * For example, instead of 50 + i * 10, write 50 + (i * 10) 
+* For loop iterators are named i, j, k, etc unless another name would improve clarity
+* Use standard keyword order (public static type)
+* Multi-line logic statements must have {}. Inlined logic statements must not have {}
+  * In most cases, inlined logic statements should be avoided entirely
+  * An if followed by an else must have {}, and the else must be set against the }, unless there is a comment above the else
 * Only write strings directly in code if they will only ever appear in 1 place, or if getting them wrong causes a crash that cannot go unnoticed
 * General coding conventions

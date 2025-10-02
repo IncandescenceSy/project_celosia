@@ -4,31 +4,32 @@ import io.github.celosia.sys.menu.MenuLib.MenuOptType;
 
 // A menu option type with text and position for it
 public class MenuOpt {
-	MenuOptType optType;
-	String text;
-	int posX;
-	int posY;
 
-	MenuOpt(MenuOptType optType, String text, int posX, int posY) {
-		this.optType = optType;
-		this.text = text;
-		this.posX = posX;
-		this.posY = posY;
-	}
+    MenuOptType optType;
+    String text;
+    int posX;
+    int posY;
 
-	public MenuOptType getType() {
-		return optType;
-	}
+    MenuOpt(MenuOptType optType, String text, int posX, int posY) {
+        this.optType = optType;
+        this.text = text;
+        this.posX = posX;
+        this.posY = posY;
+    }
 
-	public String getText() {
-		return text;
-	}
+    public MenuOptType getType() {
+        return optType;
+    }
 
-	public int getPosX() {
-		return posX;
-	}
+    public String getText() {
+        return text;
+    }
 
-	public int getPosY() {
-		return posY;
-	}
+    public int getPosX() {
+        return posX;
+    }
+
+    public int getPosY() {
+        return posY;
+    }
 }

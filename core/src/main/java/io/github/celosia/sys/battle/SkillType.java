@@ -1,24 +1,23 @@
 package io.github.celosia.sys.battle;
 
-import static io.github.celosia.sys.settings.Lang.lang;
+import static io.github.celosia.sys.save.Lang.lang;
 
 // Types that skills can have
 // todo add full names
 public enum SkillType {
-	// spotless:off
-	STR(lang.get("stat.str")),
+
+    STR(lang.get("stat.str")),
     MAG(lang.get("stat.mag")),
     FTH(lang.get("stat.fth")),
     STAT(lang.get("skill_type.stat"));
-    // spotless:on
 
-	private final String name;
+    private final String name;
 
-	SkillType(String name) {
-		this.name = name;
-	}
+    SkillType(String name) {
+        this.name = name;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 }
