@@ -1,8 +1,8 @@
 package io.github.celosia.sys.battle;
 
-import io.github.celosia.sys.battle.buff_effects.ChangeAff;
+import io.github.celosia.sys.battle.buff_effects.ChangeAffinity;
+import io.github.celosia.sys.battle.buff_effects.ChangeBooleanStat;
 import io.github.celosia.sys.battle.buff_effects.ChangeHp;
-import io.github.celosia.sys.battle.buff_effects.ChangeInfiniteSp;
 import io.github.celosia.sys.battle.buff_effects.ChangeMod;
 import io.github.celosia.sys.battle.buff_effects.ChangeMult;
 
@@ -17,7 +17,7 @@ public class Passives {
 
     // Change Affinities
     public static final Passive IGNIS_AFF_UP = new Passive(lang.get("passive.ignis_aff_up"),
-            lang.get("passive.ignis_aff_up.desc"), "[+todo]", new ChangeAff(Elements.IGNIS, 1));
+            lang.get("passive.ignis_aff_up.desc"), "[+todo]", new ChangeAffinity(Elements.IGNIS, 1));
 
     // Change Mults
     public static final Passive PERCENTAGE_DMG_TAKEN_DOWN_50 = new Passive(
@@ -37,5 +37,6 @@ public class Passives {
 
     // Change other stats
     public static final Passive ETERNAL_WELLSPRING = new Passive(lang.get("passive.eternal_wellspring"),
-            lang.get("passive.eternal_wellspring.desc"), "[+todo icon]", new ChangeInfiniteSp(1));
+            lang.get("passive.eternal_wellspring.desc"), "[+todo icon]",
+            new ChangeBooleanStat(BooleanStat.INFINITE_SP, 1));
 }

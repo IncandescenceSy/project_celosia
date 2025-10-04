@@ -16,7 +16,8 @@ import io.github.celosia.sys.input.InputPrompt;
 import io.github.celosia.sys.input.InputPrompts;
 import io.github.celosia.sys.input.Keybind;
 import io.github.celosia.sys.render.CoolRect;
-import io.github.celosia.sys.util.ArrayX;
+
+import java.util.List;
 
 import static io.github.celosia.Main.MENU_LIST;
 import static io.github.celosia.Main.inputGuide;
@@ -36,7 +37,7 @@ public class MenuLib {
             return ++index >= optCount ? 0 : index;
         }
 
-        return index;
+        return Math.min(index, optCount - 1);
     }
 
     public static int checkMovement1D(int index, int optCount, Keybind dec, Keybind inc) {
@@ -48,7 +49,7 @@ public class MenuLib {
             return ++index >= optCount ? 0 : index;
         }
 
-        return index;
+        return Math.min(index, optCount - 1);
     }
 
     // Check menu movement input (targeting) and handle wrapping
@@ -125,8 +126,8 @@ public class MenuLib {
         }
     }
 
-    public static void handleOptColor(ArrayX<TextraLabel> opts, int index) {
-        for (int i = 0; i < opts.size; i++) {
+    public static void handleOptColor(List<TextraLabel> opts, int index) {
+        for (int i = 0; i < opts.size(); i++) {
             if (index == i) {
                 opts.get(i).setColor(Color.PINK);
             } else {
@@ -167,7 +168,7 @@ public class MenuLib {
     }
 
     // Creates Labels and adds them to a Stage and a List
-    public static void createOpts(ArrayX<TypingLabel> labels, Font font, Stage stage) {
+    public static void createOpts(List<TypingLabel> labels, Font font, Stage stage) {
         for (int i = 0; i < MENU_LIST.getLast().getOptCount(); i++) {
             MenuOpt opt = MENU_LIST.getLast().getOpt(i);
             TypingLabel label = new TypingLabel(opt.getText(), font);
@@ -178,7 +179,7 @@ public class MenuLib {
     }
 
     // Removes Labels
-    public static void removeOpts(ArrayX<TypingLabel> labels, Stage stage) {
+    public static void removeOpts(List<TypingLabel> labels, Stage stage) {
         for (TypingLabel label : labels) {
             stage.getRoot().removeActor(label);
         }

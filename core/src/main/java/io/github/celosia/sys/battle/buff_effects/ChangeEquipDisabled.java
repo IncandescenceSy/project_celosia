@@ -7,13 +7,12 @@ import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.save.Lang.lang;
 import static io.github.celosia.sys.util.BoolLib.isBothTruthy;
 import static io.github.celosia.sys.util.TextLib.formatName;
-import static io.github.celosia.sys.util.TextLib.formatNum;
 
-public class ChangeInfiniteSp implements BuffEffect {
+public class ChangeEquipDisabled implements BuffEffect {
 
     private final int change;
 
-    public ChangeInfiniteSp(int change) {
+    public ChangeEquipDisabled(int change) {
         this.change = change;
     }
 
@@ -28,12 +27,12 @@ public class ChangeInfiniteSp implements BuffEffect {
     }
 
     public void calc(Unit self, int changeFull) {
-        int infiniteSpOld = self.getInfiniteSp();
-        int infiniteSpNew = infiniteSpOld + changeFull;
-        self.setInfiniteSp(infiniteSpNew);
-        if (!isBothTruthy(infiniteSpOld, infiniteSpNew)) {
-            appendToLog(lang.format("log.change_sp.infinite", formatName(self.getUnitType().getName(), self.getPos()),
-                    formatNum(self.getSp()), infiniteSpNew));
+        int equipDisabledOld = self.getEffectBlock();
+        int equipDisabledNew = equipDisabledOld + changeFull;
+        self.setEffectBlock(equipDisabledNew);
+        if (!isBothTruthy(equipDisabledOld, equipDisabledNew)) {
+            appendToLog(lang.format("log.change_equip_disabled",
+                    formatName(self.getUnitType().getName(), self.getPos()), equipDisabledNew));
         }
     }
 }

@@ -40,12 +40,14 @@ import io.github.celosia.sys.render.Path;
 import io.github.celosia.sys.render.TriLib;
 import io.github.celosia.sys.save.Lang;
 import io.github.celosia.sys.save.Settings;
-import io.github.celosia.sys.util.ArrayX;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static io.github.celosia.sys.render.RenderLib.changeScale;
 import static io.github.celosia.sys.render.TriLib.drawCoolRects;
@@ -89,7 +91,7 @@ public class Main extends ApplicationAdapter {
     // From https://github.com/tommyettinger/game-icons-net-atlas
     public static TextureAtlas atlasIcons;
 
-    static ArrayX<TypingLabel> optLabels;
+    static List<TypingLabel> optLabels;
 
     static TextraLabel fps;
     public static TypingLabel popupTitle;
@@ -101,7 +103,7 @@ public class Main extends ApplicationAdapter {
 
     public static TextraLabel inputGuide;
 
-    public static final ArrayX<Element> ELEMENTS = new ArrayX<>(false, 7);
+    public static final List<Element> ELEMENTS = new ArrayList<>();
 
     @Override
     public void create() {
@@ -220,7 +222,7 @@ public class Main extends ApplicationAdapter {
         // todo set target fps and vsync based off of settings (cant set in launcher bc
         // settings wont be loaded yet)
 
-        ELEMENTS.addAll(Elements.VIS, Elements.IGNIS, Elements.GLACIES, Elements.FULGUR, Elements.VENTUS,
+        Collections.addAll(ELEMENTS, Elements.VIS, Elements.IGNIS, Elements.GLACIES, Elements.FULGUR, Elements.VENTUS,
                 Elements.TERRA, Elements.LUX, Elements.MALUM);
     }
 
@@ -234,8 +236,10 @@ public class Main extends ApplicationAdapter {
         debug.setVisible(Debug.showDebugInfo);
 
         if (Debug.showDebugInfo) {
-            debug.setText("actors on stage1: " + stage1.getActors().size + "\nactors on stage2: " +
-                    stage2.getActors().size + "\nactors on stage3: " + stage3.getActors().size + "\nmenuList = " +
+            debug.setText(/*
+                           * "actors on stage1: " + stage1.getActors().size + "\nactors on stage2: " +
+                           * stage2.getActors().size + "\nactors on stage3: " + stage3.getActors().size + "\n
+                           */"menuList = " +
                     MENU_LIST.toString().replace("[", "").replace("]", ""));
         }
 
@@ -379,10 +383,18 @@ public class Main extends ApplicationAdapter {
 
         stage5.act();
         stage5.draw();
+
+        // todo placeholder for unit sprite
+        if (MENU_LIST.getLast() == MenuType.INSPECT) {
+            polygonSpriteBatch.begin();
+            drawer.setColor(Color.WHITE);
+            drawer.rectangle(30, World.HEIGHT - 256 - 30, 256, 256);
+            polygonSpriteBatch.end();
+        }
     }
 
     private void createMenuMain() {
-        optLabels = new ArrayX<>(false, 16);
+        optLabels = new ArrayList<>();
         MenuLib.createOpts(optLabels, FontType.KORURI.get(80), stage2);
     }
 

@@ -1,86 +1,109 @@
 package io.github.celosia.sys.battle;
 
+import io.github.celosia.sys.battle.buff_effects.ChangeBooleanStat;
 import io.github.celosia.sys.battle.buff_effects.ChangeDefend;
-import io.github.celosia.sys.battle.buff_effects.ChangeEffectBlock;
 import io.github.celosia.sys.battle.buff_effects.ChangeExtraActions;
 import io.github.celosia.sys.battle.buff_effects.ChangeHp;
-import io.github.celosia.sys.battle.buff_effects.ChangeInfiniteSp;
 import io.github.celosia.sys.battle.buff_effects.ChangeMult;
 import io.github.celosia.sys.battle.buff_effects.ChangeStat;
-import io.github.celosia.sys.battle.buff_effects.ChangeUnableToAct;
 
 import static io.github.celosia.sys.save.Lang.lang;
+import static io.github.celosia.sys.util.TextLib.C_NEG;
+import static io.github.celosia.sys.util.TextLib.C_STAT;
 
 public class Buffs {
 
     // Temp testing
-    static Buff STAR_RULER = new Buff("Star Ruler", "", "", BuffType.BUFF, new ChangeInfiniteSp(1));
 
     /// Basic
-    static Buff DEFEND = new Buff(lang.get("skill.defend"), lang.get("buff.defend.desc"), "[azure][+shield]",
-            BuffType.BUFF, new ChangeDefend(200), new ChangeMult(Mult.DMG_TAKEN, -200));
+    public static final Buff DEFEND = new Buff.Builder(lang.get("skill.defend"), "todo", "[azure][+shield]",
+            BuffType.BUFF).effects(new ChangeDefend(200), new ChangeMult(Mult.DMG_TAKEN, -200)).build();
 
     // Decreases multDmgTaken by way more than necessary to be absolutely certain
     // this minimizes it
-    static Buff PROTECT = new Buff(lang.get("buff.protect"), lang.get("buff.protect.desc"), "[azure][+shieldcomb]",
-            BuffType.BUFF, new ChangeMult(Mult.DMG_TAKEN, -10_000_000), new ChangeEffectBlock(1));
+    public static final Buff PROTECT = new Buff.Builder(lang.get("buff.protect"), "todo", "[azure][+shieldcomb]",
+            BuffType.BUFF).effects(new ChangeMult(Mult.DMG_TAKEN, -10_000_000),
+                    new ChangeBooleanStat(BooleanStat.EFFECT_BLOCK, 1))
+            .build();
 
-    static Buff STUNNED = new Buff(lang.get("buff.stunned"), lang.get("buff.stunned.desc"),
-            "[YELLOW][+knocked-out-stars]", BuffType.DEBUFF, new ChangeUnableToAct(1));
+    public static final Buff STUNNED = new Buff.Builder(lang.get("buff.stunned"), "todo",
+            "[YELLOW][+knocked-out-stars]", BuffType.DEBUFF)
+            .effects(new ChangeBooleanStat(BooleanStat.UNABLE_TO_ACT, 1)).build();
 
     // todo: affinity should convey immunity to these
     // Elemental debuffs
-    static Buff BURN = new Buff(lang.get("buff.burn"), lang.get("buff.burn.desc"), "[ORANGE][+small-fire]",
-            BuffType.DEBUFF, 5, new ChangeHp.Builder(-20).build(), new ChangeStat(Stat.STR, -50));
-    static Buff FROSTBITE = new Buff(lang.get("buff.frostbite"), lang.get("buff.frostbite.desc"),
-            "[azure][+snowflake-1]", BuffType.DEBUFF, 5, new ChangeHp.Builder(-20).build(),
-            new ChangeStat(Stat.MAG, -50));
-    static Buff SHOCK = new Buff(lang.get("buff.shock"), lang.get("buff.shock.desc"), "[YELLOW][+power-lightning]",
-            BuffType.DEBUFF, 5, new ChangeHp.Builder(-20).build(), new ChangeStat(Stat.AGI, -50));
-    static Buff WINDSWEPT = new Buff(lang.get("buff.windswept"), lang.get("buff.windswept.desc"),
-            "[LIGHT GREEN][+whirlwind]", BuffType.DEBUFF, 5, new ChangeMult(Mult.SP_GAIN, -50),
-            new ChangeStat(Stat.RES, -50));
-    static Buff TREMOR = new Buff(lang.get("buff.tremor"), lang.get("buff.tremor.desc"), "[LIGHT brown][+earth-spit]",
-            BuffType.DEBUFF, 5, new ChangeMult(Mult.SP_GAIN, -50), new ChangeStat(Stat.AMR, -50));
-    static Buff DAZZLED = new Buff(lang.get("buff.dazzled"), lang.get("buff.dazzled.desc"), "[+star-formation]",
-            BuffType.DEBUFF, 5, new ChangeMult(Mult.SP_GAIN, -50), new ChangeStat(Stat.FTH, -50));
-    static Buff CURSE = new Buff(lang.get("buff.curse"), lang.get("buff.curse.desc"), "[RED][+dread-skull]",
-            BuffType.DEBUFF, 5, new ChangeHp.Builder(-25).build(), new ChangeStat(Stat.FTH, -50));
-    static Buff POISON = new Buff(lang.get("buff.poison"), lang.get("buff.poison.desc"), "[PURPLE][+bubbles]",
-            BuffType.DEBUFF, 5, new ChangeHp.Builder(-25).build(), new ChangeMult(Mult.HEALING_TAKEN, -50));
-    static Buff RADIATION = new Buff(lang.get("buff.radiation"), lang.get("buff.radiation.desc"), "[CYAN][+nuclear]",
-            BuffType.DEBUFF, 5, new ChangeHp.Builder(-30).build(), new ChangeMult(Mult.DMG_TAKEN, 5));
+    public static final Buff BURN = new Buff.Builder(lang.get("buff.burn"), "buff_desc.2.per_stack.hp",
+            "[ORANGE][+small-fire]",
+            BuffType.DEBUFF).maxStacks(5).effects(new ChangeHp.Builder(-20).build(), new ChangeStat(Stat.STR, -50))
+            .descArgs(C_NEG + "-2%", C_NEG + "-5% " + C_STAT + lang.get("stat.str")).build();
+    public static final Buff FROSTBITE = new Buff.Builder(lang.get("buff.frostbite"), "buff_desc.2.per_stack.hp",
+            "[azure][+snowflake-1]", BuffType.DEBUFF).maxStacks(5).effects(new ChangeHp.Builder(-20).build(),
+                    new ChangeStat(Stat.MAG, -50))
+            .descArgs(C_NEG + "-2%", C_NEG + "-5% " + C_STAT + lang.get("stat.mag")).build();
+    public static final Buff SHOCK = new Buff.Builder(lang.get("buff.shock"), "todo", "[YELLOW][+power-lightning]",
+            BuffType.DEBUFF).maxStacks(5).effects(new ChangeHp.Builder(-20).build(), new ChangeStat(Stat.AGI, -50))
+            .build();
+    public static final Buff WINDSWEPT = new Buff.Builder(lang.get("buff.windswept"), "todo",
+            "[LIGHT GREEN][+whirlwind]", BuffType.DEBUFF).maxStacks(5).effects(new ChangeMult(Mult.SP_GAIN, -50),
+                    new ChangeStat(Stat.RES, -50))
+            .build();
+    public static final Buff TREMOR = new Buff.Builder(lang.get("buff.tremor"), "todo", "[LIGHT brown][+earth-spit]",
+            BuffType.DEBUFF).maxStacks(5).effects(new ChangeMult(Mult.SP_GAIN, -50), new ChangeStat(Stat.AMR, -50))
+            .build();
+    public static final Buff DAZZLED = new Buff.Builder(lang.get("buff.dazzled"), "todo", "[+star-formation]",
+            BuffType.DEBUFF).maxStacks(5).effects(new ChangeMult(Mult.SP_GAIN, -50), new ChangeStat(Stat.FTH, -50))
+            .build();
+    public static final Buff CURSE = new Buff.Builder(lang.get("buff.curse"), "todo", "[RED][+dread-skull]",
+            BuffType.DEBUFF).maxStacks(5).effects(new ChangeHp.Builder(-25).build(), new ChangeStat(Stat.FTH, -50))
+            .build();
+    public static final Buff POISON = new Buff.Builder(lang.get("buff.poison"), "todo", "[PURPLE][+bubbles]",
+            BuffType.DEBUFF).maxStacks(5)
+            .effects(new ChangeHp.Builder(-25).build(), new ChangeMult(Mult.HEALING_TAKEN, -50)).build();
+    public static final Buff RADIATION = new Buff.Builder(lang.get("buff.radiation"), "todo", "[CYAN][+nuclear]",
+            BuffType.DEBUFF).maxStacks(5).effects(new ChangeHp.Builder(-30).build(), new ChangeMult(Mult.DMG_TAKEN, 5))
+            .build();
 
     // Superior elemental debuffs
-    static Buff BURNT_OUT = new Buff(lang.get("buff.burnt_out"), lang.get("buff.burnt_out.desc"),
-            "[ORANGE][+fire-wave]", BuffType.DEBUFF, new ChangeMult(Mult.IGNIS_DMG_TAKEN, 200),
-            new ChangeStat(Stat.STR, -100));
-    static Buff FROSTBOUND = new Buff(lang.get("buff.frostbound"), lang.get("buff.frostbound.desc"),
-            "[azure][+ice-bolt]", BuffType.DEBUFF, new ChangeMult(Mult.GLACIES_DMG_TAKEN, 200),
-            new ChangeStat(Stat.MAG, -100));
-    static Buff OVERLOADED = new Buff(lang.get("buff.overloaded"), lang.get("buff.overloaded.desc"),
-            "[YELLOW][+lightning-tree]", BuffType.DEBUFF, new ChangeMult(Mult.FULGUR_DMG_TAKEN, 200),
-            new ChangeStat(Stat.AGI, -100));
-    static Buff TEMPEST = new Buff(lang.get("buff.tempest"), lang.get("buff.tempest.desc"), "[LIGHT GREEN][+wind-hole]",
-            BuffType.DEBUFF, new ChangeMult(Mult.VENTUS_DMG_TAKEN, 200), new ChangeStat(Stat.RES, -100));
-    static Buff SHATTERED = new Buff(lang.get("buff.shattered"), lang.get("buff.shattered.desc"),
-            "[LIGHT brown][+earth-crack]", BuffType.DEBUFF, new ChangeMult(Mult.TERRA_DMG_TAKEN, 200),
-            new ChangeStat(Stat.AMR, -100));
-    static Buff STARSTRUCK = new Buff(lang.get("buff.starstruck"), lang.get("buff.starstruck.desc"), "[+star-swirl]",
-            BuffType.DEBUFF, new ChangeMult(Mult.LUX_DMG_TAKEN, 200), new ChangeStat(Stat.FTH, -100));
-    static Buff DOOMED = new Buff(lang.get("buff.doomed"), lang.get("buff.doomed.desc"), "[RED][+skull-bolt]",
-            BuffType.DEBUFF, new ChangeMult(Mult.MALUM_DMG_TAKEN, 200), new ChangeStat(Stat.FTH, -100));
-    static Buff BLIGHTED = new Buff(lang.get("buff.blighted"), lang.get("buff.blighted.desc"), "[PURPLE][+poison-gas]",
-            BuffType.DEBUFF, new ChangeMult(Mult.DOT_DMG_TAKEN, 200), new ChangeMult(Mult.HEALING_TAKEN, -100));
-    static Buff DECAY = new Buff(lang.get("buff.decay"), lang.get("buff.decay.desc"), "[CYAN][+nuclear-bomb]",
-            BuffType.DEBUFF, new ChangeMult(Mult.IGNIS_DMG_TAKEN, 150), new ChangeMult(Mult.DOT_DMG_TAKEN, 150),
-            new ChangeMult(Mult.HEALING_TAKEN, -100));
+    public static final Buff BURNT_OUT = new Buff.Builder(lang.get("buff.burnt_out"), "todo",
+            "[ORANGE][+fire-wave]", BuffType.DEBUFF).effects(new ChangeMult(Mult.IGNIS_DMG_TAKEN, 200),
+                    new ChangeStat(Stat.STR, -100))
+            .build();
+    public static final Buff FROSTBOUND = new Buff.Builder(lang.get("buff.frostbound"), "buff_desc.2",
+            "[azure][+ice-bolt]", BuffType.DEBUFF).effects(new ChangeMult(Mult.GLACIES_DMG_TAKEN, 200),
+                    new ChangeStat(Stat.MAG, -100))
+            .descArgs(C_NEG + "+20% [WHITE]" + Mult.GLACIES_DMG_TAKEN.getName(),
+                    C_NEG + "-10% " + C_STAT + lang.get("stat.mag"))
+            .build();
+    public static final Buff OVERLOADED = new Buff.Builder(lang.get("buff.overloaded"), "todo",
+            "[YELLOW][+lightning-tree]", BuffType.DEBUFF).effects(new ChangeMult(Mult.FULGUR_DMG_TAKEN, 200),
+                    new ChangeStat(Stat.AGI, -100))
+            .build();
+    public static final Buff TEMPEST = new Buff.Builder(lang.get("buff.tempest"), "todo", "[LIGHT GREEN][+wind-hole]",
+            BuffType.DEBUFF).effects(new ChangeMult(Mult.VENTUS_DMG_TAKEN, 200), new ChangeStat(Stat.RES, -100))
+            .build();
+    public static final Buff SHATTERED = new Buff.Builder(lang.get("buff.shattered"), "todo",
+            "[LIGHT brown][+earth-crack]", BuffType.DEBUFF).effects(new ChangeMult(Mult.TERRA_DMG_TAKEN, 200),
+                    new ChangeStat(Stat.AMR, -100))
+            .build();
+    public static final Buff STARSTRUCK = new Buff.Builder(lang.get("buff.starstruck"), "todo", "[+star-swirl]",
+            BuffType.DEBUFF).effects(new ChangeMult(Mult.LUX_DMG_TAKEN, 200), new ChangeStat(Stat.FTH, -100)).build();
+    public static final Buff DOOMED = new Buff.Builder(lang.get("buff.doomed"), "todo", "[RED][+skull-bolt]",
+            BuffType.DEBUFF).effects(new ChangeMult(Mult.MALUM_DMG_TAKEN, 200), new ChangeStat(Stat.FTH, -100)).build();
+    public static final Buff BLIGHTED = new Buff.Builder(lang.get("buff.blighted"), "todo", "[PURPLE][+poison-gas]",
+            BuffType.DEBUFF).effects(new ChangeMult(Mult.DOT_DMG_TAKEN, 200), new ChangeMult(Mult.HEALING_TAKEN, -100))
+            .build();
+    public static final Buff DECAY = new Buff.Builder(lang.get("buff.decay"), "todo", "[CYAN][+nuclear-bomb]",
+            BuffType.DEBUFF).effects(new ChangeMult(Mult.IGNIS_DMG_TAKEN, 150), new ChangeMult(Mult.DOT_DMG_TAKEN, 150),
+                    new ChangeMult(Mult.HEALING_TAKEN, -100))
+            .build();
 
     // Other
-    static Buff REGENERATION = new Buff(lang.get("buff.regeneration"), lang.get("buff.regeneration.desc"),
-            "[GREEN][+heart-plus]", BuffType.BUFF, 5, new ChangeHp.Builder(500).build());
-    static Buff EXTRA_ACTION = new Buff(lang.get("buff.extra_action"), lang.get("buff.extra_action.desc"),
-            "[RED][+echo-ripples]", BuffType.BUFF, new ChangeExtraActions(1));
+    public static final Buff REGENERATION = new Buff.Builder(lang.get("buff.regeneration"),
+            lang.get("buff.regeneration.desc"),
+            "[GREEN][+heart-plus]", BuffType.BUFF).maxStacks(5).effects(new ChangeHp.Builder(500).build()).build();
+    public static final Buff EXTRA_ACTION = new Buff.Builder(lang.get("buff.extra_action"),
+            lang.get("buff.extra_action.desc"),
+            "[RED][+echo-ripples]", BuffType.BUFF).effects(new ChangeExtraActions(1)).build();
 
     /// Unique
 }

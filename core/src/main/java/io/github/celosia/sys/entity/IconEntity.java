@@ -20,4 +20,8 @@ public class IconEntity extends NamedEntity {
     public String getNameWithIcon() {
         return icon + " [WHITE]" + this.getName();
     }
+
+    public String getNameWithIcon(String color) {
+        return icon + " " + color + this.getName();
+    }
 }

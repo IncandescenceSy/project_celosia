@@ -1,11 +1,9 @@
 package io.github.celosia.sys.battle;
 
-import io.github.celosia.sys.entity.IconEntity;
-
 import java.util.HashMap;
 import java.util.Map;
 
-public class Weapon extends IconEntity implements Equippable {
+public class Weapon extends EquippableEntity {
 
     private final Map<Element, Integer> affinities;
     private final Skill[] skills;
@@ -23,9 +21,9 @@ public class Weapon extends IconEntity implements Equippable {
         private final String name;
         private final String desc;
         private final String icon;
-        private Map<Element, Integer> affinities;
-        private Skill[] skills;
-        private Passive[] passives;
+        private Map<Element, Integer> affinities = null;
+        private Skill[] skills = null;
+        private Passive[] passives = null;
 
         public Builder(String name, String desc, String icon) {
             this.name = name;
@@ -78,9 +76,23 @@ public class Weapon extends IconEntity implements Equippable {
     }
 
     @Override
-    public void apply(Unit unit) {
-        unit.getAffinities().putAll(affinities);
-        unit.addSkills(skills);
-        unit.addPassives(passives);
+    public void apply(Unit unit, boolean give) {
+        if (give) {
+            if (affinities != null) {
+                for (Map.Entry<Element, Integer> entry : affinities.entrySet()) {
+                    unit.getAffinities().merge(entry.getKey(), entry.getValue(), Integer::sum);
+                }
+            }
+            if (skills != null) unit.addSkills(skills);
+            if (passives != null) unit.addPassives(passives);
+        } else {
+            if (affinities != null) {
+                for (Map.Entry<Element, Integer> entry : affinities.entrySet()) {
+                    unit.getAffinities().merge(entry.getKey(), entry.getValue() * -1, Integer::sum);
+                }
+            }
+            if (skills != null) unit.removeSkills(skills);
+            if (passives != null) unit.removePassives(passives);
+        }
     }
 }

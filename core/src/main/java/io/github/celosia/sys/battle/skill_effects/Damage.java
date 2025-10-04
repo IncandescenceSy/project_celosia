@@ -164,4 +164,14 @@ public class Damage implements SkillEffect {
     public boolean isInstant() {
         return isInstant;
     }
+
+    @Override
+    public SkillType getSkillType() {
+        return type;
+    }
+
+    @Override
+    public int getPow() {
+        return pow;
+    }
 }

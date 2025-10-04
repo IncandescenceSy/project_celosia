@@ -6,12 +6,12 @@ import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.github.tommyettinger.textra.TypingLabel;
 import io.github.celosia.Main;
 import io.github.celosia.sys.World;
 import io.github.celosia.sys.menu.MenuLib;
 import io.github.celosia.sys.save.Settings;
-import io.github.celosia.sys.util.ArrayX;
 import io.github.celosia.sys.util.TextLib;
 import space.earlygrey.shapedrawer.JoinType;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -77,7 +77,7 @@ public class TriLib {
                 if (rect.hasOutline()) {
                     drawer.setColor(1, 1, 1, 1);
 
-                    ArrayX<Vector2> points = new ArrayX<>(false, 4);
+                    Array<Vector2> points = new Array<>(false, 4);
                     points.addAll(new Vector2(tlx, tly), new Vector2(blx, bly), new Vector2(brx, bry),
                             new Vector2(trx, try_));
                     drawer.path(points,
@@ -101,7 +101,7 @@ public class TriLib {
 
         for (Path path : paths) {
             if (path.getPrio() == prio) {
-                ArrayX<Vector2> points = path.getPoints();
+                Array<Vector2> points = path.getPoints();
                 if (points != null && !points.isEmpty()) {
                     int dir = path.getDir();
                     float prog = Math.clamp(path.getProg() + (delta * dir * path.getSpeed() * (dir == -1 ? 2 : 1)), 0f,

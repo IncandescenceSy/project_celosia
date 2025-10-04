@@ -20,7 +20,9 @@ It is strongly recommended to use Intellij IDEA
   * lowerCamelCase fields and methods
   * Do not prefix interface names with I
 * Global constants must be final
-* Only use this when necessary
+* All class fields must be private
+* Use this when calling a method, and only use this when necessary on fields
+* Favor using fields over calling methods
 * Use no-arg Builder methods for booleans
   * For example, if isPierce defaults false, instead of isPierce(boolean), create pierce()
 * Do not add unused methods (unless they're for modders)
@@ -37,4 +39,8 @@ It is strongly recommended to use Intellij IDEA
   * In most cases, inlined logic statements should be avoided entirely
   * An if followed by an else must have {}, and the else must be set against the }, unless there is a comment above the else
 * Only write strings directly in code if they will only ever appear in 1 place, or if getting them wrong causes a crash that cannot go unnoticed
+* Don't use Gdx.Array unless you have a really good reason
+  * It's super jank and unnecessary. It allegedly slightly improves performance in most areas, but you'd need some massive Lists before that starts mattering
+  * In unordered mode, non-last removal is much faster than for an ArrayList. But again, this only matters with massive Lists. And even in that case, you probably want a Set. Also, implementing an unordered remove for a regular List is 2 lines
+  * It causes a lot of code compatibility issues and bespoke errors that may not be noticed until much later, and even considering it in the first place instead of instantly defaulting to ArrayList requires you to spend extra time thinking about it
 * General coding conventions

@@ -2,12 +2,12 @@ package io.github.celosia.sys.render;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import io.github.celosia.sys.util.ArrayX;
+import com.badlogic.gdx.utils.Array;
 
 // A path to be drawn
 public class Path {
 
-    private ArrayX<Vector2> points;
+    private Array<Vector2> points;
     private float prog; // Animation progress
     private int dir; // 1 = unfolding; -1 = collapsing
     private final Color color;
@@ -15,7 +15,7 @@ public class Path {
     private final int thickness;
     private final int prio;
 
-    public Path(ArrayX<Vector2> points, Color color, int thickness, int prio) {
+    public Path(Array<Vector2> points, Color color, int thickness, int prio) {
         this.points = points;
         this.prog = 0;
         this.dir = -1;
@@ -25,19 +25,19 @@ public class Path {
         this.prio = prio;
     }
 
-    public Path(ArrayX<Vector2> points) {
+    public Path(Array<Vector2> points) {
         this(points, Color.WHITE, 10, 0);
     }
 
     public Path(int prio) {
-        this(new ArrayX<>(), Color.WHITE, 10, prio);
+        this(new Array<>(), Color.WHITE, 10, prio);
     }
 
-    public void setPoints(ArrayX<Vector2> points) {
+    public void setPoints(Array<Vector2> points) {
         this.points = points;
     }
 
-    public ArrayX<Vector2> getPoints() {
+    public Array<Vector2> getPoints() {
         return points;
     }
 

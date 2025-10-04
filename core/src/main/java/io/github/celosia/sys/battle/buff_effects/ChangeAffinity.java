@@ -6,17 +6,18 @@ import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.save.Lang.lang;
+import static io.github.celosia.sys.util.TextLib.C_ELEMENT;
 import static io.github.celosia.sys.util.TextLib.formatName;
 import static io.github.celosia.sys.util.TextLib.formatNum;
 import static io.github.celosia.sys.util.TextLib.getColor;
 import static io.github.celosia.sys.util.TextLib.getSign;
 
-public class ChangeAff implements BuffEffect {
+public class ChangeAffinity implements BuffEffect {
 
     private final Element element;
     private final int change;
 
-    public ChangeAff(Element element, int change) {
+    public ChangeAffinity(Element element, int change) {
         this.element = element;
         this.change = change;
     }
@@ -37,7 +38,7 @@ public class ChangeAff implements BuffEffect {
         self.getAffinities().put(element, affNew);
 
         appendToLog(lang.format("log.change_aff", formatName(self.getUnitType().getName(), self.getPos()),
-                element.getNameWithIcon(), getColor(affOld) + getSign(affOld) + formatNum(affOld),
+                element.getNameWithIcon(C_ELEMENT), getColor(affOld) + getSign(affOld) + formatNum(affOld),
                 getColor(affNew) + getSign(affNew) + formatNum(affNew)));
     }
 }

@@ -1,22 +1,72 @@
 package io.github.celosia.sys.battle;
 
+import io.github.celosia.sys.entity.ComplexDescEntity;
 import io.github.celosia.sys.entity.IconEntity;
 
-public class Buff extends IconEntity {
+import static io.github.celosia.sys.save.Lang.lang;
+import static io.github.celosia.sys.util.TextLib.C_NUM;
+
+public class Buff extends ComplexDescEntity {
 
     private final BuffType buffType;
     private final int maxStacks;
     private final BuffEffect[] buffEffects;
 
-    Buff(String name, String desc, String icon, BuffType buffType, int maxStacks, BuffEffect... buffEffects) {
-        super(name, desc, icon);
-        this.buffType = buffType;
-        this.maxStacks = maxStacks;
-        this.buffEffects = buffEffects;
+    Buff(Builder builder) {
+        super(builder);
+        this.buffType = builder.buffType;
+        this.maxStacks = builder.maxStacks;
+        this.buffEffects = builder.buffEffects;
     }
 
-    Buff(String name, String desc, String icon, BuffType buffType, BuffEffect... buffEffects) {
-        this(name, desc, icon, buffType, 1, buffEffects);
+    public static class Builder extends ComplexDescEntity.Builder {
+
+        private final BuffType buffType;
+        private int maxStacks = 1;
+        private BuffEffect[] buffEffects = new BuffEffect[] {};
+
+        public Builder(String name, String desc, String icon, BuffType buffType) {
+            super(name, desc, icon);
+            this.buffType = buffType;
+        }
+
+        // Override so they can be used without casting
+        @Override
+        public Builder descArgs(String... descArgs) {
+            super.descArgs(descArgs);
+            return this;
+        }
+
+        @Override
+        public Builder descInclusion(IconEntity descInclusion) {
+            super.descInclusion(descInclusion);
+            return this;
+        }
+
+        @Override
+        public Builder descInclusions(IconEntity... descInclusions) {
+            super.descInclusions(descInclusions);
+            return this;
+        }
+
+        public Builder effect(BuffEffect buffEffect) {
+            buffEffects = new BuffEffect[] { buffEffect };
+            return this;
+        }
+
+        public Builder maxStacks(int maxStacks) {
+            this.maxStacks = maxStacks;
+            return this;
+        }
+
+        public Builder effects(BuffEffect... buffEffects) {
+            this.buffEffects = buffEffects;
+            return this;
+        }
+
+        public Buff build() {
+            return new Buff(this);
+        }
     }
 
     public BuffType getBuffType() {
@@ -29,5 +79,11 @@ public class Buff extends IconEntity {
 
     public BuffEffect[] getBuffEffects() {
         return buffEffects;
+    }
+
+    @Override
+    public String getDesc() {
+        return lang.format("buff_desc", buffType.getName(),
+                (maxStacks == 1) ? "" : lang.format("buff_desc.stacks_to", C_NUM + maxStacks), super.getPartialDesc());
     }
 }

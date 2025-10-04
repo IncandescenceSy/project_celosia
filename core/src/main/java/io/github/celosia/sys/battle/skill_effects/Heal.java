@@ -2,6 +2,7 @@ package io.github.celosia.sys.battle.skill_effects;
 
 import io.github.celosia.sys.battle.ResultType;
 import io.github.celosia.sys.battle.SkillEffect;
+import io.github.celosia.sys.battle.SkillType;
 import io.github.celosia.sys.battle.Unit;
 
 import java.util.ArrayList;
@@ -135,7 +136,7 @@ public class Heal implements SkillEffect {
 
             // Effect block message
             if (shieldOld == 0 && shieldNew > 0 && !unit.isEffectBlock() && unit.getDefend() == 0) {
-                msg.add(lang.format("log.change_effect_block",
+                msg.add(lang.format("log.change_boolean_stat.effect_block",
                         formatName(unit.getUnitType().getName(), unit.getPos(), false), 1));
             }
 
@@ -170,5 +171,10 @@ public class Heal implements SkillEffect {
     @Override
     public boolean isInstant() {
         return isInstant;
+    }
+
+    @Override
+    public SkillType getSkillType() {
+        return SkillType.FTH;
     }
 }

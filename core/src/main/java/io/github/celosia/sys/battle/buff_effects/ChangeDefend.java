@@ -39,7 +39,7 @@ public class ChangeDefend implements BuffEffect {
                 C_SHIELD + "+" + formatNum(((shieldDisp + defendNewDisp) - (shieldDisp + defendOldDisp)))));
 
         if (!self.isEffectBlock() && self.getShield() == 0 && defendOld == 0) {
-            appendToLog(lang.format("log.change_effect_block",
+            appendToLog(lang.format("log.change_boolean_stat.effect_block",
                     formatName(self.getUnitType().getName(), self.getPos(), false), 1));
         }
     }
@@ -59,7 +59,7 @@ public class ChangeDefend implements BuffEffect {
                     C_SHIELD + formatNum(defendOldDisp)));
         }
         if (!self.isEffectBlock() && self.getShield() == 0) {
-            appendToLog(lang.format("log.change_effect_block",
+            appendToLog(lang.format("log.change_boolean_stat.effect_block",
                     formatName(self.getUnitType().getName(), self.getPos(), false), 0));
         }
     }

@@ -1,7 +1,6 @@
 package io.github.celosia.sys.battle;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +25,8 @@ public class Unit {
     private final long lvl;
 
     // Stats
-    // statsMult is treated as multipliers applied to statsDefault, in 10ths of a %
-    // (1000 = 100%). Is never treated as less than 10%
+    // statsMult is treated as multipliers applied to statsDefault, in 10ths of a % (1000 = 100%)
+    // Is never treated as less than 10%
     // HP, Str, Mag, Amr, Res, and Agi
     private final Stats statsDefault;
     private final Stats statsMult;
@@ -37,19 +36,25 @@ public class Unit {
 
     private final List<SkillInstance> skillInstances = new ArrayList<>();
     private final List<Passive> passives;
-    private final Equippable equipped;
+
+    // Equipped item (Accessory or Weapon)
+    private EquippableEntity equipped;
+
+    /// Affinities
+    // Multiplies the damage dealt, damage taken, and SP cost for their corresponding element
+    private final Map<Element, Integer> affinities;
 
     // Skill Points
     private int sp;
 
-    // Position on the battlefield
+    /// Position on the battlefield
     // 0 4
     // 1 5
     // 2 6
     // 3 7
     private int pos;
 
-    // Stat stages
+    /// Stat stages
     // Increases/decreases corresponding stats by +10/-5% each level, between -5 and
     // +5 levels
     private int stageAtk; // Str and Mag
@@ -60,11 +65,6 @@ public class Unit {
     private int stageFthTurns;
     private int stageAgi;
     private int stageAgiTurns;
-
-    // Affinities
-    // Multiplies the damage dealt, damage taken, and SP cost for their
-    // corresponding element
-    private final Map<Element, Integer> affinities;
 
     /// Multipliers
     // Multiplies the corresponding numbers
@@ -98,7 +98,7 @@ public class Unit {
     private int expDoTDmgTaken;
 
     // For %-based damage. Primarily reserved for bosses
-    // Unlike other mults, the minimum is 0.1%
+    // Unlike other Mults, the minimum is 0.1%
     private int multPercentageDmgTaken;
     private int expPercentageDmgTaken;
 
@@ -120,6 +120,7 @@ public class Unit {
 
     private int extraActions;
 
+    /// Boolean stats
     // Secondary effect block; >= 1 blocks secondary effects the same as Shield
     private int effectBlock;
 
@@ -128,6 +129,15 @@ public class Unit {
 
     // >= 1 removes ability to move
     private int unableToAct;
+
+    // >= 1 conveys immunity to unableToAct
+    private int unableToActImmunity;
+
+    // >= 1 disables equipped
+    private int equipDisabled;
+
+    // >= 1 conveys immunity to equipDisabled
+    private int equipDisabledImmunity;
 
     /// Modifiers
     private int modDurationBuffDealt;
@@ -144,7 +154,7 @@ public class Unit {
 
     private List<BuffInstance> buffInstances = new ArrayList<>();
 
-    public Unit(UnitType unitType, long lvl, Skill[] skills, Equippable equipped, int pos) {
+    public Unit(UnitType unitType, long lvl, Skill[] skills, EquippableEntity equipped, int pos) {
         this.unitType = unitType;
         this.lvl = lvl;
         statsDefault = unitType.getStatsBase().getRealStats(lvl);
@@ -152,8 +162,9 @@ public class Unit {
         hp = statsDefault.getHp();
         for (Skill i : skills) skillInstances.add(i.toSkillInstance());
         passives = new ArrayList<>(List.of(unitType.getPassives()));
+        affinities = unitType.getAffinities();
         this.equipped = equipped;
-        equipped.apply(this);
+        equipped.equip(this);
         sp = 200;
         this.pos = pos;
         stageAtk = 0;
@@ -164,7 +175,6 @@ public class Unit {
         stageFthTurns = 0;
         stageAgi = 0;
         stageAgiTurns = 0;
-        affinities = unitType.getAffinities();
         multDmgDealt = 1000;
         multDmgTaken = 1000;
         multWeakDmgDealt = 1000;
@@ -195,6 +205,8 @@ public class Unit {
         extraActions = 0;
         effectBlock = 0;
         infiniteSp = 0;
+        unableToAct = 0;
+        equipDisabled = 0;
         modDurationBuffDealt = 0;
         modDurationBuffTaken = 0;
         modDurationDebuffDealt = 0;
@@ -311,6 +323,10 @@ public class Unit {
         return skillInstances;
     }
 
+    public Skill getSkill(int index) {
+        return skillInstances.get(index).getSkill();
+    }
+
     public int getSkillCount() {
         return skillInstances.size();
     }
@@ -323,8 +339,20 @@ public class Unit {
         for (Skill skill : skills) skillInstances.add(skill.toSkillInstance());
     }
 
+    public void removeSkill(Skill skill) {
+        skillInstances.remove(skill.toSkillInstance());
+    }
+
+    public void removeSkills(Skill... skills) {
+        for (Skill skill : skills) skillInstances.remove(skill.toSkillInstance());
+    }
+
     public List<Passive> getPassives() {
         return passives;
+    }
+
+    public Passive getPassive(int index) {
+        return passives.get(index);
     }
 
     public int getPassiveCount() {
@@ -333,18 +361,36 @@ public class Unit {
 
     public void addPassive(Passive passive) {
         passives.add(passive);
+        for (BuffEffect buffEffect : passive.getBuffEffects()) buffEffect.onGive(this, 1);
     }
 
     public void addPassives(Passive... passives) {
-        Collections.addAll(this.passives, passives);
+        for (Passive passive : passives) {
+            this.passives.add(passive);
+            for (BuffEffect buffEffect : passive.getBuffEffects()) buffEffect.onGive(this, 1);
+        }
     }
 
     public void removePassive(Passive passive) {
         passives.remove(passive);
+        for (BuffEffect buffEffect : passive.getBuffEffects()) buffEffect.onRemove(this, 1);
     }
 
     public void removePassives(Passive... passives) {
-        this.passives.removeAll(List.of(passives));
+        for (Passive passive : passives) {
+            this.passives.remove(passive);
+            for (BuffEffect buffEffect : passive.getBuffEffects()) buffEffect.onRemove(this, 1);
+        }
+    }
+
+    public void setEquipped(EquippableEntity equipped) {
+        equipped.unequip(this);
+        this.equipped = equipped;
+        equipped.equip(this);
+    }
+
+    public EquippableEntity getEquipped() {
+        return equipped;
     }
 
     public void setSp(int sp) {
@@ -759,6 +805,14 @@ public class Unit {
         return multElementDmgTaken.getOrDefault(element, 1000);
     }
 
+    public Map<Element, Integer> getMultElementDmgDealt() {
+        return multElementDmgDealt;
+    }
+
+    public Map<Element, Integer> getMultElementDmgTaken() {
+        return multElementDmgTaken;
+    }
+
     public void setExpDmgDealt(int expDmgDealt) {
         this.expDmgDealt = expDmgDealt;
     }
@@ -923,6 +977,14 @@ public class Unit {
 
     public int getExpElementDmgTaken(Element element) {
         return expElementDmgTaken.getOrDefault(element, 100);
+    }
+
+    public Map<Element, Integer> getExpElementDmgDealt() {
+        return expElementDmgDealt;
+    }
+
+    public Map<Element, Integer> getExpElementDmgTaken() {
+        return expElementDmgTaken;
     }
 
     public double getMultWithExpDmgDealt() {
@@ -1090,7 +1152,77 @@ public class Unit {
     }
 
     public boolean isUnableToAct() {
-        return unableToAct > 0;
+        return unableToAct > 0 && unableToActImmunity <= 0;
+    }
+
+    public void setUnableToActImmunity(int unableToActImmunity) {
+        this.unableToActImmunity = unableToActImmunity;
+    }
+
+    public int getUnableToActImmunity() {
+        return unableToActImmunity;
+    }
+
+    public boolean isUnableToActImmune() {
+        return unableToActImmunity > 0;
+    }
+
+    public void setEquipDisabled(int equipDisabled) {
+        this.equipDisabled = equipDisabled;
+        equipped.apply(this, equipDisabled <= 0);
+    }
+
+    public int getEquipDisabled() {
+        return equipDisabled;
+    }
+
+    public boolean isEquipDisabled() {
+        return equipDisabled > 0 && equipDisabledImmunity <= 0;
+    }
+
+    public void setEquipDisabledImmunity(int equipDisabledImmunity) {
+        this.equipDisabledImmunity = equipDisabledImmunity;
+    }
+
+    public int getEquipDisabledImmunity() {
+        return equipDisabledImmunity;
+    }
+
+    public boolean isEquipDisabledImmune() {
+        return equipDisabledImmunity > 0;
+    }
+
+    public void setBooleanStat(BooleanStat stat, int set) {
+        switch (stat) {
+            case EFFECT_BLOCK -> effectBlock = set;
+            case INFINITE_SP -> infiniteSp = set;
+            case UNABLE_TO_ACT -> unableToAct = set;
+            case UNABLE_TO_ACT_IMMUNITY -> unableToActImmunity = set;
+            case EQUIP_DISABLED -> equipDisabled = set;
+            case EQUIP_DISABLED_IMMUNITY -> equipDisabledImmunity = set;
+        }
+    }
+
+    public int getBooleanStat(BooleanStat stat) {
+        return switch (stat) {
+            case EFFECT_BLOCK -> effectBlock;
+            case INFINITE_SP -> infiniteSp;
+            case UNABLE_TO_ACT -> unableToAct;
+            case UNABLE_TO_ACT_IMMUNITY -> unableToActImmunity;
+            case EQUIP_DISABLED -> equipDisabled;
+            case EQUIP_DISABLED_IMMUNITY -> equipDisabledImmunity;
+        };
+    }
+
+    public boolean isBooleanStat(BooleanStat stat) {
+        return switch (stat) {
+            case EFFECT_BLOCK -> effectBlock > 0;
+            case INFINITE_SP -> infiniteSp > 0;
+            case UNABLE_TO_ACT -> unableToAct > 0;
+            case UNABLE_TO_ACT_IMMUNITY -> unableToActImmunity > 0;
+            case EQUIP_DISABLED -> equipDisabled > 0;
+            case EQUIP_DISABLED_IMMUNITY -> equipDisabledImmunity > 0;
+        };
     }
 
     public void setModDurationBuffDealt(int modDurationBuffDealt) {
@@ -1249,6 +1381,10 @@ public class Unit {
         return buffInstances;
     }
 
+    public Buff getBuff(int index) {
+        return buffInstances.get(index).getBuff();
+    }
+
     public int getBuffCount() {
         return buffInstances.size();
     }
@@ -1394,7 +1530,8 @@ public class Unit {
                 appendToLog(lang.format("log.lose.shield", formatName(unitType.getName(), pos, false),
                         C_SHIELD + formatNum(shield / STAT_MULT_HIDDEN)));
                 if (effectBlock <= 0) {
-                    appendToLog(lang.format("log.change_effect_block", formatName(unitType.getName(), pos, false), 0));
+                    appendToLog(lang.format("log.change_boolean_stat.effect_block",
+                            formatName(unitType.getName(), pos, false), 0));
                 }
             } else {
                 appendToLog(lang.format("log.change_shield", formatName(unitType.getName(), pos),
@@ -1410,7 +1547,7 @@ public class Unit {
         for (int i = buffInstances.size() - 1; i >= 0; i--) {
             BuffInstance buffInstance = buffInstances.get(i);
             int turns = buffInstance.getTurns();
-            // 1000+ turns = infinitea
+            // 1000+ turns = infinite
             if (turns >= 2 && turns < 1000) {
                 buffInstance.setTurns(turns - 1);
             } else {
@@ -1462,7 +1599,7 @@ public class Unit {
                     defend = 0;
                     // todo this should come after the dmg message
                     if (shield == 0 && effectBlock <= 0) {
-                        msg.add(lang.format("log.change_effect_block", name, 0));
+                        msg.add(lang.format("log.change_boolean_stat.effect_block", name, 0));
                     }
                 }
             }
@@ -1489,7 +1626,7 @@ public class Unit {
                     shield = 0;
                     shieldTurns = 0;
                     if (effectBlock <= 0) {
-                        msg.add(lang.format("log.change_effect_block", name, 0));
+                        msg.add(lang.format("log.change_boolean_stat.effect_block", name, 0));
                     }
                 }
             }

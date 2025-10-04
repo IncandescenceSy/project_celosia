@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.github.tommyettinger.textra.TextraLabel;
 import io.github.celosia.sys.Debug;
 import io.github.celosia.sys.World;
@@ -18,7 +19,6 @@ import io.github.celosia.sys.render.Fonts;
 import io.github.celosia.sys.render.Path;
 import io.github.celosia.sys.render.Paths;
 import io.github.celosia.sys.save.Settings;
-import io.github.celosia.sys.util.ArrayX;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -68,15 +68,15 @@ public class BattleControllerLib {
     static TextraLabel[] statsL = new TextraLabel[8];
     static TextraLabel[] buffsL = new TextraLabel[8];
     static TextraLabel[] movesL = new TextraLabel[8];
-    static ArrayX<TextraLabel> skillsL = new ArrayX<>();
+    static List<TextraLabel> skillsL = new ArrayList<>();
 
-    // Inspect
+    // Inspect menu
     static TextraLabel unitList = new TextraLabel("", Fonts.FontType.KORURI.get(30));
     static TextraLabel pageList = new TextraLabel(
             lang.get("skills") + "   " + lang.get("passives") + "   " + lang.get("buffs") + "   " + lang.get("stats"),
             Fonts.FontType.KORURI.get(30));
     static TextraLabel pageItemList = new TextraLabel("", Fonts.FontType.KORURI.get(20));
-    static TextraLabel desc = new TextraLabel("", Fonts.FontType.KORURI.get(30));
+    static TextraLabel desc = new TextraLabel("", Fonts.FontType.KORURI.get(20));
 
     // Stat, Equip, Affinity, Mult, Mod, Other
     static int[] infoX = new int[] { 1436, 670, 1300, 300, 750, 1125 };
@@ -96,20 +96,22 @@ public class BattleControllerLib {
     static TextraLabel hpAmt = new TextraLabel("", Fonts.FontType.KORURI.get(20));
     static TextraLabel sp = new TextraLabel(lang.get("sp"), Fonts.FontType.KORURI.get(30));
     static TextraLabel spAmt = new TextraLabel("", Fonts.FontType.KORURI.get(20));
-    static TextraLabel multipliers = new TextraLabel(lang.get("inspect.multipliers"), Fonts.FontType.KORURI.get(30));
-    static TextraLabel modifiers = new TextraLabel(lang.get("inspect.modifiers"), Fonts.FontType.KORURI.get(30));
-    static TextraLabel other = new TextraLabel(lang.get("inspect.other_stats"), Fonts.FontType.KORURI.get(30));
+
+    static String[] statCategoryHeaderNames = new String[] { lang.get("info.mult"), lang.get("info.mod"),
+            lang.get("info.other") };
+    static TextraLabel[] statCategoryHeaderL = new TextraLabel[3];
 
     static String multNames = getNamesAsMultiline(Mult.values(), Mult::getName);
     static String modNames = getNamesAsMultiline(Mod.values(), Mod::getName);
-    static String otherNames = lang.get("extra_actions") + "\n" + lang.get("effect_block") + "\n" +
-            lang.get("infinite_sp") + "\n" + lang.get("unable_to_act");
+    // todo dont show immunities
+    static String otherNames = getNamesAsMultiline(BooleanStat.values(), BooleanStat::getName) + "\n" +
+            lang.get("extra_actions");
     static String[] statCategoryNames = new String[] { multNames, modNames, otherNames };
     static TextraLabel[] statsPageL = new TextraLabel[3];
     static TextraLabel[] statsPageNumL = new TextraLabel[3];
 
     // temp
-    static Skill[] skills = new Skill[] { Skills.FIREBALL, Skills.FAITH_DOWN, Skills.RASETU_FEAST,
+    static Skill[] skills = new Skill[] { Skills.FIREBALL, Skills.NOTHING, Skills.RASETU_FEAST,
             Skills.AGILITY_UP_GROUP, Skills.ICE_AGE, Skills.DEFEND };
     static Skill[] skills2 = new Skill[] { Skills.ICE_BEAM, Skills.DEMON_SCYTHE, Skills.ATTACK_UP_GROUP,
             Skills.RASETU_FEAST, Skills.ICE_AGE, Skills.DEFEND };
@@ -124,12 +126,12 @@ public class BattleControllerLib {
     // Amount of lines scrolled upwards
     static int logScroll = 0;
 
-    // static ArrayX<Move> moves = new ArrayX<>(false, 16);
+    // static List<Move> moves = new ArrayList<>(false, 16);
     // Copy for queue reasons
-    // static ArrayX<Move> moves2 = new ArrayX<>(false, 16);
-    static ArrayX<Move> moves = new ArrayX<>(false, 16);
+    // static List<Move> moves2 = new ArrayList<>(false, 16);
+    static List<Move> moves = new ArrayList<>();
     // Copy for queue reasons
-    static ArrayX<Move> moves2 = new ArrayX<>(false, 16);
+    static List<Move> moves2 = new ArrayList<>();
 
     // How many extra actions have been used for the currently acting Unit
     static int extraActions = 0;
@@ -248,6 +250,14 @@ public class BattleControllerLib {
             stage2.addActor(moves);
         }
 
+        hp.setPosition(330, World.HEIGHT - 110);
+        hpAmt.setAlignment(Align.right);
+        hpAmt.setPosition(600, World.HEIGHT - 110);
+
+        sp.setPosition(330, World.HEIGHT - 150);
+        spAmt.setAlignment(Align.right);
+        spAmt.setPosition(600, World.HEIGHT - 150);
+
         // Inspect info and basic stats
         for (int i = 0; i < 6; i++) {
             TextraLabel info = new TextraLabel("", Fonts.FontType.KORURI.get(20));
@@ -255,36 +265,43 @@ public class BattleControllerLib {
             infoL[i] = info;
 
             TextraLabel stat = new TextraLabel(statNames[i], Fonts.FontType.KORURI.get(30));
-            stat.setPosition((i > 2) ? 1050 : 600, World.HEIGHT - (110 + (40 * (i % 3))));
+            stat.setPosition((i > 2) ? 960 : 630, World.HEIGHT - (110 + (40 * (i % 3))));
             stat.setAlignment(Align.left);
             statsBasicL[i] = stat;
 
             TextraLabel statNum = new TextraLabel("", Fonts.FontType.KORURI.get(30));
-            statNum.setPosition((i > 2) ? 1150 : 700, World.HEIGHT - (110 + (40 * (i % 3))));
+            statNum.setPosition((i > 2) ? 1060 : 730, World.HEIGHT - (110 + (40 * (i % 3))));
             statNum.setAlignment(Align.right);
             statsBasicNumL[i] = statNum;
         }
 
         // Inspect stats page
         for (int i = 0; i < 3; i++) {
+            TextraLabel statHeader = new TextraLabel(statCategoryHeaderNames[i], Fonts.FontType.KORURI.get(30));
+            statHeader.setPosition(50 + (450 * i), World.HEIGHT - 380);
+            statCategoryHeaderL[i] = statHeader;
+
             TextraLabel stat = new TextraLabel(statCategoryNames[i], Fonts.FontType.KORURI.get(20));
             stat.setAlignment(Align.topLeft);
-            stat.setPosition(45 + (i * 420), World.HEIGHT - 430);
+            stat.setPosition(50 + (i * 450), World.HEIGHT - 400);
             statsPageL[i] = stat;
 
             TextraLabel statNum = new TextraLabel("", Fonts.FontType.KORURI.get(20));
             statNum.setAlignment(Align.topRight);
-            stat.setPosition(320 + (i * 420), World.HEIGHT - 430);
+            statNum.setPosition(250 + (i * 450), World.HEIGHT - 400);
             statsPageNumL[i] = statNum;
         }
 
-        unitList.setAlignment(Align.center);
-        unitList.setPosition(400, World.HEIGHT - 50);
+        unitList.setPosition(320, World.HEIGHT - 50);
+
+        pageList.setAlignment(Align.center);
+        pageList.setPosition(640, World.HEIGHT - 320);
 
         pageItemList.setAlignment(Align.topLeft);
-        pageItemList.setPosition(130, World.HEIGHT - 400);
+        pageItemList.setPosition(50, World.HEIGHT - 370);
 
-        desc.setPosition(550, World.HEIGHT - 360);
+        desc.setAlignment(Align.topLeft);
+        desc.setPosition(550, World.HEIGHT - 370);
 
         // todo support arbitrary size
         for (int i = 0; i < 6; i++) {
@@ -450,7 +467,7 @@ public class BattleControllerLib {
                 }
 
                 appendToLog(lang.format("log.skill_use", formatName(self.getUnitType().getName(), self.getPos(), false),
-                        C_SKILL + skill.getNameWithIcon(),
+                        skill.getNameWithIcon(C_SKILL),
                         formatName(target.getUnitType().getName(), move.targetPos(), false),
                         booleanToInt(skill.isRangeSelf()), changeSp));
 
@@ -653,15 +670,14 @@ public class BattleControllerLib {
         // actually wtf is the purpose of this code?? i cant even tell what this is supposed to do??? i wrote this???
         // Only copy if it hasn't started emptying yet
         if (selectingMove == 8) {
-            moves2 = new ArrayX<>(moves);
+            moves2 = new ArrayList<>(moves);
         } else if (selectingMove == 100) {
             moves2.sort(Comparator.comparingInt((Move entry) -> entry.skillInstance().getSkill().getPrio())
                     .thenComparingLong(entry -> entry.self().getAgiWithStage()).reversed());
-            // todo will thenComparingInt(pos.reversed) work
             // todo is this supposed to change queue order? cuz it doesnt. probably remove
             // this or make it work
         } else {
-            moves2 = new ArrayX<>();
+            moves2 = new ArrayList<>();
         }
 
         StringBuilder queueText = new StringBuilder().append(lang.get("queue")).append(": ");
@@ -670,7 +686,7 @@ public class BattleControllerLib {
             int pos = unitsAll.get(i).getPos();
             boolean active = pos == selectingMove;
 
-            if (!active && usingMove > 0 && moves2.size >= unitsAll.size()) {
+            if (!active && usingMove > 0 && moves2.size() >= unitsAll.size()) {
                 active = (moves2.get(usingMove - 1).self() == unitsAll.get(i));
             }
 
@@ -848,7 +864,7 @@ public class BattleControllerLib {
             float ex = sx + (barLength / 6);
             float ey = sy + barLength;
 
-            ArrayX<Vector2> points = new ArrayX<>(false, 2);
+            Array<Vector2> points = new Array<>(false, 2);
             points.addAll(new Vector2(sx, sy), new Vector2(ex, ey));
             scrollbar.setPoints(points);
         }
@@ -944,9 +960,7 @@ public class BattleControllerLib {
         stage4.addActor(hpAmt);
         stage4.addActor(sp);
         stage4.addActor(spAmt);
-        stage4.addActor(multipliers);
-        stage4.addActor(modifiers);
-        stage4.addActor(other);
+        for (TextraLabel label : statCategoryHeaderL) stage4.addActor(label);
         for (TextraLabel label : statsPageL) stage4.addActor(label);
         for (TextraLabel label : statsPageNumL) stage4.addActor(label);
     }
@@ -963,7 +977,7 @@ public class BattleControllerLib {
         indexPage = checkMovement1D(indexPage, 4, Keybind.LEFT, Keybind.RIGHT);
 
         if (InputLib.checkInput(Keybind.CONFIRM)) { // todo
-            createPopup("Equipped item name here", "Equipped item desc here");
+            createPopup(unit.getEquipped().getNameWithIcon(), unit.getEquipped().getDesc());
         } else if (InputLib.checkInput(Keybind.MENU)) {
             createPopup(lang.get("info.stat"), lang.get("info.stat.desc"));
         } else if (InputLib.checkInput(Keybind.MAP)) {
@@ -972,26 +986,43 @@ public class BattleControllerLib {
 
         switch (indexPage) {
             case SKILLS:
+                setStatVisibility(false);
+
                 indexPageList = checkMovement1D(indexPageList, unit.getSkillCount());
 
                 pageItemList.setText(getNamesAsMultiline(unit.getSkillInstances(),
-                        skillInstance -> skillInstance.getSkill().getName()));
+                        skillInstance -> skillInstance.getSkill().getNameWithIcon()));
+
+                if (indexPageList != -1) desc.setText(unit.getSkill(indexPageList).getDesc());
 
                 break;
+
             case PASSIVES:
+                setStatVisibility(false);
+
                 indexPageList = checkMovement1D(indexPageList, unit.getPassiveCount());
 
-                pageItemList.setText(getNamesAsMultiline(unit.getPassives(), Passive::getName));
+                pageItemList.setText(getNamesAsMultiline(unit.getPassives(), Passive::getNameWithIcon));
+
+                if (indexPageList != -1) desc.setText(unit.getPassive(indexPageList).getDesc());
 
                 break;
+
             case BUFFS:
+                setStatVisibility(false);
+
                 indexPageList = checkMovement1D(indexPageList, unit.getBuffCount());
 
-                pageItemList.setText(
-                        getNamesAsMultiline(unit.getBuffInstances(), buffInstance -> buffInstance.getBuff().getName()));
+                pageItemList.setText(getNamesAsMultiline(unit.getBuffInstances(),
+                        buffInstance -> buffInstance.getBuff().getNameWithIcon()));
+
+                if (indexPageList != -1) desc.setText(unit.getBuff(indexPageList).getDesc());
 
                 break;
+
             case STATS:
+                setStatVisibility(true);
+
                 if (InputLib.checkInput(Keybind.PAGE_L1)) {
                     createPopup(lang.get("info.mult"), lang.get("info.mult.desc"));
                 } else if (InputLib.checkInput(Keybind.PAGE_R1)) {
@@ -1001,6 +1032,12 @@ public class BattleControllerLib {
                 }
                 break;
         }
+    }
+
+    static void setStatVisibility(boolean visible) {
+        for (TextraLabel label : statCategoryHeaderL) label.setVisible(visible);
+        for (TextraLabel label : statsPageL) label.setVisible(visible);
+        for (TextraLabel label : statsPageNumL) label.setVisible(visible);
     }
 
     static void deleteInspect() {
@@ -1022,9 +1059,7 @@ public class BattleControllerLib {
         root.removeActor(hpAmt);
         root.removeActor(sp);
         root.removeActor(spAmt);
-        root.removeActor(multipliers);
-        root.removeActor(modifiers);
-        root.removeActor(other);
+        for (TextraLabel label : statCategoryHeaderL) root.removeActor(label);
         for (TextraLabel label : statsPageL) root.removeActor(label);
         for (TextraLabel label : statsPageNumL) root.removeActor(label);
     }
@@ -1047,7 +1082,7 @@ public class BattleControllerLib {
             return;
         }
 
-        indexSkill = MenuLib.checkMovement1D(indexSkill, skillsL.size);
+        indexSkill = MenuLib.checkMovement1D(indexSkill, skillsL.size());
 
         MenuLib.handleOptColor(skillsL, indexSkill);
 

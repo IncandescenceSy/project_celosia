@@ -1,9 +1,20 @@
 package io.github.celosia.sys.battle;
 
+import io.github.celosia.sys.entity.ComplexDescEntity;
 import io.github.celosia.sys.entity.IconEntity;
 import io.github.celosia.sys.util.ArrayLib;
 
-public class Skill extends IconEntity {
+import java.util.ArrayList;
+import java.util.List;
+
+import static io.github.celosia.sys.save.Lang.lang;
+import static io.github.celosia.sys.util.TextLib.C_ELEMENT;
+import static io.github.celosia.sys.util.TextLib.C_NUM;
+import static io.github.celosia.sys.util.TextLib.C_STAT;
+import static io.github.celosia.sys.util.TextLib.getColor;
+import static io.github.celosia.sys.util.TextLib.getSign;
+
+public class Skill extends ComplexDescEntity {
 
     private final Element element;
     private final Range range;
@@ -27,7 +38,7 @@ public class Skill extends IconEntity {
     private final SkillEffect[] skillEffects;
 
     Skill(Builder builder) {
-        super(builder.name, builder.desc, builder.element.getIcon());
+        super(builder);
         element = builder.element;
         range = builder.range;
         cost = builder.cost;
@@ -38,10 +49,8 @@ public class Skill extends IconEntity {
         skillEffects = builder.skillEffects;
     }
 
-    public static class Builder {
+    public static class Builder extends ComplexDescEntity.Builder {
 
-        private final String name;
-        private final String desc;
         private final Element element;
         private final Range range;
         private final int cost;
@@ -53,11 +62,29 @@ public class Skill extends IconEntity {
         private SkillEffect[] skillEffects = new SkillEffect[] {};
 
         public Builder(String name, String desc, Element element, Range range, int cost) {
-            this.name = name;
-            this.desc = desc;
+            super(name, desc, element.getIcon());
             this.element = element;
             this.range = range;
             this.cost = cost;
+        }
+
+        // Override so they can be used without casting
+        @Override
+        public Builder descArgs(String... descArgs) {
+            super.descArgs(descArgs);
+            return this;
+        }
+
+        @Override
+        public Builder descInclusion(IconEntity descInclusion) {
+            super.descInclusion(descInclusion);
+            return this;
+        }
+
+        @Override
+        public Builder descInclusions(IconEntity... descInclusions) {
+            super.descInclusions(descInclusions);
+            return this;
         }
 
         public Builder cooldown(int cooldown) {
@@ -76,7 +103,7 @@ public class Skill extends IconEntity {
         }
 
         public Builder role(SkillRole skillRole) {
-            this.skillRoles = new SkillRole[] { skillRole };
+            skillRoles = new SkillRole[] { skillRole };
             return this;
         }
 
@@ -86,7 +113,7 @@ public class Skill extends IconEntity {
         }
 
         public Builder effect(SkillEffect skillEffect) {
-            this.skillEffects = new SkillEffect[] { skillEffect };
+            skillEffects = new SkillEffect[] { skillEffect };
             return this;
         }
 
@@ -147,5 +174,39 @@ public class Skill extends IconEntity {
 
     public SkillInstance toSkillInstance() {
         return new SkillInstance(this);
+    }
+
+    @Override
+    public String getDesc() {
+        int pow = 0;
+        List<String> skillTypes = new ArrayList<>(3);
+
+        for (SkillEffect skillEffect : skillEffects) {
+            // todo better pow logic
+            int effectPow = skillEffect.getPow();
+            if (effectPow > pow) {
+                pow = effectPow;
+            }
+
+            SkillType effectType = skillEffect.getSkillType();
+            String str = "C_STAT" + effectType.getName() + "WHITE";
+            if (effectType != SkillType.STAT && !skillTypes.contains(str)) {
+                skillTypes.add(str);
+            }
+        }
+
+        String skillTypesStr;
+        if (!skillTypes.isEmpty()) {
+            skillTypesStr = skillTypes.toString().replace("[", "").replace("]", "")
+                    .replace("WHITE", "[WHITE]")
+                    .replace("C_STAT", C_STAT).replace(", ", "[WHITE]/");
+        } else {
+            skillTypesStr = C_STAT + SkillType.STAT.getName() + "[WHITE]";
+        }
+
+        return lang.format("skill_desc", skillTypesStr, element.getNameWithIcon(C_ELEMENT), range.name(),
+                (pow == 0) ? "" : ", " + C_NUM + pow + " [WHITE]" + lang.get("pow"),
+                (prio == 0) ? "" : ", " + getColor(prio) + getSign(prio) + prio + " [WHITE]" + lang.get("prio"),
+                this.getPartialDesc());
     }
 }

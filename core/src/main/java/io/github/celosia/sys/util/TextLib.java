@@ -41,6 +41,7 @@ public class TextLib {
 
     public static final String C_BUFF = "[#c6a1ff]";
     public static final String C_SKILL = "[#95c9ff]";
+    public static final String C_ELEMENT = "[#95c9ff]";
     public static final String C_PASSIVE = "[#c6a1ff]";
     public static final String C_STAT = "[#deff81]";
     public static final String C_EXP = "[#a034ff]"; // Calculated exponent parenthesis
@@ -268,7 +269,7 @@ public class TextLib {
         Unit self = move.self();
 
         String msg = lang.format("log.tries_to_use.1", formatName(self.getUnitType().getName(), self.getPos(), false),
-                C_SKILL + skill.getNameWithIcon());
+                skill.getNameWithIcon(C_SKILL));
 
         if (!skill.isRangeSelf()) {
             msg += lang.format("log.tries_to_use.2",
