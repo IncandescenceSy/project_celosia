@@ -1,17 +1,19 @@
 package io.github.celosia.sys.entity;
 
-import io.github.celosia.sys.battle.Buff;
+import io.github.celosia.sys.battle.Skill;
 
 import static io.github.celosia.sys.save.Lang.lang;
 import static io.github.celosia.sys.util.TextLib.C_BUFF;
 import static io.github.celosia.sys.util.TextLib.C_SKILL;
 
-public class ComplexDescEntity extends IconEntity {
+// Allows the entity's description to include the names and descriptions of other IconEntities
+// desc is now treated as a raw lang key and should not be formatted for display
+public abstract class ComplexDescriptionEntity extends IconEntity {
 
     private final String[] descArgs;
     private final IconEntity[] descInclusions;
 
-    public ComplexDescEntity(Builder builder) {
+    public ComplexDescriptionEntity(Builder builder) {
         super(builder.name, builder.desc, builder.icon);
         descArgs = builder.descArgs;
         descInclusions = builder.descInclusions;
@@ -46,10 +48,6 @@ public class ComplexDescEntity extends IconEntity {
             return this;
         }
 
-        public ComplexDescEntity build() {
-            return new ComplexDescEntity(this);
-        }
-
         public String getName() {
             return name;
         }
@@ -71,6 +69,10 @@ public class ComplexDescEntity extends IconEntity {
         }
     }
 
+    // All classes extending this class should need to override getDesc(), so make sure they do
+    @Override
+    public abstract String getDesc();
+
     // todo address warning
     public String getPartialDesc() {
         StringBuilder partialDesc = new StringBuilder(lang.format(super.getDesc(), descArgs));
@@ -80,7 +82,7 @@ public class ComplexDescEntity extends IconEntity {
         }
 
         for (IconEntity entity : descInclusions) {
-            String color = (entity instanceof Buff) ? C_BUFF : C_SKILL;
+            String color = (entity instanceof Skill) ? C_SKILL : C_BUFF;
             partialDesc.append("\n[WHITE](").append(entity.getNameWithIcon(color)).append("[WHITE]: ")
                     .append(entity.getDesc().replace("\n", ". ")).append("[WHITE])");
         }

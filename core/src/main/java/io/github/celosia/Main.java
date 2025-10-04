@@ -198,6 +198,13 @@ public class Main extends ApplicationAdapter {
         debug.setPosition(10, World.HEIGHT - 80);
         stage5.addActor(debug);
 
+        popupTitle = new TypingLabel("", Fonts.FontType.KORURI.get(30));
+        popupTitle.setAlignment(Align.center);
+        popupTitle.setPosition(World.WIDTH_2, World.HEIGHT_2 + 150);
+
+        popupText = new TypingLabel("", Fonts.FontType.KORURI.get(20));
+        popupText.setPosition(World.WIDTH_2 - 420, World.HEIGHT_2 + 80);
+
         inputGuide = new TextraLabel("", FontType.KORURI_BORDER.get(20));
         inputGuide.setPosition(0, 0);
         inputGuide.setAlignment(Align.bottomRight);

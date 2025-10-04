@@ -5,14 +5,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
-import com.github.tommyettinger.textra.TypingLabel;
 import io.github.celosia.Main;
-import io.github.celosia.sys.World;
 import io.github.celosia.sys.menu.MenuLib;
 import io.github.celosia.sys.save.Settings;
-import io.github.celosia.sys.util.TextLib;
 import space.earlygrey.shapedrawer.JoinType;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -20,6 +16,8 @@ import static io.github.celosia.Main.coolRects;
 import static io.github.celosia.Main.drawer;
 import static io.github.celosia.Main.paths;
 import static io.github.celosia.Main.polygonSpriteBatch;
+import static io.github.celosia.Main.popupText;
+import static io.github.celosia.Main.popupTitle;
 
 public class TriLib {
 
@@ -144,13 +142,11 @@ public class TriLib {
     public static void createPopup(String name, String desc) {
         Main.MENU_LIST.add(MenuLib.MenuType.POPUP);
 
-        Main.popupTitle = new TypingLabel(TextLib.TAGS + name, Fonts.FontType.KORURI.get(80));
-        Main.popupTitle.setPosition(World.WIDTH_2, World.HEIGHT_2 + 120, Align.center);
         Main.stage5.addActor(Main.popupTitle);
-
-        Main.popupText = new TypingLabel(TextLib.TAGS + desc, Fonts.FontType.KORURI.get(30));
-        Main.popupText.setPosition(World.WIDTH_2 - 440, World.HEIGHT_2 + 20, Align.left);
         Main.stage5.addActor(Main.popupText);
+
+        popupTitle.setText(name);
+        popupText.setText(desc);
 
         coolRects[CoolRects.POPUP_CENTERED.ordinal()].setDir(1);
     }

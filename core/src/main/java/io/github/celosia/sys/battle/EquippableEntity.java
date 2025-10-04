@@ -1,12 +1,11 @@
 package io.github.celosia.sys.battle;
 
-import io.github.celosia.sys.entity.IconEntity;
+import io.github.celosia.sys.entity.ComplexDescriptionEntity;
 
-// todo extend ComplexDescEntity
-public abstract class EquippableEntity extends IconEntity {
+public abstract class EquippableEntity extends ComplexDescriptionEntity {
 
-    public EquippableEntity(String name, String desc, String icon) {
-        super(name, desc, icon);
+    public EquippableEntity(ComplexDescriptionEntity.Builder builder) {
+        super(builder);
     }
 
     public abstract void apply(Unit unit, boolean give);

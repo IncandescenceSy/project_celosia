@@ -1,12 +1,12 @@
 package io.github.celosia.sys.battle;
 
-import io.github.celosia.sys.entity.ComplexDescEntity;
+import io.github.celosia.sys.entity.ComplexDescriptionEntity;
 import io.github.celosia.sys.entity.IconEntity;
 
 import static io.github.celosia.sys.save.Lang.lang;
 import static io.github.celosia.sys.util.TextLib.C_NUM;
 
-public class Buff extends ComplexDescEntity {
+public class Buff extends ComplexDescriptionEntity {
 
     private final BuffType buffType;
     private final int maxStacks;
@@ -19,7 +19,7 @@ public class Buff extends ComplexDescEntity {
         this.buffEffects = builder.buffEffects;
     }
 
-    public static class Builder extends ComplexDescEntity.Builder {
+    public static class Builder extends ComplexDescriptionEntity.Builder {
 
         private final BuffType buffType;
         private int maxStacks = 1;
@@ -49,13 +49,13 @@ public class Buff extends ComplexDescEntity {
             return this;
         }
 
-        public Builder effect(BuffEffect buffEffect) {
-            buffEffects = new BuffEffect[] { buffEffect };
+        public Builder maxStacks(int maxStacks) {
+            this.maxStacks = maxStacks;
             return this;
         }
 
-        public Builder maxStacks(int maxStacks) {
-            this.maxStacks = maxStacks;
+        public Builder effect(BuffEffect buffEffect) {
+            buffEffects = new BuffEffect[] { buffEffect };
             return this;
         }
 

@@ -1,6 +1,6 @@
 package io.github.celosia.sys.battle;
 
-import io.github.celosia.sys.entity.ComplexDescEntity;
+import io.github.celosia.sys.entity.ComplexDescriptionEntity;
 import io.github.celosia.sys.entity.IconEntity;
 import io.github.celosia.sys.util.ArrayLib;
 
@@ -14,7 +14,7 @@ import static io.github.celosia.sys.util.TextLib.C_STAT;
 import static io.github.celosia.sys.util.TextLib.getColor;
 import static io.github.celosia.sys.util.TextLib.getSign;
 
-public class Skill extends ComplexDescEntity {
+public class Skill extends ComplexDescriptionEntity {
 
     private final Element element;
     private final Range range;
@@ -49,7 +49,7 @@ public class Skill extends ComplexDescEntity {
         skillEffects = builder.skillEffects;
     }
 
-    public static class Builder extends ComplexDescEntity.Builder {
+    public static class Builder extends ComplexDescriptionEntity.Builder {
 
         private final Element element;
         private final Range range;

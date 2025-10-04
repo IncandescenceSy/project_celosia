@@ -1,5 +1,7 @@
 package io.github.celosia.sys.battle;
 
+import io.github.celosia.sys.entity.ComplexDescriptionEntity;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,25 +12,20 @@ public class Weapon extends EquippableEntity {
     private final Passive[] passives;
 
     public Weapon(Builder builder) {
-        super(builder.name, builder.desc, builder.icon);
+        super(builder);
         this.affinities = builder.affinities;
         this.skills = builder.skills;
         this.passives = builder.passives;
     }
 
-    public static class Builder {
+    public static class Builder extends ComplexDescriptionEntity.Builder {
 
-        private final String name;
-        private final String desc;
-        private final String icon;
         private Map<Element, Integer> affinities = null;
-        private Skill[] skills = null;
-        private Passive[] passives = null;
+        private Skill[] skills = new Skill[] {};
+        private Passive[] passives = new Passive[] {};
 
         public Builder(String name, String desc, String icon) {
-            this.name = name;
-            this.desc = desc;
-            this.icon = icon;
+            super(name, desc, icon);
         }
 
         public Builder affinities(int ignis, int glacies, int fulgur, int ventus, int terra, int lux, int malum) {
@@ -48,13 +45,27 @@ public class Weapon extends EquippableEntity {
             return this;
         }
 
+        public Builder skill(Skill skill) {
+            skills = new Skill[] {skill};
+            super.descInclusion(skill);
+            return this;
+        }
+
         public Builder skills(Skill... skills) {
             this.skills = skills;
+            super.descInclusions(skills);
+            return this;
+        }
+
+        public Builder passive(Passive passive) {
+            passives = new Passive[] {passive};
+            super.descInclusion(passive);
             return this;
         }
 
         public Builder passives(Passive... passives) {
             this.passives = passives;
+            super.descInclusions(passives);
             return this;
         }
 
@@ -83,16 +94,24 @@ public class Weapon extends EquippableEntity {
                     unit.getAffinities().merge(entry.getKey(), entry.getValue(), Integer::sum);
                 }
             }
-            if (skills != null) unit.addSkills(skills);
-            if (passives != null) unit.addPassives(passives);
+
+            unit.addSkills(skills);
+            unit.addPassives(passives);
         } else {
             if (affinities != null) {
                 for (Map.Entry<Element, Integer> entry : affinities.entrySet()) {
                     unit.getAffinities().merge(entry.getKey(), entry.getValue() * -1, Integer::sum);
                 }
             }
-            if (skills != null) unit.removeSkills(skills);
-            if (passives != null) unit.removePassives(passives);
+
+            unit.removeSkills(skills);
+            unit.removePassives(passives);
         }
+    }
+
+    // todo
+    @Override
+    public String getDesc() {
+        return "";
     }
 }
