@@ -69,7 +69,6 @@ public abstract class ComplexDescriptionEntity extends IconEntity {
         }
     }
 
-    // All classes extending this class should need to override getDesc(), so make sure they do
     @Override
     public abstract String getDesc();
 

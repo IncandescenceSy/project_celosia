@@ -46,7 +46,7 @@ public class Weapon extends EquippableEntity {
         }
 
         public Builder skill(Skill skill) {
-            skills = new Skill[] {skill};
+            skills = new Skill[] { skill };
             super.descInclusion(skill);
             return this;
         }
@@ -58,7 +58,7 @@ public class Weapon extends EquippableEntity {
         }
 
         public Builder passive(Passive passive) {
-            passives = new Passive[] {passive};
+            passives = new Passive[] { passive };
             super.descInclusion(passive);
             return this;
         }

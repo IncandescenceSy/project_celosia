@@ -16,6 +16,7 @@ public class Accessory extends EquippableEntity {
     }
 
     public static class Builder extends ComplexDescriptionEntity.Builder {
+
         private Skill[] skills = new Skill[] {};
         private Passive[] passives = new Passive[] {};
 
@@ -24,7 +25,7 @@ public class Accessory extends EquippableEntity {
         }
 
         public Builder skill(Skill skill) {
-            skills = new Skill[] {skill};
+            skills = new Skill[] { skill };
             super.descInclusion(skill);
             return this;
         }
@@ -36,7 +37,7 @@ public class Accessory extends EquippableEntity {
         }
 
         public Builder passive(Passive passive) {
-            passives = new Passive[] {passive};
+            passives = new Passive[] { passive };
             super.descInclusion(passive);
             return this;
         }
