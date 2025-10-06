@@ -14,7 +14,8 @@ public record Move(SkillInstance skillInstance, Unit self, int targetPos) {
         }
 
         // Check if target is within vertical range
-        if (Math.abs(getHeight(self.getPos()) - getHeight(targetPos)) > range.rangeVertical() + self.getModRange()) {
+        if (Math.abs(getHeight(self.getPos()) - getHeight(targetPos)) >
+                range.rangeVertical() + self.getMod(Mod.RANGE)) {
             return false;
         }
 

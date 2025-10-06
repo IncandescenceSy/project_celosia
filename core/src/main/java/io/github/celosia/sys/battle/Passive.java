@@ -28,19 +28,8 @@ public class Passive extends ComplexDescriptionEntity {
         }
 
         @Override
-        public Builder descInclusion(IconEntity descInclusion) {
-            super.descInclusion(descInclusion);
-            return this;
-        }
-
-        @Override
         public Builder descInclusions(IconEntity... descInclusions) {
             super.descInclusions(descInclusions);
-            return this;
-        }
-
-        public Builder effect(BuffEffect buffEffect) {
-            buffEffects = new BuffEffect[] { buffEffect };
             return this;
         }
 

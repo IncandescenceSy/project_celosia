@@ -3,6 +3,7 @@ package io.github.celosia.sys.battle.skill_effects;
 import io.github.celosia.sys.battle.AffLib;
 import io.github.celosia.sys.battle.Element;
 import io.github.celosia.sys.battle.Elements;
+import io.github.celosia.sys.battle.Mult;
 import io.github.celosia.sys.battle.Result;
 import io.github.celosia.sys.battle.ResultType;
 import io.github.celosia.sys.battle.SkillEffect;
@@ -116,8 +117,8 @@ public class Damage implements SkillEffect {
             affMultDmgTaken = AffLib.DMG_TAKEN.get(target.getAffinity(element));
 
             if (target.isWeakTo(element)) {
-                multWeakDmgDealt = self.getMultWithExpWeakDmgDealt();
-                multWeakDmgTaken = target.getMultWithExpWeakDmgTaken();
+                multWeakDmgDealt = self.getMultWithExp(Mult.WEAK_DMG_DEALT);
+                multWeakDmgTaken = target.getMultWithExp(Mult.WEAK_DMG_TAKEN);
             }
         }
 
@@ -125,8 +126,8 @@ public class Damage implements SkillEffect {
         double multFollowUpDmgTaken = 1;
 
         if (isFollowUp) {
-            multFollowUpDmgDealt = self.getMultWithExpFollowUpDmgDealt();
-            multFollowUpDmgTaken = target.getMultWithExpFollowUpDmgTaken();
+            multFollowUpDmgDealt = self.getMultWithExp(Mult.FOLLOW_UP_DMG_DEALT);
+            multFollowUpDmgTaken = target.getMultWithExp(Mult.FOLLOW_UP_DMG_TAKEN);
         }
 
         long dmg;
@@ -137,7 +138,7 @@ public class Damage implements SkillEffect {
         } else {
             dmg = STAT_MULT_HIDDEN * STAT_MULT_VISIBLE *
                     (long) (((double) atk / def) * pow * (affMultDmgDealt / 1000d) * (affMultDmgTaken / 1000d) *
-                            self.getMultWithExpDmgDealt() * target.getMultWithExpDmgTaken() *
+                            self.getMultWithExp(Mult.DMG_DEALT) * target.getMultWithExp(Mult.DMG_TAKEN) *
                             self.getMultWithExpElementDmgDealt(element) *
                             target.getMultWithExpElementDmgTaken(element) * multWeakDmgDealt * multWeakDmgTaken *
                             multFollowUpDmgDealt * multFollowUpDmgTaken);

@@ -38,11 +38,6 @@ public abstract class ComplexDescriptionEntity extends IconEntity {
             return this;
         }
 
-        public Builder descInclusion(IconEntity descInclusion) {
-            descInclusions = new IconEntity[] { descInclusion };
-            return this;
-        }
-
         public Builder descInclusions(IconEntity... descInclusions) {
             this.descInclusions = descInclusions;
             return this;

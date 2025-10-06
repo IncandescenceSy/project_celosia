@@ -144,7 +144,7 @@ public class GiveBuff implements SkillEffect {
         } else {
             msg.add(lang.format("log.give_buff.gain", formatName(unit.getUnitType().getName(), unit.getPos(), false),
                     buffName, buff.getMaxStacks(), stacksMod, lang.format("log.stack_s", stacksMod), turnsMod));
-            unit.addBuffInstance(new BuffInstance(buff, turnsMod, stacksMod));
+            unit.addBuffInstances(new BuffInstance(buff, turnsMod, stacksMod));
             buffInstance = buffInstances.getLast();
 
             appendToLog(msg);

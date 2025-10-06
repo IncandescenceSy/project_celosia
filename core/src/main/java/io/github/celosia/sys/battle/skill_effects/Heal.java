@@ -1,5 +1,8 @@
 package io.github.celosia.sys.battle.skill_effects;
 
+import io.github.celosia.sys.battle.BooleanStat;
+import io.github.celosia.sys.battle.Mod;
+import io.github.celosia.sys.battle.Mult;
 import io.github.celosia.sys.battle.ResultType;
 import io.github.celosia.sys.battle.SkillEffect;
 import io.github.celosia.sys.battle.SkillType;
@@ -91,15 +94,15 @@ public class Heal implements SkillEffect {
         Unit unit = (giveToSelf) ? self : target;
 
         // Heals by pow% of user's Fth
-        long heal = (long) (self.getFthWithStage() * (pow / 100d) * self.getMultWithExpHealingDealt() *
-                unit.getMultWithExpHealingTaken());
+        long heal = (long) (self.getFthWithStage() * (pow / 100d) * self.getMultWithExp(Mult.HEALING_DEALT) *
+                unit.getMultWithExp(Mult.HEALING_TAKEN));
 
         // Adds shield (shield + defend cannot exceed max HP)
         if (shieldTurns > 0) {
             String str = "";
 
             // Apply self's durationMod
-            int turnsMod = shieldTurns + self.getModDurationBuffDealt() + unit.getModDurationBuffTaken();
+            int turnsMod = shieldTurns + self.getMod(Mod.DURATION_BUFF_DEALT) + unit.getMod(Mod.DURATION_BUFF_TAKEN);
 
             self.onDealShield(unit, turnsMod, heal);
             unit.onTakeShield(unit, turnsMod, heal);
@@ -135,7 +138,8 @@ public class Heal implements SkillEffect {
             }
 
             // Effect block message
-            if (shieldOld == 0 && shieldNew > 0 && !unit.isEffectBlock() && unit.getDefend() == 0) {
+            if (shieldOld == 0 && shieldNew > 0 && !unit.isBooleanStat(BooleanStat.EFFECT_BLOCK) &&
+                    unit.getDefend() == 0) {
                 msg.add(lang.format("log.change_boolean_stat.effect_block",
                         formatName(unit.getUnitType().getName(), unit.getPos(), false), 1));
             }

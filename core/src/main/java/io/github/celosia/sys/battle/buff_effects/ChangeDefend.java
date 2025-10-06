@@ -1,5 +1,6 @@
 package io.github.celosia.sys.battle.buff_effects;
 
+import io.github.celosia.sys.battle.BooleanStat;
 import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Unit;
 
@@ -38,7 +39,7 @@ public class ChangeDefend implements BuffEffect {
                 C_HP + formatNum(self.getDisplayMaxHp()),
                 C_SHIELD + "+" + formatNum(((shieldDisp + defendNewDisp) - (shieldDisp + defendOldDisp)))));
 
-        if (!self.isEffectBlock() && self.getShield() == 0 && defendOld == 0) {
+        if (!self.isBooleanStat(BooleanStat.EFFECT_BLOCK) && self.getShield() == 0 && defendOld == 0) {
             appendToLog(lang.format("log.change_boolean_stat.effect_block",
                     formatName(self.getUnitType().getName(), self.getPos(), false), 1));
         }
@@ -58,7 +59,7 @@ public class ChangeDefend implements BuffEffect {
             appendToLog(lang.format("log.lose_shield", formatName(self.getUnitType().getName(), self.getPos(), false),
                     C_SHIELD + formatNum(defendOldDisp)));
         }
-        if (!self.isEffectBlock() && self.getShield() == 0) {
+        if (!self.isBooleanStat(BooleanStat.EFFECT_BLOCK) && self.getShield() == 0) {
             appendToLog(lang.format("log.change_boolean_stat.effect_block",
                     formatName(self.getUnitType().getName(), self.getPos(), false), 0));
         }

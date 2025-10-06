@@ -404,9 +404,9 @@ public class BattleControllerLib {
         Move move = moves.getFirst();
         Unit self = move.self();
 
-        if (self.isUnableToAct()) {
+        if (self.isBooleanStat(BooleanStat.UNABLE_TO_ACT)) {
             appendToLog(lang.format("log.skill_fail.unable_to_act", getTriesToUseString(move),
-                    lang.format("log.but_is_unable_to_act", self.getUnableToAct())));
+                    lang.format("log.but_is_unable_to_act", self.getBooleanStat(BooleanStat.UNABLE_TO_ACT))));
             endMove();
             return;
         }
@@ -435,13 +435,13 @@ public class BattleControllerLib {
             Element element = skill.getElement();
             boolean isPlayerTeam = self.getPos() < 4;
             Team team = (isPlayerTeam) ? battle.getPlayerTeam() : battle.getOpponentTeam();
-            int cost = (self.isInfiniteSp() && !skill.isBloom()) ? 0 : skill.getCost();
+            int cost = (self.isBooleanStat(BooleanStat.INFINITE_SP) && !skill.isBloom()) ? 0 : skill.getCost();
 
             // Make sure cost doesn't go below 1 unless the skill has a base 0 SP cost
             int costMod = (cost > 0) ?
                     (int) Math.max(cost * (AffLib.SP_COST.get(self.getAffinity(element)) / 1000d), 1) : 0;
 
-            int change = skill.isBloom() ? costMod : (int) (costMod * self.getMultWithExpSpUse());
+            int change = skill.isBloom() ? costMod : (int) (costMod * self.getMultWithExp(Mult.SP_USE));
             spNew = skill.isBloom() ? team.getBloom() - change : self.getSp() - change;
 
             if (spNew < 0) {
@@ -586,8 +586,8 @@ public class BattleControllerLib {
         }
 
         for (Unit unit : battle.getAllUnits()) {
-            if (!unit.isInfiniteSp()) {
-                unit.setSp(Math.min((int) (unit.getSp() + (100 * unit.getMultWithExpSpGain())), 1000));
+            if (!unit.isBooleanStat(BooleanStat.INFINITE_SP)) {
+                unit.setSp(Math.min((int) (unit.getSp() + (100 * unit.getMultWithExp(Mult.SP_GAIN))), 1000));
             }
 
             for (Passive passive : unit.getPassives()) {
@@ -738,7 +738,8 @@ public class BattleControllerLib {
                 // "\n");
                 /// Stat display
                 String shieldStr = (shield > 0) ? "[CYAN]+" + formatNum(shield) + "[WHITE]" : "";
-                String spStr = (!unit.isInfiniteSp()) ? formatNum(unit.getSp()) + "/" + formatNum(1000) : "∞";
+                String spStr = (!unit.isBooleanStat(BooleanStat.INFINITE_SP)) ?
+                        formatNum(unit.getSp()) + "/" + formatNum(1000) : "∞";
                 StringBuilder text = new StringBuilder(unit.getUnitType().getName() + "\n" + lang.get("hp") + ": " +
                         formatNum(unit.getDisplayHp()) + shieldStr + "/" + formatNum(unit.getDisplayMaxHp()) + "\n" +
                         lang.get("sp") + ": " + spStr); // + "\nStr: " + formatNum(unit.getStrWithStage()) + "/"

@@ -13,7 +13,7 @@ public class Calcs {
 
     public static String changeSp(Unit unit, int change) {
         int spOld = unit.getSp();
-        int spNew = Math.clamp(spOld + (int) (change * unit.getMultWithExpSpGain()), 0, 1000);
+        int spNew = Math.clamp(spOld + (int) (change * unit.getMultWithExp(Mult.SP_GAIN)), 0, 1000);
 
         if (spNew != spOld) {
             unit.setSp(spNew);

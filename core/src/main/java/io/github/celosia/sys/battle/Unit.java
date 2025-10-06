@@ -331,16 +331,8 @@ public class Unit {
         return skillInstances.size();
     }
 
-    public void addSkill(Skill skill) {
-        skillInstances.add(skill.toSkillInstance());
-    }
-
     public void addSkills(Skill... skills) {
         for (Skill skill : skills) skillInstances.add(skill.toSkillInstance());
-    }
-
-    public void removeSkill(Skill skill) {
-        skillInstances.remove(skill.toSkillInstance());
     }
 
     public void removeSkills(Skill... skills) {
@@ -359,21 +351,11 @@ public class Unit {
         return passives.size();
     }
 
-    public void addPassive(Passive passive) {
-        passives.add(passive);
-        for (BuffEffect buffEffect : passive.getBuffEffects()) buffEffect.onGive(this, 1);
-    }
-
     public void addPassives(Passive... passives) {
         for (Passive passive : passives) {
             this.passives.add(passive);
             for (BuffEffect buffEffect : passive.getBuffEffects()) buffEffect.onGive(this, 1);
         }
-    }
-
-    public void removePassive(Passive passive) {
-        passives.remove(passive);
-        for (BuffEffect buffEffect : passive.getBuffEffects()) buffEffect.onRemove(this, 1);
     }
 
     public void removePassives(Passive... passives) {
@@ -407,70 +389,6 @@ public class Unit {
 
     public int getPos() {
         return pos;
-    }
-
-    public void setStageAtk(int stageAtk) {
-        this.stageAtk = stageAtk;
-    }
-
-    public int getStageAtk() {
-        return stageAtk;
-    }
-
-    public void setStageAtkTurns(int stageAtkTurns) {
-        this.stageAtkTurns = stageAtkTurns;
-    }
-
-    public int getStageAtkTurns() {
-        return stageAtkTurns;
-    }
-
-    public void setStageDef(int stageDef) {
-        this.stageDef = stageDef;
-    }
-
-    public int getStageDef() {
-        return stageDef;
-    }
-
-    public void setStageDefTurns(int stageDefTurns) {
-        this.stageDefTurns = stageDefTurns;
-    }
-
-    public int getStageDefTurns() {
-        return stageDefTurns;
-    }
-
-    public void setStageFth(int stageFth) {
-        this.stageFth = stageFth;
-    }
-
-    public int getStageFth() {
-        return stageFth;
-    }
-
-    public void setStageFthTurns(int stageFthTurns) {
-        this.stageFthTurns = stageFthTurns;
-    }
-
-    public int getStageFthTurns() {
-        return stageFthTurns;
-    }
-
-    public void setStageAgi(int stageAgi) {
-        this.stageAgi = stageAgi;
-    }
-
-    public int getStageAgi() {
-        return stageAgi;
-    }
-
-    public void setStageAgiTurns(int stageAgiTurns) {
-        this.stageAgiTurns = stageAgiTurns;
-    }
-
-    public int getStageAgiTurns() {
-        return stageAgiTurns;
     }
 
     public void setStage(StageType stageType, int stage) {
@@ -639,102 +557,6 @@ public class Unit {
         return affinities.getOrDefault(element, 0);
     }
 
-    public void setMultDmgDealt(int multDmgDealt) {
-        this.multDmgDealt = multDmgDealt;
-    }
-
-    public int getMultDmgDealt() {
-        return multDmgDealt;
-    }
-
-    public void setMultDmgTaken(int multDmgTaken) {
-        this.multDmgTaken = multDmgTaken;
-    }
-
-    public int getMultDmgTaken() {
-        return multDmgTaken;
-    }
-
-    public void setMultWeakDmgDealt(int multWeakDmgDealt) {
-        this.multWeakDmgDealt = multWeakDmgDealt;
-    }
-
-    public int getMultWeakDmgDealt() {
-        return multWeakDmgDealt;
-    }
-
-    public void setMultWeakDmgTaken(int multWeakDmgTaken) {
-        this.multWeakDmgTaken = multWeakDmgTaken;
-    }
-
-    public int getMultWeakDmgTaken() {
-        return multWeakDmgTaken;
-    }
-
-    public void setMultFollowUpDmgDealt(int multFollowUpDmgDealt) {
-        this.multFollowUpDmgDealt = multFollowUpDmgDealt;
-    }
-
-    public int getMultFollowUpDmgDealt() {
-        return multFollowUpDmgDealt;
-    }
-
-    public void setMultFollowUpDmgTaken(int multFollowUpDmgTaken) {
-        this.multFollowUpDmgTaken = multFollowUpDmgTaken;
-    }
-
-    public int getMultFollowUpDmgTaken() {
-        return multFollowUpDmgTaken;
-    }
-
-    public void setMultDoTDmgTaken(int multDoTDmgTaken) {
-        this.multDoTDmgTaken = multDoTDmgTaken;
-    }
-
-    public int getMultDoTDmgTaken() {
-        return multDoTDmgTaken;
-    }
-
-    public void setMultPercentageDmgTaken(int multPercentageDmgTaken) {
-        this.multPercentageDmgTaken = multPercentageDmgTaken;
-    }
-
-    public int getMultPercentageDmgTaken() {
-        return multPercentageDmgTaken;
-    }
-
-    public void setMultHealingDealt(int multHealingDealt) {
-        this.multHealingDealt = multHealingDealt;
-    }
-
-    public int getMultHealingDealt() {
-        return multHealingDealt;
-    }
-
-    public void setMultHealingTaken(int multHealingTaken) {
-        this.multHealingTaken = multHealingTaken;
-    }
-
-    public int getMultHealingTaken() {
-        return multHealingTaken;
-    }
-
-    public void setMultSpGain(int multSpGain) {
-        this.multSpGain = multSpGain;
-    }
-
-    public int getMultSpGain() {
-        return multSpGain;
-    }
-
-    public void setMultSpUse(int multSpUse) {
-        this.multSpUse = multSpUse;
-    }
-
-    public int getMultSpUse() {
-        return multSpUse;
-    }
-
     public void setMult(Mult mult, int set) {
         switch (mult) {
             case DMG_DEALT -> multDmgDealt = set;
@@ -813,102 +635,6 @@ public class Unit {
         return multElementDmgTaken;
     }
 
-    public void setExpDmgDealt(int expDmgDealt) {
-        this.expDmgDealt = expDmgDealt;
-    }
-
-    public int getExpDmgDealt() {
-        return expDmgDealt;
-    }
-
-    public void setExpDmgTaken(int expDmgTaken) {
-        this.expDmgTaken = expDmgTaken;
-    }
-
-    public int getExpDmgTaken() {
-        return expDmgTaken;
-    }
-
-    public void setExpWeakDmgDealt(int expWeakDmgDealt) {
-        this.expWeakDmgDealt = expWeakDmgDealt;
-    }
-
-    public int getExpWeakDmgDealt() {
-        return expWeakDmgDealt;
-    }
-
-    public void setExpWeakDmgTaken(int expWeakDmgTaken) {
-        this.expWeakDmgTaken = expWeakDmgTaken;
-    }
-
-    public int getExpWeakDmgTaken() {
-        return expWeakDmgTaken;
-    }
-
-    public void setExpFollowUpDmgDealt(int expFollowUpDmgDealt) {
-        this.expFollowUpDmgDealt = expFollowUpDmgDealt;
-    }
-
-    public int getExpFollowUpDmgDealt() {
-        return expFollowUpDmgDealt;
-    }
-
-    public void setExpFollowUpDmgTaken(int expFollowUpDmgTaken) {
-        this.expFollowUpDmgTaken = expFollowUpDmgTaken;
-    }
-
-    public int getExpFollowUpDmgTaken() {
-        return expFollowUpDmgTaken;
-    }
-
-    public void setExpDoTDmgTaken(int expDoTDmgTaken) {
-        this.expDoTDmgTaken = expDoTDmgTaken;
-    }
-
-    public int getExpDoTDmgTaken() {
-        return expDoTDmgTaken;
-    }
-
-    public void setExpPercentageDmgTaken(int expPercentageDmgTaken) {
-        this.expPercentageDmgTaken = expPercentageDmgTaken;
-    }
-
-    public int getExpPercentageDmgTaken() {
-        return expPercentageDmgTaken;
-    }
-
-    public void setExpHealingDealt(int expHealingDealt) {
-        this.expHealingDealt = expHealingDealt;
-    }
-
-    public int getExpHealingDealt() {
-        return expHealingDealt;
-    }
-
-    public void setExpHealingTaken(int expHealingTaken) {
-        this.expHealingTaken = expHealingTaken;
-    }
-
-    public int getExpHealingTaken() {
-        return expHealingTaken;
-    }
-
-    public void setExpSpGain(int expSpGain) {
-        this.expSpGain = expSpGain;
-    }
-
-    public int getExpSpGain() {
-        return expSpGain;
-    }
-
-    public void setExpSpUse(int expSpUse) {
-        this.expSpUse = expSpUse;
-    }
-
-    public int getExpSpUse() {
-        return expSpUse;
-    }
-
     public void setExp(Mult mult, int set) {
         switch (mult) {
             case DMG_DEALT -> expDmgDealt = set;
@@ -985,54 +711,6 @@ public class Unit {
 
     public Map<Element, Integer> getExpElementDmgTaken() {
         return expElementDmgTaken;
-    }
-
-    public double getMultWithExpDmgDealt() {
-        return Math.max(Math.pow(multDmgDealt / 1000d, expDmgDealt / 100d), 0.1);
-    }
-
-    public double getMultWithExpDmgTaken() {
-        return Math.max(Math.pow(multDmgTaken / 1000d, expDmgTaken / 100d), 0.1);
-    }
-
-    public double getMultWithExpWeakDmgDealt() {
-        return Math.max(Math.pow(multWeakDmgDealt / 1000d, expWeakDmgDealt / 100d), 0.1);
-    }
-
-    public double getMultWithExpWeakDmgTaken() {
-        return Math.max(Math.pow(multWeakDmgTaken / 1000d, expWeakDmgTaken / 100d), 0.1);
-    }
-
-    public double getMultWithExpFollowUpDmgDealt() {
-        return Math.max(Math.pow(multFollowUpDmgDealt / 1000d, expFollowUpDmgDealt / 100d), 0.1);
-    }
-
-    public double getMultWithExpFollowUpDmgTaken() {
-        return Math.max(Math.pow(multFollowUpDmgTaken / 1000d, expFollowUpDmgTaken / 100d), 0.1);
-    }
-
-    public double getMultWithExpDoTDmgTaken() {
-        return Math.max(Math.pow(multDoTDmgTaken / 1000d, expDoTDmgTaken / 100d), 0.1);
-    }
-
-    public double getMultWithExpPercentageDmgTaken() {
-        return Math.max(Math.pow(multPercentageDmgTaken / 1000d, expPercentageDmgTaken / 100d), 0.001);
-    }
-
-    public double getMultWithExpHealingDealt() {
-        return Math.max(Math.pow(multHealingDealt / 1000d, expHealingDealt / 100d), 0.1);
-    }
-
-    public double getMultWithExpHealingTaken() {
-        return Math.max(Math.pow(multHealingTaken / 1000d, expHealingTaken / 100d), 0.1);
-    }
-
-    public double getMultWithExpSpGain() {
-        return Math.max(Math.pow(multSpGain / 1000d, expSpGain / 100d), 0.1);
-    }
-
-    public double getMultWithExpSpUse() {
-        return Math.max(Math.pow(multSpUse / 1000d, expSpUse / 100d), 0.1);
     }
 
     public double getMultWithExp(Mult mult) {
@@ -1119,79 +797,6 @@ public class Unit {
         return extraActions;
     }
 
-    public void setEffectBlock(int effectBlock) {
-        this.effectBlock = effectBlock;
-    }
-
-    public int getEffectBlock() {
-        return effectBlock;
-    }
-
-    public boolean isEffectBlock() {
-        return effectBlock > 0;
-    }
-
-    public void setInfiniteSp(int infiniteSp) {
-        this.infiniteSp = infiniteSp;
-    }
-
-    public int getInfiniteSp() {
-        return infiniteSp;
-    }
-
-    public boolean isInfiniteSp() {
-        return infiniteSp > 0;
-    }
-
-    public void setUnableToAct(int unableToAct) {
-        this.unableToAct = unableToAct;
-    }
-
-    public int getUnableToAct() {
-        return unableToAct;
-    }
-
-    public boolean isUnableToAct() {
-        return unableToAct > 0 && unableToActImmunity <= 0;
-    }
-
-    public void setUnableToActImmunity(int unableToActImmunity) {
-        this.unableToActImmunity = unableToActImmunity;
-    }
-
-    public int getUnableToActImmunity() {
-        return unableToActImmunity;
-    }
-
-    public boolean isUnableToActImmune() {
-        return unableToActImmunity > 0;
-    }
-
-    public void setEquipDisabled(int equipDisabled) {
-        this.equipDisabled = equipDisabled;
-        equipped.apply(this, equipDisabled <= 0);
-    }
-
-    public int getEquipDisabled() {
-        return equipDisabled;
-    }
-
-    public boolean isEquipDisabled() {
-        return equipDisabled > 0 && equipDisabledImmunity <= 0;
-    }
-
-    public void setEquipDisabledImmunity(int equipDisabledImmunity) {
-        this.equipDisabledImmunity = equipDisabledImmunity;
-    }
-
-    public int getEquipDisabledImmunity() {
-        return equipDisabledImmunity;
-    }
-
-    public boolean isEquipDisabledImmune() {
-        return equipDisabledImmunity > 0;
-    }
-
     public void setBooleanStat(BooleanStat stat, int set) {
         switch (stat) {
             case EFFECT_BLOCK -> effectBlock = set;
@@ -1218,131 +823,27 @@ public class Unit {
         return switch (stat) {
             case EFFECT_BLOCK -> effectBlock > 0;
             case INFINITE_SP -> infiniteSp > 0;
-            case UNABLE_TO_ACT -> unableToAct > 0;
+            case UNABLE_TO_ACT -> unableToAct > 0 && unableToActImmunity <= 0;
             case UNABLE_TO_ACT_IMMUNITY -> unableToActImmunity > 0;
-            case EQUIP_DISABLED -> equipDisabled > 0;
+            case EQUIP_DISABLED -> equipDisabled > 0 && equipDisabledImmunity <= 0;
             case EQUIP_DISABLED_IMMUNITY -> equipDisabledImmunity > 0;
         };
-    }
-
-    public void setModDurationBuffDealt(int modDurationBuffDealt) {
-        this.modDurationBuffDealt = modDurationBuffDealt;
-    }
-
-    public int getModDurationBuffDealt() {
-        return modDurationBuffDealt;
-    }
-
-    public void setModDurationBuffTaken(int modDurationBuffTaken) {
-        this.modDurationBuffTaken = modDurationBuffTaken;
-    }
-
-    public int getModDurationBuffTaken() {
-        return modDurationBuffTaken;
-    }
-
-    public void setModDurationDebuffDealt(int modDurationDebuffDealt) {
-        this.modDurationDebuffDealt = modDurationDebuffDealt;
-    }
-
-    public int getModDurationDebuffDealt() {
-        return modDurationDebuffDealt;
-    }
-
-    public void setModDurationDebuffTaken(int modDurationDebuffTaken) {
-        this.modDurationDebuffTaken = modDurationDebuffTaken;
-    }
-
-    public int getModDurationDebuffTaken() {
-        return modDurationDebuffTaken;
-    }
-
-    public void setDurationModBuffTypeDealt(BuffType buffType, int durationModBuffTypeDealt) {
-        if (buffType == BuffType.BUFF) {
-            modDurationBuffDealt = durationModBuffTypeDealt;
-        } else {
-            modDurationDebuffDealt = durationModBuffTypeDealt;
-        }
     }
 
     public int getDurationModBuffTypeDealt(BuffType buffType) {
         return (buffType == BuffType.BUFF) ? modDurationBuffDealt : modDurationDebuffDealt;
     }
 
-    public void setDurationModBuffTypeTaken(BuffType buffType, int durationModBuffTypeTaken) {
-        if (buffType == BuffType.BUFF) {
-            modDurationBuffTaken = durationModBuffTypeTaken;
-        } else {
-            modDurationDebuffTaken = durationModBuffTypeTaken;
-        }
-    }
-
     public int getDurationModBuffTypeTaken(BuffType buffType) {
         return (buffType == BuffType.BUFF) ? modDurationBuffTaken : modDurationDebuffTaken;
-    }
-
-    public void setModStacksBuffDealt(int modStacksBuffDealt) {
-        this.modStacksBuffDealt = modStacksBuffDealt;
-    }
-
-    public int getModStacksBuffDealt() {
-        return modStacksBuffDealt;
-    }
-
-    public void setModStacksBuffTaken(int modStacksBuffTaken) {
-        this.modStacksBuffTaken = modStacksBuffTaken;
-    }
-
-    public int getModStacksBuffTaken() {
-        return modStacksBuffTaken;
-    }
-
-    public void setModStacksDebuffDealt(int modStacksDebuffDealt) {
-        this.modStacksDebuffDealt = modStacksDebuffDealt;
-    }
-
-    public int getModStacksDebuffDealt() {
-        return modStacksDebuffDealt;
-    }
-
-    public void setModStacksDebuffTaken(int modStacksDebuffTaken) {
-        this.modStacksDebuffTaken = modStacksDebuffTaken;
-    }
-
-    public int getModStacksDebuffTaken() {
-        return modStacksDebuffTaken;
-    }
-
-    public void setStacksModBuffTypeDealt(BuffType buffType, int StacksModBuffTypeDealt) {
-        if (buffType == BuffType.BUFF) {
-            modStacksBuffDealt = StacksModBuffTypeDealt;
-        } else {
-            modStacksDebuffDealt = StacksModBuffTypeDealt;
-        }
     }
 
     public int getStacksModBuffTypeDealt(BuffType buffType) {
         return (buffType == BuffType.BUFF) ? modStacksBuffDealt : modStacksDebuffDealt;
     }
 
-    public void setStacksModBuffTypeTaken(BuffType buffType, int StacksModBuffTypeTaken) {
-        if (buffType == BuffType.BUFF) {
-            modStacksBuffTaken = StacksModBuffTypeTaken;
-        } else {
-            modStacksDebuffTaken = StacksModBuffTypeTaken;
-        }
-    }
-
     public int getStacksModBuffTypeTaken(BuffType buffType) {
         return (buffType == BuffType.BUFF) ? modStacksBuffTaken : modStacksDebuffTaken;
-    }
-
-    public void setModRange(int modRange) {
-        this.modRange = modRange;
-    }
-
-    public int getModRange() {
-        return modRange;
     }
 
     public void setMod(Mod mod, int set) {
@@ -1387,10 +888,6 @@ public class Unit {
 
     public int getBuffCount() {
         return buffInstances.size();
-    }
-
-    public void addBuffInstance(BuffInstance buffInstance) {
-        buffInstances.add(buffInstance);
     }
 
     public void addBuffInstances(BuffInstance... buffInstances) {

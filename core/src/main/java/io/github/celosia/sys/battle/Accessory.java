@@ -24,21 +24,9 @@ public class Accessory extends EquippableEntity {
             super(name, desc, icon);
         }
 
-        public Builder skill(Skill skill) {
-            skills = new Skill[] { skill };
-            super.descInclusion(skill);
-            return this;
-        }
-
         public Builder skills(Skill... skills) {
             this.skills = skills;
             super.descInclusions(skills);
-            return this;
-        }
-
-        public Builder passive(Passive passive) {
-            passives = new Passive[] { passive };
-            super.descInclusion(passive);
             return this;
         }
 

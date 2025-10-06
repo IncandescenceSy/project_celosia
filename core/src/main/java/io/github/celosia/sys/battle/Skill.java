@@ -76,12 +76,6 @@ public class Skill extends ComplexDescriptionEntity {
         }
 
         @Override
-        public Builder descInclusion(IconEntity descInclusion) {
-            super.descInclusion(descInclusion);
-            return this;
-        }
-
-        @Override
         public Builder descInclusions(IconEntity... descInclusions) {
             super.descInclusions(descInclusions);
             return this;
@@ -102,18 +96,8 @@ public class Skill extends ComplexDescriptionEntity {
             return this;
         }
 
-        public Builder role(SkillRole skillRole) {
-            skillRoles = new SkillRole[] { skillRole };
-            return this;
-        }
-
         public Builder roles(SkillRole... skillRoles) {
             this.skillRoles = skillRoles;
-            return this;
-        }
-
-        public Builder effect(SkillEffect skillEffect) {
-            skillEffects = new SkillEffect[] { skillEffect };
             return this;
         }
 
