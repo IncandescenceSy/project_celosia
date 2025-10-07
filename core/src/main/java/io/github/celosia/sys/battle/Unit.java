@@ -592,7 +592,7 @@ public class Unit {
     public String getAffinitiesString() {
         StringBuilder str = new StringBuilder();
 
-        for(Element element : ELEMENTS) {
+        for (Element element : ELEMENTS) {
             int aff = affinities.getOrDefault(element, 0);
             str.append(element.getIcon()).append(getColor(aff)).append(getSign(aff)).append(aff).append("[WHITE]  ");
         }

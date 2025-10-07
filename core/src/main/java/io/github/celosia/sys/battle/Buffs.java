@@ -57,17 +57,20 @@ public class Buffs {
     public static final Buff WINDSWEPT = new Buff.Builder(lang.get("buff.windswept"), "buff_desc.2.per_stack",
             "[LIGHT GREEN][+whirlwind]", BuffType.DEBUFF).maxStacks(5).effects(new ChangeMult(Mult.SP_GAIN, -50),
                     new ChangeStat(Stat.RES, -50))
-            .descArgs(C_NEG + "-5% " + C_STAT + lang.get("mult.sp_gain"), C_NEG + "-5% " + C_STAT + lang.get("stat.res"))
+            .descArgs(C_NEG + "-5% " + C_STAT + lang.get("mult.sp_gain"),
+                    C_NEG + "-5% " + C_STAT + lang.get("stat.res"))
             .build();
     public static final Buff TREMOR = new Buff.Builder(lang.get("buff.tremor"), "buff_desc.2.per_stack",
             "[LIGHT brown][+earth-spit]",
             BuffType.DEBUFF).maxStacks(5).effects(new ChangeMult(Mult.SP_GAIN, -50), new ChangeStat(Stat.AMR, -50))
-            .descArgs(C_NEG + "-5% " + C_STAT + lang.get("mult.sp_gain"), C_NEG + "-5% " + C_STAT + lang.get("stat.amr"))
+            .descArgs(C_NEG + "-5% " + C_STAT + lang.get("mult.sp_gain"),
+                    C_NEG + "-5% " + C_STAT + lang.get("stat.amr"))
             .build();
     public static final Buff DAZZLED = new Buff.Builder(lang.get("buff.dazzled"), "buff_desc.2.per_stack",
             "[+star-formation]",
             BuffType.DEBUFF).maxStacks(5).effects(new ChangeMult(Mult.SP_GAIN, -50), new ChangeStat(Stat.FTH, -50))
-            .descArgs(C_NEG + "-5% " + C_STAT + lang.get("mult.sp_gain"), C_NEG + "-5% " + C_STAT + lang.get("stat.fth"))
+            .descArgs(C_NEG + "-5% " + C_STAT + lang.get("mult.sp_gain"),
+                    C_NEG + "-5% " + C_STAT + lang.get("stat.fth"))
             .build();
     public static final Buff CURSE = new Buff.Builder(lang.get("buff.curse"), "buff_desc.2.per_stack.hp",
             "[RED][+dread-skull]",

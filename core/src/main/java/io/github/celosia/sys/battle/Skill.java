@@ -4,7 +4,6 @@ import io.github.celosia.sys.entity.ComplexDescriptionEntity;
 import io.github.celosia.sys.entity.IconEntity;
 import io.github.celosia.sys.util.ArrayLib;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -185,7 +184,7 @@ public class Skill extends ComplexDescriptionEntity {
             inclusions.add(effect.getDescInclusion());
         }
 
-        for(IconEntity inclusion : inclusions) {
+        for (IconEntity inclusion : inclusions) {
             if (inclusion != null) {
                 partialDesc.append("\n[WHITE](").append(inclusion.getNameWithIcon(C_BUFF)).append("[WHITE]: ")
                         .append(inclusion.getDesc().replace("\n", ". ")).append("[WHITE])");

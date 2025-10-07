@@ -89,7 +89,8 @@ public class BattleControllerLib {
 
     // Stat, Equip, Affinity, Mult, Mod, Other
     static int[] infoX = new int[] { 960 + 330, 700, 300, 300, 750, 1125 };
-    static int[] infoY = new int[] { World.HEIGHT - (110 + 60), World.HEIGHT - 245, World.HEIGHT - 245, World.HEIGHT - 385,
+    static int[] infoY = new int[] { World.HEIGHT - (110 + 60), World.HEIGHT - 245, World.HEIGHT - 245,
+            World.HEIGHT - 385,
             World.HEIGHT - 385, World.HEIGHT - 385 };
     static InputPrompt[] infoPrompts = new InputPrompt[] { InputPrompts.I_STAT, InputPrompts.I_AFFINITY,
             InputPrompts.I_EQUIP, InputPrompts.I_MULT, InputPrompts.I_MOD, InputPrompts.I_OTHER };
@@ -1016,7 +1017,7 @@ public class BattleControllerLib {
         hpAmt.setText(formatNum(unit.getDisplayHp()) + "/" + formatNum(unit.getDisplayMaxHp()));
         spAmt.setText(formatNum(unit.getSp()) + "/" + formatNum(1000));
 
-        if(Settings.showInputGuide) {
+        if (Settings.showInputGuide) {
             for (int i = 0; i < infoL.length; i++) {
                 infoL[i].setText(infoPrompts[i].getText());
             }
