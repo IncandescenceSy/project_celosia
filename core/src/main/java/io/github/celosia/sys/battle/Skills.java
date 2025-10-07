@@ -46,68 +46,68 @@ public class Skills {
     public static final Skill ATTACK_UP = new Skill.Builder(lang.get("skill.atk_up"), "todo",
             Elements.VIS,
             Ranges.OTHER_2R_OR_SELF, 50).roles(SkillRole.BUFF_OFFENSIVE)
-            .effects(new ChangeStage.Builder(StageType.ATK, 5, 2).notInstant().build()).build();
+            .effects(new ChangeStage.Builder(StageTypes.ATK, 5, 2).notInstant().build()).build();
     public static final Skill DEFENSE_UP = new Skill.Builder(lang.get("skill.def_up"), "todo",
             Elements.VIS,
             Ranges.OTHER_2R_OR_SELF, 50).roles(SkillRole.BUFF_DEFENSIVE)
-            .effects(new ChangeStage.Builder(StageType.DEF, 5, 2).notInstant().build()).build();
+            .effects(new ChangeStage.Builder(StageTypes.DEF, 5, 2).notInstant().build()).build();
     public static final Skill FAITH_UP = new Skill.Builder(lang.get("skill.fth_up"), "todo",
             Elements.VIS,
             Ranges.OTHER_2R_OR_SELF, 50).roles(SkillRole.BUFF_DEFENSIVE)
-            .effects(new ChangeStage.Builder(StageType.FTH, 5, 2).notInstant().build()).build();
+            .effects(new ChangeStage.Builder(StageTypes.FTH, 5, 2).notInstant().build()).build();
     public static final Skill AGILITY_UP = new Skill.Builder(lang.get("skill.agi_up"), "todo",
             Elements.VIS,
             Ranges.OTHER_2R_OR_SELF, 50).roles(SkillRole.BUFF_OFFENSIVE)
-            .effects(new ChangeStage.Builder(StageType.AGI, 5, 2).notInstant().build()).build();
+            .effects(new ChangeStage.Builder(StageTypes.AGI, 5, 2).notInstant().build()).build();
     public static final Skill ATTACK_DOWN = new Skill.Builder(lang.get("skill.atk_down"),
             "todo",
             Elements.VIS, Ranges.OTHER_2R_OR_SELF, 50).roles(SkillRole.DEBUFF_DEFENSIVE)
-            .effects(new ChangeStage.Builder(StageType.ATK, 5, -2).notInstant().build()).build();
+            .effects(new ChangeStage.Builder(StageTypes.ATK, 5, -2).notInstant().build()).build();
     public static final Skill DEFENSE_DOWN = new Skill.Builder(lang.get("skill.def_down"),
             "todo",
             Elements.VIS, Ranges.OTHER_2R_OR_SELF, 50).roles(SkillRole.DEBUFF_OFFENSIVE)
-            .effects(new ChangeStage.Builder(StageType.DEF, 5, -2).notInstant().build()).build();
+            .effects(new ChangeStage.Builder(StageTypes.DEF, 5, -2).notInstant().build()).build();
     public static final Skill FAITH_DOWN = new Skill.Builder(lang.get("skill.fth_down"),
             "todo",
             Elements.VIS, Ranges.OTHER_2R_OR_SELF, 50).roles(SkillRole.DEBUFF_OFFENSIVE)
-            .effects(new ChangeStage.Builder(StageType.FTH, 5, -2).notInstant().build()).build();
+            .effects(new ChangeStage.Builder(StageTypes.FTH, 5, -2).notInstant().build()).build();
     public static final Skill AGILITY_DOWN = new Skill.Builder(lang.get("skill.agi_down"),
             "todo",
             Elements.VIS, Ranges.OTHER_2R_OR_SELF, 50).roles(SkillRole.DEBUFF_DEFENSIVE)
-            .effects(new ChangeStage.Builder(StageType.AGI, 5, -2).notInstant().build()).build();
+            .effects(new ChangeStage.Builder(StageTypes.AGI, 5, -2).notInstant().build()).build();
 
     public static final Skill ATTACK_UP_GROUP = new Skill.Builder(lang.get("skill.atk_up_group"),
             "todo", Elements.VIS, Ranges.COLUMN_OF_3_1R, 150)
             .roles(SkillRole.BUFF_OFFENSIVE)
-            .effects(new ChangeStage.Builder(StageType.ATK, 5, 2).notInstant().build()).build();
+            .effects(new ChangeStage.Builder(StageTypes.ATK, 5, 2).notInstant().build()).build();
     public static final Skill DEFENSE_UP_GROUP = new Skill.Builder(lang.get("skill.def_up_group"),
             "todo", Elements.VIS, Ranges.COLUMN_OF_3_1R, 150)
             .roles(SkillRole.BUFF_DEFENSIVE)
-            .effects(new ChangeStage.Builder(StageType.DEF, 5, 2).notInstant().build()).build();
+            .effects(new ChangeStage.Builder(StageTypes.DEF, 5, 2).notInstant().build()).build();
     public static final Skill FAITH_UP_GROUP = new Skill.Builder(lang.get("skill.fth_up_group"),
             "todo",
             Elements.VIS, Ranges.COLUMN_OF_3_1R, 150).roles(SkillRole.BUFF_DEFENSIVE)
-            .effects(new ChangeStage.Builder(StageType.FTH, 5, 2).notInstant().build()).build();
+            .effects(new ChangeStage.Builder(StageTypes.FTH, 5, 2).notInstant().build()).build();
     public static final Skill AGILITY_UP_GROUP = new Skill.Builder(lang.get("skill.agi_up_group"),
             "todo", Elements.VIS, Ranges.COLUMN_OF_3_1R, 150)
             .roles(SkillRole.BUFF_OFFENSIVE)
-            .effects(new ChangeStage.Builder(StageType.AGI, 5, 2).notInstant().build()).build();
+            .effects(new ChangeStage.Builder(StageTypes.AGI, 5, 2).notInstant().build()).build();
     public static final Skill ATTACK_DOWN_GROUP = new Skill.Builder(lang.get("skill.atk_down_group"),
             "todo", Elements.VIS, Ranges.COLUMN_OF_3_1R, 150)
             .roles(SkillRole.DEBUFF_DEFENSIVE)
-            .effects(new ChangeStage.Builder(StageType.ATK, 5, -2).notInstant().build()).build();
+            .effects(new ChangeStage.Builder(StageTypes.ATK, 5, -2).notInstant().build()).build();
     public static final Skill DEFENSE_DOWN_GROUP = new Skill.Builder(lang.get("skill.def_down_group"),
             "todo", Elements.VIS, Ranges.COLUMN_OF_3_1R, 150)
             .roles(SkillRole.DEBUFF_OFFENSIVE)
-            .effects(new ChangeStage.Builder(StageType.DEF, 5, -2).notInstant().build()).build();
+            .effects(new ChangeStage.Builder(StageTypes.DEF, 5, -2).notInstant().build()).build();
     public static final Skill FAITH_DOWN_GROUP = new Skill.Builder(lang.get("skill.fth_down_group"),
             "todo", Elements.VIS, Ranges.COLUMN_OF_3_1R, 150)
             .roles(SkillRole.DEBUFF_OFFENSIVE)
-            .effects(new ChangeStage.Builder(StageType.FTH, 5, -2).notInstant().build()).build();
+            .effects(new ChangeStage.Builder(StageTypes.FTH, 5, -2).notInstant().build()).build();
     public static final Skill AGILITY_DOWN_GROUP = new Skill.Builder(lang.get("skill.agi_down_group"),
             "todo", Elements.VIS, Ranges.COLUMN_OF_3_1R, 150)
             .roles(SkillRole.DEBUFF_DEFENSIVE)
-            .effects(new ChangeStage.Builder(StageType.AGI, 5, -2).notInstant().build()).build();
+            .effects(new ChangeStage.Builder(StageTypes.AGI, 5, -2).notInstant().build()).build();
 
     // Heals
     public static final Skill HEAL = new Skill.Builder(lang.get("skill.heal"), "todo",
@@ -124,12 +124,12 @@ public class Skills {
     // Shields
     public static final Skill SHIELD = new Skill.Builder(lang.get("skill.shield"), "todo",
             Elements.VIS,
-            Ranges.OTHER_1R_OR_SELF, 140).roles(SkillRole.SHIELD).effects(new Heal.Builder(60).shieldTurns(5).build())
+            Ranges.OTHER_1R_OR_SELF, 140).roles(SkillRole.SHIELD).effects(new GiveBuff.Builder(Buffs.SHIELD, 5).build())
             .build();
     public static final Skill SHIELD_GROUP = new Skill.Builder(lang.get("skill.shield_group"),
             "todo",
             Elements.VIS, Ranges.COLUMN_OF_3_1R, 450).roles(SkillRole.SHIELD)
-            .effects(new Heal.Builder(60).shieldTurns(5).build()).build();
+            .effects(new GiveBuff.Builder(Buffs.SHIELD, 5).build()).build();
 
     /// Ignis
     // Str
@@ -139,7 +139,6 @@ public class Skills {
             .effects(new Damage.Builder(SkillType.MAG, Elements.IGNIS, 50).build(),
                     new GiveBuff.Builder(Buffs.BURN, 3).build())
             .descArgs(C_NEG + "+1 ", Buffs.BURN.getNameWithIcon(C_BUFF), "3")
-            .descInclusions(Buffs.BURN)
             .build();
     public static final Skill HEAT_WAVE = new Skill.Builder(lang.get("skill.heat_wave"),
             "skill_desc.buff",
@@ -147,7 +146,6 @@ public class Skills {
             .effects(new Damage.Builder(SkillType.MAG, Elements.IGNIS, 60).build(),
                     new GiveBuff.Builder(Buffs.BURN, 2).build())
             .descArgs(C_NEG + "+1 ", Buffs.BURN.getNameWithIcon(C_BUFF), "2")
-            .descInclusions(Buffs.BURN)
             .build();
 
     /// Glacies
@@ -158,7 +156,6 @@ public class Skills {
             .effects(new Damage.Builder(SkillType.MAG, Elements.GLACIES, 80).build(),
                     new GiveBuff.Builder(Buffs.FROSTBITE, 3).build())
             .descArgs(C_NEG + "+1 ", Buffs.FROSTBITE.getNameWithIcon(C_BUFF), "3")
-            .descInclusions(Buffs.FROSTBITE)
             .build();
 
     /// Fulgur
@@ -170,7 +167,6 @@ public class Skills {
             .effects(new Damage.Builder(SkillType.MAG, Elements.FULGUR, 100).build(),
                     new GiveBuff.Builder(Buffs.SHOCK, 3).build())
             .descArgs(C_NEG + "+1 ", Buffs.SHOCK.getNameWithIcon(C_BUFF), "3")
-            .descInclusions(Buffs.SHOCK)
             .build();
 
     /// Ventus
@@ -203,7 +199,6 @@ public class Skills {
                     new Damage.Builder(SkillType.MAG, Elements.MALUM, 50).build(),
                     new GiveBuff.Builder(Buffs.CURSE, 2).build())
             .descArgs("2", C_NEG + "+1 ", Buffs.CURSE.getNameWithIcon(C_BUFF), "2")
-            .descInclusions(Buffs.CURSE)
             .build();
 
     ////////// Unique skills
@@ -226,9 +221,8 @@ public class Skills {
             .effects(new Damage.Builder(SkillType.STR, Elements.GLACIES, 260).build(),
                     new GiveBuff.Builder(Buffs.FROSTBITE, 3).stacks(3).build(),
                     new GiveBuff.Builder(Buffs.FROSTBOUND, 3).build())
-            .descArgs(C_NEG + "+1 ", Buffs.FROSTBITE.getNameWithIcon(C_BUFF), "",
+            .descArgs(C_NEG + "+3 ", Buffs.FROSTBITE.getNameWithIcon(C_BUFF), "",
                     Buffs.FROSTBOUND.getNameWithIcon(C_BUFF), "3")
-            .descInclusions(Buffs.FROSTBITE, Buffs.FROSTBOUND)
             .build();
 
     /// Fulgur

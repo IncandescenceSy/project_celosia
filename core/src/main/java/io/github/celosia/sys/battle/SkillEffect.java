@@ -1,5 +1,7 @@
 package io.github.celosia.sys.battle;
 
+import io.github.celosia.sys.entity.IconEntity;
+
 // Interface for applying skill effects
 public interface SkillEffect {
 
@@ -13,5 +15,9 @@ public interface SkillEffect {
 
     default int getPow() {
         return 0;
+    }
+
+    default IconEntity getDescInclusion() {
+        return null;
     }
 }

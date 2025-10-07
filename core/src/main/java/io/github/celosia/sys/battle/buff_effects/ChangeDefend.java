@@ -1,6 +1,5 @@
 package io.github.celosia.sys.battle.buff_effects;
 
-import io.github.celosia.sys.battle.BooleanStat;
 import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Unit;
 
@@ -11,6 +10,7 @@ import static io.github.celosia.sys.util.TextLib.C_SHIELD;
 import static io.github.celosia.sys.util.TextLib.formatName;
 import static io.github.celosia.sys.util.TextLib.formatNum;
 
+// Multiple Buffs that contain this effect will interfere with eachother
 public class ChangeDefend implements BuffEffect {
 
     // Defend to add in tenths of a % of max HP (1000 = +100%)
@@ -38,11 +38,6 @@ public class ChangeDefend implements BuffEffect {
                 C_SHIELD + formatNum((shieldDisp + defendOldDisp)), C_SHIELD + formatNum((shieldDisp + defendNewDisp)),
                 C_HP + formatNum(self.getDisplayMaxHp()),
                 C_SHIELD + "+" + formatNum(((shieldDisp + defendNewDisp) - (shieldDisp + defendOldDisp)))));
-
-        if (!self.isBooleanStat(BooleanStat.EFFECT_BLOCK) && self.getShield() == 0 && defendOld == 0) {
-            appendToLog(lang.format("log.change_boolean_stat.effect_block",
-                    formatName(self.getUnitType().getName(), self.getPos(), false), 1));
-        }
     }
 
     @Override
@@ -58,10 +53,6 @@ public class ChangeDefend implements BuffEffect {
         } else {
             appendToLog(lang.format("log.lose_shield", formatName(self.getUnitType().getName(), self.getPos(), false),
                     C_SHIELD + formatNum(defendOldDisp)));
-        }
-        if (!self.isBooleanStat(BooleanStat.EFFECT_BLOCK) && self.getShield() == 0) {
-            appendToLog(lang.format("log.change_boolean_stat.effect_block",
-                    formatName(self.getUnitType().getName(), self.getPos(), false), 0));
         }
     }
 }

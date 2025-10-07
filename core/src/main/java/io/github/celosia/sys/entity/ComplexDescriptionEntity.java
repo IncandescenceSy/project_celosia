@@ -64,12 +64,12 @@ public abstract class ComplexDescriptionEntity extends IconEntity {
         }
     }
 
+    // Force inheritors to reimplement
     @Override
     public abstract String getDesc();
 
-    // todo address warning
     public String getPartialDesc() {
-        StringBuilder partialDesc = new StringBuilder(lang.format(super.getDesc(), descArgs));
+        StringBuilder partialDesc = new StringBuilder(lang.format(super.getDesc(), (Object[]) descArgs));
 
         if (descInclusions.length > 0) {
             partialDesc.append("\n");

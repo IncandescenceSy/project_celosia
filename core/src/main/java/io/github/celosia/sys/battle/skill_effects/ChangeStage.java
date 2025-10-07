@@ -4,6 +4,7 @@ import io.github.celosia.sys.battle.ResultType;
 import io.github.celosia.sys.battle.SkillEffect;
 import io.github.celosia.sys.battle.StageType;
 import io.github.celosia.sys.battle.Unit;
+import io.github.celosia.sys.entity.IconEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,5 +130,10 @@ public class ChangeStage implements SkillEffect {
     @Override
     public boolean isInstant() {
         return isInstant;
+    }
+
+    @Override
+    public IconEntity getDescInclusion() {
+        return stageType;
     }
 }

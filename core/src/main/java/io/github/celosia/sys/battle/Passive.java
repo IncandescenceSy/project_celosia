@@ -3,13 +3,16 @@ package io.github.celosia.sys.battle;
 import io.github.celosia.sys.entity.ComplexDescriptionEntity;
 import io.github.celosia.sys.entity.IconEntity;
 
+import static io.github.celosia.Main.PASSIVES;
+
 public class Passive extends ComplexDescriptionEntity {
 
     private final BuffEffect[] buffEffects;
 
-    Passive(Builder builder) {
+    public Passive(Builder builder) {
         super(builder);
         this.buffEffects = builder.buffEffects;
+        PASSIVES.add(this);
     }
 
     public static class Builder extends ComplexDescriptionEntity.Builder {

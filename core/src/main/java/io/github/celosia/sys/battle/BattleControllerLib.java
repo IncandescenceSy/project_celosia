@@ -12,12 +12,13 @@ import com.github.tommyettinger.textra.TextraLabel;
 import io.github.celosia.sys.Debug;
 import io.github.celosia.sys.World;
 import io.github.celosia.sys.input.InputLib;
+import io.github.celosia.sys.input.InputPrompt;
+import io.github.celosia.sys.input.InputPrompts;
 import io.github.celosia.sys.input.Keybind;
 import io.github.celosia.sys.menu.MenuLib;
 import io.github.celosia.sys.render.CoolRects;
 import io.github.celosia.sys.render.Fonts;
 import io.github.celosia.sys.render.Path;
-import io.github.celosia.sys.render.Paths;
 import io.github.celosia.sys.save.Settings;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.github.celosia.Main.MENU_LIST;
+import static io.github.celosia.Main.STAGE_TYPES;
 import static io.github.celosia.Main.coolRects;
 import static io.github.celosia.Main.paths;
 import static io.github.celosia.Main.stage2;
@@ -39,21 +41,24 @@ import static io.github.celosia.sys.menu.MenuLib.checkMovement1D;
 import static io.github.celosia.sys.render.TriLib.createPopup;
 import static io.github.celosia.sys.save.Lang.lang;
 import static io.github.celosia.sys.util.BoolLib.booleanToInt;
+import static io.github.celosia.sys.util.BoolLib.booleanToSign;
 import static io.github.celosia.sys.util.TextLib.C_ALLY;
 import static io.github.celosia.sys.util.TextLib.C_ALLY_L;
 import static io.github.celosia.sys.util.TextLib.C_BLOOM;
 import static io.github.celosia.sys.util.TextLib.C_BUFF;
 import static io.github.celosia.sys.util.TextLib.C_CD;
+import static io.github.celosia.sys.util.TextLib.C_NUM;
 import static io.github.celosia.sys.util.TextLib.C_OPP;
 import static io.github.celosia.sys.util.TextLib.C_OPP_L;
 import static io.github.celosia.sys.util.TextLib.C_PASSIVE;
 import static io.github.celosia.sys.util.TextLib.C_SKILL;
 import static io.github.celosia.sys.util.TextLib.C_STAT;
 import static io.github.celosia.sys.util.TextLib.C_TURN;
-import static io.github.celosia.sys.util.TextLib.I_SHIELD;
 import static io.github.celosia.sys.util.TextLib.formatName;
 import static io.github.celosia.sys.util.TextLib.formatNum;
 import static io.github.celosia.sys.util.TextLib.getNamesAsMultiline;
+import static io.github.celosia.sys.util.TextLib.getPercentageColor;
+import static io.github.celosia.sys.util.TextLib.getStatColor;
 import static io.github.celosia.sys.util.TextLib.getTriesToUseString;
 
 public class BattleControllerLib {
@@ -75,26 +80,32 @@ public class BattleControllerLib {
     static TextraLabel pageList = new TextraLabel(
             lang.get("skills") + "   " + lang.get("passives") + "   " + lang.get("buffs") + "   " + lang.get("stats"),
             Fonts.FontType.KORURI.get(30));
+    static Array<Vector2> pointsPageDivL = new Array<>(false, 2);
+    static Array<Vector2> pointsPageDivR = new Array<>(false, 2);
     static TextraLabel pageItemList = new TextraLabel("", Fonts.FontType.KORURI.get(20));
+    static TextraLabel pageItemRightList = new TextraLabel("", Fonts.FontType.KORURI.get(20));
+    static TextraLabel descHeader = new TextraLabel("", Fonts.FontType.KORURI.get(30));
     static TextraLabel desc = new TextraLabel("", Fonts.FontType.KORURI.get(20));
 
     // Stat, Equip, Affinity, Mult, Mod, Other
-    static int[] infoX = new int[] { 1436, 670, 1300, 300, 750, 1125 };
-    static int[] infoY = new int[] { World.HEIGHT - 194, World.HEIGHT - 247, World.HEIGHT - 250, World.HEIGHT - 385,
+    static int[] infoX = new int[] { 960 + 330, 700, 300, 300, 750, 1125 };
+    static int[] infoY = new int[] { World.HEIGHT - (110 + 60), World.HEIGHT - 245, World.HEIGHT - 245, World.HEIGHT - 385,
             World.HEIGHT - 385, World.HEIGHT - 385 };
+    static InputPrompt[] infoPrompts = new InputPrompt[] { InputPrompts.I_STAT, InputPrompts.I_AFFINITY,
+            InputPrompts.I_EQUIP, InputPrompts.I_MULT, InputPrompts.I_MOD, InputPrompts.I_OTHER };
     static TextraLabel[] infoL = new TextraLabel[6];
 
-    static TextraLabel equip = new TextraLabel("", Fonts.FontType.KORURI.get(30));
-    static TextraLabel affinities = new TextraLabel("", Fonts.FontType.KORURI.get(30));
+    static TextraLabel equip = new TextraLabel("", Fonts.FontType.KORURI.get(20));
+    static TextraLabel affinities = new TextraLabel("", Fonts.FontType.KORURI.get(20));
 
     static String[] statNames = new String[] { lang.get("stat.str"), lang.get("stat.mag"), lang.get("stat.fth"),
             lang.get("stat.amr"), lang.get("stat.res"), lang.get("stat.agi") };
     static TextraLabel[] statsBasicL = new TextraLabel[6];
     static TextraLabel[] statsBasicNumL = new TextraLabel[6];
 
-    static TextraLabel hp = new TextraLabel(lang.get("hp"), Fonts.FontType.KORURI.get(30));
+    static TextraLabel hp = new TextraLabel(lang.get("hp"), Fonts.FontType.KORURI.get(20));
     static TextraLabel hpAmt = new TextraLabel("", Fonts.FontType.KORURI.get(20));
-    static TextraLabel sp = new TextraLabel(lang.get("sp"), Fonts.FontType.KORURI.get(30));
+    static TextraLabel sp = new TextraLabel(lang.get("sp"), Fonts.FontType.KORURI.get(20));
     static TextraLabel spAmt = new TextraLabel("", Fonts.FontType.KORURI.get(20));
 
     static String[] statCategoryHeaderNames = new String[] { lang.get("info.mult"), lang.get("info.mod"),
@@ -107,11 +118,14 @@ public class BattleControllerLib {
     static String otherNames = getNamesAsMultiline(BooleanStat.values(), BooleanStat::getName) + "\n" +
             lang.get("extra_actions");
     static String[] statCategoryNames = new String[] { multNames, modNames, otherNames };
+    static Array<Vector2> pointsMult = new Array<>(false, 2);
+    static Array<Vector2> pointsMod = new Array<>(false, 2);
+    static Array<Vector2> pointsOther = new Array<>(false, 2);
     static TextraLabel[] statsPageL = new TextraLabel[3];
     static TextraLabel[] statsPageNumL = new TextraLabel[3];
 
     // temp
-    static Skill[] skills = new Skill[] { Skills.FIREBALL, Skills.NOTHING, Skills.RASETU_FEAST,
+    static Skill[] skills = new Skill[] { Skills.FIREBALL, Skills.SHIELD, Skills.RASETU_FEAST,
             Skills.AGILITY_UP_GROUP, Skills.ICE_AGE, Skills.DEFEND };
     static Skill[] skills2 = new Skill[] { Skills.ICE_BEAM, Skills.DEMON_SCYTHE, Skills.ATTACK_UP_GROUP,
             Skills.RASETU_FEAST, Skills.ICE_AGE, Skills.DEFEND };
@@ -126,11 +140,8 @@ public class BattleControllerLib {
     // Amount of lines scrolled upwards
     static int logScroll = 0;
 
-    // static List<Move> moves = new ArrayList<>(false, 16);
-    // Copy for queue reasons
-    // static List<Move> moves2 = new ArrayList<>(false, 16);
     static List<Move> moves = new ArrayList<>();
-    // Copy for queue reasons
+    // Copy for queue reasons ...? todo
     static List<Move> moves2 = new ArrayList<>();
 
     // How many extra actions have been used for the currently acting Unit
@@ -157,7 +168,7 @@ public class BattleControllerLib {
     static int indexPage = 0;
     static int indexPageList = 0;
 
-    // Pages
+    // Inspect pages
     static final int SKILLS = 0;
     static final int PASSIVES = 1;
     static final int BUFFS = 2;
@@ -168,24 +179,24 @@ public class BattleControllerLib {
 
     static void handleSetup() {
         // Setup teams (temp)
-        Map<Element, Integer> affinities = new HashMap<>();
+        Map<Element, Integer> affinitiesTemp = new HashMap<>();
         Stats johnyStats = new Stats(100, 100, 100, 100, 100, 100, 100);
-        UnitType johny = new UnitType("Johny", "", johnyStats, new HashMap<>(affinities),
+        UnitType johny = new UnitType("Johny", "", johnyStats, new HashMap<>(affinitiesTemp),
                 Passives.DEBUFF_DURATION_UP, Passives.RESTORATION, Passives.PERCENTAGE_DMG_TAKEN_DOWN_50);
         Stats jerryStats = new Stats(100, 100, 100, 100, 100, 100, 115);
-        UnitType jerry = new UnitType("Jerry", "", jerryStats, new HashMap<>(affinities),
+        UnitType jerry = new UnitType("Jerry", "", jerryStats, new HashMap<>(affinitiesTemp),
                 Passives.DEBUFF_DURATION_UP);
-        UnitType james = new UnitType("James", "", jerryStats, new HashMap<>(affinities),
+        UnitType james = new UnitType("James", "", jerryStats, new HashMap<>(affinitiesTemp),
                 Passives.DEBUFF_DURATION_UP, Passives.ETERNAL_WELLSPRING);
-        UnitType jacob = new UnitType("Jacob", "", johnyStats, new HashMap<>(affinities),
+        UnitType jacob = new UnitType("Jacob", "", johnyStats, new HashMap<>(affinitiesTemp),
                 Passives.DEBUFF_DURATION_UP);
-        UnitType julia = new UnitType("Julia", "", johnyStats, new HashMap<>(affinities),
+        UnitType julia = new UnitType("Julia", "", johnyStats, new HashMap<>(affinitiesTemp),
                 Passives.DEBUFF_DURATION_UP);
-        UnitType jude = new UnitType("Jude", "", jerryStats, new HashMap<>(affinities),
+        UnitType jude = new UnitType("Jude", "", jerryStats, new HashMap<>(affinitiesTemp),
                 Passives.DEBUFF_DURATION_UP, Passives.PERCENTAGE_DMG_TAKEN_DOWN_999);
-        UnitType josephine = new UnitType("Josephine", "", jerryStats, new HashMap<>(affinities),
+        UnitType josephine = new UnitType("Josephine", "", jerryStats, new HashMap<>(affinitiesTemp),
                 Passives.DEBUFF_DURATION_UP);
-        UnitType julian = new UnitType("Julian", "", johnyStats, new HashMap<>(affinities),
+        UnitType julian = new UnitType("Julian", "", johnyStats, new HashMap<>(affinitiesTemp),
                 Passives.DEBUFF_DURATION_UP);
 
         Team player = new Team(new Unit[] { new Unit(johny, 19, skills, Accessories.FIREBORN_RING, 0),
@@ -250,13 +261,16 @@ public class BattleControllerLib {
             stage2.addActor(moves);
         }
 
-        hp.setPosition(330, World.HEIGHT - 110);
+        equip.setPosition(300, World.HEIGHT - 215);
+        affinities.setPosition(700, World.HEIGHT - 215);
+
+        hp.setPosition(300, World.HEIGHT - 110);
         hpAmt.setAlignment(Align.right);
         hpAmt.setPosition(600, World.HEIGHT - 110);
 
-        sp.setPosition(330, World.HEIGHT - 150);
+        sp.setPosition(300, World.HEIGHT - 140);
         spAmt.setAlignment(Align.right);
-        spAmt.setPosition(600, World.HEIGHT - 150);
+        spAmt.setPosition(600, World.HEIGHT - (110 + 30));
 
         // Inspect info and basic stats
         for (int i = 0; i < 6; i++) {
@@ -264,13 +278,13 @@ public class BattleControllerLib {
             info.setPosition(infoX[i], infoY[i]);
             infoL[i] = info;
 
-            TextraLabel stat = new TextraLabel(statNames[i], Fonts.FontType.KORURI.get(30));
-            stat.setPosition((i > 2) ? 960 : 630, World.HEIGHT - (110 + (40 * (i % 3))));
+            TextraLabel stat = new TextraLabel(statNames[i], Fonts.FontType.KORURI.get(20));
+            stat.setPosition((i > 2) ? 960 : 630, World.HEIGHT - (110 + (30 * (i % 3))));
             stat.setAlignment(Align.left);
             statsBasicL[i] = stat;
 
-            TextraLabel statNum = new TextraLabel("", Fonts.FontType.KORURI.get(30));
-            statNum.setPosition((i > 2) ? 1060 : 730, World.HEIGHT - (110 + (40 * (i % 3))));
+            TextraLabel statNum = new TextraLabel("", Fonts.FontType.KORURI.get(20));
+            statNum.setPosition((i > 2) ? 1260 : 930, World.HEIGHT - (110 + (30 * (i % 3))));
             statNum.setAlignment(Align.right);
             statsBasicNumL[i] = statNum;
         }
@@ -283,25 +297,39 @@ public class BattleControllerLib {
 
             TextraLabel stat = new TextraLabel(statCategoryNames[i], Fonts.FontType.KORURI.get(20));
             stat.setAlignment(Align.topLeft);
-            stat.setPosition(50 + (i * 450), World.HEIGHT - 400);
+            stat.setPosition(50 + (i * 450), World.HEIGHT - 415);
             statsPageL[i] = stat;
 
             TextraLabel statNum = new TextraLabel("", Fonts.FontType.KORURI.get(20));
             statNum.setAlignment(Align.topRight);
-            statNum.setPosition(250 + (i * 450), World.HEIGHT - 400);
+            statNum.setPosition(250 + (i * 450), World.HEIGHT - 415);
             statsPageNumL[i] = statNum;
         }
+
+        int y = World.HEIGHT - 400;
+        pointsMult.addAll(new Vector2(40, y), new Vector2(440, y));
+        pointsMod.addAll(new Vector2(40 + 450, y), new Vector2(440 + 450, y));
+        pointsOther.addAll(new Vector2(40 + 900, y), new Vector2(440 + 900, y));
 
         unitList.setPosition(320, World.HEIGHT - 50);
 
         pageList.setAlignment(Align.center);
         pageList.setPosition(640, World.HEIGHT - 320);
 
+        y = World.HEIGHT - 315;
+        pointsPageDivL.addAll(new Vector2(30, y), new Vector2(400, y));
+        pointsPageDivR.addAll(new Vector2(870, y), new Vector2(1450, y));
+
         pageItemList.setAlignment(Align.topLeft);
         pageItemList.setPosition(50, World.HEIGHT - 370);
 
+        pageItemRightList.setAlignment(Align.topRight);
+        pageItemRightList.setPosition(475, World.HEIGHT - 370);
+
+        descHeader.setPosition(550, World.HEIGHT - 390);
+
         desc.setAlignment(Align.topLeft);
-        desc.setPosition(550, World.HEIGHT - 370);
+        desc.setPosition(550, World.HEIGHT - 420);
 
         // todo support arbitrary size
         for (int i = 0; i < 6; i++) {
@@ -757,7 +785,7 @@ public class BattleControllerLib {
                 text = new StringBuilder();
 
                 // List stage changes
-                for (StageType stageType : StageType.values()) {
+                for (StageType stageType : STAGE_TYPES) {
                     int stage = unit.getStage(stageType);
                     if (stage != 0) {
                         if (buffCount > 0 && buffCount % 4 == 0) text.append("\n");
@@ -769,16 +797,6 @@ public class BattleControllerLib {
                     }
                 }
 
-                // Shield
-                shield = unit.getDisplayShield();
-                if (shield > 0) {
-                    if (buffCount > 0 && buffCount % 4 == 0) text.append("\n");
-                    buffCount++;
-
-                    text.append(I_SHIELD).append("[WHITE]").append(formatNum(shield)).append("(")
-                            .append(unit.getShieldTurns()).append(") ");
-                }
-
                 // List buffs
                 List<BuffInstance> buffInstances = unit.getBuffInstances();
                 if (!buffInstances.isEmpty()) {
@@ -787,13 +805,17 @@ public class BattleControllerLib {
                         buffCount++;
 
                         if (buffInstance.getBuff() == Buffs.DEFEND) {
-                            text.append(buffInstance.getBuff().getIcon()).append("[WHITE]")
+                            text.append(buffInstance.getBuff().getIcon()).append("[WHITE]").append("x")
                                     .append(formatNum(unit.getDisplayDefend())).append("(")
+                                    .append(buffInstance.getTurns()).append(") ");
+                        } else if (buffInstance.getBuff() == Buffs.SHIELD) {
+                            text.append(buffInstance.getBuff().getIcon()).append("[WHITE]").append("x")
+                                    .append(formatNum(unit.getDisplayShield())).append("(")
                                     .append(buffInstance.getTurns()).append(") ");
                         } else {
                             text.append(buffInstance.getBuff().getIcon()).append("[WHITE]");
                             if (buffInstance.getBuff().getMaxStacks() > 1) {
-                                text.append(buffInstance.getStacks());
+                                text.append("x").append(buffInstance.getStacks());
                             }
                             // 1000+ turns = infinite
                             text.append("(");
@@ -842,7 +864,7 @@ public class BattleControllerLib {
         battleLog.setText(formatLog());
 
         if (MENU_LIST.getLast() == MenuLib.MenuType.LOG) {
-            Path scrollbar = paths[Paths.SCROLLBAR.ordinal()];
+            Path scrollbar = paths[0];
 
             // Portion of the log currently displayed
             float ratio = Math.min(48f / logText.size(), 1);
@@ -887,7 +909,7 @@ public class BattleControllerLib {
         battleLog.setPosition(20, World.HEIGHT);
         MENU_LIST.add(MenuLib.MenuType.LOG);
         coolRects[CoolRects.COVER_LEFT.ordinal()].setDir(1).setPrio(3);
-        paths[Paths.SCROLLBAR.ordinal()].setDir(1);
+        paths[0].setDir(1).setThickness(10).setPrio(3);
         updateLog();
     }
 
@@ -898,7 +920,7 @@ public class BattleControllerLib {
             MENU_LIST.removeLast();
             updateLog();
             coolRects[CoolRects.COVER_LEFT.ordinal()].setDir(-1);
-            paths[Paths.SCROLLBAR.ordinal()].setDir(-1);
+            paths[0].setDir(-1);
         }
 
         int logScrollNew = MenuLib.checkLogScroll(logScroll, logText.size(),
@@ -933,7 +955,7 @@ public class BattleControllerLib {
 
         MenuLib.handleOptColor(statsL, indexTarget);
 
-        if (InputLib.checkInput(Keybind.CONFIRM)) {
+        if (InputLib.checkInput(Keybind.CONFIRM, Keybind.MAP)) {
             createInspect();
         }
     }
@@ -941,7 +963,16 @@ public class BattleControllerLib {
     static void createInspect() {
         MENU_LIST.removeLast();
         MENU_LIST.add(MenuLib.MenuType.INSPECT);
+
         coolRects[CoolRects.COVER_LEFT.ordinal()].setDir(1).setPrio(4);
+        coolRects[CoolRects.CURSOR_1.ordinal()].setDir(1).setPrio(4).setLR(45, 475);
+        coolRects[CoolRects.CURSOR_2.ordinal()].setPrio(4).setLR(45, 475);
+
+        paths[0].setDir(1).setPoints(pointsPageDivL).setThickness(5).setPrio(4);
+        paths[1].setDir(1).setPoints(pointsPageDivR).setThickness(5).setPrio(4);
+        paths[2].setDir(1).setPoints(pointsMult).setThickness(5).setPrio(4);
+        paths[3].setDir(1).setPoints(pointsMod).setThickness(5).setPrio(4);
+        paths[4].setDir(1).setPoints(pointsOther).setThickness(5).setPrio(4);
 
         List<Unit> unitsAll = battle.getAllUnits();
         StringBuilder unitNames = new StringBuilder();
@@ -951,6 +982,8 @@ public class BattleControllerLib {
 
         stage4.addActor(pageList);
         stage4.addActor(pageItemList);
+        stage4.addActor(pageItemRightList);
+        stage4.addActor(descHeader);
         stage4.addActor(desc);
         for (TextraLabel label : infoL) stage4.addActor(label);
         stage4.addActor(equip);
@@ -975,9 +1008,33 @@ public class BattleControllerLib {
         indexTarget = checkMovement1D(indexTarget, 8, Keybind.PAGE_L2, Keybind.PAGE_R2);
         Unit unit = battle.getUnitAtPos(indexTarget);
 
+        equip.setText(unit.getEquipped().getNameWithIcon());
+
+        affinities.setText(unit.getAffinitiesString());
+
+        // todo bars
+        hpAmt.setText(formatNum(unit.getDisplayHp()) + "/" + formatNum(unit.getDisplayMaxHp()));
+        spAmt.setText(formatNum(unit.getSp()) + "/" + formatNum(1000));
+
+        if(Settings.showInputGuide) {
+            for (int i = 0; i < infoL.length; i++) {
+                infoL[i].setText(infoPrompts[i].getText());
+            }
+        }
+
+        Stat[] stats = Stat.values();
+        for (int i = 0; i < statsBasicNumL.length; i++) {
+            long statCur = unit.getStatWithStage(stats[i]);
+            long statDefault = unit.getStatsDefault().getStat(stats[i]);
+            double statPerc = ((double) statCur / statDefault) * 100;
+            statsBasicNumL[i].setText(getStatColor(statCur, statDefault) + formatNum(statCur) + "[WHITE]/" + C_NUM +
+                    formatNum(statDefault) + " [WHITE](" + getPercentageColor(statPerc) + formatNum(statPerc) +
+                    "%[WHITE])");
+        }
+
         indexPage = checkMovement1D(indexPage, 4, Keybind.LEFT, Keybind.RIGHT);
 
-        if (InputLib.checkInput(Keybind.CONFIRM)) { // todo
+        if (InputLib.checkInput(Keybind.CONFIRM)) {
             createPopup(unit.getEquipped().getNameWithIcon(), unit.getEquipped().getDesc());
         } else if (InputLib.checkInput(Keybind.MENU)) {
             createPopup(lang.get("info.stat"), lang.get("info.stat.desc"));
@@ -987,42 +1044,83 @@ public class BattleControllerLib {
 
         switch (indexPage) {
             case SKILLS:
-                setStatVisibility(false);
+                int skillCount = unit.getSkillCount();
+                handleInspectPage(false, skillCount);
 
-                indexPageList = checkMovement1D(indexPageList, unit.getSkillCount());
+                List<SkillInstance> skillInstances = unit.getSkillInstances();
 
-                pageItemList.setText(getNamesAsMultiline(unit.getSkillInstances(),
+                pageItemList.setText(getNamesAsMultiline(skillInstances,
                         skillInstance -> skillInstance.getSkill().getNameWithIcon()));
 
-                if (indexPageList != -1) desc.setText(unit.getSkill(indexPageList).getDesc());
+                pageItemRightList.setText(getNamesAsMultiline(skillInstances,
+                        skillInstance -> skillInstance.getSkill().getCostFormatted()));
+
+                if (skillCount > 0) {
+                    indexPageList = checkMovement1D(indexPageList, skillCount);
+
+                    if (indexPageList < skillCount) {
+                        Skill skill = unit.getSkill(indexPageList);
+                        descHeader.setText(skill.getNameWithIcon());
+                        desc.setText(skill.getDesc());
+                    }
+                }
 
                 break;
 
             case PASSIVES:
-                setStatVisibility(false);
-
-                indexPageList = checkMovement1D(indexPageList, unit.getPassiveCount());
+                int passiveCount = unit.getPassiveCount();
+                handleInspectPage(false, passiveCount);
 
                 pageItemList.setText(getNamesAsMultiline(unit.getPassives(), Passive::getNameWithIcon));
+                pageItemRightList.setText("");
 
-                if (indexPageList != -1) desc.setText(unit.getPassive(indexPageList).getDesc());
+                if (passiveCount > 0) {
+                    indexPageList = checkMovement1D(indexPageList, passiveCount);
+
+                    if (indexPageList < passiveCount) {
+                        Passive passive = unit.getPassive(indexPageList);
+                        descHeader.setText(passive.getNameWithIcon());
+                        desc.setText(passive.getDesc());
+                    }
+                }
 
                 break;
 
             case BUFFS:
-                setStatVisibility(false);
+                List<StageType> alteredStages = unit.getAlteredStages();
+                int alteredStageCount = alteredStages.size();
+                int buffCount = unit.getBuffCount();
 
-                indexPageList = checkMovement1D(indexPageList, unit.getBuffCount());
+                handleInspectPage(false, buffCount + alteredStageCount);
 
-                pageItemList.setText(getNamesAsMultiline(unit.getBuffInstances(),
-                        buffInstance -> buffInstance.getBuff().getNameWithIcon()));
+                pageItemList.setText(
+                        getNamesAsMultiline(alteredStages,
+                                stageType -> stageType.getNameWithIconAndSign(unit.getStage(stageType)), true) +
+                                getNamesAsMultiline(unit.getBuffInstances(),
+                                        buffInstance -> buffInstance.getBuff().getNameWithIcon()));
 
-                if (indexPageList != -1) desc.setText(unit.getBuff(indexPageList).getDesc());
+                pageItemRightList.setText(
+                        getNamesAsMultiline(alteredStages, stageType -> stageType.getTurnsStacksFormatted(unit), true) +
+                                getNamesAsMultiline(unit.getBuffInstances(), BuffInstance::getTurnsStacksFormatted));
+
+                if (buffCount + alteredStageCount > 0) {
+                    indexPageList = checkMovement1D(indexPageList, buffCount + alteredStageCount);
+
+                    if (indexPageList < alteredStageCount) {
+                        StageType stageType = alteredStages.get(indexPageList);
+                        descHeader.setText(stageType.getNameWithIconAndSign(unit.getStage(stageType)));
+                        desc.setText(stageType.getDesc());
+                    } else if (indexPageList - alteredStageCount < buffCount) {
+                        Buff buff = unit.getBuff(indexPageList - alteredStageCount);
+                        descHeader.setText(buff.getNameWithIcon());
+                        desc.setText(buff.getDesc());
+                    }
+                }
 
                 break;
 
             case STATS:
-                setStatVisibility(true);
+                handleInspectPage(true, 0);
 
                 if (InputLib.checkInput(Keybind.PAGE_L1)) {
                     createPopup(lang.get("info.mult"), lang.get("info.mult.desc"));
@@ -1031,25 +1129,66 @@ public class BattleControllerLib {
                 } else if (InputLib.checkInput(Keybind.UP, Keybind.DOWN)) {
                     createPopup(lang.get("info.other"), lang.get("info.other.desc"));
                 }
+
                 break;
         }
     }
 
-    static void setStatVisibility(boolean visible) {
-        for (TextraLabel label : statCategoryHeaderL) label.setVisible(visible);
-        for (TextraLabel label : statsPageL) label.setVisible(visible);
-        for (TextraLabel label : statsPageNumL) label.setVisible(visible);
+    static void handleInspectPage(boolean isStatsPage, int pageItemCount) {
+        setStatVisibility(isStatsPage);
+        setPageItemVisibility(pageItemCount > 0);
+
+        if (isStatsPage || pageItemCount == 0) {
+            coolRects[CoolRects.CURSOR_1.ordinal()].setDir(-1).setSpeed(4f);
+            return;
+        }
+
+        MenuLib.handleCursor(coolRects[CoolRects.CURSOR_1.ordinal()], coolRects[CoolRects.CURSOR_2.ordinal()],
+                indexPageList, 45, 475, World.HEIGHT - 367, 30, false);
+        coolRects[CoolRects.CURSOR_1.ordinal()].setDir(1).setSpeed(2f);
+    }
+
+    static void setStatVisibility(boolean isStatsPage) {
+        for (TextraLabel label : statCategoryHeaderL) label.setVisible(isStatsPage);
+        for (TextraLabel label : statsPageL) label.setVisible(isStatsPage);
+        for (TextraLabel label : statsPageNumL) label.setVisible(isStatsPage);
+
+        infoL[3].setVisible(isStatsPage);
+        infoL[4].setVisible(isStatsPage);
+        infoL[5].setVisible(isStatsPage);
+
+        paths[2].setDir(booleanToSign(isStatsPage));
+        paths[3].setDir(booleanToSign(isStatsPage));
+        paths[4].setDir(booleanToSign(isStatsPage));
+    }
+
+    static void setPageItemVisibility(boolean visible) {
+        pageItemList.setVisible(visible);
+        pageItemRightList.setVisible(visible);
+        descHeader.setVisible(visible);
+        desc.setVisible(visible);
     }
 
     static void deleteInspect() {
         MENU_LIST.removeLast();
+
         coolRects[CoolRects.COVER_LEFT.ordinal()].setDir(-1);
+        coolRects[CoolRects.CURSOR_1.ordinal()].setDir(-1).setPrio(2);
+        coolRects[CoolRects.CURSOR_2.ordinal()].setPrio(2);
+
+        paths[0].setDir(-1);
+        paths[1].setDir(-1);
+        paths[2].setDir(-1);
+        paths[3].setDir(-1);
+        paths[4].setDir(-1);
 
         Group root = stage4.getRoot();
 
         root.removeActor(unitList);
         root.removeActor(pageList);
         root.removeActor(pageItemList);
+        root.removeActor(pageItemRightList);
+        root.removeActor(descHeader);
         root.removeActor(desc);
         for (TextraLabel label : infoL) root.removeActor(label);
         root.removeActor(equip);

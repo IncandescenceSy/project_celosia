@@ -20,12 +20,20 @@ import com.github.tommyettinger.textra.TextraLabel;
 import com.github.tommyettinger.textra.TypingConfig;
 import com.github.tommyettinger.textra.TypingLabel;
 import io.github.celosia.sys.Debug;
+import io.github.celosia.sys.GameMod;
 import io.github.celosia.sys.InputHandler;
 import io.github.celosia.sys.World;
+import io.github.celosia.sys.battle.Accessory;
 import io.github.celosia.sys.battle.BattleController;
 import io.github.celosia.sys.battle.BattleControllerLib;
+import io.github.celosia.sys.battle.Buff;
 import io.github.celosia.sys.battle.Element;
-import io.github.celosia.sys.battle.Elements;
+import io.github.celosia.sys.battle.Passive;
+import io.github.celosia.sys.battle.Range;
+import io.github.celosia.sys.battle.Skill;
+import io.github.celosia.sys.battle.StageType;
+import io.github.celosia.sys.battle.UnitType;
+import io.github.celosia.sys.battle.Weapon;
 import io.github.celosia.sys.input.InputLib;
 import io.github.celosia.sys.input.Keybind;
 import io.github.celosia.sys.menu.MenuDebug;
@@ -46,7 +54,6 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static io.github.celosia.sys.render.RenderLib.changeScale;
@@ -103,7 +110,20 @@ public class Main extends ApplicationAdapter {
 
     public static TextraLabel inputGuide;
 
-    public static final List<Element> ELEMENTS = new ArrayList<>();
+    // Lists of stuff. Mostly for mods. todo impl + set exact sizes
+    // New objects of these types are added automatically
+    public static final List<Element> ELEMENTS = new ArrayList<>(8);
+    public static final List<Skill> SKILLS = new ArrayList<>(512);
+    public static final List<Buff> BUFFS = new ArrayList<>(256);
+    public static final List<StageType> STAGE_TYPES = new ArrayList<>(4);
+    public static final List<Passive> PASSIVES = new ArrayList<>(256);
+    public static final List<Accessory> ACCESSORIES = new ArrayList<>(64);
+    public static final List<Weapon> WEAPONS = new ArrayList<>(64);
+    public static final List<UnitType> UNIT_TYPES = new ArrayList<>(64);
+    public static final List<Range> RANGES = new ArrayList<>(16);
+
+    // You have to add your mod to this List manually (maybe? todo)
+    public static final List<GameMod> GAME_MODS = new ArrayList<>(16);
 
     @Override
     public void create() {
@@ -131,21 +151,24 @@ public class Main extends ApplicationAdapter {
                 // Main menu bg
                 new CoolRect.Builder(World.WIDTH - 700, 230 + 475 + 5, World.WIDTH - 175 - 92, 230 - 75 + 25).dir(1)
                         .hasOutline().prio(2).build(),
-
+                // Full log
+                new CoolRect.Builder(5, World.HEIGHT + 100, 1300, -100).hasOutline().speed(4).angL(0).prio(3).build(),
                 // Menu cursor. X pos comes from 450 (y diff) / 6 (slant)
                 new CoolRect.Builder(0, 0, 0, 0).dir(1).color(Color.PURPLE).prio(2).build(),
 
                 // Disappearing menu cursor
                 new CoolRect.Builder(0, 0, 0, 0).color(Color.PURPLE).prio(2).build(),
-                // Full log
-                new CoolRect.Builder(5, World.HEIGHT + 100, 1300, -100).hasOutline().speed(4).angL(0).prio(3).build(),
                 // Centered popup bg
                 new CoolRect.Builder(World.WIDTH_2 - 440,
                         World.HEIGHT_2 - 200, World.WIDTH_2 + 440, World.HEIGHT_2 + 200).hasOutline().prio(5).build()
         };
 
         paths = new Path[] {
-                new Path(3)
+                new Path(), // Scrollbar, Inspect page tab left side
+                new Path(), // Inspect page tab right side
+                new Path(), // Inspect stats page multipliers
+                new Path(), // Inspect stats page modifiers
+                new Path() // Inspect stats page other stats
         };
 
         // temp todo draw from atlas
@@ -195,7 +218,7 @@ public class Main extends ApplicationAdapter {
         stage5.addActor(fps);
 
         debug = new TextraLabel("", FontType.KORURI.get(20));
-        debug.setPosition(10, World.HEIGHT - 80);
+        debug.setPosition(10, World.HEIGHT - 30);
         stage5.addActor(debug);
 
         popupTitle = new TypingLabel("", Fonts.FontType.KORURI.get(30));
@@ -220,17 +243,14 @@ public class Main extends ApplicationAdapter {
         // Sets resolution based on Settings.scale
         // The game always initially launches at the closest 16:9 res to the display res
         // The game can't launch already scaled because Settings won't be loaded yet,
-        /// and Settings.scale can exceed display res, and if the game launches at >
-        /// display res, it causes problems
+        // and Settings.scale can exceed display res, and if the game launches at >
+        // display res, it causes problems
         if (!Settings.autoRes) {
             changeScale(Settings.scale);
         }
 
         // todo set target fps and vsync based off of settings (cant set in launcher bc
         // settings wont be loaded yet)
-
-        Collections.addAll(ELEMENTS, Elements.VIS, Elements.IGNIS, Elements.GLACIES, Elements.FULGUR, Elements.VENTUS,
-                Elements.TERRA, Elements.LUX, Elements.MALUM);
     }
 
     @Override
@@ -273,7 +293,7 @@ public class Main extends ApplicationAdapter {
                     switch (optSelected) {
                         case START:
                             coolRects[CoolRects.MENU_MAIN.ordinal()].setDir(-1);
-                            coolRects[CoolRects.CURSOR_1.ordinal()].setDir(-1).setSpeed(2f);
+                            coolRects[CoolRects.CURSOR_1.ordinal()].setDir(-1);
                             MenuLib.removeOpts(optLabels, stage2);
 
                             BattleController.create();

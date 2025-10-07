@@ -25,10 +25,10 @@ public enum Stat {
 
     public StageType getMatchingStageType() {
         return switch (this) {
-            case STR, MAG -> StageType.ATK;
-            case FTH -> StageType.FTH;
-            case AMR, RES -> StageType.DEF;
-            case AGI -> StageType.AGI;
+            case STR, MAG -> StageTypes.ATK;
+            case FTH -> StageTypes.FTH;
+            case AMR, RES -> StageTypes.DEF;
+            case AGI -> StageTypes.AGI;
         };
     }
 }

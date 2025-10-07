@@ -2,6 +2,7 @@ package io.github.celosia.sys.battle;
 
 import io.github.celosia.sys.entity.ComplexDescriptionEntity;
 
+import static io.github.celosia.Main.ACCESSORIES;
 import static io.github.celosia.sys.save.Lang.lang;
 
 public class Accessory extends EquippableEntity {
@@ -13,6 +14,7 @@ public class Accessory extends EquippableEntity {
         super(builder);
         this.skills = builder.skills;
         this.passives = builder.passives;
+        ACCESSORIES.add(this);
     }
 
     public static class Builder extends ComplexDescriptionEntity.Builder {

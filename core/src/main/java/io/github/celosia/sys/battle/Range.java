@@ -2,22 +2,39 @@ package io.github.celosia.sys.battle;
 
 import com.badlogic.gdx.utils.IntArray;
 
+import static io.github.celosia.Main.RANGES;
 import static io.github.celosia.sys.battle.PosLib.getAcross;
 import static io.github.celosia.sys.battle.PosLib.getTeamWithout;
 import static io.github.celosia.sys.battle.PosLib.getUpDown;
 
-public record Range(String name, int rangeVertical, Side side, boolean canTargetSelf, int targetCount,
-                    Target... targets) {
+public class Range {
 
-    Range(String name, int rangeVertical, Side side, boolean canTargetSelf, Target... targets) {
+    private final String name;
+    private final int rangeVertical;
+    private final Side side;
+    private final boolean canTargetSelf;
+    private final int targetCount;
+    private final Target[] targets;
+
+    public Range(String name, int rangeVertical, Side side, boolean canTargetSelf, int targetCount, Target... targets) {
+        this.name = name;
+        this.rangeVertical = rangeVertical;
+        this.side = side;
+        this.canTargetSelf = canTargetSelf;
+        this.targetCount = targetCount;
+        this.targets = targets;
+        RANGES.add(this);
+    }
+
+    public Range(String name, int rangeVertical, Side side, boolean canTargetSelf, Target... targets) {
         this(name, rangeVertical, side, canTargetSelf, 1, targets);
     }
 
-    Range(String name, int rangeVertical, Side side, int targetCount, Target... targets) {
+    public Range(String name, int rangeVertical, Side side, int targetCount, Target... targets) {
         this(name, rangeVertical, side, false, targetCount, targets);
     }
 
-    Range(String name, int rangeVertical, Side side, Target... targets) {
+    public Range(String name, int rangeVertical, Side side, Target... targets) {
         this(name, rangeVertical, side, false, 1, targets);
     }
 
@@ -63,5 +80,29 @@ public record Range(String name, int rangeVertical, Side side, boolean canTarget
         }
 
         return pos.toArray();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getRangeVertical() {
+        return rangeVertical;
+    }
+
+    public Side getSide() {
+        return side;
+    }
+
+    public boolean canTargetSelf() {
+        return canTargetSelf;
+    }
+
+    public int getTargetCount() {
+        return targetCount;
+    }
+
+    public Target[] getTargets() {
+        return targets;
     }
 }

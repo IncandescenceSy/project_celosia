@@ -79,11 +79,11 @@ public class MenuLib {
         }
 
         // Lock cursor to valid side
-        if (range.side() == Side.BOTH) {
+        if (range.getSide() == Side.BOTH) {
             return newIndex;
         }
 
-        if (range.side() == getRelativeSide(selectingMove, newIndex)) {
+        if (range.getSide() == getRelativeSide(selectingMove, newIndex)) {
             return newIndex;
         }
 
@@ -142,7 +142,8 @@ public class MenuLib {
     // xR = right of cursor rect at top of box
     // yT = top of cursor rect at top of box
     // yOff = how much it should move down per index
-    public static void handleCursor(CoolRect cursor, CoolRect afterimage, int index, int xL, int xR, int yT, int yOff) {
+    public static void handleCursor(CoolRect cursor, CoolRect afterimage, int index, int xL, int xR, int yT, int yOff,
+                                    boolean changeX) {
         int tOld = cursor.getT();
         int tNew = yT - (yOff * index);
 
@@ -163,8 +164,14 @@ public class MenuLib {
 
         cursor.setT(tNew);
         cursor.setB(yT - (yOff * (index + 1)));
-        cursor.setL(xL - (yOff * index) / 6);
-        cursor.setR(xR - (yOff * index) / 6);
+        if (changeX) {
+            cursor.setL(xL - (yOff * index) / (90 / cursor.getAngL()));
+            cursor.setR(xR - (yOff * index) / (90 / cursor.getAngR()));
+        }
+    }
+
+    public static void handleCursor(CoolRect cursor, CoolRect afterimage, int index, int xL, int xR, int yT, int yOff) {
+        handleCursor(cursor, afterimage, index, xL, xR, yT, yOff, true);
     }
 
     // Creates Labels and adds them to a Stage and a List

@@ -11,7 +11,7 @@ public class BoolLib {
         return a ? 1 : 0;
     }
 
-    public static boolean intToBoolean(int a) {
-        return a > 0;
+    public static int booleanToSign(boolean a) {
+        return a ? 1 : -1;
     }
 }

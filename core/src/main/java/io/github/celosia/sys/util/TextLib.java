@@ -75,6 +75,9 @@ public class TextLib {
     // todo: does having separate for double and long actually matter? theoretically
     // it keeps more precision but idk if it ever matters
     public static String formatNum(double num) {
+        // Truncate to 2 decimal places
+        num = Math.floor(num * 100) / 100;
+
         int digitCount = String.valueOf(Math.abs(num)).length();
 
         if (digitCount >= 9) {
@@ -99,6 +102,10 @@ public class TextLib {
     // negative
     public static String getColor(long num) {
         return (num > 0) ? C_POS : (num < 0) ? C_NEG : C_NUM;
+    }
+
+    public static String getPercentageColor(double num) {
+        return (num > 100) ? C_POS : (num < 100) ? C_NEG : C_NUM;
     }
 
     public static String getSign(double num) {
@@ -309,17 +316,21 @@ public class TextLib {
         return builder.toString();
     }
 
-    public static <T> String getNamesAsMultiline(List<T> list, Function<T, String> function) {
+    public static <T> String getNamesAsMultiline(List<T> list, Function<T, String> function, boolean trailingNewline) {
         StringBuilder builder = new StringBuilder();
 
         for (int i = 0; i < list.size(); i++) {
             builder.append(function.apply(list.get(i)));
 
-            if (i != list.size() - 1) {
+            if (trailingNewline || i != list.size() - 1) {
                 builder.append("\n");
             }
         }
 
         return builder.toString();
+    }
+
+    public static <T> String getNamesAsMultiline(List<T> list, Function<T, String> function) {
+        return getNamesAsMultiline(list, function, false);
     }
 }

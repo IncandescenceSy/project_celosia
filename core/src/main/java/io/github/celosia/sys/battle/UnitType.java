@@ -4,6 +4,8 @@ import io.github.celosia.sys.entity.NamedEntity;
 
 import java.util.Map;
 
+import static io.github.celosia.Main.UNIT_TYPES;
+
 // todo skills and stuff
 public class UnitType extends NamedEntity {
 
@@ -16,6 +18,7 @@ public class UnitType extends NamedEntity {
         this.statsBase = statsBase;
         this.affinities = affinities;
         this.passives = passives;
+        UNIT_TYPES.add(this);
     }
 
     public Stats getStatsBase() {

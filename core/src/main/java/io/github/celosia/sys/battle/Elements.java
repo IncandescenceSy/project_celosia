@@ -21,5 +21,5 @@ public class Elements {
     public static final Element LUX = new Element(lang.get("element.lux"), lang.get("element.lux.desc"),
             C_LUX + "[+todo]");
     public static final Element MALUM = new Element(lang.get("element.malum"), lang.get("element.malum.desc"),
-            "[PURPLE][+evil-wings]");
+            "[RED][+evil-wings]");
 }

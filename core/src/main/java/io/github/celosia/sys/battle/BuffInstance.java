@@ -31,4 +31,8 @@ public class BuffInstance {
     public int getStacks() {
         return stacks;
     }
+
+    public String getTurnsStacksFormatted() {
+        return "x" + stacks + "(" + turns + ")";
+    }
 }

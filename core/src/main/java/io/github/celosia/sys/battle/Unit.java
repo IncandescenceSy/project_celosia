@@ -5,7 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.github.celosia.Main.ELEMENTS;
+import static io.github.celosia.Main.STAGE_TYPES;
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
+import static io.github.celosia.sys.battle.BattleLib.STAGE_TYPE_NOT_FOUND;
 import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_HIDDEN;
 import static io.github.celosia.sys.save.Lang.lang;
 import static io.github.celosia.sys.util.TextLib.C_BUFF;
@@ -16,6 +19,7 @@ import static io.github.celosia.sys.util.TextLib.C_SHIELD;
 import static io.github.celosia.sys.util.TextLib.formatName;
 import static io.github.celosia.sys.util.TextLib.formatNum;
 import static io.github.celosia.sys.util.TextLib.getColor;
+import static io.github.celosia.sys.util.TextLib.getSign;
 import static io.github.celosia.sys.util.TextLib.getStageStatString;
 
 // Species and current stats
@@ -113,7 +117,6 @@ public class Unit {
     private int expSpUse;
 
     private long shield;
-    private int shieldTurns;
 
     // Defend (essentially a 2nd Shield with higher priority)
     private long defend;
@@ -200,7 +203,6 @@ public class Unit {
         expSpGain = 100;
         expSpUse = 100;
         shield = 0;
-        shieldTurns = 0;
         defend = 0;
         extraActions = 0;
         effectBlock = 0;
@@ -392,39 +394,69 @@ public class Unit {
     }
 
     public void setStage(StageType stageType, int stage) {
-        switch (stageType) {
-            case ATK -> stageAtk = stage;
-            case DEF -> stageDef = stage;
-            case FTH -> stageFth = stage;
-            case AGI -> stageAgi = stage;
+        if (stageType == StageTypes.ATK) {
+            stageAtk = stage;
+            return;
+        }
+        if (stageType == StageTypes.DEF) {
+            stageDef = stage;
+            return;
+        }
+        if (stageType == StageTypes.FTH) {
+            stageFth = stage;
+            return;
+        }
+        if (stageType == StageTypes.AGI) {
+            stageAgi = stage;
         }
     }
 
     public int getStage(StageType stageType) {
-        return switch (stageType) {
-            case ATK -> stageAtk;
-            case DEF -> stageDef;
-            case FTH -> stageFth;
-            case AGI -> stageAgi;
-        };
+        if (stageType == StageTypes.ATK) return stageAtk;
+        if (stageType == StageTypes.DEF) return stageDef;
+        if (stageType == StageTypes.FTH) return stageFth;
+        if (stageType == StageTypes.AGI) return stageAgi;
+
+        return STAGE_TYPE_NOT_FOUND;
     }
 
     public void setStageTurns(StageType stageType, int turns) {
-        switch (stageType) {
-            case ATK -> stageAtkTurns = turns;
-            case DEF -> stageDefTurns = turns;
-            case FTH -> stageFthTurns = turns;
-            case AGI -> stageAgiTurns = turns;
+        if (stageType == StageTypes.ATK) {
+            stageAtkTurns = turns;
+            return;
+        }
+        if (stageType == StageTypes.DEF) {
+            stageDefTurns = turns;
+            return;
+        }
+        if (stageType == StageTypes.FTH) {
+            stageFthTurns = turns;
+            return;
+        }
+        if (stageType == StageTypes.AGI) {
+            stageAgiTurns = turns;
         }
     }
 
     public int getStageTurns(StageType stageType) {
-        return switch (stageType) {
-            case ATK -> stageAtkTurns;
-            case DEF -> stageDefTurns;
-            case FTH -> stageFthTurns;
-            case AGI -> stageAgiTurns;
-        };
+        if (stageType == StageTypes.ATK) return stageAtkTurns;
+        if (stageType == StageTypes.DEF) return stageDefTurns;
+        if (stageType == StageTypes.FTH) return stageFthTurns;
+        if (stageType == StageTypes.AGI) return stageAgiTurns;
+
+        return STAGE_TYPE_NOT_FOUND;
+    }
+
+    public List<StageType> getAlteredStages() {
+        List<StageType> alteredStages = new ArrayList<>(4);
+
+        for (StageType stageType : STAGE_TYPES) {
+            if (this.getStage(stageType) != 0) {
+                alteredStages.add(stageType);
+            }
+        }
+
+        return alteredStages;
     }
 
     public long getStrWithStage() {
@@ -555,6 +587,17 @@ public class Unit {
 
     public int getAffinity(Element element) {
         return affinities.getOrDefault(element, 0);
+    }
+
+    public String getAffinitiesString() {
+        StringBuilder str = new StringBuilder();
+
+        for(Element element : ELEMENTS) {
+            int aff = affinities.getOrDefault(element, 0);
+            str.append(element.getIcon()).append(getColor(aff)).append(getSign(aff)).append(aff).append("[WHITE]  ");
+        }
+
+        return str.toString();
     }
 
     public void setMult(Mult mult, int set) {
@@ -767,14 +810,6 @@ public class Unit {
 
     public long getDisplayShield() {
         return shield / STAT_MULT_HIDDEN;
-    }
-
-    public void setShieldTurns(int shieldTurns) {
-        this.shieldTurns = shieldTurns;
-    }
-
-    public int getShieldTurns() {
-        return shieldTurns;
     }
 
     public void setDefend(long defend) {
@@ -997,46 +1032,28 @@ public class Unit {
         // Stages
         if (stageAtk != 0 && --stageAtkTurns <= 0) {
             appendToLog(lang.format("log.lose.stage", formatName(unitType.getName(), pos, false), stageAtk,
-                    getColor(stageAtk) + stageAtk, StageType.ATK.getIcon() + C_BUFF + StageType.ATK.getName(),
-                    getStageStatString(this, StageType.ATK, 0)));
+                    getColor(stageAtk) + stageAtk, StageTypes.ATK.getIcon() + C_BUFF + StageTypes.ATK.getName(),
+                    getStageStatString(this, StageTypes.ATK, 0)));
             // Remove stages
             stageAtk = 0;
         }
         if (stageDef != 0 && --stageDefTurns <= 0) {
             appendToLog(lang.format("log.lose.stage", formatName(unitType.getName(), pos, false), stageDef,
-                    getColor(stageDef) + stageDef, StageType.DEF.getIcon() + C_BUFF + StageType.DEF.getName(),
-                    getStageStatString(this, StageType.DEF, 0)));
+                    getColor(stageDef) + stageDef, StageTypes.DEF.getIcon() + C_BUFF + StageTypes.DEF.getName(),
+                    getStageStatString(this, StageTypes.DEF, 0)));
             stageDef = 0;
         }
         if (stageFth != 0 && --stageFthTurns <= 0) {
             appendToLog(lang.format("log.lose.stage", formatName(unitType.getName(), pos, false), stageFth,
-                    getColor(stageFth) + stageFth, StageType.FTH.getIcon() + C_BUFF + StageType.FTH.getName(),
-                    getStageStatString(this, StageType.FTH, 0)));
+                    getColor(stageFth) + stageFth, StageTypes.FTH.getIcon() + C_BUFF + StageTypes.FTH.getName(),
+                    getStageStatString(this, StageTypes.FTH, 0)));
             stageFth = 0;
         }
         if (stageAgi != 0 && --stageAgiTurns <= 0) {
             appendToLog(lang.format("log.lose.stage", formatName(unitType.getName(), pos, false), stageAgi,
-                    getColor(stageAgi) + stageAgi, StageType.AGI.getIcon() + C_BUFF + StageType.AGI.getName(),
-                    getStageStatString(this, StageType.AGI, 0)));
+                    getColor(stageAgi) + stageAgi, StageTypes.AGI.getIcon() + C_BUFF + StageTypes.AGI.getName(),
+                    getStageStatString(this, StageTypes.AGI, 0)));
             stageAgi = 0;
-        }
-
-        // Shield
-        if (shield != 0 && --shieldTurns <= 0) {
-            if (defend == 0) {
-                appendToLog(lang.format("log.lose.shield", formatName(unitType.getName(), pos, false),
-                        C_SHIELD + formatNum(shield / STAT_MULT_HIDDEN)));
-                if (effectBlock <= 0) {
-                    appendToLog(lang.format("log.change_boolean_stat.effect_block",
-                            formatName(unitType.getName(), pos, false), 0));
-                }
-            } else {
-                appendToLog(lang.format("log.change_shield", formatName(unitType.getName(), pos),
-                        C_SHIELD + formatNum((shield + defend) / STAT_MULT_HIDDEN),
-                        C_SHIELD + formatNum(defend / STAT_MULT_HIDDEN), C_HP + formatNum(statsDefault.getHp()),
-                        C_NEG + "-" + formatNum(shield / STAT_MULT_HIDDEN)));
-            }
-            shield = 0;
         }
 
         // Buffs
@@ -1121,7 +1138,6 @@ public class Unit {
                             C_NEG + "-" + formatNum((defendOld + shield) / STAT_MULT_HIDDEN)));
                     dmg -= shield;
                     shield = 0;
-                    shieldTurns = 0;
                     if (effectBlock <= 0) {
                         msg.add(lang.format("log.change_boolean_stat.effect_block", name, 0));
                     }

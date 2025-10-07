@@ -1,36 +1,31 @@
 package io.github.celosia.sys.battle;
 
+import io.github.celosia.sys.entity.IconEntity;
+
+import static io.github.celosia.Main.STAGE_TYPES;
 import static io.github.celosia.sys.save.Lang.lang;
+import static io.github.celosia.sys.util.TextLib.getSign;
 
-public enum StageType {
+public class StageType extends IconEntity {
 
-    ATK(lang.get("stage.atk"), "[LIGHT RED][+energy-sword]"),
-    DEF(lang.get("stage.def"), "[#006eff][+rosa-shield]"),
-    FTH(lang.get("stat.fth"), "[LIGHT PURPLE][+star-altar]"),
-    AGI(lang.get("stat.agi"), "[LIGHT GREEN][+walking-boot]");
+    private final Stat[] stats;
 
-    private final String name;
-    private final String icon;
-
-    StageType(String name, String icon) {
-        this.name = name;
-        this.icon = icon;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getIcon() {
-        return icon;
+    StageType(String name, String desc, String icon, Stat... stats) {
+        super(name, desc, icon);
+        this.stats = stats;
+        STAGE_TYPES.add(this);
     }
 
     public Stat[] getStats() {
-        return switch (this) {
-            case ATK -> new Stat[] { Stat.STR, Stat.MAG };
-            case DEF -> new Stat[] { Stat.AMR, Stat.RES };
-            case FTH -> new Stat[] { Stat.FTH };
-            case AGI -> new Stat[] { Stat.AGI };
-        };
+        return stats;
+    }
+
+    public String getTurnsStacksFormatted(Unit unit) {
+        int stage = unit.getStage(this);
+        return getSign(stage) + stage + "(" + unit.getStageTurns(this) + ")";
+    }
+
+    public String getNameWithIconAndSign(int stage) {
+        return this.getNameWithIcon() + " " + ((stage > 0) ? lang.get("up") : lang.get("down"));
     }
 }

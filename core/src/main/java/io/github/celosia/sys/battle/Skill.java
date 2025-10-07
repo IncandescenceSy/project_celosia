@@ -4,13 +4,20 @@ import io.github.celosia.sys.entity.ComplexDescriptionEntity;
 import io.github.celosia.sys.entity.IconEntity;
 import io.github.celosia.sys.util.ArrayLib;
 
+import javax.swing.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import static io.github.celosia.Main.SKILLS;
 import static io.github.celosia.sys.save.Lang.lang;
+import static io.github.celosia.sys.util.BoolLib.booleanToInt;
+import static io.github.celosia.sys.util.TextLib.C_BUFF;
 import static io.github.celosia.sys.util.TextLib.C_ELEMENT;
 import static io.github.celosia.sys.util.TextLib.C_NUM;
 import static io.github.celosia.sys.util.TextLib.C_STAT;
+import static io.github.celosia.sys.util.TextLib.formatNum;
 import static io.github.celosia.sys.util.TextLib.getColor;
 import static io.github.celosia.sys.util.TextLib.getSign;
 
@@ -37,7 +44,7 @@ public class Skill extends ComplexDescriptionEntity {
     private final SkillRole[] skillRoles;
     private final SkillEffect[] skillEffects;
 
-    Skill(Builder builder) {
+    public Skill(Builder builder) {
         super(builder);
         element = builder.element;
         range = builder.range;
@@ -47,6 +54,7 @@ public class Skill extends ComplexDescriptionEntity {
         isBloom = builder.isBloom;
         skillRoles = builder.skillRoles;
         skillEffects = builder.skillEffects;
+        SKILLS.add(this);
     }
 
     public static class Builder extends ComplexDescriptionEntity.Builder {
@@ -123,6 +131,10 @@ public class Skill extends ComplexDescriptionEntity {
         return cost;
     }
 
+    public String getCostFormatted() {
+        return lang.format("skill_cost", formatNum(cost), booleanToInt(isBloom));
+    }
+
     public int getCooldown() {
         return cooldown;
     }
@@ -152,12 +164,35 @@ public class Skill extends ComplexDescriptionEntity {
     }
 
     public boolean shouldTargetOpponent() {
-        return range.side() == Side.OPPONENT || this.hasRole(SkillRole.ATTACK) ||
+        return range.getSide() == Side.OPPONENT || this.hasRole(SkillRole.ATTACK) ||
                 this.hasRole(SkillRole.DEBUFF_DEFENSIVE) || this.hasRole(SkillRole.DEBUFF_OFFENSIVE);
     }
 
     public SkillInstance toSkillInstance() {
         return new SkillInstance(this);
+    }
+
+    @Override
+    public String getPartialDesc() {
+        StringBuilder partialDesc = new StringBuilder(super.getPartialDesc());
+
+        if (this.getDescInclusions().length == 0) {
+            partialDesc.append("\n");
+        }
+
+        Set<IconEntity> inclusions = HashSet.newHashSet(8);
+        for (SkillEffect effect : skillEffects) {
+            inclusions.add(effect.getDescInclusion());
+        }
+
+        for(IconEntity inclusion : inclusions) {
+            if (inclusion != null) {
+                partialDesc.append("\n[WHITE](").append(inclusion.getNameWithIcon(C_BUFF)).append("[WHITE]: ")
+                        .append(inclusion.getDesc().replace("\n", ". ")).append("[WHITE])");
+            }
+        }
+
+        return partialDesc.toString();
     }
 
     @Override
@@ -167,6 +202,7 @@ public class Skill extends ComplexDescriptionEntity {
 
         for (SkillEffect skillEffect : skillEffects) {
             // todo better pow logic
+            // multihit should output eg 60+20*2
             int effectPow = skillEffect.getPow();
             if (effectPow > pow) {
                 pow = effectPow;
@@ -188,7 +224,7 @@ public class Skill extends ComplexDescriptionEntity {
             skillTypesStr = C_STAT + SkillType.STAT.getName() + "[WHITE]";
         }
 
-        return lang.format("skill_desc", skillTypesStr, element.getNameWithIcon(C_ELEMENT), range.name(),
+        return lang.format("skill_desc", skillTypesStr, element.getNameWithIcon(C_ELEMENT), range.getName(),
                 (pow == 0) ? "" : ", " + C_NUM + pow + " [WHITE]" + lang.get("pow"),
                 (prio == 0) ? "" : ", " + getColor(prio) + getSign(prio) + prio + " [WHITE]" + lang.get("prio"),
                 this.getPartialDesc());

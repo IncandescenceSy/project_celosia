@@ -3,6 +3,7 @@ package io.github.celosia.sys.battle;
 import io.github.celosia.sys.entity.ComplexDescriptionEntity;
 import io.github.celosia.sys.entity.IconEntity;
 
+import static io.github.celosia.Main.BUFFS;
 import static io.github.celosia.sys.save.Lang.lang;
 import static io.github.celosia.sys.util.TextLib.C_NUM;
 
@@ -12,11 +13,12 @@ public class Buff extends ComplexDescriptionEntity {
     private final int maxStacks;
     private final BuffEffect[] buffEffects;
 
-    Buff(Builder builder) {
+    public Buff(Builder builder) {
         super(builder);
         this.buffType = builder.buffType;
         this.maxStacks = builder.maxStacks;
         this.buffEffects = builder.buffEffects;
+        BUFFS.add(this);
     }
 
     public static class Builder extends ComplexDescriptionEntity.Builder {

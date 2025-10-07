@@ -5,6 +5,8 @@ import io.github.celosia.sys.entity.ComplexDescriptionEntity;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.github.celosia.Main.WEAPONS;
+
 public class Weapon extends EquippableEntity {
 
     private final Map<Element, Integer> affinities;
@@ -16,6 +18,7 @@ public class Weapon extends EquippableEntity {
         this.affinities = builder.affinities;
         this.skills = builder.skills;
         this.passives = builder.passives;
+        WEAPONS.add(this);
     }
 
     public static class Builder extends ComplexDescriptionEntity.Builder {

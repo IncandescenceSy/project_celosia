@@ -136,6 +136,16 @@ public class CoolRect {
         return b;
     }
 
+    public void setLR(int l, int r) {
+        this.l = l;
+        this.r = r;
+    }
+
+    public void setTB(int t, int b) {
+        this.t = t;
+        this.b = b;
+    }
+
     public void setPos(int l, int t, int r, int b) {
         this.l = l;
         this.t = t;
@@ -201,8 +211,9 @@ public class CoolRect {
         return angR;
     }
 
-    public void setPrio(int prio) {
+    public CoolRect setPrio(int prio) {
         this.prio = prio;
+        return this;
     }
 
     public int getPrio() {

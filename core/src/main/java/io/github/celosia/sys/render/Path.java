@@ -10,31 +10,25 @@ public class Path {
     private Array<Vector2> points;
     private float prog; // Animation progress
     private int dir; // 1 = unfolding; -1 = collapsing
-    private final Color color;
-    private final float speed;
-    private final int thickness;
-    private final int prio;
+    private Color color;
+    private float speed;
+    private int thickness;
+    private int prio;
 
-    public Path(Array<Vector2> points, Color color, int thickness, int prio) {
-        this.points = points;
+    public Path() {
+        this.points = new Array<>();
         this.prog = 0;
         this.dir = -1;
-        this.color = color;
+        this.color = Color.WHITE;
         this.speed = 4;
-        this.thickness = thickness;
-        this.prio = prio;
+        this.thickness = 5;
+        this.prio = 3;
     }
 
-    public Path(Array<Vector2> points) {
-        this(points, Color.WHITE, 10, 0);
-    }
-
-    public Path(int prio) {
-        this(new Array<>(), Color.WHITE, 10, prio);
-    }
-
-    public void setPoints(Array<Vector2> points) {
+    // Return this for easy chaining
+    public Path setPoints(Array<Vector2> points) {
         this.points = points;
+        return this;
     }
 
     public Array<Vector2> getPoints() {
@@ -49,24 +43,42 @@ public class Path {
         return prog;
     }
 
-    public void setDir(int dir) {
+    public Path setDir(int dir) {
         this.dir = dir;
+        return this;
     }
 
     public int getDir() {
         return dir;
     }
 
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
     public Color getColor() {
         return color;
+    }
+
+    public Path setThickness(int thickness) {
+        this.thickness = thickness;
+        return this;
     }
 
     public float getThickness() {
         return thickness;
     }
 
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
     public float getSpeed() {
         return speed;
+    }
+
+    public void setPrio(int prio) {
+        this.prio = prio;
     }
 
     public int getPrio() {

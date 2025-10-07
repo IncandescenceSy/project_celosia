@@ -35,7 +35,7 @@ public class ChangeBooleanStat implements BuffEffect {
         int statNew = statOld + changeFull;
         self.setBooleanStat(stat, statNew);
         if (!isBothTruthy(statOld, statNew) &&
-                (stat != BooleanStat.EFFECT_BLOCK || (self.getShield() == 0 && self.getDefend() == 0))) {
+                (stat != BooleanStat.EFFECT_BLOCK)) {
             appendToLog(lang.format(stat.getLogMsgLangId(),
                     formatName(self.getUnitType().getName(), self.getPos(), stat.isPossessiveNameInLogMsg()), statNew,
                     formatNum(self.getSp())));

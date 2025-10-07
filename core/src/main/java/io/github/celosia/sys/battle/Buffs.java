@@ -5,10 +5,12 @@ import io.github.celosia.sys.battle.buff_effects.ChangeDefend;
 import io.github.celosia.sys.battle.buff_effects.ChangeExtraActions;
 import io.github.celosia.sys.battle.buff_effects.ChangeHp;
 import io.github.celosia.sys.battle.buff_effects.ChangeMult;
+import io.github.celosia.sys.battle.buff_effects.ChangeShield;
 import io.github.celosia.sys.battle.buff_effects.ChangeStat;
 
 import static io.github.celosia.sys.save.Lang.lang;
 import static io.github.celosia.sys.util.TextLib.C_NEG;
+import static io.github.celosia.sys.util.TextLib.C_SHIELD;
 import static io.github.celosia.sys.util.TextLib.C_STAT;
 
 public class Buffs {
@@ -16,8 +18,15 @@ public class Buffs {
     // Temp testing
 
     /// Basic
-    public static final Buff DEFEND = new Buff.Builder(lang.get("skill.defend"), "todo", "[azure][+shield]",
-            BuffType.BUFF).effects(new ChangeDefend(200), new ChangeMult(Mult.DMG_TAKEN, -200)).build();
+    public static final Buff DEFEND = new Buff.Builder(lang.get("buff.defend"), "todo", "[azure][+shield]",
+            BuffType.BUFF)
+            .effects(new ChangeDefend(200), new ChangeMult(Mult.DMG_TAKEN, -200),
+                    new ChangeBooleanStat(BooleanStat.EFFECT_BLOCK, 1))
+            .build();
+
+    public static final Buff SHIELD = new Buff.Builder(lang.get("buff.shield"), "todo",
+            C_SHIELD + "[+vibrating-shield]", BuffType.BUFF)
+            .effects(new ChangeShield(1), new ChangeBooleanStat(BooleanStat.EFFECT_BLOCK, 1)).build();
 
     // Decreases multDmgTaken by way more than necessary to be absolutely certain
     // this minimizes it
@@ -35,32 +44,46 @@ public class Buffs {
     public static final Buff BURN = new Buff.Builder(lang.get("buff.burn"), "buff_desc.2.per_stack.hp",
             "[ORANGE][+small-fire]",
             BuffType.DEBUFF).maxStacks(5).effects(new ChangeHp.Builder(-20).build(), new ChangeStat(Stat.STR, -50))
-            .descArgs(C_NEG + "-2%", C_NEG + "-5% " + C_STAT + lang.get("stat.str")).build();
+            .descArgs(C_NEG + "-2%" + C_STAT, C_NEG + "-5% " + C_STAT + lang.get("stat.str")).build();
     public static final Buff FROSTBITE = new Buff.Builder(lang.get("buff.frostbite"), "buff_desc.2.per_stack.hp",
             "[azure][+snowflake-1]", BuffType.DEBUFF).maxStacks(5).effects(new ChangeHp.Builder(-20).build(),
                     new ChangeStat(Stat.MAG, -50))
-            .descArgs(C_NEG + "-2%", C_NEG + "-5% " + C_STAT + lang.get("stat.mag")).build();
-    public static final Buff SHOCK = new Buff.Builder(lang.get("buff.shock"), "todo", "[YELLOW][+power-lightning]",
+            .descArgs(C_NEG + "-2%" + C_STAT, C_NEG + "-5% " + C_STAT + lang.get("stat.mag")).build();
+    public static final Buff SHOCK = new Buff.Builder(lang.get("buff.shock"), "buff_desc.2.per_stack.hp",
+            "[YELLOW][+power-lightning]",
             BuffType.DEBUFF).maxStacks(5).effects(new ChangeHp.Builder(-20).build(), new ChangeStat(Stat.AGI, -50))
+            .descArgs(C_NEG + "-2%" + C_STAT, C_NEG + "-5% " + C_STAT + lang.get("stat.agi"))
             .build();
-    public static final Buff WINDSWEPT = new Buff.Builder(lang.get("buff.windswept"), "todo",
+    public static final Buff WINDSWEPT = new Buff.Builder(lang.get("buff.windswept"), "buff_desc.2.per_stack",
             "[LIGHT GREEN][+whirlwind]", BuffType.DEBUFF).maxStacks(5).effects(new ChangeMult(Mult.SP_GAIN, -50),
                     new ChangeStat(Stat.RES, -50))
+            .descArgs(C_NEG + "-5% " + C_STAT + lang.get("mult.sp_gain"), C_NEG + "-5% " + C_STAT + lang.get("stat.res"))
             .build();
-    public static final Buff TREMOR = new Buff.Builder(lang.get("buff.tremor"), "todo", "[LIGHT brown][+earth-spit]",
+    public static final Buff TREMOR = new Buff.Builder(lang.get("buff.tremor"), "buff_desc.2.per_stack",
+            "[LIGHT brown][+earth-spit]",
             BuffType.DEBUFF).maxStacks(5).effects(new ChangeMult(Mult.SP_GAIN, -50), new ChangeStat(Stat.AMR, -50))
+            .descArgs(C_NEG + "-5% " + C_STAT + lang.get("mult.sp_gain"), C_NEG + "-5% " + C_STAT + lang.get("stat.amr"))
             .build();
-    public static final Buff DAZZLED = new Buff.Builder(lang.get("buff.dazzled"), "todo", "[+star-formation]",
+    public static final Buff DAZZLED = new Buff.Builder(lang.get("buff.dazzled"), "buff_desc.2.per_stack",
+            "[+star-formation]",
             BuffType.DEBUFF).maxStacks(5).effects(new ChangeMult(Mult.SP_GAIN, -50), new ChangeStat(Stat.FTH, -50))
+            .descArgs(C_NEG + "-5% " + C_STAT + lang.get("mult.sp_gain"), C_NEG + "-5% " + C_STAT + lang.get("stat.fth"))
             .build();
-    public static final Buff CURSE = new Buff.Builder(lang.get("buff.curse"), "todo", "[RED][+dread-skull]",
+    public static final Buff CURSE = new Buff.Builder(lang.get("buff.curse"), "buff_desc.2.per_stack.hp",
+            "[RED][+dread-skull]",
             BuffType.DEBUFF).maxStacks(5).effects(new ChangeHp.Builder(-25).build(), new ChangeStat(Stat.FTH, -50))
+            .descArgs(C_NEG + "-2.5%" + C_STAT, C_NEG + "-5% " + C_STAT + lang.get("stat.fth"))
             .build();
-    public static final Buff POISON = new Buff.Builder(lang.get("buff.poison"), "todo", "[PURPLE][+bubbles]",
+    public static final Buff POISON = new Buff.Builder(lang.get("buff.poison"), "buff_desc.2.per_stack.hp",
+            "[PURPLE][+bubbles]",
             BuffType.DEBUFF).maxStacks(5)
-            .effects(new ChangeHp.Builder(-25).build(), new ChangeMult(Mult.HEALING_TAKEN, -50)).build();
-    public static final Buff RADIATION = new Buff.Builder(lang.get("buff.radiation"), "todo", "[CYAN][+nuclear]",
+            .effects(new ChangeHp.Builder(-25).build(), new ChangeMult(Mult.HEALING_TAKEN, -50))
+            .descArgs(C_NEG + "-2.5%" + C_STAT, C_NEG + "-5% " + C_STAT + lang.get("mult.healing_taken"))
+            .build();
+    public static final Buff RADIATION = new Buff.Builder(lang.get("buff.radiation"), "buff_desc.2.per_stack.hp",
+            "[CYAN][+nuclear]",
             BuffType.DEBUFF).maxStacks(5).effects(new ChangeHp.Builder(-30).build(), new ChangeMult(Mult.DMG_TAKEN, 5))
+            .descArgs(C_NEG + "-3%" + C_STAT, C_NEG + "+5% " + C_STAT + lang.get("mult.dmg_taken"))
             .build();
 
     // Superior elemental debuffs
@@ -71,7 +94,7 @@ public class Buffs {
     public static final Buff FROSTBOUND = new Buff.Builder(lang.get("buff.frostbound"), "buff_desc.2",
             "[azure][+ice-bolt]", BuffType.DEBUFF).effects(new ChangeMult(Mult.GLACIES_DMG_TAKEN, 200),
                     new ChangeStat(Stat.MAG, -100))
-            .descArgs(C_NEG + "+20% [WHITE]" + Mult.GLACIES_DMG_TAKEN.getName(),
+            .descArgs(C_NEG + "+20% " + C_STAT + Mult.GLACIES_DMG_TAKEN.getName(),
                     C_NEG + "-10% " + C_STAT + lang.get("stat.mag"))
             .build();
     public static final Buff OVERLOADED = new Buff.Builder(lang.get("buff.overloaded"), "todo",
