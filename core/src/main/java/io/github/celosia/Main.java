@@ -5,9 +5,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -56,7 +56,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.celosia.sys.render.RenderLib.changeScale;
+import static io.github.celosia.sys.menu.MenuDebug.drawF3MenuBg;
 import static io.github.celosia.sys.render.TriLib.drawCoolRects;
 import static io.github.celosia.sys.render.TriLib.drawPaths;
 import static io.github.celosia.sys.util.TextLib.rf;
@@ -65,16 +65,18 @@ import static io.github.celosia.sys.util.TextLib.rf;
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all
  * platforms.
  */
+// todo cleanup
 public class Main extends ApplicationAdapter {
 
     static InputHandler inputHandler;
 
     static int index = 0;
-    public static final ArrayDeque<MenuType> MENU_LIST = new ArrayDeque<>();
+    public static final ArrayDeque<MenuType> NAV_PATH = new ArrayDeque<>();
     static MenuOptType optSelected;
 
     // Rendering
     public static FitViewport viewPort;
+    public static Camera camera;
 
     public static ShapeDrawer drawer;
     public static SpriteBatch spriteBatch;
@@ -100,10 +102,10 @@ public class Main extends ApplicationAdapter {
 
     static List<TypingLabel> optLabels;
 
-    static TextraLabel fps;
     public static TypingLabel popupTitle;
     public static TypingLabel popupText;
-    static TextraLabel debug;
+
+    static boolean isF3MenuEnabled = false;
 
     // todo move
     static Texture texBg;
@@ -131,6 +133,7 @@ public class Main extends ApplicationAdapter {
         polygonSpriteBatch = new PolygonSpriteBatch();
 
         viewPort = new FitViewport(World.WIDTH, World.HEIGHT);
+        camera = viewPort.getCamera();
 
         stage1 = new Stage(viewPort);
         stage2 = new Stage(viewPort);
@@ -172,21 +175,12 @@ public class Main extends ApplicationAdapter {
         };
 
         // temp todo draw from atlas
-        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        pixmap.setColor(Color.WHITE);
-        pixmap.drawPixel(0, 0);
-        Texture texture = new Texture(pixmap); // remember to dispose of later
-        pixmap.dispose();
+        Texture texture = new Texture("white_pixel.png"); // remember to dispose of later
         TextureRegion region = new TextureRegion(texture, 0, 0, 1, 1);
 
         drawer = new ShapeDrawer(polygonSpriteBatch, region);
 
-        if (Debug.generateFonts) {
-            Fonts.createFonts();
-        } else {
-            // todo fix (doesnt work well)
-            Fonts.loadFonts();
-        }
+        Fonts.createFonts();
 
         texBg = new Texture("bg.png");
 
@@ -208,18 +202,9 @@ public class Main extends ApplicationAdapter {
         Debug.showDebugInfo = true;
         // Debug.alwaysUseNSWLayout = true;
         // Debug.selectOpponentMoves = true;
-        // Debug.displayRealStats = true;
 
         Settings.showFpsCounter = true;
         Settings.battleSpeed = 0.5f;
-
-        fps = new TextraLabel("", FontType.KORURI.get(20));
-        fps.setPosition(10, World.HEIGHT - 15);
-        stage5.addActor(fps);
-
-        debug = new TextraLabel("", FontType.KORURI.get(20));
-        debug.setPosition(10, World.HEIGHT - 30);
-        stage5.addActor(debug);
 
         popupTitle = new TypingLabel("", Fonts.FontType.KORURI.get(30));
         popupTitle.setAlignment(Align.center);
@@ -233,7 +218,7 @@ public class Main extends ApplicationAdapter {
         inputGuide.setAlignment(Align.bottomRight);
         stage3.addActor(inputGuide);
 
-        MENU_LIST.add(MenuType.MAIN);
+        NAV_PATH.add(MenuType.MAIN);
         createMenuMain();
 
         // todo if using SteamInput, initial warning popup abt incorrect glyphs
@@ -246,11 +231,13 @@ public class Main extends ApplicationAdapter {
         // and Settings.scale can exceed display res, and if the game launches at >
         // display res, it causes problems
         if (!Settings.autoRes) {
-            changeScale(Settings.scale);
+            // changeScale(todo);
         }
 
         // todo set target fps and vsync based off of settings (cant set in launcher bc
         // settings wont be loaded yet)
+
+        MenuDebug.init();
     }
 
     @Override
@@ -260,26 +247,15 @@ public class Main extends ApplicationAdapter {
     }
 
     private void input() {
-        debug.setVisible(Debug.showDebugInfo);
-
-        if (Debug.showDebugInfo) {
-            debug.setText(/*
-                           * "actors on stage1: " + stage1.getActors().size + "\nactors on stage2: " +
-                           * stage2.getActors().size + "\nactors on stage3: " + stage3.getActors().size + "\n
-                           */"menuList = " +
-                    MENU_LIST.toString().replace("[", "").replace("]", ""));
-        }
-
-        if (Settings.showFpsCounter) {
-            fps.setText((int) (1d / Gdx.graphics.getDeltaTime()) + " FPS");
-        }
+        isF3MenuEnabled ^= Gdx.input.isKeyJustPressed(Input.Keys.F3);
+        MenuDebug.handleF3Menu(isF3MenuEnabled);
 
         InputHandler.checkController();
 
-        switch (MENU_LIST.getLast()) {
+        switch (NAV_PATH.getLast()) {
             case MAIN:
                 if (Debug.enableDebugHotkeys && Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
-                    MENU_LIST.add(MenuType.DEBUG);
+                    NAV_PATH.add(MenuType.DEBUG);
                 }
 
                 index = MenuLib.checkMovement1D(index, MenuType.MAIN.getOptCount());
@@ -297,7 +273,7 @@ public class Main extends ApplicationAdapter {
                             MenuLib.removeOpts(optLabels, stage2);
 
                             BattleController.create();
-                            MENU_LIST.add(MenuType.BATTLE);
+                            NAV_PATH.add(MenuType.BATTLE);
                             break;
                         case QUIT:
                             Gdx.app.exit();
@@ -320,7 +296,7 @@ public class Main extends ApplicationAdapter {
                     stage5.getRoot().removeActor(popupTitle);
                     stage5.getRoot().removeActor(popupText);
                     coolRects[CoolRects.POPUP_CENTERED.ordinal()].setDir(-1);
-                    MENU_LIST.removeLast();
+                    NAV_PATH.removeLast();
                 }
                 break;
             case BATTLE, TARGETING, LOG, INSPECT_TARGETING, INSPECT:
@@ -330,15 +306,15 @@ public class Main extends ApplicationAdapter {
             // todo cleanup
             case DEBUG:
                 if (InputLib.checkInput(Keybind.BACK)) {
-                    MENU_LIST.removeLast();
+                    NAV_PATH.removeLast();
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
                     Debug.showDebugInfo = !Debug.showDebugInfo;
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
                     MenuDebug.create(MenuType.DEBUG_TEXT);
-                    MENU_LIST.add(MenuType.DEBUG_TEXT);
+                    NAV_PATH.add(MenuType.DEBUG_TEXT);
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
                     MenuDebug.create(MenuType.DEBUG_RES);
-                    MENU_LIST.add(MenuType.DEBUG_RES);
+                    NAV_PATH.add(MenuType.DEBUG_RES);
                 }
                 break;
             case DEBUG_TEXT:
@@ -353,7 +329,7 @@ public class Main extends ApplicationAdapter {
         }
 
         if (Settings.showInputGuide) {
-            MenuLib.setInputGuideText(MENU_LIST.getLast());
+            MenuLib.setInputGuideText(NAV_PATH.getLast());
             inputGuide.setX(World.WIDTH - inputGuide.getWidth());
         }
     }
@@ -362,6 +338,9 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        spriteBatch.setProjectionMatrix(camera.combined);
+        polygonSpriteBatch.setProjectionMatrix(camera.combined);
+
         // Lowest priority. Unused
         drawCoolRects(0);
         drawPaths(0);
@@ -369,7 +348,7 @@ public class Main extends ApplicationAdapter {
         // Sprites (will prob need several separate begin/end blocks and a wrapper
         // method eventually)
         spriteBatch.begin();
-        spriteBatch.draw(texBg, 0, 0, World.WIDTH * Settings.scale, World.HEIGHT * Settings.scale);
+        spriteBatch.draw(texBg, 0, 0, World.WIDTH, World.HEIGHT);
         spriteBatch.end();
 
         // Low priority. Unused
@@ -408,16 +387,18 @@ public class Main extends ApplicationAdapter {
         drawCoolRects(5);
         drawPaths(5);
 
-        stage5.act();
-        stage5.draw();
-
         // todo placeholder for unit sprite
-        if (MENU_LIST.getLast() == MenuType.INSPECT) {
+        if (NAV_PATH.getLast() == MenuType.INSPECT) {
             polygonSpriteBatch.begin();
             drawer.setColor(Color.WHITE);
             drawer.rectangle(30, World.HEIGHT - 256 - 30, 256, 256);
             polygonSpriteBatch.end();
         }
+
+        if(isF3MenuEnabled) drawF3MenuBg();
+
+        stage5.act();
+        stage5.draw();
     }
 
     private void createMenuMain() {
@@ -425,9 +406,7 @@ public class Main extends ApplicationAdapter {
         MenuLib.createOpts(optLabels, FontType.KORURI.get(80), stage2);
     }
 
-    // todo fix bugs that arise from being resized (temporary input rejection) or
-    // remove resizing
-    // and handle monitor res changes while the game is running
+    // todo fix bugs that arise from being resized (temporary input rejection) or remove drag resizing
     @Override
     public void resize(int width, int height) {
         viewPort.update(width, height, true);

@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.github.celosia.Main.MENU_LIST;
+import static io.github.celosia.Main.NAV_PATH;
 import static io.github.celosia.Main.STAGE_TYPES;
 import static io.github.celosia.Main.coolRects;
 import static io.github.celosia.Main.paths;
@@ -566,7 +566,7 @@ public class BattleControllerLib {
             }
             movesL[selectingMove].setText("");
 
-            MENU_LIST.removeLast();
+            NAV_PATH.removeLast();
             return;
         }
 
@@ -598,7 +598,7 @@ public class BattleControllerLib {
 
             indexSkill = 0;
 
-            MENU_LIST.removeLast();
+            NAV_PATH.removeLast();
         }
     }
 
@@ -864,7 +864,7 @@ public class BattleControllerLib {
     static void updateLog() {
         battleLog.setText(formatLog());
 
-        if (MENU_LIST.getLast() == MenuLib.MenuType.LOG) {
+        if (NAV_PATH.getLast() == MenuLib.MenuType.LOG) {
             Path scrollbar = paths[0];
 
             // Portion of the log currently displayed
@@ -895,8 +895,8 @@ public class BattleControllerLib {
     }
 
     static String formatLog() {
-        int lines = (MENU_LIST.getLast() == MenuLib.MenuType.LOG) ? 48 : 8;
-        int scroll = (MENU_LIST.getLast() == MenuLib.MenuType.LOG) ? logScroll : 0;
+        int lines = (NAV_PATH.getLast() == MenuLib.MenuType.LOG) ? 48 : 8;
+        int scroll = (NAV_PATH.getLast() == MenuLib.MenuType.LOG) ? logScroll : 0;
 
         int start = Math.max(0, logText.size() - lines - scroll);
         int end = Math.min(start + lines, logText.size());
@@ -908,7 +908,7 @@ public class BattleControllerLib {
     static void createFullLog() {
         battleLog.setAlignment(Align.topLeft);
         battleLog.setPosition(20, World.HEIGHT);
-        MENU_LIST.add(MenuLib.MenuType.LOG);
+        NAV_PATH.add(MenuLib.MenuType.LOG);
         coolRects[CoolRects.COVER_LEFT.ordinal()].setDir(1).setPrio(3);
         paths[0].setDir(1).setThickness(10).setPrio(3);
         updateLog();
@@ -918,14 +918,14 @@ public class BattleControllerLib {
         if (InputLib.checkInput(Keybind.BACK, Keybind.MENU)) {
             battleLog.setAlignment(Align.left);
             battleLog.setPosition(World.WIDTH_2 - 200, World.HEIGHT - 270);
-            MENU_LIST.removeLast();
+            NAV_PATH.removeLast();
             updateLog();
             coolRects[CoolRects.COVER_LEFT.ordinal()].setDir(-1);
             paths[0].setDir(-1);
         }
 
         int logScrollNew = MenuLib.checkLogScroll(logScroll, logText.size(),
-                (MENU_LIST.getLast() == MenuLib.MenuType.LOG) ? 48 : 8);
+                (NAV_PATH.getLast() == MenuLib.MenuType.LOG) ? 48 : 8);
         if (logScroll != logScrollNew) {
             logScroll = logScrollNew;
             updateLog();
@@ -938,7 +938,7 @@ public class BattleControllerLib {
             skill.setColor(Color.WHITE);
         }
 
-        MENU_LIST.add(MenuLib.MenuType.INSPECT_TARGETING);
+        NAV_PATH.add(MenuLib.MenuType.INSPECT_TARGETING);
     }
 
     static void handleInspectTargeting() {
@@ -948,7 +948,7 @@ public class BattleControllerLib {
             }
             movesL[selectingMove].setText("");
 
-            MENU_LIST.removeLast();
+            NAV_PATH.removeLast();
             return;
         }
 
@@ -962,8 +962,8 @@ public class BattleControllerLib {
     }
 
     static void createInspect() {
-        MENU_LIST.removeLast();
-        MENU_LIST.add(MenuLib.MenuType.INSPECT);
+        NAV_PATH.removeLast();
+        NAV_PATH.add(MenuLib.MenuType.INSPECT);
 
         coolRects[CoolRects.COVER_LEFT.ordinal()].setDir(1).setPrio(4);
         coolRects[CoolRects.CURSOR_1.ordinal()].setDir(1).setPrio(4).setLR(45, 475);
@@ -1171,7 +1171,7 @@ public class BattleControllerLib {
     }
 
     static void deleteInspect() {
-        MENU_LIST.removeLast();
+        NAV_PATH.removeLast();
 
         coolRects[CoolRects.COVER_LEFT.ordinal()].setDir(-1);
         coolRects[CoolRects.CURSOR_1.ordinal()].setDir(-1).setPrio(2);
@@ -1238,7 +1238,7 @@ public class BattleControllerLib {
             }
 
             indexTarget = getStartingIndex(selectedSkillInstance.getSkill());
-            MENU_LIST.add(MenuLib.MenuType.TARGETING);
+            NAV_PATH.add(MenuLib.MenuType.TARGETING);
         }
     }
 

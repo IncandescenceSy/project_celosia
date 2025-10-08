@@ -6,7 +6,7 @@ import io.github.celosia.sys.input.InputLib;
 import io.github.celosia.sys.input.Keybind;
 import io.github.celosia.sys.menu.MenuLib.MenuType;
 
-import static io.github.celosia.Main.MENU_LIST;
+import static io.github.celosia.Main.NAV_PATH;
 import static io.github.celosia.sys.battle.BattleControllerLib.createFullLog;
 import static io.github.celosia.sys.battle.BattleControllerLib.createInspectTargeting;
 import static io.github.celosia.sys.battle.BattleControllerLib.handleBattle;
@@ -32,7 +32,7 @@ public class BattleController {
             handleDebug();
         }
 
-        MenuType curMenu = MENU_LIST.getLast();
+        MenuType curMenu = NAV_PATH.getLast();
 
         if (curMenu == MenuType.LOG) {
             handleLog();

@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import io.github.celosia.Main;
 import io.github.celosia.sys.menu.MenuLib;
-import io.github.celosia.sys.save.Settings;
 import space.earlygrey.shapedrawer.JoinType;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -47,20 +46,20 @@ public class TriLib {
                 float angROff = (rect.getAngR() > 0) ? (height / (90f / rect.getAngR())) : 0;
 
                 // Top left
-                float tlx = (rect.getL() + angLOff) * Settings.scale;
-                float tly = rect.getT() * Settings.scale;
+                float tlx = (rect.getL() + angLOff);
+                float tly = rect.getT();
 
                 // Top right
-                float trx = i.apply(tlx, (rect.getR() + angROff) * Settings.scale, prog);
-                float try_ = rect.getT() * Settings.scale;
+                float trx = i.apply(tlx, (rect.getR() + angROff), prog);
+                float try_ = rect.getT();
 
                 // Bottom left
-                float blx = rect.getL() * Settings.scale;
-                float bly = rect.getB() * Settings.scale;
+                float blx = rect.getL();
+                float bly = rect.getB();
 
                 // Bottom right
-                float brx = i.apply(blx, rect.getR() * Settings.scale, prog);
-                float bry = rect.getB() * Settings.scale;
+                float brx = i.apply(blx, rect.getR(), prog);
+                float bry = rect.getB();
 
                 // Center
                 Color color = rect.getColor();
@@ -81,7 +80,7 @@ public class TriLib {
                     drawer.path(points,
                             // Change line thickness near the start/end of the animation to make its
                             // appearance/disappearance smoother
-                            i.apply(0, 10 * Settings.scale, Math.min(1f, prog * 3.5f)), JoinType.POINTY, false);
+                            i.apply(0, 10, Math.min(1f, prog * 3.5f)), JoinType.POINTY, false);
                 }
 
             }
@@ -100,7 +99,9 @@ public class TriLib {
         for (Path path : paths) {
             if (path.getPrio() == prio) {
                 Array<Vector2> points = path.getPoints();
+
                 if (points != null && !points.isEmpty()) {
+
                     int dir = path.getDir();
                     float prog = Math.clamp(path.getProg() + (delta * dir * path.getSpeed() * (dir == -1 ? 2 : 1)), 0f,
                             1f);
@@ -118,7 +119,7 @@ public class TriLib {
                     drawer.path(points,
                             // Change line thickness near the start/end of the animation to make its
                             // appearance/disappearance smoother
-                            i.apply(0, path.getThickness() * Settings.scale, Math.min(1f, prog)), JoinType.POINTY,
+                            i.apply(0, path.getThickness(), Math.min(1f, prog)), JoinType.POINTY,
                             false);
                 }
             }
@@ -132,15 +133,12 @@ public class TriLib {
     public static void drawTri(PolygonSpriteBatch batch, ShapeDrawer drawer, int tlx, int tly, int blx, int bly,
                                int trx, int try_) {
         batch.begin();
-
-        drawer.filledTriangle(tlx * Settings.scale, tly * Settings.scale, blx * Settings.scale, bly * Settings.scale,
-                trx * Settings.scale, try_ * Settings.scale);
-
+        drawer.filledTriangle(tlx, tly, blx, bly, trx, try_);
         batch.end();
     }
 
     public static void createPopup(String name, String desc) {
-        Main.MENU_LIST.add(MenuLib.MenuType.POPUP);
+        Main.NAV_PATH.add(MenuLib.MenuType.POPUP);
 
         Main.stage5.addActor(Main.popupTitle);
         Main.stage5.addActor(Main.popupText);

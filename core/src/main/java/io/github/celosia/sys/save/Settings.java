@@ -28,10 +28,6 @@ public class Settings {
 
     //// Display settings
 
-    // Launch resolution relative to 2560x1440
-    // After the game has launched, this shouldn't change even if res changes
-    public static float scale = 1f;
-
     // Whether to ignore windowScale and use the nearest fitting 16:9 to the
     // display's resolution
     // Hidden from the user. User is instead presented with 1 "Resolution" option
@@ -50,7 +46,7 @@ public class Settings {
     // Target FPS. Only used if Vsync is disabled
     public static int targetFPS = 60;
 
-    // Whether to ignore targetFPs use the display's refresh rate + 1 instead
+    // Whether to ignore targetFPS and use the display's refresh rate + 1 instead
     // Hidden from the user. User is instead presented with 1 "Target FPS" option
     // with choices of 60, 120, 144, 165, 240, 360, and Auto (and maybe some others
     // idk)

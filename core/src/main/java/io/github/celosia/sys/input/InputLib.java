@@ -38,13 +38,8 @@ public class InputLib {
         Button.DD.setMapping(mapping.buttonDpadDown);
         Button.LB.setMapping(mapping.buttonL1);
         Button.RB.setMapping(mapping.buttonR1);
-        if (Debug.treatTriggersAsAxes) {
-            Button.LT.setMapping(4);
-            Button.RT.setMapping(5);
-        } else {
-            Button.LT.setMapping(mapping.buttonL2);
-            Button.RT.setMapping(mapping.buttonR2);
-        }
+        Button.LT.setMapping(4);
+        Button.RT.setMapping(5);
         Button.LX.setMapping(mapping.axisLeftX);
         Button.LY.setMapping(mapping.axisLeftY);
         Button.RX.setMapping(mapping.axisRightX);

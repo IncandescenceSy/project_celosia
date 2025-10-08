@@ -17,7 +17,7 @@ public class InputPrompt {
     }
 
     public String getText() {
-        ControllerType lastUsedController = InputHandler.getLastUsedController();
+        ControllerType lastUsedController = InputHandler.getLastUsedControllerType();
         StringBuilder glyphBuilder = new StringBuilder();
 
         if (lastUsedController == ControllerType.NONE) {

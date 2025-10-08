@@ -19,7 +19,7 @@ import io.github.celosia.sys.render.CoolRect;
 
 import java.util.List;
 
-import static io.github.celosia.Main.MENU_LIST;
+import static io.github.celosia.Main.NAV_PATH;
 import static io.github.celosia.Main.inputGuide;
 import static io.github.celosia.sys.battle.PosLib.getRelativeSide;
 import static io.github.celosia.sys.save.Lang.lang;
@@ -176,8 +176,8 @@ public class MenuLib {
 
     // Creates Labels and adds them to a Stage and a List
     public static void createOpts(List<TypingLabel> labels, Font font, Stage stage) {
-        for (int i = 0; i < MENU_LIST.getLast().getOptCount(); i++) {
-            MenuOpt opt = MENU_LIST.getLast().getOpt(i);
+        for (int i = 0; i < NAV_PATH.getLast().getOptCount(); i++) {
+            MenuOpt opt = NAV_PATH.getLast().getOpt(i);
             TypingLabel label = new TypingLabel(opt.getText(), font);
             labels.add(label);
             label.setPosition(opt.getPosX(), opt.getPosY(), Align.left);

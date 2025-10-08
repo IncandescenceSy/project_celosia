@@ -14,6 +14,7 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.battle;
 import static io.github.celosia.sys.battle.PosLib.getSide;
@@ -316,18 +317,14 @@ public class TextLib {
         return builder.toString();
     }
 
-    public static <T> String getNamesAsMultiline(List<T> list, Function<T, String> function, boolean trailingNewline) {
-        StringBuilder builder = new StringBuilder();
+    public static <T> String getNamesAsMultiline(List<T> list, Function<? super T, String> function,
+                                                 boolean trailingNewline) {
+        String str = list.stream()
+                .map(function)
+                .collect(Collectors.joining("\n"));
 
-        for (int i = 0; i < list.size(); i++) {
-            builder.append(function.apply(list.get(i)));
-
-            if (trailingNewline || i != list.size() - 1) {
-                builder.append("\n");
-            }
-        }
-
-        return builder.toString();
+        if (trailingNewline) return str + "\n";
+        return str;
     }
 
     public static <T> String getNamesAsMultiline(List<T> list, Function<T, String> function) {

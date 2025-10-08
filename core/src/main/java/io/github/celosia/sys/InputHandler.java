@@ -17,7 +17,7 @@ public class InputHandler extends InputAdapter implements ControllerListener {
 
     // The kind of controller the last input came from
     // NONE means the last input came from a keyboard
-    private static ControllerType lastUsedController = NONE;
+    private static ControllerType lastUsedControllerType = NONE;
 
     public static void checkController() {
         controller = Controllers.getCurrent();
@@ -29,36 +29,36 @@ public class InputHandler extends InputAdapter implements ControllerListener {
     // Keyboard input events
     @Override
     public boolean keyDown(int keycode) {
-        lastUsedController = NONE;
+        lastUsedControllerType = NONE;
         return super.keyDown(keycode);
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        lastUsedController = NONE;
+        lastUsedControllerType = NONE;
         return super.keyDown(keycode);
     }
 
     // Controller input events
     @Override
     public void connected(Controller controller) {
-        lastUsedController = getControllerType(controller);
+        lastUsedControllerType = getControllerType(controller);
     }
 
     @Override
     public void disconnected(Controller controller) {
-        lastUsedController = NONE;
+        lastUsedControllerType = NONE;
     }
 
     @Override
     public boolean buttonDown(Controller controller, int buttonCode) {
-        lastUsedController = getControllerType(controller);
+        lastUsedControllerType = getControllerType(controller);
         return false;
     }
 
     @Override
     public boolean buttonUp(Controller controller, int buttonCode) {
-        lastUsedController = getControllerType(controller);
+        lastUsedControllerType = getControllerType(controller);
         return false;
     }
 
@@ -66,7 +66,7 @@ public class InputHandler extends InputAdapter implements ControllerListener {
     public boolean axisMoved(Controller controller, int axisCode, float value) {
         // Ignore small movement
         if (Math.abs(value) > 0.2f) {
-            lastUsedController = getControllerType(controller);
+            lastUsedControllerType = getControllerType(controller);
         }
         return false;
     }
@@ -76,10 +76,10 @@ public class InputHandler extends InputAdapter implements ControllerListener {
     }
 
     public static boolean isLastUsedController() {
-        return lastUsedController != NONE;
+        return lastUsedControllerType != NONE;
     }
 
-    public static ControllerType getLastUsedController() {
-        return lastUsedController;
+    public static ControllerType getLastUsedControllerType() {
+        return lastUsedControllerType;
     }
 }

@@ -4,7 +4,6 @@ import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import io.github.celosia.Main;
-import io.github.celosia.sys.save.Settings;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
@@ -43,7 +42,6 @@ public class Lwjgl3Launcher {
         double scale = Math.min(dispMode.width / 16, dispMode.height / 9);
         int y = (int) (9 * scale);
         configuration.setWindowedMode((int) (16 * scale), y);
-        Settings.scale = y / 1440f;
 
         //// You can change these files; they are in lwjgl3/src/main/resources/ .
         //// They can also be loaded from the root of assets/ .

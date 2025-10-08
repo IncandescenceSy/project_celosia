@@ -18,6 +18,7 @@ dependencies {
     api "com.badlogicgames.gdx:gdx:$gdxVersion"
     api "com.github.tommyettinger:textratypist:2.0.3"
     api "space.earlygrey:shapedrawer:$shapedrawerVersion"
+    implementation 'com.github.oshi:oshi-core:6.9.0'
 
     if (enableGraalNative == 'true') {
         implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
