@@ -84,9 +84,9 @@ public class InputLib {
     }
 
     public static boolean checkKeybind(Keybind keybind) {
-        return Gdx.input.isKeyPressed(keybind.getKey()) || (InputHandler.getController() != null &&
-                (InputHandler.getController().getButton(keybind.getButton().getMapping()) ||
-                        checkKeybind2Axis(keybind)));
+        return Gdx.input.isKeyPressed(keybind.getKey()) || InputHandler.getController()
+                .map(controller -> controller.getButton(keybind.getButton().getMapping()) || checkKeybind2Axis(keybind))
+                .orElse(false);
     }
 
     // todo: stick sensitivity setting? also dont make L1/R1 automatically map to R
@@ -106,9 +106,9 @@ public class InputLib {
     }
 
     public static boolean checkAxis(int mapping, float dist) {
-        return InputHandler.getController() != null &&
-                (dist > 0f ? InputHandler.getController().getAxis(mapping) > dist :
-                        InputHandler.getController().getAxis(mapping) < dist);
+        return InputHandler.getController()
+                .map(controller -> dist > 0f ? controller.getAxis(mapping) > dist : controller.getAxis(mapping) < dist)
+                .orElse(false);
     }
 
     public static ControllerType getControllerType(Controller controller) {

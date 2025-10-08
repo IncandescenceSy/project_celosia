@@ -319,6 +319,8 @@ public class TextLib {
 
     public static <T> String getNamesAsMultiline(List<T> list, Function<? super T, String> function,
                                                  boolean trailingNewline) {
+        if (list.isEmpty()) return "";
+
         String str = list.stream()
                 .map(function)
                 .collect(Collectors.joining("\n"));

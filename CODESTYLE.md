@@ -29,6 +29,8 @@ It is strongly recommended to use Intellij IDEA
 * Setters before getters (only for consistency, not because it's a better order)
 * Early return whenever it can make code cleaner
 * Do not have >1 nested classes
+* Explicitly annotate Overrides, Nullability, FunctionalInterfaces, etc
+* Whenever possible, wrap nullable values in Optional<T>
 * When you need to invert a number, multiply it by -1 instead of prefixing it with - (for readability)
 * Split big logic into separate functions
 * Comment when necessary, but don't over-comment self-explanatory code

@@ -23,7 +23,7 @@ public class Weapon extends EquippableEntity {
 
     public static class Builder extends ComplexDescriptionEntity.Builder {
 
-        private Map<Element, Integer> affinities = null;
+        private Map<Element, Integer> affinities = new HashMap<>();
         private Skill[] skills = new Skill[] {};
         private Passive[] passives = new Passive[] {};
 
@@ -80,19 +80,15 @@ public class Weapon extends EquippableEntity {
     @Override
     public void apply(Unit unit, boolean give) {
         if (give) {
-            if (affinities != null) {
-                for (Map.Entry<Element, Integer> entry : affinities.entrySet()) {
-                    unit.getAffinities().merge(entry.getKey(), entry.getValue(), Integer::sum);
-                }
+            for (Map.Entry<Element, Integer> entry : affinities.entrySet()) {
+                unit.getAffinities().merge(entry.getKey(), entry.getValue(), Integer::sum);
             }
 
             unit.addSkills(skills);
             unit.addPassives(passives);
         } else {
-            if (affinities != null) {
-                for (Map.Entry<Element, Integer> entry : affinities.entrySet()) {
-                    unit.getAffinities().merge(entry.getKey(), entry.getValue() * -1, Integer::sum);
-                }
+            for (Map.Entry<Element, Integer> entry : affinities.entrySet()) {
+                unit.getAffinities().merge(entry.getKey(), entry.getValue() * -1, Integer::sum);
             }
 
             unit.removeSkills(skills);

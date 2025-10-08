@@ -412,7 +412,7 @@ public class MenuLib {
             case Input.Keys.SCROLL_LOCK -> "Scroll Lock";
             case Input.Keys.PAUSE -> "Pause";
             case Input.Keys.PRINT_SCREEN -> "[+KB_Prt_Scrn]";
-            default -> null; // key name not found
+            default -> ""; // key name not found
         };
     }
 

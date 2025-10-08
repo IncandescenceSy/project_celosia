@@ -2,7 +2,6 @@ package io.github.celosia.sys.menu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Align;
 import com.github.tommyettinger.textra.TextraLabel;
@@ -10,7 +9,6 @@ import com.github.tommyettinger.textra.TypingLabel;
 import io.github.celosia.Main;
 import io.github.celosia.sys.InputHandler;
 import io.github.celosia.sys.World;
-import io.github.celosia.sys.input.ControllerType;
 import io.github.celosia.sys.input.InputLib;
 import io.github.celosia.sys.input.Keybind;
 import io.github.celosia.sys.render.Fonts;
@@ -34,27 +32,29 @@ public class MenuDebug {
     private static final TypingLabel TEXT = new TypingLabel("", Fonts.FontType.KORURI.get(30));
 
     // F3 menu
-    public static final TextraLabel F3L = new TextraLabel("", Fonts.FontType.KORURI.get(20));;
-    public static final TextraLabel F3R = new TextraLabel("", Fonts.FontType.KORURI.get(20));;
+    public static final TextraLabel F3L = new TextraLabel("", Fonts.FontType.KORURI.get(20));
+    public static final TextraLabel F3R = new TextraLabel("", Fonts.FontType.KORURI.get(20));
 
     private static final Runtime RUNTIME = Runtime.getRuntime();
     private static final int MB = 1024 * 1024;
 
-    private static final SystemInfo systemInfo = new SystemInfo();
-    private static final HardwareAbstractionLayer hardware = systemInfo.getHardware();
+    private static final SystemInfo SYSTEM_INFO = new SystemInfo();
+    private static final HardwareAbstractionLayer HARDWARE = SYSTEM_INFO.getHardware();
 
-    private static final CentralProcessor CPU = hardware.getProcessor();
+    private static final CentralProcessor CPU = HARDWARE.getProcessor();
     private static final String CPU_NAME = CPU.getProcessorIdentifier().getName();
     // todo if it seems common for CPU_NAME to include the core count, remove this
+    // or dynamically display it depending on if it does?
     private static final int CPU_CORES = CPU.getPhysicalProcessorCount();
 
-    private static final List<GraphicsCard> GPUS = hardware.getGraphicsCards();
+    private static final List<GraphicsCard> GPUS = HARDWARE.getGraphicsCards();
     private static final int GPU_COUNT = GPUS.size();
+    // todo are multi-gpus ever relevant? maybe with iGPU + GPU?
     private static final String GPU_NAME = Gdx.gl.glGetString(GL20.GL_RENDERER);
     // todo fix incorrect vram reporting or just remove this
     private static final long GPU_VRAM = GPUS.getFirst().getVRam();
 
-    private static final long TOTAL_RAM = hardware.getMemory().getTotal();
+    private static final long TOTAL_RAM = HARDWARE.getMemory().getTotal();
 
     public static void init() {
         F3L.setAlignment(Align.topLeft);
@@ -111,31 +111,26 @@ public class MenuDebug {
         }
     }
 
-    // todo background
     public static void handleF3Menu(boolean enabled) {
-        if (!enabled) {
-            F3L.setVisible(false);
-            F3R.setVisible(false);
-            return;
-        }
-        F3L.setVisible(true);
-        F3R.setVisible(true);
+        F3L.setVisible(enabled);
+        F3R.setVisible(enabled);
+
+        if (!enabled) return;
 
         String vsync = Settings.useVsync ? " " + lang.get("f3.vsync") : "";
 
         long memAlloc = RUNTIME.totalMemory();
 
         String gpuCount = "";
-        if(GPU_COUNT > 1) gpuCount = lang.format("f3.gpu_count", GPU_COUNT - 1);
+        if (GPU_COUNT > 1) gpuCount = lang.format("f3.gpu_count", GPU_COUNT - 1);
 
         String lastInputSource = lang.get("f3.keyboard");
 
-        if (InputHandler.getLastUsedControllerType() != ControllerType.NONE) {
-            Controller controller = InputHandler.getController();
-            if (controller != null) {
-                lastInputSource = controller.getName() + " " +
-                        lang.format("f3.predicted_type", InputLib.getControllerType(controller).toString());
-            }
+        if (InputHandler.isLastUsedController()) {
+            lastInputSource = InputHandler.getController()
+                    .map(controller -> controller.getName() + " " +
+                            lang.format("f3.predicted_type", InputLib.getControllerType(controller).toString()))
+                    .orElse(lastInputSource);
         }
 
         // spotless:off
@@ -145,16 +140,17 @@ public class MenuDebug {
                 lang.get("f3.resolution") + " " + Gdx.graphics.getWidth() + "x" + Gdx.graphics.getHeight() + "\n" +
                 lang.get("f3.nav_path") + " " + NAV_PATH.toString().replace("[", "").replace("]", "") + "\n" +
                 lang.get("f3.overworld_location") + " " + "todo" + " " + lang.format("f3.xy", 0, 0) + "\n" + //todo
+                lang.get("f3.actor_count") + " " + Main.stage1.getActors().size + ", " + Main.stage2.getActors().size + ", " +
+                        Main.stage3.getActors().size + ", " + Main.stage4.getActors().size + ", " + Main.stage5.getActors().size + "\n" +
                 lang.get("f3.loaded_mod_count") + " " + 0 // todo
         );
 
         F3R.setText(
                 lang.get("f3.os") + " " + System.getProperty("os.name") + "\n" +
-                lang.get("f3.ram") + " " + (memAlloc - RUNTIME.freeMemory()) / MB + "/" + memAlloc / MB + "/" + RUNTIME.maxMemory() / MB + "MB\n" +
-                lang.get("f3.ram_total") + " " + TOTAL_RAM / MB + "MB\n" +
+                lang.format("f3.ram", (memAlloc - RUNTIME.freeMemory()) / MB, memAlloc / MB, RUNTIME.maxMemory() / MB, TOTAL_RAM / MB) + "\n" +
                 lang.get("f3.cpu") + " " + CPU_NAME + " " + lang.format("f3.cpu_cores", CPU_CORES) + "\n" +
                 lang.get("f3.gpu") + " " + GPU_NAME + " " + lang.format("f3.gpu_vram", GPU_VRAM / MB) + " " + gpuCount + "\n" +
-                lang.get("f3.last_input_source") + " " + lastInputSource
+                lang.format("f3.last_input_source", lastInputSource)
         );
         // spotless:on
     }

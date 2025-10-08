@@ -2,6 +2,8 @@ package io.github.celosia.sys.battle;
 
 import io.github.celosia.sys.entity.IconEntity;
 
+import java.util.Optional;
+
 // Interface for applying skill effects
 public interface SkillEffect {
 
@@ -17,7 +19,7 @@ public interface SkillEffect {
         return 0;
     }
 
-    default IconEntity getDescInclusion() {
-        return null;
+    default Optional<IconEntity> getDescInclusion() {
+        return Optional.empty();
     }
 }

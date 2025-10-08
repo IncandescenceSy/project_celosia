@@ -8,6 +8,7 @@ import io.github.celosia.sys.entity.IconEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.battle.BattleLib.getStageBuffType;
@@ -133,7 +134,7 @@ public class ChangeStage implements SkillEffect {
     }
 
     @Override
-    public IconEntity getDescInclusion() {
-        return stageType;
+    public Optional<IconEntity> getDescInclusion() {
+        return Optional.of(stageType);
     }
 }

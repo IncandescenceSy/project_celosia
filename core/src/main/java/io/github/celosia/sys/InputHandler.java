@@ -6,14 +6,17 @@ import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.Controllers;
 import io.github.celosia.sys.input.ControllerType;
 import io.github.celosia.sys.input.InputLib;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 import static io.github.celosia.sys.input.ControllerType.NONE;
 import static io.github.celosia.sys.input.InputLib.getControllerType;
 
 public class InputHandler extends InputAdapter implements ControllerListener {
 
-    // The controller the last input came from
-    private static Controller controller;
+    // The controller the last input came from, or null
+    @Nullable private static Controller controller;
 
     // The kind of controller the last input came from
     // NONE means the last input came from a keyboard
@@ -71,8 +74,8 @@ public class InputHandler extends InputAdapter implements ControllerListener {
         return false;
     }
 
-    public static Controller getController() {
-        return controller;
+    public static Optional<Controller> getController() {
+        return Optional.ofNullable(controller);
     }
 
     public static boolean isLastUsedController() {

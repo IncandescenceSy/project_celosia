@@ -742,97 +742,100 @@ public class BattleControllerLib {
         for (int i = 0; i < 8; i++) {
             // todo can use battle.getAlUnits
             Unit unit = (i >= 4) ? battle.getOpponentTeam().getUnits()[i - 4] : battle.getPlayerTeam().getUnits()[i];
-            if (unit != null) {
-                long shield = unit.getDisplayShield() + unit.getDisplayDefend();
-                // Account for overflow
-                if (shield < 0) {
-                    shield = Long.MAX_VALUE;
-                }
-                // todo colors
-                // String shieldStr = (shield > 0) ? c_shield + "+" + String.format("%,d",
-                // shield) : "";
-                // String spStr = (!unit.isInfiniteSp()) ? formatNum(unit.getSp()) +
-                // "[WHITE]/" + c_sp + formatNum(1000) : "∞";
-                // StringBuilder text = new StringBuilder(unit.getUnitType().getName() + "\n" +
-                // c_stat + lang.get("hp") + "[WHITE]: " + c_hp + String.format("%,d",
-                // unit.getStatsCur().getHp()) +
-                // shieldStr + "[WHITE]/" + c_hp + String.format("%,d",
-                // unit.getMaxHp()) + "\n" + c_stat + lang.get("sp") + "[WHITE]:
-                // " + c_sp + spStr +
-                // //"\nStr: " + unit.getStrWithStage() + "/" + unit.getStatsDefault().getStr()
-                // + "\nMag:" + unit.getMagWithStage() + "/" + unit.getStatsDefault().getMag() +
-                // //"\nAmr: " + unit.getAmrWithStage() + "/" + unit.getStatsDefault().getAmr()
-                // + "\nRes: " + unit.getResWithStage() + "/" + unit.getStatsDefault().getRes()
-                // +
-                // "\n");
-                /// Stat display
-                String shieldStr = (shield > 0) ? "[CYAN]+" + formatNum(shield) + "[WHITE]" : "";
-                String spStr = (!unit.isBooleanStat(BooleanStat.INFINITE_SP)) ?
-                        formatNum(unit.getSp()) + "/" + formatNum(1000) : "∞";
-                StringBuilder text = new StringBuilder(unit.getUnitType().getName() + "\n" + lang.get("hp") + ": " +
-                        formatNum(unit.getDisplayHp()) + shieldStr + "/" + formatNum(unit.getDisplayMaxHp()) + "\n" +
-                        lang.get("sp") + ": " + spStr); // + "\nStr: " + formatNum(unit.getStrWithStage()) + "/"
-                // + formatNum(unit.getStatsDefault().getStr()) +
-                // "\nMag:" + unit.getMagWithStage() + "/" + unit.getStatsDefault().getMag() +
-                // "\nAmr: " + unit.getAmrWithStage() + "/" + unit.getStatsDefault().getAmr() +
-                // "\nRes: " + unit.getResWithStage() + "/" + unit.getStatsDefault().getRes() +
-                // "\n");
-
-                statsL[i].setText(text.toString());
-
-                /// Buff display
-
-                int buffCount = 0;
-                text = new StringBuilder();
-
-                // List stage changes
-                for (StageType stageType : STAGE_TYPES) {
-                    int stage = unit.getStage(stageType);
-                    if (stage != 0) {
-                        if (buffCount > 0 && buffCount % 4 == 0) text.append("\n");
-
-                        buffCount++;
-
-                        text.append(stageType.getIcon()).append("[WHITE]").append((stage >= 1) ? "+" : "").append(stage)
-                                .append("(").append(unit.getStageTurns(stageType)).append(") ");
-                    }
-                }
-
-                // List buffs
-                List<BuffInstance> buffInstances = unit.getBuffInstances();
-                if (!buffInstances.isEmpty()) {
-                    for (BuffInstance buffInstance : buffInstances) {
-                        if (buffCount > 0 && buffCount % 4 == 0) text.append("\n");
-                        buffCount++;
-
-                        if (buffInstance.getBuff() == Buffs.DEFEND) {
-                            text.append(buffInstance.getBuff().getIcon()).append("[WHITE]").append("x")
-                                    .append(formatNum(unit.getDisplayDefend())).append("(")
-                                    .append(buffInstance.getTurns()).append(") ");
-                        } else if (buffInstance.getBuff() == Buffs.SHIELD) {
-                            text.append(buffInstance.getBuff().getIcon()).append("[WHITE]").append("x")
-                                    .append(formatNum(unit.getDisplayShield())).append("(")
-                                    .append(buffInstance.getTurns()).append(") ");
-                        } else {
-                            text.append(buffInstance.getBuff().getIcon()).append("[WHITE]");
-                            if (buffInstance.getBuff().getMaxStacks() > 1) {
-                                text.append("x").append(buffInstance.getStacks());
-                            }
-                            // 1000+ turns = infinite
-                            text.append("(");
-                            if (buffInstance.getTurns() < 1000) {
-                                text.append(buffInstance.getTurns());
-                            } else text.append("∞");
-                            text.append(") ");
-                        }
-                    }
-                }
-
-                buffsL[i].setText(text.toString());
-            } else {
-                statsL[i].setText("");
-                buffsL[i].setText("");
+            // todo unit cant be null for now, i think it might be possible later, impl better null safety then
+            // if (unit != null) {
+            long shield = unit.getDisplayShield() + unit.getDisplayDefend();
+            // Account for overflow
+            if (shield < 0) {
+                shield = Long.MAX_VALUE;
             }
+            // todo colors
+            // String shieldStr = (shield > 0) ? c_shield + "+" + String.format("%,d",
+            // shield) : "";
+            // String spStr = (!unit.isInfiniteSp()) ? formatNum(unit.getSp()) +
+            // "[WHITE]/" + c_sp + formatNum(1000) : "∞";
+            // StringBuilder text = new StringBuilder(unit.getUnitType().getName() + "\n" +
+            // c_stat + lang.get("hp") + "[WHITE]: " + c_hp + String.format("%,d",
+            // unit.getStatsCur().getHp()) +
+            // shieldStr + "[WHITE]/" + c_hp + String.format("%,d",
+            // unit.getMaxHp()) + "\n" + c_stat + lang.get("sp") + "[WHITE]:
+            // " + c_sp + spStr +
+            // //"\nStr: " + unit.getStrWithStage() + "/" + unit.getStatsDefault().getStr()
+            // + "\nMag:" + unit.getMagWithStage() + "/" + unit.getStatsDefault().getMag() +
+            // //"\nAmr: " + unit.getAmrWithStage() + "/" + unit.getStatsDefault().getAmr()
+            // + "\nRes: " + unit.getResWithStage() + "/" + unit.getStatsDefault().getRes()
+            // +
+            // "\n");
+            /// Stat display
+            String shieldStr = (shield > 0) ? "[CYAN]+" + formatNum(shield) + "[WHITE]" : "";
+            String spStr = (!unit.isBooleanStat(BooleanStat.INFINITE_SP)) ?
+                    formatNum(unit.getSp()) + "/" + formatNum(1000) : "∞";
+            StringBuilder text = new StringBuilder(unit.getUnitType().getName() + "\n" + lang.get("hp") + ": " +
+                    formatNum(unit.getDisplayHp()) + shieldStr + "/" + formatNum(unit.getDisplayMaxHp()) + "\n" +
+                    lang.get("sp") + ": " + spStr); // + "\nStr: " + formatNum(unit.getStrWithStage()) + "/"
+            // + formatNum(unit.getStatsDefault().getStr()) +
+            // "\nMag:" + unit.getMagWithStage() + "/" + unit.getStatsDefault().getMag() +
+            // "\nAmr: " + unit.getAmrWithStage() + "/" + unit.getStatsDefault().getAmr() +
+            // "\nRes: " + unit.getResWithStage() + "/" + unit.getStatsDefault().getRes() +
+            // "\n");
+
+            statsL[i].setText(text.toString());
+
+            /// Buff display
+
+            int buffCount = 0;
+            text = new StringBuilder();
+
+            // List stage changes
+            for (StageType stageType : STAGE_TYPES) {
+                int stage = unit.getStage(stageType);
+                if (stage != 0) {
+                    if (buffCount > 0 && buffCount % 4 == 0) text.append("\n");
+
+                    buffCount++;
+
+                    text.append(stageType.getIcon()).append("[WHITE]").append((stage >= 1) ? "+" : "").append(stage)
+                            .append("(").append(unit.getStageTurns(stageType)).append(") ");
+                }
+            }
+
+            // List buffs
+            List<BuffInstance> buffInstances = unit.getBuffInstances();
+            if (!buffInstances.isEmpty()) {
+                for (BuffInstance buffInstance : buffInstances) {
+                    if (buffCount > 0 && buffCount % 4 == 0) text.append("\n");
+                    buffCount++;
+
+                    if (buffInstance.getBuff() == Buffs.DEFEND) {
+                        text.append(buffInstance.getBuff().getIcon()).append("[WHITE]").append("x")
+                                .append(formatNum(unit.getDisplayDefend())).append("(")
+                                .append(buffInstance.getTurns()).append(") ");
+                    } else if (buffInstance.getBuff() == Buffs.SHIELD) {
+                        text.append(buffInstance.getBuff().getIcon()).append("[WHITE]").append("x")
+                                .append(formatNum(unit.getDisplayShield())).append("(")
+                                .append(buffInstance.getTurns()).append(") ");
+                    } else {
+                        text.append(buffInstance.getBuff().getIcon()).append("[WHITE]");
+                        if (buffInstance.getBuff().getMaxStacks() > 1) {
+                            text.append("x").append(buffInstance.getStacks());
+                        }
+                        // 1000+ turns = infinite
+                        text.append("(");
+                        if (buffInstance.getTurns() < 1000) {
+                            text.append(buffInstance.getTurns());
+                        } else text.append("∞");
+                        text.append(") ");
+                    }
+                }
+            }
+
+            buffsL[i].setText(text.toString());
+            /*
+             * } else {
+             * statsL[i].setText("");
+             * buffsL[i].setText("");
+             * }
+             */
         }
     }
 

@@ -230,9 +230,11 @@ public class Main extends ApplicationAdapter {
         // The game can't launch already scaled because Settings won't be loaded yet,
         // and Settings.scale can exceed display res, and if the game launches at >
         // display res, it causes problems
-        if (!Settings.autoRes) {
-            // changeScale(todo);
-        }
+        /*
+         * if (!Settings.autoRes) {
+         * changeScale(todo);
+         * }
+         */
 
         // todo set target fps and vsync based off of settings (cant set in launcher bc
         // settings wont be loaded yet)
@@ -395,7 +397,7 @@ public class Main extends ApplicationAdapter {
             polygonSpriteBatch.end();
         }
 
-        if(isF3MenuEnabled) drawF3MenuBg();
+        if (isF3MenuEnabled) drawF3MenuBg();
 
         stage5.act();
         stage5.draw();

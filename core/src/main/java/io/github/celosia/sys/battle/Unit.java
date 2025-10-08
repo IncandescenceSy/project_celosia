@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static io.github.celosia.Main.ELEMENTS;
 import static io.github.celosia.Main.STAGE_TYPES;
@@ -955,14 +956,14 @@ public class Unit {
     }
 
     // Returns the requested BuffInstance if present
-    public BuffInstance getBuffInstance(Buff buff) {
+    public Optional<BuffInstance> getBuffInstance(Buff buff) {
         for (BuffInstance buffInstance : buffInstances) {
             if (buffInstance.getBuff() == buff) {
-                return buffInstance;
+                return Optional.of(buffInstance);
             }
         }
 
-        return null;
+        return Optional.empty();
     }
 
     private void notifyBuffEffects(Unit target, BuffEffectNotifier notifier) {

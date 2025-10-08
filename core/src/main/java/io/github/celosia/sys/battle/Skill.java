@@ -181,14 +181,12 @@ public class Skill extends ComplexDescriptionEntity {
 
         Set<IconEntity> inclusions = HashSet.newHashSet(8);
         for (SkillEffect effect : skillEffects) {
-            inclusions.add(effect.getDescInclusion());
+            effect.getDescInclusion().ifPresent(inclusions::add);
         }
 
         for (IconEntity inclusion : inclusions) {
-            if (inclusion != null) {
-                partialDesc.append("\n[WHITE](").append(inclusion.getNameWithIcon(C_BUFF)).append("[WHITE]: ")
-                        .append(inclusion.getDesc().replace("\n", ". ")).append("[WHITE])");
-            }
+            partialDesc.append("\n[WHITE](").append(inclusion.getNameWithIcon(C_BUFF)).append("[WHITE]: ")
+                    .append(inclusion.getDesc().replace("\n", ". ")).append("[WHITE])");
         }
 
         return partialDesc.toString();

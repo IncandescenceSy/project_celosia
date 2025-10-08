@@ -100,7 +100,7 @@ public class TriLib {
             if (path.getPrio() == prio) {
                 Array<Vector2> points = path.getPoints();
 
-                if (points != null && !points.isEmpty()) {
+                if (!points.isEmpty()) {
 
                     int dir = path.getDir();
                     float prog = Math.clamp(path.getProg() + (delta * dir * path.getSpeed() * (dir == -1 ? 2 : 1)), 0f,
