@@ -1,10 +1,11 @@
 package io.github.celosia.sys.battle;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static io.github.celosia.Main.ELEMENTS;
 import static io.github.celosia.Main.STAGE_TYPES;
@@ -956,14 +957,15 @@ public class Unit {
     }
 
     // Returns the requested BuffInstance if present
-    public Optional<BuffInstance> getBuffInstance(Buff buff) {
+    @Nullable
+    public BuffInstance getBuffInstance(Buff buff) {
         for (BuffInstance buffInstance : buffInstances) {
             if (buffInstance.getBuff() == buff) {
-                return Optional.of(buffInstance);
+                return buffInstance;
             }
         }
 
-        return Optional.empty();
+        return null;
     }
 
     private void notifyBuffEffects(Unit target, BuffEffectNotifier notifier) {

@@ -1,14 +1,10 @@
-package io.github.celosia.sys;
+package io.github.celosia.sys.input;
 
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.Controllers;
-import io.github.celosia.sys.input.ControllerType;
-import io.github.celosia.sys.input.InputLib;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
 
 import static io.github.celosia.sys.input.ControllerType.NONE;
 import static io.github.celosia.sys.input.InputLib.getControllerType;
@@ -74,8 +70,9 @@ public class InputHandler extends InputAdapter implements ControllerListener {
         return false;
     }
 
-    public static Optional<Controller> getController() {
-        return Optional.ofNullable(controller);
+    @Nullable
+    public static Controller getController() {
+        return controller;
     }
 
     public static boolean isLastUsedController() {

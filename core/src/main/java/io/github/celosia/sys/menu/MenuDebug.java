@@ -2,13 +2,15 @@ package io.github.celosia.sys.menu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Align;
 import com.github.tommyettinger.textra.TextraLabel;
 import com.github.tommyettinger.textra.TypingLabel;
 import io.github.celosia.Main;
-import io.github.celosia.sys.InputHandler;
 import io.github.celosia.sys.World;
+import io.github.celosia.sys.input.ControllerType;
+import io.github.celosia.sys.input.InputHandler;
 import io.github.celosia.sys.input.InputLib;
 import io.github.celosia.sys.input.Keybind;
 import io.github.celosia.sys.render.Fonts;
@@ -126,11 +128,12 @@ public class MenuDebug {
 
         String lastInputSource = lang.get("f3.keyboard");
 
-        if (InputHandler.isLastUsedController()) {
-            lastInputSource = InputHandler.getController()
-                    .map(controller -> controller.getName() + " " +
-                            lang.format("f3.predicted_type", InputLib.getControllerType(controller).toString()))
-                    .orElse(lastInputSource);
+        if (InputHandler.getLastUsedControllerType() != ControllerType.NONE) {
+            Controller controller = InputHandler.getController();
+            if (controller != null) {
+                lastInputSource = controller.getName() + " " +
+                        lang.format("f3.predicted_type", InputLib.getControllerType(controller).toString());
+            }
         }
 
         // spotless:off

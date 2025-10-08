@@ -7,10 +7,10 @@ import io.github.celosia.sys.battle.ResultType;
 import io.github.celosia.sys.battle.SkillEffect;
 import io.github.celosia.sys.battle.Unit;
 import io.github.celosia.sys.entity.IconEntity;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.save.Lang.lang;
@@ -106,25 +106,25 @@ public class GiveBuff implements SkillEffect {
         self.onGiveBuff(target, buff, turnsMod, stacksMod);
 
         List<BuffInstance> buffInstances = unit.getBuffInstances();
-        Optional<BuffInstance> buffInstanceOpt = unit.getBuffInstance(buff);
+        BuffInstance buffInstance = unit.getBuffInstance(buff);
 
         String buffName = buff.getIcon() + C_BUFF + buff.getName();
 
         // Already has buff
-        if (buffInstanceOpt.isPresent()) {
+        if (buffInstance != null) {
             String str = "";
 
-            int stacksOld = buffInstanceOpt.get().getStacks();
-            int stacksNew = Math.min(buffInstanceOpt.get().getBuff().getMaxStacks(), stacksOld + stacksMod);
+            int stacksOld = buffInstance.getStacks();
+            int stacksNew = Math.min(buffInstance.getBuff().getMaxStacks(), stacksOld + stacksMod);
             if (stacksNew != stacksOld) {
-                buffInstanceOpt.get().setStacks(stacksNew);
+                buffInstance.setStacks(stacksNew);
                 str = lang.format("log.give_buff.stacks", formatName(unit.getUnitType().getName(), unit.getPos()),
                         buffName, C_NUM + stacksOld, C_NUM + stacksNew);
             }
 
-            int turnsOld = buffInstanceOpt.get().getTurns();
+            int turnsOld = buffInstance.getTurns();
             if (turnsMod > turnsOld) {
-                buffInstanceOpt.get().setTurns(turnsMod);
+                buffInstance.setTurns(turnsMod);
 
                 if (stacksNew != stacksOld) {
                     msg.add(str + lang.format("log.turns.nameless", C_NUM + turnsOld, C_NUM + turnsMod));
@@ -138,7 +138,7 @@ public class GiveBuff implements SkillEffect {
 
             int stacksAdded = stacksNew - stacksOld;
             if (stacksAdded > 0) {
-                for (BuffEffect buffEffect : buffInstanceOpt.get().getBuff().getBuffEffects()) {
+                for (BuffEffect buffEffect : buffInstance.getBuff().getBuffEffects()) {
                     buffEffect.onGive(unit, stacksAdded);
                 }
             }
@@ -147,7 +147,7 @@ public class GiveBuff implements SkillEffect {
             msg.add(lang.format("log.give_buff.gain", formatName(unit.getUnitType().getName(), unit.getPos(), false),
                     buffName, buff.getMaxStacks(), stacksMod, lang.format("log.stack_s", stacksMod), turnsMod));
             unit.addBuffInstances(new BuffInstance(buff, turnsMod, stacksMod));
-            BuffInstance buffInstance = buffInstances.getLast();
+            buffInstance = buffInstances.getLast();
 
             appendToLog(msg);
 
@@ -167,7 +167,8 @@ public class GiveBuff implements SkillEffect {
     }
 
     @Override
-    public Optional<IconEntity> getDescInclusion() {
-        return Optional.of(buff);
+    @Nullable
+    public IconEntity getDescInclusion() {
+        return buff;
     }
 }

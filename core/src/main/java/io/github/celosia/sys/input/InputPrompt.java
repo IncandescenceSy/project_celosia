@@ -1,7 +1,5 @@
 package io.github.celosia.sys.input;
 
-import io.github.celosia.sys.InputHandler;
-
 import static io.github.celosia.sys.util.TextLib.mergeGlyphs;
 
 public class InputPrompt {

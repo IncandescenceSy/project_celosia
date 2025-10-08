@@ -30,7 +30,7 @@ It is strongly recommended to use Intellij IDEA
 * Early return whenever it can make code cleaner
 * Do not have >1 nested classes
 * Explicitly annotate Overrides, Nullability, FunctionalInterfaces, etc
-* Whenever possible, wrap nullable values in Optional<T>
+* Do not use Optional<T> unless you have a very good reason to. It's much clunkier than @Nullable and doesn't actually have improved null safety
 * When you need to invert a number, multiply it by -1 instead of prefixing it with - (for readability)
 * Split big logic into separate functions
 * Comment when necessary, but don't over-comment self-explanatory code

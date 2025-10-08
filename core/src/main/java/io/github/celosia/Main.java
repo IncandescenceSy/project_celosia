@@ -21,7 +21,7 @@ import com.github.tommyettinger.textra.TypingConfig;
 import com.github.tommyettinger.textra.TypingLabel;
 import io.github.celosia.sys.Debug;
 import io.github.celosia.sys.GameMod;
-import io.github.celosia.sys.InputHandler;
+import io.github.celosia.sys.input.InputHandler;
 import io.github.celosia.sys.World;
 import io.github.celosia.sys.battle.Accessory;
 import io.github.celosia.sys.battle.BattleController;

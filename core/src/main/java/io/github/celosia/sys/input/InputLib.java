@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerMapping;
 import io.github.celosia.sys.Debug;
-import io.github.celosia.sys.InputHandler;
 import io.github.celosia.sys.save.Settings;
 
 public class InputLib {
@@ -84,31 +83,26 @@ public class InputLib {
     }
 
     public static boolean checkKeybind(Keybind keybind) {
-        return Gdx.input.isKeyPressed(keybind.getKey()) || InputHandler.getController()
-                .map(controller -> controller.getButton(keybind.getButton().getMapping()) || checkKeybind2Axis(keybind))
-                .orElse(false);
+        return Gdx.input.isKeyPressed(keybind.getKey()) || (InputHandler.getController() != null &&
+                (InputHandler.getController().getButton(keybind.getButton().getMapping()) ||
+                        checkKeybind2Axis(keybind)));
     }
 
-    // todo: stick sensitivity setting? also dont make L1/R1 automatically map to R
-    // stick
+    // todo: stick sensitivity setting?
     public static boolean checkKeybind2Axis(Keybind keybind) {
         return switch (keybind) {
             case LEFT -> checkAxis(Button.LX.getMapping(), -0.4f);
             case RIGHT -> checkAxis(Button.LX.getMapping(), 0.4f);
             case UP -> checkAxis(Button.LY.getMapping(), -0.4f);
             case DOWN -> checkAxis(Button.LY.getMapping(), 0.4f);
-            case PAGE_L1 -> checkAxis(Button.RY.getMapping(), -0.4f);
-            case PAGE_R1 -> checkAxis(Button.RY.getMapping(), 0.4f);
-            case PAGE_L2 -> checkAxis(Button.LT.getMapping(), 0.4f);
-            case PAGE_R2 -> checkAxis(Button.RT.getMapping(), 0.4f);
             default -> false;
         };
     }
 
     public static boolean checkAxis(int mapping, float dist) {
-        return InputHandler.getController()
-                .map(controller -> dist > 0f ? controller.getAxis(mapping) > dist : controller.getAxis(mapping) < dist)
-                .orElse(false);
+        return InputHandler.getController() != null &&
+                (dist > 0f ? InputHandler.getController().getAxis(mapping) > dist :
+                        InputHandler.getController().getAxis(mapping) < dist);
     }
 
     public static ControllerType getControllerType(Controller controller) {

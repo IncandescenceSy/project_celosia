@@ -5,10 +5,10 @@ import io.github.celosia.sys.battle.SkillEffect;
 import io.github.celosia.sys.battle.StageType;
 import io.github.celosia.sys.battle.Unit;
 import io.github.celosia.sys.entity.IconEntity;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.battle.BattleLib.getStageBuffType;
@@ -134,7 +134,8 @@ public class ChangeStage implements SkillEffect {
     }
 
     @Override
-    public Optional<IconEntity> getDescInclusion() {
-        return Optional.of(stageType);
+    @Nullable
+    public IconEntity getDescInclusion() {
+        return stageType;
     }
 }
