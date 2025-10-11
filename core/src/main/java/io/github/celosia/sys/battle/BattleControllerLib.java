@@ -40,8 +40,8 @@ import static io.github.celosia.sys.battle.PosLib.getStartingIndex;
 import static io.github.celosia.sys.menu.MenuLib.checkMovement1D;
 import static io.github.celosia.sys.render.TriLib.createPopup;
 import static io.github.celosia.sys.save.Lang.lang;
-import static io.github.celosia.sys.util.BoolLib.booleanToInt;
-import static io.github.celosia.sys.util.BoolLib.booleanToSign;
+import static io.github.celosia.sys.util.BoolLib.bool2Int;
+import static io.github.celosia.sys.util.BoolLib.bool2Sign;
 import static io.github.celosia.sys.util.TextLib.C_ALLY;
 import static io.github.celosia.sys.util.TextLib.C_ALLY_L;
 import static io.github.celosia.sys.util.TextLib.C_BLOOM;
@@ -352,12 +352,12 @@ public class BattleControllerLib {
 
     static void handleDebug() {
         // Print log
-        if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
             Gdx.app.log("Battle Log", String.join("\n", logText).replaceAll("\\[.*?]", ""));
         }
 
         // Test popup
-        if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
             createPopup("among", "ussss");
         }
     }
@@ -475,7 +475,7 @@ public class BattleControllerLib {
 
             if (spNew < 0) {
                 String msg = lang.format("log.skill_fail.sp", getTriesToUseString(move),
-                        lang.format("log.but_doesnt_have_enough", booleanToInt(skill.isBloom())));
+                        lang.format("log.but_doesnt_have_enough", bool2Int(skill.isBloom())));
                 appendToLog(msg);
             } else {
                 Unit target = battle.getUnitAtPos(move.targetPos());
@@ -486,7 +486,7 @@ public class BattleControllerLib {
                 String changeSp = "";
 
                 if (spOld != spNew) {
-                    lang.format("log.skill_use.change_sp_bloom", booleanToInt(isBloom), spOld, spNew, change);
+                    lang.format("log.skill_use.change_sp_bloom", bool2Int(isBloom), spOld, spNew, change);
                 }
 
                 if (isBloom) {
@@ -498,7 +498,7 @@ public class BattleControllerLib {
                 appendToLog(lang.format("log.skill_use", formatName(self.getUnitType().getName(), self.getPos(), false),
                         skill.getNameWithIcon(C_SKILL),
                         formatName(target.getUnitType().getName(), move.targetPos(), false),
-                        booleanToInt(skill.isRangeSelf()), changeSp));
+                        bool2Int(skill.isRangeSelf()), changeSp));
 
                 self.onUseSkill(target, skill);
 
@@ -1161,9 +1161,9 @@ public class BattleControllerLib {
         infoL[4].setVisible(isStatsPage);
         infoL[5].setVisible(isStatsPage);
 
-        paths[2].setDir(booleanToSign(isStatsPage));
-        paths[3].setDir(booleanToSign(isStatsPage));
-        paths[4].setDir(booleanToSign(isStatsPage));
+        paths[2].setDir(bool2Sign(isStatsPage));
+        paths[3].setDir(bool2Sign(isStatsPage));
+        paths[4].setDir(bool2Sign(isStatsPage));
     }
 
     static void setPageItemVisibility(boolean visible) {

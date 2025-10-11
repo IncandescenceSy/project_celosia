@@ -5,6 +5,7 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerMapping;
 import io.github.celosia.sys.Debug;
 import io.github.celosia.sys.save.Settings;
+import org.jetbrains.annotations.Nullable;
 
 public class InputLib {
 
@@ -83,8 +84,9 @@ public class InputLib {
     }
 
     public static boolean checkKeybind(Keybind keybind) {
-        return Gdx.input.isKeyPressed(keybind.getKey()) || (InputHandler.getController() != null &&
-                (InputHandler.getController().getButton(keybind.getButton().getMapping()) ||
+        @Nullable Controller controller = InputHandler.getController();
+        return Gdx.input.isKeyPressed(keybind.getKey()) ||
+                (controller != null && (controller.getButton(keybind.getButton().getMapping()) ||
                         checkKeybind2Axis(keybind)));
     }
 
@@ -100,9 +102,9 @@ public class InputLib {
     }
 
     public static boolean checkAxis(int mapping, float dist) {
-        return InputHandler.getController() != null &&
-                (dist > 0f ? InputHandler.getController().getAxis(mapping) > dist :
-                        InputHandler.getController().getAxis(mapping) < dist);
+        @Nullable Controller controller = InputHandler.getController();
+        return controller != null &&
+                (dist > 0f ? controller.getAxis(mapping) > dist : controller.getAxis(mapping) < dist);
     }
 
     public static ControllerType getControllerType(Controller controller) {

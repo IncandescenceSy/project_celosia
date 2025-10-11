@@ -21,22 +21,27 @@ It is strongly recommended to use Intellij IDEA
   * Do not prefix interface names with I
 * Global constants must be final
 * All class fields must be private
-* Use this when calling a method, and only use this when necessary on fields
+* Always use this when calling a method, and only use this when necessary on fields
 * Favor using fields over calling methods
 * Use no-arg Builder methods for booleans
-  * For example, if isPierce defaults false, instead of isPierce(boolean), create pierce()
+  * For example, if isPierce defaults false, instead of isPierce(boolean), create pierce() that sets it to true
 * Do not add unused methods (unless they're for modders)
 * Setters before getters (only for consistency, not because it's a better order)
 * Early return whenever it can make code cleaner
+  * Instead of having else blocks at the end of a function, it is often better to invert your condition and early return
 * Do not have >1 nested classes
-* Explicitly annotate Overrides, Nullability, FunctionalInterfaces, etc
+* Explicitly annotate Overrides, Nullability, Functional Interfaces, etc
+  * Annotate/assert NotNull when overriding/calling a Nullable method in a way that you can guarantee is NotNull. Otherwise, assume NotNull by default instead of annotating it. Unless you want to annotate NotNull on every single thing in the entire codebase for consistency. Then go ahead!
+  * Place @Nullable and @NotNull directly before the relevant type
 * Do not use Optional<T> unless you have a very good reason to. It's much clunkier than @Nullable and doesn't actually have improved null safety
 * When you need to invert a number, multiply it by -1 instead of prefixing it with - (for readability)
 * Split big logic into separate functions
+* Code in the simplest way that gets the job done. Don't use advanced features when not necessary
 * Comment when necessary, but don't over-comment self-explanatory code
+  * If you feel a comment is needed, first consider if you can rewrite the code to be self-commenting 
 * In expressions, use brackets to improve clarity even when not strictly necessary
   * For example, instead of 50 + i * 10, write 50 + (i * 10) 
-* For loop iterators are named i, j, k, etc unless another name would improve clarity
+* Name for loop incrementing variables i, j, k, etc unless another name would improve clarity
 * Use standard keyword order (public static type)
 * Multi-line logic statements must have {}. Inlined logic statements must not have {}
   * In most cases, inlined logic statements should be avoided entirely
@@ -47,3 +52,4 @@ It is strongly recommended to use Intellij IDEA
   * In unordered mode, non-last removal is much faster than for an ArrayList. But again, this only matters with massive Lists. And even in that case, you probably want a Set. Also, implementing an unordered remove for a regular List is 2 lines
   * It causes a lot of code compatibility issues and bespoke errors that may not be noticed until much later, and even considering it in the first place instead of instantly defaulting to ArrayList requires you to spend extra time thinking about it
 * General coding conventions
+* More stuff I forgot and will add as I think of it

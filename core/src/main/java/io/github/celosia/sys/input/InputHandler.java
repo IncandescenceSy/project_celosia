@@ -12,7 +12,7 @@ import static io.github.celosia.sys.input.InputLib.getControllerType;
 public class InputHandler extends InputAdapter implements ControllerListener {
 
     // The controller the last input came from, or null
-    @Nullable private static Controller controller;
+    private static @Nullable Controller controller;
 
     // The kind of controller the last input came from
     // NONE means the last input came from a keyboard
@@ -41,6 +41,7 @@ public class InputHandler extends InputAdapter implements ControllerListener {
     // Controller input events
     @Override
     public void connected(Controller controller) {
+        InputHandler.controller = controller;
         lastUsedControllerType = getControllerType(controller);
     }
 
@@ -70,8 +71,7 @@ public class InputHandler extends InputAdapter implements ControllerListener {
         return false;
     }
 
-    @Nullable
-    public static Controller getController() {
+    public static @Nullable Controller getController() {
         return controller;
     }
 

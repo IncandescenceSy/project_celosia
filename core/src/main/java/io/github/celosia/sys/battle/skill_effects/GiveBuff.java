@@ -7,6 +7,7 @@ import io.github.celosia.sys.battle.ResultType;
 import io.github.celosia.sys.battle.SkillEffect;
 import io.github.celosia.sys.battle.Unit;
 import io.github.celosia.sys.entity.IconEntity;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -106,7 +107,7 @@ public class GiveBuff implements SkillEffect {
         self.onGiveBuff(target, buff, turnsMod, stacksMod);
 
         List<BuffInstance> buffInstances = unit.getBuffInstances();
-        BuffInstance buffInstance = unit.getBuffInstance(buff);
+        @Nullable BuffInstance buffInstance = unit.getBuffInstance(buff);
 
         String buffName = buff.getIcon() + C_BUFF + buff.getName();
 
@@ -167,8 +168,7 @@ public class GiveBuff implements SkillEffect {
     }
 
     @Override
-    @Nullable
-    public IconEntity getDescInclusion() {
+    public @NotNull IconEntity getDescInclusion() {
         return buff;
     }
 }

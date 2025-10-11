@@ -5,10 +5,10 @@ public class Debug {
 
     // Enables debug hotkeys
     // Main menu:
-    // Q: Open Debug menu
+    // 1: Open Debug menu
     // In battle:
-    // Q: Prints battle log to console
-    // W: Test popup
+    // 1: Prints battle log to console
+    // 2: Test popup
     public static boolean enableDebugHotkeys = false;
 
     // Shows some extra info

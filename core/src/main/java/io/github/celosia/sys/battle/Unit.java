@@ -957,8 +957,7 @@ public class Unit {
     }
 
     // Returns the requested BuffInstance if present
-    @Nullable
-    public BuffInstance getBuffInstance(Buff buff) {
+    public @Nullable BuffInstance getBuffInstance(Buff buff) {
         for (BuffInstance buffInstance : buffInstances) {
             if (buffInstance.getBuff() == buff) {
                 return buffInstance;

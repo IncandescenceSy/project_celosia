@@ -124,35 +124,36 @@ public class MenuDebug {
         long memAlloc = RUNTIME.totalMemory();
 
         String gpuCount = "";
-        if (GPU_COUNT > 1) gpuCount = lang.format("f3.gpu_count", GPU_COUNT - 1);
+        if (GPU_COUNT > 1) {
+            gpuCount = " " + lang.format("f3.gpu_count", GPU_COUNT - 1);
+        }
 
         String lastInputSource = lang.get("f3.keyboard");
 
         if (InputHandler.getLastUsedControllerType() != ControllerType.NONE) {
             Controller controller = InputHandler.getController();
-            if (controller != null) {
-                lastInputSource = controller.getName() + " " +
-                        lang.format("f3.predicted_type", InputLib.getControllerType(controller).toString());
-            }
+            assert controller != null;
+            lastInputSource = controller.getName() + " " +
+                    lang.format("f3.predicted_type", InputLib.getControllerType(controller).toString());
         }
 
         // spotless:off
         F3L.setText(
                 lang.get("f3.press_f3") + "\n" +
-                lang.get("f3.fps") + " " + Gdx.graphics.getFramesPerSecond() + "/" + RenderLib.getTargetFPS() + vsync + "\n" +
-                lang.get("f3.resolution") + " " + Gdx.graphics.getWidth() + "x" + Gdx.graphics.getHeight() + "\n" +
-                lang.get("f3.nav_path") + " " + NAV_PATH.toString().replace("[", "").replace("]", "") + "\n" +
-                lang.get("f3.overworld_location") + " " + "todo" + " " + lang.format("f3.xy", 0, 0) + "\n" + //todo
-                lang.get("f3.actor_count") + " " + Main.stage1.getActors().size + ", " + Main.stage2.getActors().size + ", " +
-                        Main.stage3.getActors().size + ", " + Main.stage4.getActors().size + ", " + Main.stage5.getActors().size + "\n" +
-                lang.get("f3.loaded_mod_count") + " " + 0 // todo
+                lang.format("f3.fps", Gdx.graphics.getFramesPerSecond(), RenderLib.getTargetFPS()) + vsync + "\n" +
+                lang.format("f3.resolution", Gdx.graphics.getWidth(), Gdx.graphics.getHeight()) + "\n" +
+                lang.format("f3.nav_path", NAV_PATH.toString().replace("[", "").replace("]", "")) + "\n" +
+                lang.format("f3.overworld_location", "todo", 0, 0) + "\n" + // todo
+                lang.format("f3.actor_count", Main.stage1.getActors().size, Main.stage2.getActors().size,
+                        Main.stage3.getActors().size, Main.stage4.getActors().size, Main.stage5.getActors().size) + "\n" +
+                lang.format("f3.loaded_mod_count", 0) // todo
         );
 
         F3R.setText(
-                lang.get("f3.os") + " " + System.getProperty("os.name") + "\n" +
+                lang.format("f3.os", System.getProperty("os.name")) + "\n" +
                 lang.format("f3.ram", (memAlloc - RUNTIME.freeMemory()) / MB, memAlloc / MB, RUNTIME.maxMemory() / MB, TOTAL_RAM / MB) + "\n" +
-                lang.get("f3.cpu") + " " + CPU_NAME + " " + lang.format("f3.cpu_cores", CPU_CORES) + "\n" +
-                lang.get("f3.gpu") + " " + GPU_NAME + " " + lang.format("f3.gpu_vram", GPU_VRAM / MB) + " " + gpuCount + "\n" +
+                lang.format("f3.cpu", CPU_NAME) + " " + lang.format("f3.cpu_cores", CPU_CORES) + "\n" +
+                lang.format("f3.gpu", GPU_NAME) + " " + lang.format("f3.gpu_vram", GPU_VRAM / MB) + gpuCount + "\n" +
                 lang.format("f3.last_input_source", lastInputSource)
         );
         // spotless:on

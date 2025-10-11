@@ -5,7 +5,7 @@ import io.github.celosia.sys.battle.SkillEffect;
 import io.github.celosia.sys.battle.StageType;
 import io.github.celosia.sys.battle.Unit;
 import io.github.celosia.sys.entity.IconEntity;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,8 +134,7 @@ public class ChangeStage implements SkillEffect {
     }
 
     @Override
-    @Nullable
-    public IconEntity getDescInclusion() {
+    public @NotNull IconEntity getDescInclusion() {
         return stageType;
     }
 }

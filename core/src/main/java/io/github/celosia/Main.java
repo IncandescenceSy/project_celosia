@@ -125,10 +125,13 @@ public class Main extends ApplicationAdapter {
     public static final List<Range> RANGES = new ArrayList<>(16);
 
     // You have to add your mod to this List manually (maybe? todo)
-    public static final List<GameMod> GAME_MODS = new ArrayList<>(16);
+    public static final List<GameMod> GAME_MODS = new ArrayList<>();
 
     @Override
     public void create() {
+        // todo make assertions work in dev
+        assert false;
+
         spriteBatch = new SpriteBatch();
         polygonSpriteBatch = new PolygonSpriteBatch();
 

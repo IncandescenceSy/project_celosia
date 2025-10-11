@@ -3,6 +3,7 @@ package io.github.celosia.sys.battle;
 import io.github.celosia.sys.entity.ComplexDescriptionEntity;
 import io.github.celosia.sys.entity.IconEntity;
 import io.github.celosia.sys.util.ArrayLib;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,7 +12,7 @@ import java.util.Set;
 
 import static io.github.celosia.Main.SKILLS;
 import static io.github.celosia.sys.save.Lang.lang;
-import static io.github.celosia.sys.util.BoolLib.booleanToInt;
+import static io.github.celosia.sys.util.BoolLib.bool2Int;
 import static io.github.celosia.sys.util.TextLib.C_BUFF;
 import static io.github.celosia.sys.util.TextLib.C_ELEMENT;
 import static io.github.celosia.sys.util.TextLib.C_NUM;
@@ -131,7 +132,7 @@ public class Skill extends ComplexDescriptionEntity {
     }
 
     public String getCostFormatted() {
-        return lang.format("skill_cost", formatNum(cost), booleanToInt(isBloom));
+        return lang.format("skill_cost", formatNum(cost), bool2Int(isBloom));
     }
 
     public int getCooldown() {
@@ -179,16 +180,15 @@ public class Skill extends ComplexDescriptionEntity {
             partialDesc.append("\n");
         }
 
-        Set<IconEntity> inclusions = HashSet.newHashSet(8);
+        Set<IconEntity> inclusions = new HashSet<>(8);
         for (SkillEffect effect : skillEffects) {
-            inclusions.add(effect.getDescInclusion());
+            @Nullable IconEntity inclusion = effect.getDescInclusion();
+            if (inclusion != null) inclusions.add(inclusion);
         }
 
         for (IconEntity inclusion : inclusions) {
-            if(inclusion != null) {
-                partialDesc.append("\n[WHITE](").append(inclusion.getNameWithIcon(C_BUFF)).append("[WHITE]: ")
-                        .append(inclusion.getDesc().replace("\n", ". ")).append("[WHITE])");
-            }
+            partialDesc.append("\n[WHITE](").append(inclusion.getNameWithIcon(C_BUFF)).append("[WHITE]: ")
+                    .append(inclusion.getDesc().replace("\n", ". ")).append("[WHITE])");
         }
 
         return partialDesc.toString();

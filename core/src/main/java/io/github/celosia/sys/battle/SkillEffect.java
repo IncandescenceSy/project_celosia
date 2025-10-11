@@ -18,8 +18,7 @@ public interface SkillEffect {
         return 0;
     }
 
-    @Nullable
-    default IconEntity getDescInclusion() {
+    default @Nullable IconEntity getDescInclusion() {
         return null;
     }
 }
