@@ -41,7 +41,7 @@ It is strongly recommended to use Intellij IDEA
   * If you feel a comment is needed, first consider if you can rewrite the code to be self-commenting 
 * In expressions, use brackets to improve clarity even when not strictly necessary
   * For example, instead of 50 + i * 10, write 50 + (i * 10) 
-* Name for loop incrementing variables i, j, k, etc unless another name would improve clarity
+* Name for loop incrementing variables i, then j, unless another name would improve clarity (if you need more than 2, you should probably refactor your code)
 * Use standard keyword order (public static type)
 * Multi-line logic statements must have {}. Inlined logic statements must not have {}
   * In most cases, inlined logic statements should be avoided entirely
