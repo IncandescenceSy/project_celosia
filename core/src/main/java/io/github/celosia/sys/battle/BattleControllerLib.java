@@ -68,12 +68,12 @@ public class BattleControllerLib {
     /// Display
     static TextraLabel turn = new TextraLabel("{SPEED=0.1}{FADE}{SLIDE}" + C_TURN + lang.get("turn") + " 1",
             Fonts.FontType.KORURI.get(80));
-    static TextraLabel[] bloomL = new TextraLabel[2];
+    static TextraLabel[] bloomLabels = new TextraLabel[2];
     static TextraLabel queue = new TextraLabel("", Fonts.FontType.KORURI.get(30));
-    static TextraLabel[] statsL = new TextraLabel[8];
-    static TextraLabel[] buffsL = new TextraLabel[8];
-    static TextraLabel[] movesL = new TextraLabel[8];
-    static List<TextraLabel> skillsL = new ArrayList<>();
+    static TextraLabel[] stats = new TextraLabel[8];
+    static TextraLabel[] buffs = new TextraLabel[8];
+    static TextraLabel[] moves = new TextraLabel[8];
+    static List<TextraLabel> skills = new ArrayList<>();
 
     // Inspect menu
     static TextraLabel unitList = new TextraLabel("", Fonts.FontType.KORURI.get(30));
@@ -88,21 +88,21 @@ public class BattleControllerLib {
     static TextraLabel desc = new TextraLabel("", Fonts.FontType.KORURI.get(20));
 
     // Stat, Equip, Affinity, Mult, Mod, Other
-    static int[] infoX = new int[] { 960 + 330, 700, 300, 300, 750, 1125 };
-    static int[] infoY = new int[] { World.HEIGHT - (110 + 60), World.HEIGHT - 245, World.HEIGHT - 245,
+    static int[] promptX = new int[] { 960 + 330, 700, 300, 300, 750, 1125 };
+    static int[] promptY = new int[] { World.HEIGHT - (110 + 60), World.HEIGHT - 245, World.HEIGHT - 245,
             World.HEIGHT - 385,
             World.HEIGHT - 385, World.HEIGHT - 385 };
-    static InputPrompt[] infoPrompts = new InputPrompt[] { InputPrompts.I_STAT, InputPrompts.I_AFFINITY,
+    static InputPrompt[] promptTypes = new InputPrompt[] { InputPrompts.I_STAT, InputPrompts.I_AFFINITY,
             InputPrompts.I_EQUIP, InputPrompts.I_MULT, InputPrompts.I_MOD, InputPrompts.I_OTHER };
-    static TextraLabel[] infoL = new TextraLabel[6];
+    static TextraLabel[] prompts = new TextraLabel[6];
 
     static TextraLabel equip = new TextraLabel("", Fonts.FontType.KORURI.get(20));
     static TextraLabel affinities = new TextraLabel("", Fonts.FontType.KORURI.get(20));
 
     static String[] statNames = new String[] { lang.get("stat.str"), lang.get("stat.mag"), lang.get("stat.fth"),
             lang.get("stat.amr"), lang.get("stat.res"), lang.get("stat.agi") };
-    static TextraLabel[] statsBasicL = new TextraLabel[6];
-    static TextraLabel[] statsBasicNumL = new TextraLabel[6];
+    static TextraLabel[] statsBasic = new TextraLabel[6];
+    static TextraLabel[] statsBasicNum = new TextraLabel[6];
 
     static TextraLabel hp = new TextraLabel(lang.get("hp"), Fonts.FontType.KORURI.get(20));
     static TextraLabel hpAmt = new TextraLabel("", Fonts.FontType.KORURI.get(20));
@@ -115,18 +115,18 @@ public class BattleControllerLib {
 
     static String multNames = getNamesAsMultiline(Mult.values(), Mult::getName);
     static String modNames = getNamesAsMultiline(Mod.values(), Mod::getName);
-    // todo dont show immunities
-    static String otherNames = getNamesAsMultiline(BooleanStat.values(), BooleanStat::getName) + "\n" +
-            lang.get("extra_actions");
+    static String otherNames = getNamesAsMultiline(new BooleanStat[] { BooleanStat.EFFECT_BLOCK,
+            BooleanStat.INFINITE_SP, BooleanStat.UNABLE_TO_ACT, BooleanStat.EQUIP_DISABLED }, BooleanStat::getName) +
+            "\n" + lang.get("extra_actions");
     static String[] statCategoryNames = new String[] { multNames, modNames, otherNames };
     static Array<Vector2> pointsMult = new Array<>(false, 2);
     static Array<Vector2> pointsMod = new Array<>(false, 2);
     static Array<Vector2> pointsOther = new Array<>(false, 2);
-    static TextraLabel[] statsPageL = new TextraLabel[3];
-    static TextraLabel[] statsPageNumL = new TextraLabel[3];
+    static TextraLabel[] statsPage = new TextraLabel[3];
+    static TextraLabel[] statsPageNum = new TextraLabel[3];
 
     // temp
-    static Skill[] skills = new Skill[] { Skills.FIREBALL, Skills.SHIELD, Skills.RASETU_FEAST,
+    static Skill[] skills1 = new Skill[] { Skills.FIREBALL, Skills.SHIELD, Skills.RASETU_FEAST,
             Skills.AGILITY_UP_GROUP, Skills.ICE_AGE, Skills.DEFEND };
     static Skill[] skills2 = new Skill[] { Skills.ICE_BEAM, Skills.DEMON_SCYTHE, Skills.ATTACK_UP_GROUP,
             Skills.RASETU_FEAST, Skills.ICE_AGE, Skills.DEFEND };
@@ -141,7 +141,7 @@ public class BattleControllerLib {
     // Amount of lines scrolled upwards
     static int logScroll = 0;
 
-    static List<Move> moves = new ArrayList<>();
+    static List<Move> curMoves = new ArrayList<>();
     // Copy for queue reasons ...? todo
     static List<Move> moves2 = new ArrayList<>();
 
@@ -200,10 +200,10 @@ public class BattleControllerLib {
         UnitType julian = new UnitType("Julian", "", johnyStats, new HashMap<>(affinitiesTemp),
                 Passives.DEBUFF_DURATION_UP);
 
-        Team player = new Team(new Unit[] { new Unit(johny, 19, skills, Accessories.FIREBORN_RING, 0),
+        Team player = new Team(new Unit[] { new Unit(johny, 19, skills1, Accessories.FIREBORN_RING, 0),
                 new Unit(james, 19, skills2, Accessories.FIREBORN_RING, 1),
                 new Unit(julia, 19, skills3, Accessories.FIREBORN_RING, 2),
-                new Unit(josephine, 19, skills, Accessories.FIREBORN_RING, 3) });
+                new Unit(josephine, 19, skills1, Accessories.FIREBORN_RING, 3) });
 
         Team opponent = new Team(new Unit[] { new Unit(jerry, 19, skills2, Accessories.FIREBORN_RING, 4),
                 new Unit(jacob, 19, skills2, Accessories.FIREBORN_RING, 5),
@@ -221,7 +221,7 @@ public class BattleControllerLib {
             TextraLabel bloom = new TextraLabel(
                     C_STAT + lang.get("bloom") + "[WHITE]: " + C_BLOOM + "100[WHITE]/" + C_BLOOM + "1,000",
                     Fonts.FontType.KORURI.get(30));
-            bloomL[i] = bloom;
+            bloomLabels[i] = bloom;
             bloom.setY(World.HEIGHT - 90);
 
             if (i == 1) {
@@ -246,18 +246,18 @@ public class BattleControllerLib {
             int y = (i >= 4) ? World.HEIGHT - 300 - 300 * (i - 4) : World.HEIGHT - 300 - 300 * i;
 
             TextraLabel stats = new TextraLabel("", Fonts.FontType.KORURI.get(30));
-            statsL[i] = stats;
+            BattleControllerLib.stats[i] = stats;
             stats.setPosition((i >= 4) ? World.WIDTH - 350 : 50, y);
             stage2.addActor(stats);
 
             TextraLabel buffs = new TextraLabel("", Fonts.FontType.KORURI.get(20));
-            buffsL[i] = buffs;
+            BattleControllerLib.buffs[i] = buffs;
             buffs.setAlignment(Align.topLeft);
             buffs.setPosition((i >= 4) ? World.WIDTH - 350 : 50, y - 70);
             stage2.addActor(buffs);
 
             TextraLabel moves = new TextraLabel("", Fonts.FontType.KORURI.get(30));
-            movesL[i] = moves;
+            BattleControllerLib.moves[i] = moves;
             moves.setPosition((i >= 4) ? World.WIDTH - 550 : 400, y);
             stage2.addActor(moves);
         }
@@ -276,18 +276,18 @@ public class BattleControllerLib {
         // Inspect info and basic stats
         for (int i = 0; i < 6; i++) {
             TextraLabel info = new TextraLabel("", Fonts.FontType.KORURI.get(20));
-            info.setPosition(infoX[i], infoY[i]);
-            infoL[i] = info;
+            info.setPosition(promptX[i], promptY[i]);
+            prompts[i] = info;
 
             TextraLabel stat = new TextraLabel(statNames[i], Fonts.FontType.KORURI.get(20));
             stat.setPosition((i > 2) ? 960 : 630, World.HEIGHT - (110 + (30 * (i % 3))));
             stat.setAlignment(Align.left);
-            statsBasicL[i] = stat;
+            statsBasic[i] = stat;
 
             TextraLabel statNum = new TextraLabel("", Fonts.FontType.KORURI.get(20));
             statNum.setPosition((i > 2) ? 1260 : 930, World.HEIGHT - (110 + (30 * (i % 3))));
             statNum.setAlignment(Align.right);
-            statsBasicNumL[i] = statNum;
+            statsBasicNum[i] = statNum;
         }
 
         // Inspect stats page
@@ -299,12 +299,12 @@ public class BattleControllerLib {
             TextraLabel stat = new TextraLabel(statCategoryNames[i], Fonts.FontType.KORURI.get(20));
             stat.setAlignment(Align.topLeft);
             stat.setPosition(50 + (i * 450), World.HEIGHT - 415);
-            statsPageL[i] = stat;
+            statsPage[i] = stat;
 
             TextraLabel statNum = new TextraLabel("", Fonts.FontType.KORURI.get(20));
             statNum.setAlignment(Align.topRight);
-            statNum.setPosition(250 + (i * 450), World.HEIGHT - 415);
-            statsPageNumL[i] = statNum;
+            statNum.setPosition(440 + (i * 450), World.HEIGHT - 415);
+            statsPageNum[i] = statNum;
         }
 
         int y = World.HEIGHT - 400;
@@ -334,8 +334,8 @@ public class BattleControllerLib {
 
         // todo support arbitrary size
         for (int i = 0; i < 6; i++) {
-            skillsL.add(new TextraLabel("", Fonts.FontType.KORURI.get(30)));
-            stage2.addActor(skillsL.get(i));
+            skills.add(new TextraLabel("", Fonts.FontType.KORURI.get(30)));
+            stage2.addActor(skills.get(i));
         }
 
         for (Unit unit : battle.getAllUnits()) {
@@ -381,9 +381,9 @@ public class BattleControllerLib {
         if (selectingMove < battle.getPlayerTeam().getUnits().length) {
             // todo support arbitrary size
             for (int i = 0; i < 6; i++) {
-                skillsL.get(i).setPosition(600, (World.HEIGHT - 400 - 250 * selectingMove) - ((i - 2) * 35));
+                skills.get(i).setPosition(600, (World.HEIGHT - 400 - 250 * selectingMove) - ((i - 2) * 35));
                 // todo support ExA
-                skillsL.get(i).setText(
+                skills.get(i).setText(
                         battle.getPlayerTeam().getUnits()[selectingMove].getSkillInstances().get(i).getSkill()
                                 // temp
                                 // todo real skill description display
@@ -391,7 +391,7 @@ public class BattleControllerLib {
                                 battle.getPlayerTeam().getUnits()[selectingMove].getSkillInstances().get(i)
                                         .getCooldown() +
                                 "[WHITE])");
-                skillsL.get(i).skipToTheEnd();
+                skills.get(i).skipToTheEnd();
             }
 
             selectMove();
@@ -406,9 +406,9 @@ public class BattleControllerLib {
                 Unit target = battle.getPlayerTeam().getUnits()[MathUtils
                         .random(battle.getPlayerTeam().getUnits().length - 1)];
                 // todo support ExA
-                movesL[selectingMove].setText(
+                moves[selectingMove].setText(
                         selectedSkillInstance.getSkill().getName() + " → " + target.getUnitType().getName());
-                moves.add(new Move(selectedSkillInstance, battle.getOpponentTeam().getUnits()[selectingMove - 4],
+                curMoves.add(new Move(selectedSkillInstance, battle.getOpponentTeam().getUnits()[selectingMove - 4],
                         target.getPos())); // todo AI
                 selectingMove++;
             } else {
@@ -421,16 +421,16 @@ public class BattleControllerLib {
     }
 
     static void executeMove() {
-        if (moves.isEmpty()) {
+        if (curMoves.isEmpty()) {
             endTurn();
             return;
         }
 
         // Sort moves by Prio and then by Agi
-        moves.sort(Comparator.comparingInt((Move entry) -> entry.skillInstance().getSkill().getPrio())
+        curMoves.sort(Comparator.comparingInt((Move entry) -> entry.skillInstance().getSkill().getPrio())
                 .thenComparingLong(entry -> entry.self().getAgiWithStage()).reversed());
 
-        Move move = moves.getFirst();
+        Move move = curMoves.getFirst();
         Unit self = move.self();
 
         if (self.isBooleanStat(BooleanStat.UNABLE_TO_ACT)) {
@@ -505,9 +505,9 @@ public class BattleControllerLib {
                 // Color move for currently acting combatant (temp)
                 for (int i = 0; i < 8; i++) {
                     if (self.getPos() == i) {
-                        movesL[i].setColor(Color.PINK);
+                        moves[i].setColor(Color.PINK);
                     } else {
-                        movesL[i].setColor(Color.WHITE);
+                        moves[i].setColor(Color.WHITE);
                     }
                 }
 
@@ -561,10 +561,10 @@ public class BattleControllerLib {
 
     static void handleTargeting() {
         if (InputLib.checkInput(Keybind.BACK)) {
-            for (TextraLabel stat : statsL) {
+            for (TextraLabel stat : stats) {
                 stat.setColor(Color.WHITE);
             }
-            movesL[selectingMove].setText("");
+            moves[selectingMove].setText("");
 
             NAV_PATH.removeLast();
             return;
@@ -573,18 +573,18 @@ public class BattleControllerLib {
         indexTarget = MenuLib.checkMovementTargeting(indexTarget, selectingMove,
                 selectedSkillInstance.getSkill().getRange());
 
-        MenuLib.handleOptColor(statsL, indexTarget);
+        MenuLib.handleOptColor(stats, indexTarget);
 
         if (InputLib.checkInput(Keybind.CONFIRM)) {
             Unit self = battle.getPlayerTeam().getUnits()[selectingMove];
             Unit target = (indexTarget < 4) ? battle.getPlayerTeam().getUnits()[indexTarget] :
                     battle.getOpponentTeam().getUnits()[indexTarget - 4];
-            moves.add(new Move(selectedSkillInstance, self, target.getPos()));
+            curMoves.add(new Move(selectedSkillInstance, self, target.getPos()));
             // todo support ExA
-            movesL[selectingMove].setText(
-                    movesL[selectingMove].storedText + " → " + target.getUnitType().getName());
+            moves[selectingMove].setText(
+                    moves[selectingMove].storedText + " → " + target.getUnitType().getName());
 
-            for (TextraLabel stat : statsL) {
+            for (TextraLabel stat : stats) {
                 stat.setColor(Color.WHITE);
             }
 
@@ -610,8 +610,8 @@ public class BattleControllerLib {
         turn.setText(C_TURN + lang.get("turn") + " " + (battle.getTurn() + 1));
 
         for (int i = 0; i < 8; i++) {
-            movesL[i].setText("");
-            movesL[i].setColor(Color.WHITE);
+            moves[i].setText("");
+            moves[i].setColor(Color.WHITE);
         }
 
         for (Unit unit : battle.getAllUnits()) {
@@ -686,7 +686,7 @@ public class BattleControllerLib {
             // battle.getTeam(i).getBloom()) + "[WHITE]/" + c_bloom + String.format("%,d",
             // 1000));
             // bloomL.get(i).skipToTheEnd();
-            bloomL[i].setText("{SPEED=0.1}{FADE}{SLIDE}" + lang.get("bloom") + ": " +
+            bloomLabels[i].setText("{SPEED=0.1}{FADE}{SLIDE}" + lang.get("bloom") + ": " +
                     formatNum(battle.getTeam(i).getBloom()) + "/" + formatNum(1000));
         }
 
@@ -699,7 +699,7 @@ public class BattleControllerLib {
         // actually wtf is the purpose of this code?? i cant even tell what this is supposed to do??? i wrote this???
         // Only copy if it hasn't started emptying yet
         if (selectingMove == 8) {
-            moves2 = new ArrayList<>(moves);
+            moves2 = new ArrayList<>(curMoves);
         } else if (selectingMove == 100) {
             moves2.sort(Comparator.comparingInt((Move entry) -> entry.skillInstance().getSkill().getPrio())
                     .thenComparingLong(entry -> entry.self().getAgiWithStage()).reversed());
@@ -779,7 +779,7 @@ public class BattleControllerLib {
             // "\nRes: " + unit.getResWithStage() + "/" + unit.getStatsDefault().getRes() +
             // "\n");
 
-            statsL[i].setText(text.toString());
+            stats[i].setText(text.toString());
 
             /// Buff display
 
@@ -829,7 +829,7 @@ public class BattleControllerLib {
                 }
             }
 
-            buffsL[i].setText(text.toString());
+            buffs[i].setText(text.toString());
             /*
              * } else {
              * statsL[i].setText("");
@@ -936,7 +936,7 @@ public class BattleControllerLib {
     }
 
     static void createInspectTargeting() {
-        for (TextraLabel skill : skillsL) {
+        for (TextraLabel skill : skills) {
             skill.setText("");
             skill.setColor(Color.WHITE);
         }
@@ -946,10 +946,10 @@ public class BattleControllerLib {
 
     static void handleInspectTargeting() {
         if (InputLib.checkInput(Keybind.BACK)) {
-            for (TextraLabel label : statsL) {
+            for (TextraLabel label : stats) {
                 label.setColor(Color.WHITE);
             }
-            movesL[selectingMove].setText("");
+            moves[selectingMove].setText("");
 
             NAV_PATH.removeLast();
             return;
@@ -957,7 +957,7 @@ public class BattleControllerLib {
 
         indexTarget = MenuLib.checkMovementTargeting(indexTarget, selectingMove, Ranges.OTHER_3R_OR_SELF);
 
-        MenuLib.handleOptColor(statsL, indexTarget);
+        MenuLib.handleOptColor(stats, indexTarget);
 
         if (InputLib.checkInput(Keybind.CONFIRM, Keybind.MAP)) {
             createInspect();
@@ -989,18 +989,18 @@ public class BattleControllerLib {
         stage4.addActor(pageItemRightList);
         stage4.addActor(descHeader);
         stage4.addActor(desc);
-        for (TextraLabel label : infoL) stage4.addActor(label);
+        for (TextraLabel label : prompts) stage4.addActor(label);
         stage4.addActor(equip);
         stage4.addActor(affinities);
-        for (TextraLabel label : statsBasicL) stage4.addActor(label);
-        for (TextraLabel label : statsBasicNumL) stage4.addActor(label);
+        for (TextraLabel label : statsBasic) stage4.addActor(label);
+        for (TextraLabel label : statsBasicNum) stage4.addActor(label);
         stage4.addActor(hp);
         stage4.addActor(hpAmt);
         stage4.addActor(sp);
         stage4.addActor(spAmt);
         for (TextraLabel label : statCategoryHeaderL) stage4.addActor(label);
-        for (TextraLabel label : statsPageL) stage4.addActor(label);
-        for (TextraLabel label : statsPageNumL) stage4.addActor(label);
+        for (TextraLabel label : statsPage) stage4.addActor(label);
+        for (TextraLabel label : statsPageNum) stage4.addActor(label);
     }
 
     static void handleInspect() {
@@ -1021,17 +1021,17 @@ public class BattleControllerLib {
         spAmt.setText(formatNum(unit.getSp()) + "/" + formatNum(1000));
 
         if (Settings.showInputGuide) {
-            for (int i = 0; i < infoL.length; i++) {
-                infoL[i].setText(infoPrompts[i].getText());
+            for (int i = 0; i < prompts.length; i++) {
+                prompts[i].setText(promptTypes[i].getText());
             }
         }
 
         Stat[] stats = Stat.values();
-        for (int i = 0; i < statsBasicNumL.length; i++) {
+        for (int i = 0; i < statsBasicNum.length; i++) {
             long statCur = unit.getStatWithStage(stats[i]);
             long statDefault = unit.getStatsDefault().getStat(stats[i]);
             double statPerc = ((double) statCur / statDefault) * 100;
-            statsBasicNumL[i].setText(getStatColor(statCur, statDefault) + formatNum(statCur) + "[WHITE]/" + C_NUM +
+            statsBasicNum[i].setText(getStatColor(statCur, statDefault) + formatNum(statCur) + "[WHITE]/" + C_NUM +
                     formatNum(statDefault) + " [WHITE](" + getPercentageColor(statPerc) + formatNum(statPerc) +
                     "%[WHITE])");
         }
@@ -1126,6 +1126,10 @@ public class BattleControllerLib {
             case STATS:
                 handleInspectPage(true, 0);
 
+                statsPageNum[0].setText(unit.getMultsString());
+                statsPageNum[1].setText(unit.getModsString());
+                statsPageNum[2].setText(unit.getOtherStatsString());
+
                 if (InputLib.checkInput(Keybind.PAGE_L1)) {
                     createPopup(lang.get("info.mult"), lang.get("info.mult.desc"));
                 } else if (InputLib.checkInput(Keybind.PAGE_R1)) {
@@ -1154,12 +1158,12 @@ public class BattleControllerLib {
 
     static void setStatVisibility(boolean isStatsPage) {
         for (TextraLabel label : statCategoryHeaderL) label.setVisible(isStatsPage);
-        for (TextraLabel label : statsPageL) label.setVisible(isStatsPage);
-        for (TextraLabel label : statsPageNumL) label.setVisible(isStatsPage);
+        for (TextraLabel label : statsPage) label.setVisible(isStatsPage);
+        for (TextraLabel label : statsPageNum) label.setVisible(isStatsPage);
 
-        infoL[3].setVisible(isStatsPage);
-        infoL[4].setVisible(isStatsPage);
-        infoL[5].setVisible(isStatsPage);
+        prompts[3].setVisible(isStatsPage);
+        prompts[4].setVisible(isStatsPage);
+        prompts[5].setVisible(isStatsPage);
 
         paths[2].setDir(bool2Sign(isStatsPage));
         paths[3].setDir(bool2Sign(isStatsPage));
@@ -1194,48 +1198,48 @@ public class BattleControllerLib {
         root.removeActor(pageItemRightList);
         root.removeActor(descHeader);
         root.removeActor(desc);
-        for (TextraLabel label : infoL) root.removeActor(label);
+        for (TextraLabel label : prompts) root.removeActor(label);
         root.removeActor(equip);
         root.removeActor(affinities);
-        for (TextraLabel label : statsBasicL) root.removeActor(label);
-        for (TextraLabel label : statsBasicNumL) root.removeActor(label);
+        for (TextraLabel label : statsBasic) root.removeActor(label);
+        for (TextraLabel label : statsBasicNum) root.removeActor(label);
         root.removeActor(hp);
         root.removeActor(hpAmt);
         root.removeActor(sp);
         root.removeActor(spAmt);
         for (TextraLabel label : statCategoryHeaderL) root.removeActor(label);
-        for (TextraLabel label : statsPageL) root.removeActor(label);
-        for (TextraLabel label : statsPageNumL) root.removeActor(label);
+        for (TextraLabel label : statsPage) root.removeActor(label);
+        for (TextraLabel label : statsPageNum) root.removeActor(label);
     }
 
     static void selectMove() {
         if (InputLib.checkInput(Keybind.BACK) && selectingMove != 0) {
-            for (TextraLabel skill : skillsL) {
+            for (TextraLabel skill : skills) {
                 skill.setText("");
                 skill.setColor(Color.WHITE);
             }
 
             selectingMove--;
             indexSkill = 0;
-            movesL[selectingMove].setText("");
+            moves[selectingMove].setText("");
 
             for (int i = 0; i <= battle.getPlayerTeam().getUnits()[selectingMove].getExtraActions(); i++) {
-                moves.removeLast();
+                curMoves.removeLast();
             }
 
             return;
         }
 
-        indexSkill = MenuLib.checkMovement1D(indexSkill, skillsL.size());
+        indexSkill = MenuLib.checkMovement1D(indexSkill, skills.size());
 
-        MenuLib.handleOptColor(skillsL, indexSkill);
+        MenuLib.handleOptColor(skills, indexSkill);
 
         if (InputLib.checkInput(Keybind.CONFIRM)) {
             selectedSkillInstance = battle.getPlayerTeam().getUnits()[selectingMove].getSkillInstances()
                     .get(indexSkill);
-            movesL[selectingMove].setText(selectedSkillInstance.getSkill().getName());
+            moves[selectingMove].setText(selectedSkillInstance.getSkill().getName());
 
-            for (TextraLabel skill : skillsL) {
+            for (TextraLabel skill : skills) {
                 skill.setText("");
                 skill.setColor(Color.WHITE);
             }
@@ -1249,7 +1253,7 @@ public class BattleControllerLib {
         usingMove++;
         applyingEffect = 0;
         nonFails = 0;
-        moves.removeFirst();
+        curMoves.removeFirst();
         delayS += 1 * Settings.battleSpeed;
     }
 }

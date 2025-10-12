@@ -47,7 +47,7 @@ public class InputPrompts {
     public static final InputPrompt I_MULT = new InputPrompt(lang.get("input.inspect.mult"),
             toGlyph(Keybind.PAGE_L1.getKey()), Keybind.PAGE_L1.getButton().getGlyphs());
     public static final InputPrompt I_MOD = new InputPrompt(lang.get("input.inspect.mod"),
-            toGlyph(Keybind.PAGE_L2.getKey()), Keybind.PAGE_R1.getButton().getGlyphs());
+            toGlyph(Keybind.PAGE_R1.getKey()), Keybind.PAGE_R1.getButton().getGlyphs());
     public static final InputPrompt I_OTHER = new InputPrompt(lang.get("input.inspect.other"),
             toGlyph(Keybind.UP.getKey()) + "/" + toGlyph(Keybind.DOWN.getKey()), Keybind.UP.getButton().getGlyphs(),
             Keybind.DOWN.getButton().getGlyphs());

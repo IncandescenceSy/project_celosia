@@ -16,7 +16,7 @@ public class Skills {
     ///// Temp testing skills
     public static final Skill RASETU_FEAST = new Skill.Builder("Rasetu Feast", "todo", Elements.VIS,
             Ranges.OTHER_3R_OR_SELF, 1)
-            .effects(new GiveBuff.Builder(Buffs.BURN, 3).build(), new GiveBuff.Builder(Buffs.FROSTBITE, 3).build(),
+            .effects(new GiveBuff.Builder(Buffs.STUNNED, 3).build(), new GiveBuff.Builder(Buffs.FROSTBITE, 3).build(),
                     new GiveBuff.Builder(Buffs.SHOCK, 3).build(), new GiveBuff.Builder(Buffs.TREMOR, 3).build())
             .build();
     public static final Skill GET_EXA = new Skill.Builder("Get ExA", "todo", Elements.VIS, Ranges.OTHER_3R_OR_SELF, 1)

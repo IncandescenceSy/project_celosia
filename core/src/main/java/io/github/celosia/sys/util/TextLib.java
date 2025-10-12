@@ -101,7 +101,7 @@ public class TextLib {
 
     // Returns the color a number should be displayed based on if it's positive or
     // negative
-    public static String getColor(long num) {
+    public static String getColor(double num) {
         return (num > 0) ? C_POS : (num < 0) ? C_NEG : C_NUM;
     }
 

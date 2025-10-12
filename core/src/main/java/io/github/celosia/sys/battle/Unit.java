@@ -14,13 +14,17 @@ import static io.github.celosia.sys.battle.BattleLib.STAGE_TYPE_NOT_FOUND;
 import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_HIDDEN;
 import static io.github.celosia.sys.save.Lang.lang;
 import static io.github.celosia.sys.util.TextLib.C_BUFF;
+import static io.github.celosia.sys.util.TextLib.C_EXP;
 import static io.github.celosia.sys.util.TextLib.C_HP;
 import static io.github.celosia.sys.util.TextLib.C_NEG;
 import static io.github.celosia.sys.util.TextLib.C_NUM;
+import static io.github.celosia.sys.util.TextLib.C_POS;
 import static io.github.celosia.sys.util.TextLib.C_SHIELD;
 import static io.github.celosia.sys.util.TextLib.formatName;
 import static io.github.celosia.sys.util.TextLib.formatNum;
 import static io.github.celosia.sys.util.TextLib.getColor;
+import static io.github.celosia.sys.util.TextLib.getExpColor;
+import static io.github.celosia.sys.util.TextLib.getMultColor;
 import static io.github.celosia.sys.util.TextLib.getSign;
 import static io.github.celosia.sys.util.TextLib.getStageStatString;
 
@@ -867,6 +871,14 @@ public class Unit {
         };
     }
 
+    public boolean isImmuneToBooleanStat(BooleanStat stat) {
+        return switch (stat) {
+            case UNABLE_TO_ACT -> unableToActImmunity > 0;
+            case EQUIP_DISABLED -> equipDisabledImmunity > 0;
+            default -> false;
+        };
+    }
+
     public int getDurationModBuffTypeDealt(BuffType buffType) {
         return (buffType == BuffType.BUFF) ? modDurationBuffDealt : modDurationDebuffDealt;
     }
@@ -1172,5 +1184,63 @@ public class Unit {
 
     public Result damage(long dmg) {
         return this.damage(dmg, false, true);
+    }
+
+    public String getMultsString() {
+        StringBuilder str = new StringBuilder();
+
+        for (Mult mult : Mult.values()) {
+            int curMult = this.getMult(mult);
+            str.append(getMultColor(curMult, mult)).append(formatNum(curMult / 10d)).append("%");
+
+            int curExp = this.getExp(mult);
+            if (curExp != 100) {
+                double curMultWithExp = this.getMultWithExp(mult);
+                str.append("^").append(getExpColor(curExp, curMult, mult)).append(formatNum(curExp / 100d)).append(" ")
+                        .append(C_EXP).append("(").append(getMultColor((int) (curMultWithExp * 1000), mult))
+                        .append(formatNum(curMultWithExp * 100)).append("%").append(C_EXP).append(")");
+            }
+
+            str.append("\n");
+        }
+
+        return str.toString();
+    }
+
+    public String getModsString() {
+        StringBuilder str = new StringBuilder();
+
+        for (Mod mod : Mod.values()) {
+            int curMod = this.getMod(mod);
+            str.append(getColor(curMod)).append(getSign(curMod)).append(curMod).append("\n");
+        }
+
+        return str.toString();
+    }
+
+    public String getOtherStatsString() {
+        StringBuilder str = new StringBuilder();
+
+        for (BooleanStat stat : BooleanStat.values()) {
+            if (!stat.isInvisible()) {
+                str.append(getBooleanStatString(stat)).append("\n");
+            }
+        }
+
+        str.append(getColor(extraActions)).append(extraActions);
+
+        return str.toString();
+    }
+
+    public String getBooleanStatString(BooleanStat stat) {
+        if (this.isImmuneToBooleanStat(stat)) {
+            return C_POS + lang.get("immune");
+        }
+
+        if (this.isBooleanStat(stat)) {
+            return (stat.isPositive() ? C_POS : C_NEG) + lang.get("yes");
+        }
+
+        return (stat.isPositive() ? C_NEG : C_POS) + lang.get("no");
     }
 }

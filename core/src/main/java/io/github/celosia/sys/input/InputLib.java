@@ -97,6 +97,8 @@ public class InputLib {
             case RIGHT -> checkAxis(Button.LX.getMapping(), 0.4f);
             case UP -> checkAxis(Button.LY.getMapping(), -0.4f);
             case DOWN -> checkAxis(Button.LY.getMapping(), 0.4f);
+            case PAGE_L2 -> checkAxis(Button.LT.getMapping(), 0.4f);
+            case PAGE_R2 -> checkAxis(Button.RT.getMapping(), 0.4f);
             default -> false;
         };
     }
