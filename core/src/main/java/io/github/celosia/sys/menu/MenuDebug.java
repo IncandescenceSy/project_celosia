@@ -24,7 +24,7 @@ import oshi.hardware.HardwareAbstractionLayer;
 import java.util.List;
 
 import static io.github.celosia.Main.NAV_PATH;
-import static io.github.celosia.Main.stage3;
+import static io.github.celosia.Main.stage2;
 import static io.github.celosia.sys.menu.MenuLib.setTextIfChanged;
 import static io.github.celosia.sys.save.Lang.lang;
 
@@ -61,26 +61,26 @@ public class MenuDebug {
     public static void init() {
         F3L.setAlignment(Align.topLeft);
         F3L.setPosition(10, World.HEIGHT - 10);
-        Main.stage5.addActor(F3L);
+        Main.stage4.addActor(F3L);
         F3L.setZIndex(10000);
 
         F3R.setAlignment(Align.topRight);
         F3R.setPosition(World.WIDTH - 10, World.HEIGHT - 10);
-        Main.stage5.addActor(F3R);
+        Main.stage4.addActor(F3R);
         F3R.setZIndex(10000);
     }
 
-    public static void create(MenuLib.MenuType menuType) {
-        if (menuType == MenuLib.MenuType.DEBUG_TEXT) {
+    public static void create(MenuType menuType) {
+        if (menuType == MenuType.DEBUG_TEXT) {
             lines = 1;
             TEXT.setPosition(World.WIDTH_2, World.HEIGHT_2);
-            stage3.addActor(TEXT);
+            stage2.addActor(TEXT);
         }
     }
 
     // todo cleanup
-    public static void input(MenuLib.MenuType menuType) {
-        if (menuType == MenuLib.MenuType.DEBUG_TEXT) {
+    public static void input(MenuType menuType) {
+        if (menuType == MenuType.DEBUG_TEXT) {
             setTextIfChanged(TEXT, "omg its hatsune miku!" + "\nomg miku!!!".repeat(lines + 1));
 
             TEXT.setX(World.WIDTH - TEXT.getWidth());
@@ -101,10 +101,10 @@ public class MenuDebug {
             else if (InputLib.checkInput(Keybind.DOWN)) TEXT.setAlignment(Align.bottom);
             else if (InputLib.checkInput(Keybind.MENU)) TEXT.setAlignment(Align.center);
             else if (InputLib.checkInput(Keybind.BACK)) {
-                stage3.getRoot().removeActor(TEXT);
+                stage2.getRoot().removeActor(TEXT);
                 NAV_PATH.removeLast();
             }
-        } else if (menuType == MenuLib.MenuType.DEBUG_RES) {
+        } else if (menuType == MenuType.DEBUG_RES) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) RenderLib.changeScale(640, 360);
             else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) RenderLib.changeScale(1920, 1080);
             else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) RenderLib.changeScale(2560, 1440);
@@ -144,8 +144,8 @@ public class MenuDebug {
                 lang.format("f3.resolution", Gdx.graphics.getWidth(), Gdx.graphics.getHeight()) + "\n" +
                 lang.format("f3.nav_path", NAV_PATH.toString().replace("[", "").replace("]", "")) + "\n" +
                 lang.format("f3.overworld_location", "todo", 0, 0) + "\n" + // todo
-                lang.format("f3.actor_count", Main.stage1.getActors().size, Main.stage2.getActors().size,
-                        Main.stage3.getActors().size, Main.stage4.getActors().size, Main.stage5.getActors().size) + "\n" +
+                lang.format("f3.actor_count", Main.stage0.getActors().size, Main.stage1.getActors().size,
+                        Main.stage2.getActors().size, Main.stage3.getActors().size, Main.stage4.getActors().size) + "\n" +
                 lang.format("f3.loaded_mod_count", 0) // todo
         );
 

@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import io.github.celosia.sys.Debug;
 import io.github.celosia.sys.input.InputLib;
 import io.github.celosia.sys.input.Keybind;
-import io.github.celosia.sys.menu.MenuLib.MenuType;
+import io.github.celosia.sys.menu.MenuType;
 
 import static io.github.celosia.Main.NAV_PATH;
 import static io.github.celosia.sys.battle.BattleControllerLib.createFullLog;

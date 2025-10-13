@@ -21,7 +21,6 @@ import com.github.tommyettinger.textra.TypingConfig;
 import com.github.tommyettinger.textra.TypingLabel;
 import io.github.celosia.sys.Debug;
 import io.github.celosia.sys.GameMod;
-import io.github.celosia.sys.input.InputHandler;
 import io.github.celosia.sys.World;
 import io.github.celosia.sys.battle.Accessory;
 import io.github.celosia.sys.battle.BattleController;
@@ -34,13 +33,15 @@ import io.github.celosia.sys.battle.Skill;
 import io.github.celosia.sys.battle.StageType;
 import io.github.celosia.sys.battle.UnitType;
 import io.github.celosia.sys.battle.Weapon;
+import io.github.celosia.sys.input.InputHandler;
 import io.github.celosia.sys.input.InputLib;
 import io.github.celosia.sys.input.Keybind;
 import io.github.celosia.sys.menu.MenuDebug;
 import io.github.celosia.sys.menu.MenuLib;
-import io.github.celosia.sys.menu.MenuLib.MenuOptType;
-import io.github.celosia.sys.menu.MenuLib.MenuType;
+import io.github.celosia.sys.menu.MenuOptType;
+import io.github.celosia.sys.menu.MenuType;
 import io.github.celosia.sys.render.CoolRect;
+import io.github.celosia.sys.render.CoolRectChain;
 import io.github.celosia.sys.render.CoolRects;
 import io.github.celosia.sys.render.Fonts;
 import io.github.celosia.sys.render.Fonts.FontType;
@@ -57,8 +58,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.celosia.sys.menu.MenuDebug.drawF3MenuBg;
-import static io.github.celosia.sys.render.TriLib.drawCoolRects;
-import static io.github.celosia.sys.render.TriLib.drawPaths;
+import static io.github.celosia.sys.render.TriLib.drawShapes;
 import static io.github.celosia.sys.util.TextLib.rf;
 
 /**
@@ -85,13 +85,14 @@ public class Main extends ApplicationAdapter {
     // todo can know (unmodded) size exactly
     // todo rename
     public static CoolRect[] coolRects;
+    public static CoolRectChain[] coolRectChains;
     public static Path[] paths;
 
+    public static Stage stage0;
     public static Stage stage1;
     public static Stage stage2;
     public static Stage stage3;
     public static Stage stage4;
-    public static Stage stage5;
 
     // Atlases
     // From https://juliocacko.itch.io/free-input-prompts
@@ -138,11 +139,11 @@ public class Main extends ApplicationAdapter {
         viewPort = new FitViewport(World.WIDTH, World.HEIGHT);
         camera = viewPort.getCamera();
 
+        stage0 = new Stage(viewPort);
         stage1 = new Stage(viewPort);
         stage2 = new Stage(viewPort);
         stage3 = new Stage(viewPort);
         stage4 = new Stage(viewPort);
-        stage5 = new Stage(viewPort);
 
         atlasPrompts = new TextureAtlas("prompts.atlas");
         atlasIcons = new TextureAtlas("icons.atlas");
@@ -154,19 +155,27 @@ public class Main extends ApplicationAdapter {
         Controllers.addListener(inputHandler);
 
         coolRects = new CoolRect[] {
-                // Main menu bg
+                // MENU_MAIN
                 new CoolRect.Builder(World.WIDTH - 700, 230 + 475 + 5, World.WIDTH - 175 - 92, 230 - 75 + 25).dir(1)
-                        .hasOutline().prio(2).build(),
-                // Full log
-                new CoolRect.Builder(5, World.HEIGHT + 100, 1300, -100).hasOutline().speed(4).angL(0).prio(3).build(),
-                // Menu cursor. X pos comes from 450 (y diff) / 6 (slant)
-                new CoolRect.Builder(0, 0, 0, 0).dir(1).color(Color.PURPLE).prio(2).build(),
+                        .prio(1).build(),
+                // COVER_LEFT
+                new CoolRect.Builder(5, World.HEIGHT + 100, 1300, -100).speed(4).slantL(0).prio(2).build(),
+                // CURSOR_1
+                new CoolRect.Builder(-1, -1, -1, -1).dir(1).color(Color.PURPLE).noOutline().prio(1).build(),
+                // CURSOR_2 (afterimage)
+                new CoolRect.Builder(-1, -1, -1, -1).color(Color.PURPLE).noOutline().prio(1).build(),
+                // POPUP_CENTERED
+                new CoolRect.Builder(World.WIDTH_2 - 440, World.HEIGHT_2 - 200, World.WIDTH_2 + 440,
+                        World.HEIGHT_2 + 200).prio(4).build(),
+        };
 
-                // Disappearing menu cursor
-                new CoolRect.Builder(0, 0, 0, 0).color(Color.PURPLE).prio(2).build(),
-                // Centered popup bg
-                new CoolRect.Builder(World.WIDTH_2 - 440,
-                        World.HEIGHT_2 - 200, World.WIDTH_2 + 440, World.HEIGHT_2 + 200).hasOutline().prio(5).build()
+        coolRectChains = new CoolRectChain[] {
+                // INSPECT_TARGET
+                new CoolRectChain(new CoolRect.Builder(315, World.HEIGHT - 27, -1, World.HEIGHT - 71)
+                        .outlineThickness(5).speed(3).prio(3)).setSelectedOffset(10),
+                // INSPECT_PAGES
+                new CoolRectChain(new CoolRect.Builder(420, World.HEIGHT - 297, -1, World.HEIGHT - 334)
+                        .outlineThickness(5).speed(3).prio(3)).setDivisions(95, 142, 104, 98).setSelectedOffset(10)
         };
 
         paths = new Path[] {
@@ -219,15 +228,16 @@ public class Main extends ApplicationAdapter {
         inputGuide = new TextraLabel("", FontType.KORURI_BORDER.get(20));
         inputGuide.setPosition(0, 0);
         inputGuide.setAlignment(Align.bottomRight);
-        stage3.addActor(inputGuide);
+        stage2.addActor(inputGuide);
 
         NAV_PATH.add(MenuType.MAIN);
         createMenuMain();
 
-        // todo if using SteamInput, initial warning popup abt incorrect glyphs
-        // recommending using ingame remapping instead
+        // todo if using SteamInput, initial warning popup abt incorrect glyphs recommending using ingame remapping
+        // instead
 
         /// Initialize settings
+        // todo i think the following explanation is no longer true
         // Sets resolution based on Settings.scale
         // The game always initially launches at the closest 16:9 res to the display res
         // The game can't launch already scaled because Settings won't be loaded yet,
@@ -239,8 +249,7 @@ public class Main extends ApplicationAdapter {
          * }
          */
 
-        // todo set target fps and vsync based off of settings (cant set in launcher bc
-        // settings wont be loaded yet)
+        // todo set target fps and vsync based off of settings (can set in launcher?)
 
         MenuDebug.init();
     }
@@ -275,7 +284,7 @@ public class Main extends ApplicationAdapter {
                         case START:
                             coolRects[CoolRects.MENU_MAIN.ordinal()].setDir(-1);
                             coolRects[CoolRects.CURSOR_1.ordinal()].setDir(-1);
-                            MenuLib.removeOpts(optLabels, stage2);
+                            MenuLib.removeOpts(optLabels, stage1);
 
                             BattleController.create();
                             NAV_PATH.add(MenuType.BATTLE);
@@ -298,8 +307,8 @@ public class Main extends ApplicationAdapter {
                 break;
             case POPUP:
                 if (InputLib.checkInput(Keybind.CONFIRM, Keybind.BACK)) {
-                    stage5.getRoot().removeActor(popupTitle);
-                    stage5.getRoot().removeActor(popupText);
+                    stage4.getRoot().removeActor(popupTitle);
+                    stage4.getRoot().removeActor(popupText);
                     coolRects[CoolRects.POPUP_CENTERED.ordinal()].setDir(-1);
                     NAV_PATH.removeLast();
                 }
@@ -346,10 +355,6 @@ public class Main extends ApplicationAdapter {
         spriteBatch.setProjectionMatrix(camera.combined);
         polygonSpriteBatch.setProjectionMatrix(camera.combined);
 
-        // Lowest priority. Unused
-        drawCoolRects(0);
-        drawPaths(0);
-
         // Sprites (will prob need several separate begin/end blocks and a wrapper
         // method eventually)
         spriteBatch.begin();
@@ -357,40 +362,35 @@ public class Main extends ApplicationAdapter {
         spriteBatch.end();
 
         // Low priority. Unused
-        drawCoolRects(1);
-        drawPaths(1);
+        drawShapes(0);
 
         // Lowest priority for actors
+        stage0.act();
+        stage0.draw();
+
+        // Med priority (like nameplates)
+        drawShapes(1);
+
+        // Med priority actors (like text over nameplates)
         stage1.act();
         stage1.draw();
 
-        // Med priority (like nameplates)
-        drawCoolRects(2);
-        drawPaths(2);
+        // High priority (like full log / fullscreen menu bg)
+        drawShapes(2);
 
-        // Med priority actors (like text over nameplates)
+        // High priority actors (like full log / fullscreen menu / popup text)
         stage2.act();
         stage2.draw();
 
-        // High priority (like full log / fullscreen menu bg)
-        drawCoolRects(3);
-        drawPaths(3);
+        // Higher priority (like inspect bg)
+        drawShapes(3);
 
-        // High priority actors (like full log / fullscreen menu / popup text)
+        // Higher priority actors (like inspect text)
         stage3.act();
         stage3.draw();
 
-        // Higher priority (like inspect bg)
-        drawCoolRects(4);
-        drawPaths(4);
-
-        // Higher priority actors (like inspect text)
-        stage4.act();
-        stage4.draw();
-
         // Highest priority (like popups)
-        drawCoolRects(5);
-        drawPaths(5);
+        drawShapes(4);
 
         // todo placeholder for unit sprite
         if (NAV_PATH.getLast() == MenuType.INSPECT) {
@@ -402,13 +402,13 @@ public class Main extends ApplicationAdapter {
 
         if (isF3MenuEnabled) drawF3MenuBg();
 
-        stage5.act();
-        stage5.draw();
+        stage4.act();
+        stage4.draw();
     }
 
     private void createMenuMain() {
         optLabels = new ArrayList<>();
-        MenuLib.createOpts(optLabels, FontType.KORURI.get(80), stage2);
+        MenuLib.createOpts(optLabels, FontType.KORURI.get(80), stage1);
     }
 
     // todo fix bugs that arise from being resized (temporary input rejection) or remove drag resizing
@@ -421,11 +421,11 @@ public class Main extends ApplicationAdapter {
     public void dispose() {
         spriteBatch.dispose();
         polygonSpriteBatch.dispose();
+        stage0.dispose();
         stage1.dispose();
         stage2.dispose();
         stage3.dispose();
         stage4.dispose();
-        stage5.dispose();
         texBg.dispose();
     }
 }

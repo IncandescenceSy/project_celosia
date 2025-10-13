@@ -16,6 +16,8 @@ import io.github.celosia.sys.input.InputPrompt;
 import io.github.celosia.sys.input.InputPrompts;
 import io.github.celosia.sys.input.Keybind;
 import io.github.celosia.sys.menu.MenuLib;
+import io.github.celosia.sys.menu.MenuType;
+import io.github.celosia.sys.render.CoolRectChains;
 import io.github.celosia.sys.render.CoolRects;
 import io.github.celosia.sys.render.Fonts;
 import io.github.celosia.sys.render.Path;
@@ -29,11 +31,12 @@ import java.util.Map;
 
 import static io.github.celosia.Main.NAV_PATH;
 import static io.github.celosia.Main.STAGE_TYPES;
+import static io.github.celosia.Main.coolRectChains;
 import static io.github.celosia.Main.coolRects;
 import static io.github.celosia.Main.paths;
+import static io.github.celosia.Main.stage1;
 import static io.github.celosia.Main.stage2;
 import static io.github.celosia.Main.stage3;
-import static io.github.celosia.Main.stage4;
 import static io.github.celosia.sys.battle.BattleController.delayS;
 import static io.github.celosia.sys.battle.PosLib.getSide;
 import static io.github.celosia.sys.battle.PosLib.getStartingIndex;
@@ -76,7 +79,7 @@ public class BattleControllerLib {
     static List<TextraLabel> skills = new ArrayList<>();
 
     // Inspect menu
-    static TextraLabel unitList = new TextraLabel("", Fonts.FontType.KORURI.get(30));
+    static TextraLabel[] unitList = new TextraLabel[8];
     static TextraLabel pageList = new TextraLabel(
             lang.get("skills") + "   " + lang.get("passives") + "   " + lang.get("buffs") + "   " + lang.get("stats"),
             Fonts.FontType.KORURI.get(30));
@@ -215,7 +218,7 @@ public class BattleControllerLib {
         // Do NOT use the overload of setPosition() that also takes in Align. I don't know why, but it doesn't work
         turn.setAlignment(Align.center);
         turn.setPosition(World.WIDTH_2, World.HEIGHT - 60);
-        stage2.addActor(turn);
+        stage1.addActor(turn);
 
         for (int i = 0; i < 2; i++) {
             TextraLabel bloom = new TextraLabel(
@@ -231,35 +234,39 @@ public class BattleControllerLib {
                 bloom.setX(70);
             }
 
-            stage2.addActor(bloom);
+            stage1.addActor(bloom);
         }
 
         queue.setAlignment(Align.center);
         queue.setPosition(World.WIDTH_2, World.HEIGHT - 120);
-        stage2.addActor(queue);
+        stage1.addActor(queue);
 
         battleLog.setPosition(World.WIDTH_2 - 200, World.HEIGHT - 270);
-        stage3.addActor(battleLog);
+        stage2.addActor(battleLog);
 
         // Iterate for each Unit
         for (int i = 0; i < 8; i++) {
             int y = (i >= 4) ? World.HEIGHT - 300 - 300 * (i - 4) : World.HEIGHT - 300 - 300 * i;
 
-            TextraLabel stats = new TextraLabel("", Fonts.FontType.KORURI.get(30));
-            BattleControllerLib.stats[i] = stats;
-            stats.setPosition((i >= 4) ? World.WIDTH - 350 : 50, y);
-            stage2.addActor(stats);
+            TextraLabel stat = new TextraLabel("", Fonts.FontType.KORURI.get(30));
+            stats[i] = stat;
+            stat.setPosition((i >= 4) ? World.WIDTH - 350 : 50, y);
+            stage1.addActor(stat);
 
-            TextraLabel buffs = new TextraLabel("", Fonts.FontType.KORURI.get(20));
-            BattleControllerLib.buffs[i] = buffs;
-            buffs.setAlignment(Align.topLeft);
-            buffs.setPosition((i >= 4) ? World.WIDTH - 350 : 50, y - 70);
-            stage2.addActor(buffs);
+            TextraLabel buff = new TextraLabel("", Fonts.FontType.KORURI.get(20));
+            buffs[i] = buff;
+            buff.setAlignment(Align.topLeft);
+            buff.setPosition((i >= 4) ? World.WIDTH - 350 : 50, y - 70);
+            stage1.addActor(buff);
 
-            TextraLabel moves = new TextraLabel("", Fonts.FontType.KORURI.get(30));
-            BattleControllerLib.moves[i] = moves;
-            moves.setPosition((i >= 4) ? World.WIDTH - 550 : 400, y);
-            stage2.addActor(moves);
+            TextraLabel move = new TextraLabel("", Fonts.FontType.KORURI.get(30));
+            moves[i] = move;
+            move.setPosition((i >= 4) ? World.WIDTH - 550 : 400, y);
+            stage1.addActor(move);
+
+            TextraLabel name = new TextraLabel("", Fonts.FontType.KORURI.get(30));
+            unitList[i] = name;
+            name.setY(World.HEIGHT - 52);
         }
 
         equip.setPosition(300, World.HEIGHT - 215);
@@ -312,8 +319,6 @@ public class BattleControllerLib {
         pointsMod.addAll(new Vector2(40 + 450, y), new Vector2(440 + 450, y));
         pointsOther.addAll(new Vector2(40 + 900, y), new Vector2(440 + 900, y));
 
-        unitList.setPosition(320, World.HEIGHT - 50);
-
         pageList.setAlignment(Align.center);
         pageList.setPosition(640, World.HEIGHT - 320);
 
@@ -335,7 +340,7 @@ public class BattleControllerLib {
         // todo support arbitrary size
         for (int i = 0; i < 6; i++) {
             skills.add(new TextraLabel("", Fonts.FontType.KORURI.get(30)));
-            stage2.addActor(skills.get(i));
+            stage1.addActor(skills.get(i));
         }
 
         for (Unit unit : battle.getAllUnits()) {
@@ -867,7 +872,7 @@ public class BattleControllerLib {
     static void updateLog() {
         battleLog.setText(formatLog());
 
-        if (NAV_PATH.getLast() == MenuLib.MenuType.LOG) {
+        if (NAV_PATH.getLast() == MenuType.LOG) {
             Path scrollbar = paths[0];
 
             // Portion of the log currently displayed
@@ -898,8 +903,8 @@ public class BattleControllerLib {
     }
 
     static String formatLog() {
-        int lines = (NAV_PATH.getLast() == MenuLib.MenuType.LOG) ? 48 : 8;
-        int scroll = (NAV_PATH.getLast() == MenuLib.MenuType.LOG) ? logScroll : 0;
+        int lines = (NAV_PATH.getLast() == MenuType.LOG) ? 48 : 8;
+        int scroll = (NAV_PATH.getLast() == MenuType.LOG) ? logScroll : 0;
 
         int start = Math.max(0, logText.size() - lines - scroll);
         int end = Math.min(start + lines, logText.size());
@@ -911,9 +916,9 @@ public class BattleControllerLib {
     static void createFullLog() {
         battleLog.setAlignment(Align.topLeft);
         battleLog.setPosition(20, World.HEIGHT);
-        NAV_PATH.add(MenuLib.MenuType.LOG);
-        coolRects[CoolRects.COVER_LEFT.ordinal()].setDir(1).setPrio(3);
-        paths[0].setDir(1).setThickness(10).setPrio(3);
+        NAV_PATH.add(MenuType.LOG);
+        coolRects[CoolRects.COVER_LEFT.ordinal()].setDir(1).setPrio(2);
+        paths[0].setDir(1).setThickness(10).setPrio(2);
         updateLog();
     }
 
@@ -928,7 +933,7 @@ public class BattleControllerLib {
         }
 
         int logScrollNew = MenuLib.checkLogScroll(logScroll, logText.size(),
-                (NAV_PATH.getLast() == MenuLib.MenuType.LOG) ? 48 : 8);
+                (NAV_PATH.getLast() == MenuType.LOG) ? 48 : 8);
         if (logScroll != logScrollNew) {
             logScroll = logScrollNew;
             updateLog();
@@ -941,7 +946,7 @@ public class BattleControllerLib {
             skill.setColor(Color.WHITE);
         }
 
-        NAV_PATH.add(MenuLib.MenuType.INSPECT_TARGETING);
+        NAV_PATH.add(MenuType.INSPECT_TARGETING);
     }
 
     static void handleInspectTargeting() {
@@ -966,41 +971,50 @@ public class BattleControllerLib {
 
     static void createInspect() {
         NAV_PATH.removeLast();
-        NAV_PATH.add(MenuLib.MenuType.INSPECT);
+        NAV_PATH.add(MenuType.INSPECT);
 
-        coolRects[CoolRects.COVER_LEFT.ordinal()].setDir(1).setPrio(4);
-        coolRects[CoolRects.CURSOR_1.ordinal()].setDir(1).setPrio(4).setLR(45, 475);
-        coolRects[CoolRects.CURSOR_2.ordinal()].setPrio(4).setLR(45, 475);
+        coolRects[CoolRects.COVER_LEFT.ordinal()].setDir(1).setPrio(3);
+        coolRects[CoolRects.CURSOR_1.ordinal()].setDir(1).setPrio(3).setLR(45, 475);
+        coolRects[CoolRects.CURSOR_2.ordinal()].setPrio(3).setLR(45, 475);
+        coolRectChains[CoolRectChains.INSPECT_PAGES.ordinal()].setDir(1);
 
-        paths[0].setDir(1).setPoints(pointsPageDivL).setThickness(5).setPrio(4);
-        paths[1].setDir(1).setPoints(pointsPageDivR).setThickness(5).setPrio(4);
-        paths[2].setDir(1).setPoints(pointsMult).setThickness(5).setPrio(4);
-        paths[3].setDir(1).setPoints(pointsMod).setThickness(5).setPrio(4);
-        paths[4].setDir(1).setPoints(pointsOther).setThickness(5).setPrio(4);
+        paths[0].setDir(1).setPoints(pointsPageDivL).setThickness(5).setPrio(3);
+        paths[1].setDir(1).setPoints(pointsPageDivR).setThickness(5).setPrio(3);
+        paths[2].setDir(1).setPoints(pointsMult).setThickness(5).setPrio(3);
+        paths[3].setDir(1).setPoints(pointsMod).setThickness(5).setPrio(3);
+        paths[4].setDir(1).setPoints(pointsOther).setThickness(5).setPrio(3);
 
-        List<Unit> unitsAll = battle.getAllUnits();
-        StringBuilder unitNames = new StringBuilder();
-        for (Unit unit : unitsAll) unitNames.append(unit.getUnitType().getName()).append(" ");
-        unitList.setText(unitNames.toString());
-        stage4.addActor(unitList);
+        stage3.addActor(pageList);
+        stage3.addActor(pageItemList);
+        stage3.addActor(pageItemRightList);
+        stage3.addActor(descHeader);
+        stage3.addActor(desc);
+        for (TextraLabel label : prompts) stage3.addActor(label);
+        stage3.addActor(equip);
+        stage3.addActor(affinities);
+        for (TextraLabel label : statsBasic) stage3.addActor(label);
+        for (TextraLabel label : statsBasicNum) stage3.addActor(label);
+        stage3.addActor(hp);
+        stage3.addActor(hpAmt);
+        stage3.addActor(sp);
+        stage3.addActor(spAmt);
+        for (TextraLabel label : statCategoryHeaderL) stage3.addActor(label);
+        for (TextraLabel label : statsPage) stage3.addActor(label);
+        for (TextraLabel label : statsPageNum) stage3.addActor(label);
 
-        stage4.addActor(pageList);
-        stage4.addActor(pageItemList);
-        stage4.addActor(pageItemRightList);
-        stage4.addActor(descHeader);
-        stage4.addActor(desc);
-        for (TextraLabel label : prompts) stage4.addActor(label);
-        stage4.addActor(equip);
-        stage4.addActor(affinities);
-        for (TextraLabel label : statsBasic) stage4.addActor(label);
-        for (TextraLabel label : statsBasicNum) stage4.addActor(label);
-        stage4.addActor(hp);
-        stage4.addActor(hpAmt);
-        stage4.addActor(sp);
-        stage4.addActor(spAmt);
-        for (TextraLabel label : statCategoryHeaderL) stage4.addActor(label);
-        for (TextraLabel label : statsPage) stage4.addActor(label);
-        for (TextraLabel label : statsPageNum) stage4.addActor(label);
+        List<Unit> units = battle.getAllUnits();
+        int[] divisions = new int[8];
+        int divTotal = 0;
+        for (int i = 0; i < 8; i++) {
+            stage3.addActor(unitList[i]);
+            unitList[i].setText(units.get(i).getUnitType().getName());
+            int div = (int) (unitList[i].getPrefWidth() + 20);
+            divisions[i] = div;
+            unitList[i].setX(315 + 15 + divTotal);
+            divTotal += div;
+        }
+
+        coolRectChains[CoolRectChains.INSPECT_TARGET.ordinal()].setDivisions(divisions).setDir(1);
     }
 
     static void handleInspect() {
@@ -1010,6 +1024,7 @@ public class BattleControllerLib {
         }
 
         indexTarget = checkMovement1D(indexTarget, 8, Keybind.PAGE_L2, Keybind.PAGE_R2);
+        coolRectChains[CoolRectChains.INSPECT_TARGET.ordinal()].setSelectedDiv(indexTarget);
         Unit unit = battle.getUnitAtPos(indexTarget);
 
         equip.setText(unit.getEquipped().getNameWithIcon());
@@ -1038,6 +1053,8 @@ public class BattleControllerLib {
 
         indexPage = checkMovement1D(indexPage, 4, Keybind.LEFT, Keybind.RIGHT);
 
+        coolRectChains[CoolRectChains.INSPECT_PAGES.ordinal()].setSelectedDiv(indexPage);
+
         if (InputLib.checkInput(Keybind.CONFIRM)) {
             createPopup(unit.getEquipped().getNameWithIcon(), unit.getEquipped().getDesc());
         } else if (InputLib.checkInput(Keybind.MENU)) {
@@ -1060,7 +1077,7 @@ public class BattleControllerLib {
                         skillInstance -> skillInstance.getSkill().getCostFormatted()));
 
                 if (skillCount > 0) {
-                    indexPageList = checkMovement1D(indexPageList, skillCount);
+                    indexPageList = checkMovement1D(indexPageList, skillCount, Keybind.UP, Keybind.DOWN);
 
                     if (indexPageList < skillCount) {
                         Skill skill = unit.getSkill(indexPageList);
@@ -1079,7 +1096,7 @@ public class BattleControllerLib {
                 pageItemRightList.setText("");
 
                 if (passiveCount > 0) {
-                    indexPageList = checkMovement1D(indexPageList, passiveCount);
+                    indexPageList = checkMovement1D(indexPageList, passiveCount, Keybind.UP, Keybind.DOWN);
 
                     if (indexPageList < passiveCount) {
                         Passive passive = unit.getPassive(indexPageList);
@@ -1108,7 +1125,8 @@ public class BattleControllerLib {
                                 getNamesAsMultiline(unit.getBuffInstances(), BuffInstance::getTurnsStacksFormatted));
 
                 if (buffCount + alteredStageCount > 0) {
-                    indexPageList = checkMovement1D(indexPageList, buffCount + alteredStageCount);
+                    indexPageList = checkMovement1D(indexPageList, buffCount + alteredStageCount, Keybind.UP,
+                            Keybind.DOWN);
 
                     if (indexPageList < alteredStageCount) {
                         StageType stageType = alteredStages.get(indexPageList);
@@ -1181,8 +1199,10 @@ public class BattleControllerLib {
         NAV_PATH.removeLast();
 
         coolRects[CoolRects.COVER_LEFT.ordinal()].setDir(-1);
-        coolRects[CoolRects.CURSOR_1.ordinal()].setDir(-1).setPrio(2);
-        coolRects[CoolRects.CURSOR_2.ordinal()].setPrio(2);
+        coolRects[CoolRects.CURSOR_1.ordinal()].setDir(-1).setPrio(1);
+        coolRects[CoolRects.CURSOR_2.ordinal()].setPrio(1);
+        coolRectChains[CoolRectChains.INSPECT_TARGET.ordinal()].setDir(-1);
+        coolRectChains[CoolRectChains.INSPECT_PAGES.ordinal()].setDir(-1);
 
         paths[0].setDir(-1);
         paths[1].setDir(-1);
@@ -1190,9 +1210,9 @@ public class BattleControllerLib {
         paths[3].setDir(-1);
         paths[4].setDir(-1);
 
-        Group root = stage4.getRoot();
+        Group root = stage3.getRoot();
 
-        root.removeActor(unitList);
+        for (TextraLabel label : unitList) root.removeActor(label);
         root.removeActor(pageList);
         root.removeActor(pageItemList);
         root.removeActor(pageItemRightList);
@@ -1245,7 +1265,7 @@ public class BattleControllerLib {
             }
 
             indexTarget = getStartingIndex(selectedSkillInstance.getSkill());
-            NAV_PATH.add(MenuLib.MenuType.TARGETING);
+            NAV_PATH.add(MenuType.TARGETING);
         }
     }
 

@@ -1,13 +1,17 @@
 package io.github.celosia.sys.render;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import space.earlygrey.shapedrawer.JoinType;
 
-// Warning: bad code that I don't care enough to fix as long as it works
-// todo refactor
+import static io.github.celosia.Main.drawer;
+
+// todo rename
 public class CoolRect {
 
-    // Why not just store the actual corners instead of weird in between points?
-    // Don't think about it too hard
+    // L/R sides are halfway between
     private int l; // Left
     private int t; // Top
     private int r; // Right
@@ -16,11 +20,11 @@ public class CoolRect {
     private float prog; // Animation progress
     private int dir; // 1 = unfolding; -1 = collapsing
     private Color color; // Core color
-    private boolean hasOutline;
+    private int outlineThickness;
     private float speed; // Speed multiplier. 1f = animation completes in 1s. 2f = 0.5s. Speed is doubled
                          // when closing
-    private int angL; // Not actually an angle. Don't worry about it
-    private int angR;
+    private int slantL; // Move X by 1 for every slant Y
+    private int slantR;
     private int prio; // Rendering order priority 0-4. Bigger number = higher layer
 
     public CoolRect(Builder builder) {
@@ -30,11 +34,11 @@ public class CoolRect {
         b = builder.b;
         dir = builder.dir;
         color = builder.color;
-        hasOutline = builder.hasOutline;
+        outlineThickness = builder.outlineThickness;
         prog = 0;
         speed = builder.speed;
-        angL = builder.angL;
-        angR = builder.angR;
+        slantL = builder.slantL;
+        slantR = builder.slantR;
         prio = builder.prio;
     }
 
@@ -46,10 +50,10 @@ public class CoolRect {
         private final int b;
         private int dir = -1;
         private Color color = Color.BLACK;
-        private boolean hasOutline = false;
+        private int outlineThickness = 10;
         private float speed = 2;
-        private int angL = 15;
-        private int angR = 15;
+        private int slantL = 6;
+        private int slantR = 6;
         private int prio = 0;
 
         public Builder(int l, int t, int r, int b) {
@@ -74,8 +78,13 @@ public class CoolRect {
             return this;
         }
 
-        public Builder hasOutline() {
-            hasOutline = true;
+        public Builder outlineThickness(int outlineThickness) {
+            this.outlineThickness = outlineThickness;
+            return this;
+        }
+
+        public Builder noOutline() {
+            outlineThickness = 0;
             return this;
         }
 
@@ -84,13 +93,13 @@ public class CoolRect {
             return this;
         }
 
-        public Builder angL(int angL) {
-            this.angL = angL;
+        public Builder slantL(int slantL) {
+            this.slantL = slantL;
             return this;
         }
 
-        public Builder angR(int angR) {
-            this.angR = angR;
+        public Builder slantR(int slantR) {
+            this.slantR = slantR;
             return this;
         }
 
@@ -171,12 +180,12 @@ public class CoolRect {
         return color;
     }
 
-    public void setHasOutline(boolean hasOutline) {
-        this.hasOutline = hasOutline;
+    public void setOutlineThickness(int outlineThickness) {
+        this.outlineThickness = outlineThickness;
     }
 
-    public boolean hasOutline() {
-        return hasOutline;
+    public int getOutlineThickness() {
+        return outlineThickness;
     }
 
     public void setProg(float prog) {
@@ -195,20 +204,20 @@ public class CoolRect {
         return speed;
     }
 
-    public void setAngL(int angL) {
-        this.angL = angL;
+    public void setSlantL(int slantL) {
+        this.slantL = slantL;
     }
 
-    public int getAngL() {
-        return angL;
+    public int getSlantL() {
+        return slantL;
     }
 
-    public void setAngR(int angR) {
-        this.angR = angR;
+    public void setSlantR(int slantR) {
+        this.slantR = slantR;
     }
 
-    public int getAngR() {
-        return angR;
+    public int getSlantR() {
+        return slantR;
     }
 
     public CoolRect setPrio(int prio) {
@@ -218,5 +227,65 @@ public class CoolRect {
 
     public int getPrio() {
         return prio;
+    }
+
+    public void draw(float delta) {
+        prog = Math.clamp(prog + (delta * dir * speed * (dir == -1 ? 2 : 1)), 0f, 1f);
+
+        // Skip the rest if the width is to be near 0
+        // todo better fix for the inexplicable tallness
+        if (prog > 0.02f) this.drawWithoutUpdate();
+    }
+
+    // Main logic without update and configurable vertices for the sake of CoolRectChain
+    // It's generally bad practice for a superclass to have logic specifically to help its subclass, but this was the
+    // easiest way to do this
+    public void drawWithoutUpdate(int l, int r, int t, int b, Color color, float prog) {
+        float height = t - b;
+
+        float angLOff = (slantL > 0) ? (height / slantL) : 0;
+        float angROff = (slantR > 0) ? (height / slantR) : 0;
+
+        // Top left
+        float tlx = l + angLOff;
+        float tly = t;
+
+        // Top right
+        float trx = Interpolation.smooth2.apply(tlx, r + angROff, prog);
+        float try_ = t;
+
+        // Bottom left
+        float blx = l;
+        float bly = b;
+
+        // Bottom right
+        float brx = Interpolation.smooth2.apply(blx, r, prog);
+        float bry = b;
+
+        // Center
+        drawer.setColor(color.r, color.g, color.b, 1);
+
+        drawer.filledTriangle(tlx, tly, blx, bly, trx, try_);
+        drawer.filledTriangle(blx, bly, trx, try_, brx, bry);
+
+        // Outline
+        if (outlineThickness > 0) {
+            drawer.setColor(1, 1, 1, 1);
+
+            Array<Vector2> points = new Array<>(false, 4);
+            points.addAll(new Vector2(tlx, tly), new Vector2(blx, bly), new Vector2(brx, bry), new Vector2(trx, try_));
+
+            // Change line thickness near the start/end of the animation to make its appearance/disappearance smoother
+            drawer.path(points, Interpolation.smooth2.apply(0, outlineThickness, Math.min(1f, prog * 3.5f)),
+                    JoinType.POINTY, false);
+        }
+    }
+
+    public void drawWithoutUpdate(int l, int r, int t, int b, Color color) {
+        this.drawWithoutUpdate(l, r, t, b, color, prog);
+    }
+
+    public void drawWithoutUpdate() {
+        this.drawWithoutUpdate(l, r, t, b, color, prog);
     }
 }

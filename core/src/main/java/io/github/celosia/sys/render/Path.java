@@ -1,8 +1,12 @@
 package io.github.celosia.sys.render;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import space.earlygrey.shapedrawer.JoinType;
+
+import static io.github.celosia.Main.drawer;
 
 // A path to be drawn
 public class Path {
@@ -83,5 +87,15 @@ public class Path {
 
     public int getPrio() {
         return prio;
+    }
+
+    public void draw(float delta) {
+        if (!points.isEmpty()) {
+            prog = Math.clamp(prog + (delta * dir * speed * (dir == -1 ? 2 : 1)), 0f, 1f);
+            drawer.setColor(color.r, color.g, color.b, 1);
+
+            // Change line thickness near the start/end of the animation to make its appearance/disappearance smoother
+            drawer.path(points, Interpolation.smooth2.apply(0, thickness, Math.min(1f, prog)), JoinType.POINTY, false);
+        }
     }
 }

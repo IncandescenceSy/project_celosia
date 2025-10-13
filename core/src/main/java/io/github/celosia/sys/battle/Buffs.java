@@ -28,8 +28,7 @@ public class Buffs {
             C_SHIELD + "[+vibrating-shield]", BuffType.BUFF)
             .effects(new ChangeShield(1), new ChangeBooleanStat(BooleanStat.EFFECT_BLOCK, 1)).build();
 
-    // Decreases multDmgTaken by way more than necessary to be absolutely certain
-    // this minimizes it
+    // Decreases multDmgTaken by way more than necessary to be absolutely certain this minimizes it
     public static final Buff PROTECT = new Buff.Builder(lang.get("buff.protect"), "todo", "[azure][+shieldcomb]",
             BuffType.BUFF).effects(new ChangeMult(Mult.DMG_TAKEN, -10_000_000),
                     new ChangeBooleanStat(BooleanStat.EFFECT_BLOCK, 1))

@@ -5,5 +5,5 @@ public enum CoolRects {
     COVER_LEFT,
     CURSOR_1,
     CURSOR_2,
-    POPUP_CENTERED;
+    POPUP_CENTERED
 }

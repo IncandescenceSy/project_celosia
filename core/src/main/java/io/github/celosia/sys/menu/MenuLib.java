@@ -22,7 +22,6 @@ import java.util.List;
 import static io.github.celosia.Main.NAV_PATH;
 import static io.github.celosia.Main.inputGuide;
 import static io.github.celosia.sys.battle.PosLib.getRelativeSide;
-import static io.github.celosia.sys.save.Lang.lang;
 
 public class MenuLib {
 
@@ -148,7 +147,7 @@ public class MenuLib {
         int tNew = yT - (yOff * index);
 
         // Value changed, restart animation and create afterimage
-        if (tNew != tOld && tOld != 0) {
+        if (tNew != tOld && tOld != -1) {
             cursor.setProg(0f);
             cursor.setSpeed(4f);
 
@@ -165,8 +164,8 @@ public class MenuLib {
         cursor.setT(tNew);
         cursor.setB(yT - (yOff * (index + 1)));
         if (changeX) {
-            cursor.setL(xL - (yOff * index) / (90 / cursor.getAngL()));
-            cursor.setR(xR - (yOff * index) / (90 / cursor.getAngR()));
+            cursor.setL(xL - (yOff * index) / cursor.getSlantL());
+            cursor.setR(xR - (yOff * index) / cursor.getSlantR());
         }
     }
 
@@ -251,6 +250,7 @@ public class MenuLib {
 
     // Converts a keycode to a glyph
     public static String toGlyph(int keycode) {
+        // todo remove/catch errors depending on whats needed
         if (keycode < 0) {
             throw new IllegalArgumentException("keycode cannot be negative, keycode: " + keycode);
         }
@@ -414,62 +414,5 @@ public class MenuLib {
             case Input.Keys.PRINT_SCREEN -> "[+KB_Prt_Scrn]";
             default -> ""; // key name not found
         };
-    }
-
-    // The different menus in the game
-    // todo fix magic numbers
-    public enum MenuType {
-
-        NONE(),
-        POPUP(),
-        MAIN(
-                new MenuOpt(MenuOptType.START, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.start"), 1900 + 80,
-                        230 + 400),
-                new MenuOpt(MenuOptType.MANUAL, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.manual"), 1900 + 60,
-                        230 + 300),
-                new MenuOpt(MenuOptType.OPTIONS, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.options"), 1900 + 40,
-                        230 + 200),
-                new MenuOpt(MenuOptType.CREDITS, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.credits"), 1900 + 20,
-                        230 + 100),
-                new MenuOpt(MenuOptType.QUIT, "{SPEED=0.2}{FADE}{SHRINK}" + lang.get("menu.quit"), 1900,
-                        230)),
-        BATTLE(),
-        TARGETING(),
-        LOG(),
-        INSPECT_TARGETING(),
-        INSPECT(),
-        DEBUG(),
-        DEBUG_TEXT(),
-        DEBUG_RES();
-
-        private MenuOpt[] opts = new MenuOpt[] { new MenuOpt(MenuOptType.NONE, "", 0, 0) };
-
-        MenuType() {}
-
-        MenuType(MenuOpt... opts) {
-            this.opts = opts;
-        }
-
-        public int getOptCount() {
-            return opts.length;
-        }
-
-        public MenuOpt getOpt(int index) {
-            return opts[index];
-        }
-
-        public MenuOpt[] getOpts() {
-            return opts;
-        }
-    }
-
-    // The different menu options in the game
-    public enum MenuOptType {
-        NONE,
-        START,
-        QUIT,
-        OPTIONS,
-        MANUAL,
-        CREDITS;
     }
 }

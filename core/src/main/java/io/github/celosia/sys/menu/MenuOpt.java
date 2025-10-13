@@ -1,7 +1,5 @@
 package io.github.celosia.sys.menu;
 
-import io.github.celosia.sys.menu.MenuLib.MenuOptType;
-
 // A menu option type with text and position for it
 public class MenuOpt {
 
