@@ -3,6 +3,7 @@ package io.github.celosia.sys.battle;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -17,6 +18,8 @@ import io.github.celosia.sys.input.InputPrompts;
 import io.github.celosia.sys.input.Keybind;
 import io.github.celosia.sys.menu.MenuLib;
 import io.github.celosia.sys.menu.MenuType;
+import io.github.celosia.sys.render.CoolRectBar;
+import io.github.celosia.sys.render.CoolRectBars;
 import io.github.celosia.sys.render.CoolRectChains;
 import io.github.celosia.sys.render.CoolRects;
 import io.github.celosia.sys.render.Fonts;
@@ -31,6 +34,7 @@ import java.util.Map;
 
 import static io.github.celosia.Main.NAV_PATH;
 import static io.github.celosia.Main.STAGE_TYPES;
+import static io.github.celosia.Main.coolRectBars;
 import static io.github.celosia.Main.coolRectChains;
 import static io.github.celosia.Main.coolRects;
 import static io.github.celosia.Main.paths;
@@ -80,9 +84,9 @@ public class BattleControllerLib {
 
     // Inspect menu
     static TextraLabel[] unitList = new TextraLabel[8];
-    static TextraLabel pageList = new TextraLabel(
-            lang.get("skills") + "   " + lang.get("passives") + "   " + lang.get("buffs") + "   " + lang.get("stats"),
-            Fonts.FontType.KORURI.get(30));
+    static TextraLabel[] pageList = new TextraLabel[4];
+    static String[] pageNames = new String[] { lang.get("skills"), lang.get("passives"), lang.get("buffs"),
+            lang.get("stats") };
     static Array<Vector2> pointsPageDivL = new Array<>(false, 2);
     static Array<Vector2> pointsPageDivR = new Array<>(false, 2);
     static TextraLabel pageItemList = new TextraLabel("", Fonts.FontType.KORURI.get(20));
@@ -90,14 +94,15 @@ public class BattleControllerLib {
     static TextraLabel descHeader = new TextraLabel("", Fonts.FontType.KORURI.get(30));
     static TextraLabel desc = new TextraLabel("", Fonts.FontType.KORURI.get(20));
 
-    // Stat, Equip, Affinity, Mult, Mod, Other
-    static int[] promptX = new int[] { 960 + 330, 700, 300, 300, 750, 1125 };
+    // Stat, Equip, Affinity, Mult, Mod, Other, LT, RT, L, R
+    static int[] promptX = new int[] { 960 + 330, 700, 300, 300, 750, 1125, 310, -1, 385, 857 };
     static int[] promptY = new int[] { World.HEIGHT - (110 + 60), World.HEIGHT - 245, World.HEIGHT - 245,
-            World.HEIGHT - 385,
-            World.HEIGHT - 385, World.HEIGHT - 385 };
+            World.HEIGHT - 385, World.HEIGHT - 385, World.HEIGHT - 385, World.HEIGHT - 52, World.HEIGHT - 52,
+            World.HEIGHT - 320, World.HEIGHT - 320 };
     static InputPrompt[] promptTypes = new InputPrompt[] { InputPrompts.I_STAT, InputPrompts.I_AFFINITY,
-            InputPrompts.I_EQUIP, InputPrompts.I_MULT, InputPrompts.I_MOD, InputPrompts.I_OTHER };
-    static TextraLabel[] prompts = new TextraLabel[6];
+            InputPrompts.I_EQUIP, InputPrompts.I_MULT, InputPrompts.I_MOD, InputPrompts.I_OTHER, InputPrompts.I_UNIT_L,
+            InputPrompts.I_UNIT_R, InputPrompts.I_PAGE_L, InputPrompts.I_PAGE_R };
+    static TextraLabel[] prompts = new TextraLabel[10];
 
     static TextraLabel equip = new TextraLabel("", Fonts.FontType.KORURI.get(20));
     static TextraLabel affinities = new TextraLabel("", Fonts.FontType.KORURI.get(20));
@@ -108,9 +113,11 @@ public class BattleControllerLib {
     static TextraLabel[] statsBasicNum = new TextraLabel[6];
 
     static TextraLabel hp = new TextraLabel(lang.get("hp"), Fonts.FontType.KORURI.get(20));
-    static TextraLabel hpAmt = new TextraLabel("", Fonts.FontType.KORURI.get(20));
+    static TextraLabel hpAmt = new TextraLabel("", Fonts.FontType.KORURI_BORDER.get(20));
+    static CoolRectBar hpBar = coolRectBars[CoolRectBars.HP_INSPECT.ordinal()];
     static TextraLabel sp = new TextraLabel(lang.get("sp"), Fonts.FontType.KORURI.get(20));
-    static TextraLabel spAmt = new TextraLabel("", Fonts.FontType.KORURI.get(20));
+    static TextraLabel spAmt = new TextraLabel("", Fonts.FontType.KORURI_BORDER.get(20));
+    static CoolRectBar spBar = coolRectBars[CoolRectBars.SP_INSPECT.ordinal()];
 
     static String[] statCategoryHeaderNames = new String[] { lang.get("info.mult"), lang.get("info.mod"),
             lang.get("info.other") };
@@ -129,11 +136,11 @@ public class BattleControllerLib {
     static TextraLabel[] statsPageNum = new TextraLabel[3];
 
     // temp
-    static Skill[] skills1 = new Skill[] { Skills.FIREBALL, Skills.SHIELD, Skills.RASETU_FEAST,
+    static Skill[] skills1 = new Skill[] { Skills.OVERHEAL, Skills.SHIELD, Skills.RASETU_FEAST,
             Skills.AGILITY_UP_GROUP, Skills.ICE_AGE, Skills.DEFEND };
-    static Skill[] skills2 = new Skill[] { Skills.ICE_BEAM, Skills.DEMON_SCYTHE, Skills.ATTACK_UP_GROUP,
+    static Skill[] skills2 = new Skill[] { Skills.OVERHEAL, Skills.DEMON_SCYTHE, Skills.ATTACK_UP_GROUP,
             Skills.RASETU_FEAST, Skills.ICE_AGE, Skills.DEFEND };
-    static Skill[] skills3 = new Skill[] { Skills.THUNDERBOLT, Skills.DEFENSE_DOWN, Skills.HEAT_WAVE, Skills.PROTECT,
+    static Skill[] skills3 = new Skill[] { Skills.SHIELD, Skills.DEFENSE_DOWN, Skills.HEAT_WAVE, Skills.PROTECT,
             Skills.ICE_AGE, Skills.DEFEND };
     static SkillInstance nothingInstanceTemp = new SkillInstance(Skills.NOTHING);
 
@@ -169,6 +176,7 @@ public class BattleControllerLib {
     // Menu navigation
     static int indexSkill = 0;
     static int indexTarget = 0;
+    static float secondsOnSameTarget = 0;
     static int indexPage = 0;
     static int indexPageList = 0;
 
@@ -280,12 +288,15 @@ public class BattleControllerLib {
         spAmt.setAlignment(Align.right);
         spAmt.setPosition(600, World.HEIGHT - (110 + 30));
 
-        // Inspect info and basic stats
-        for (int i = 0; i < 6; i++) {
-            TextraLabel info = new TextraLabel("", Fonts.FontType.KORURI.get(20));
-            info.setPosition(promptX[i], promptY[i]);
-            prompts[i] = info;
+        // Inspect input prompts
+        for (int i = 0; i < 10; i++) {
+            TextraLabel prompt = new TextraLabel("", Fonts.FontType.KORURI.get(20));
+            prompt.setPosition(promptX[i], promptY[i]);
+            prompts[i] = prompt;
+        }
 
+        // Basic stats
+        for (int i = 0; i < 6; i++) {
             TextraLabel stat = new TextraLabel(statNames[i], Fonts.FontType.KORURI.get(20));
             stat.setPosition((i > 2) ? 960 : 630, World.HEIGHT - (110 + (30 * (i % 3))));
             stat.setAlignment(Align.left);
@@ -319,12 +330,23 @@ public class BattleControllerLib {
         pointsMod.addAll(new Vector2(40 + 450, y), new Vector2(440 + 450, y));
         pointsOther.addAll(new Vector2(40 + 900, y), new Vector2(440 + 900, y));
 
-        pageList.setAlignment(Align.center);
-        pageList.setPosition(640, World.HEIGHT - 320);
+        int[] divisions = new int[4];
+        int divTotal = 0;
+        for (int i = 0; i < 4; i++) {
+            TextraLabel page = new TextraLabel(pageNames[i], Fonts.FontType.KORURI.get(30));
+            pageList[i] = page;
+
+            int div = (int) (pageList[i].getPrefWidth() + 20);
+            divisions[i] = div;
+            page.setPosition(425 + 12 + divTotal, World.HEIGHT - 320);
+            divTotal += div;
+        }
+
+        coolRectChains[CoolRectChains.INSPECT_PAGES.ordinal()].setDivisions(divisions);
 
         y = World.HEIGHT - 315;
-        pointsPageDivL.addAll(new Vector2(30, y), new Vector2(400, y));
-        pointsPageDivR.addAll(new Vector2(870, y), new Vector2(1450, y));
+        pointsPageDivL.addAll(new Vector2(30, y), new Vector2(370, y));
+        pointsPageDivR.addAll(new Vector2(900, y), new Vector2(1450, y));
 
         pageItemList.setAlignment(Align.topLeft);
         pageItemList.setPosition(50, World.HEIGHT - 370);
@@ -620,9 +642,7 @@ public class BattleControllerLib {
         }
 
         for (Unit unit : battle.getAllUnits()) {
-            if (!unit.isBooleanStat(BooleanStat.INFINITE_SP)) {
-                unit.setSp(Math.min((int) (unit.getSp() + (100 * unit.getMultWithExp(Mult.SP_GAIN))), 1000));
-            }
+            unit.setSp(Math.min((int) (unit.getSp() + (100 * unit.getMultWithExp(Mult.SP_GAIN))), 1000));
 
             for (Passive passive : unit.getPassives()) {
                 StringBuilder turnEnd1 = new StringBuilder();
@@ -976,6 +996,10 @@ public class BattleControllerLib {
         coolRects[CoolRects.COVER_LEFT.ordinal()].setDir(1).setPrio(3);
         coolRects[CoolRects.CURSOR_1.ordinal()].setDir(1).setPrio(3).setLR(45, 475);
         coolRects[CoolRects.CURSOR_2.ordinal()].setPrio(3).setLR(45, 475);
+
+        hpBar.setDir(1);
+        spBar.setDir(1);
+
         coolRectChains[CoolRectChains.INSPECT_PAGES.ordinal()].setDir(1);
 
         paths[0].setDir(1).setPoints(pointsPageDivL).setThickness(5).setPrio(3);
@@ -984,7 +1008,7 @@ public class BattleControllerLib {
         paths[3].setDir(1).setPoints(pointsMod).setThickness(5).setPrio(3);
         paths[4].setDir(1).setPoints(pointsOther).setThickness(5).setPrio(3);
 
-        stage3.addActor(pageList);
+        for (TextraLabel label : pageList) stage3.addActor(label);
         stage3.addActor(pageItemList);
         stage3.addActor(pageItemRightList);
         stage3.addActor(descHeader);
@@ -1008,11 +1032,15 @@ public class BattleControllerLib {
         for (int i = 0; i < 8; i++) {
             stage3.addActor(unitList[i]);
             unitList[i].setText(units.get(i).getUnitType().getName());
+
             int div = (int) (unitList[i].getPrefWidth() + 20);
             divisions[i] = div;
-            unitList[i].setX(315 + 15 + divTotal);
+            unitList[i].setX(345 + 15 + divTotal);
             divTotal += div;
         }
+
+        // End of unit list
+        prompts[7].setX(prompts[6].getX() + divTotal + 45);
 
         coolRectChains[CoolRectChains.INSPECT_TARGET.ordinal()].setDivisions(divisions).setDir(1);
     }
@@ -1023,17 +1051,49 @@ public class BattleControllerLib {
             return;
         }
 
+        int indexTargetOld = indexTarget;
         indexTarget = checkMovement1D(indexTarget, 8, Keybind.PAGE_L2, Keybind.PAGE_R2);
+
+        if (indexTargetOld != indexTarget) secondsOnSameTarget = 0;
+        secondsOnSameTarget += Gdx.graphics.getDeltaTime();
+
         coolRectChains[CoolRectChains.INSPECT_TARGET.ordinal()].setSelectedDiv(indexTarget);
+
         Unit unit = battle.getUnitAtPos(indexTarget);
 
         equip.setText(unit.getEquipped().getNameWithIcon());
 
         affinities.setText(unit.getAffinitiesString());
 
-        // todo bars
-        hpAmt.setText(formatNum(unit.getDisplayHp()) + "/" + formatNum(unit.getDisplayMaxHp()));
-        spAmt.setText(formatNum(unit.getSp()) + "/" + formatNum(1000));
+        long hp = unit.getHp();
+        long hpMax = unit.getMaxHp();
+
+        long shield = unit.getShield() + unit.getDefend();
+        // Overflow protection
+        if(shield < 0) shield = Long.MAX_VALUE;
+
+        String shieldStr = (shield > 0) ? "[CYAN]+" + formatNum(shield) + "[WHITE]" : "";
+        hpAmt.setText(formatNum(unit.getDisplayHp()) + shieldStr + "/" + formatNum(unit.getDisplayMaxHp()));
+        hpBar.setBarProg(0, Interpolation.smooth2.apply(hpBar.getBarProg(0), (float) hp / hpMax,
+                Math.min(secondsOnSameTarget * 4, 1)));
+
+        // Shield
+        hpBar.setBarProg(1, Interpolation.smooth2.apply(hpBar.getBarProg(1),
+                (float) (unit.getShield() + unit.getDefend()) / hpMax, Math.min(secondsOnSameTarget * 4, 1)));
+
+        // Overheal
+        hpBar.setBarProg(2, Interpolation.smooth2.apply(hpBar.getBarProg(2),
+                (float) (hp - hpMax) / hpMax, Math.min(secondsOnSameTarget * 4, 1)));
+
+        if (!unit.isBooleanStat(BooleanStat.INFINITE_SP)) {
+            spAmt.setText(formatNum(unit.getSp()) + "/" + formatNum(1000));
+            spBar.setBarProg(0, Interpolation.smooth2.apply(spBar.getBarProg(0), unit.getSp() / 1000f,
+                    Math.min(secondsOnSameTarget * 4, 1)));
+        } else {
+            spAmt.setText("∞");
+            spBar.setBarProg(0,
+                    Interpolation.smooth2.apply(spBar.getBarProg(0), 1, Math.min(secondsOnSameTarget * 4, 1)));
+        }
 
         if (Settings.showInputGuide) {
             for (int i = 0; i < prompts.length; i++) {
@@ -1201,6 +1261,10 @@ public class BattleControllerLib {
         coolRects[CoolRects.COVER_LEFT.ordinal()].setDir(-1);
         coolRects[CoolRects.CURSOR_1.ordinal()].setDir(-1).setPrio(1);
         coolRects[CoolRects.CURSOR_2.ordinal()].setPrio(1);
+
+        hpBar.setDir(-1);
+        spBar.setDir(-1);
+
         coolRectChains[CoolRectChains.INSPECT_TARGET.ordinal()].setDir(-1);
         coolRectChains[CoolRectChains.INSPECT_PAGES.ordinal()].setDir(-1);
 
@@ -1213,7 +1277,7 @@ public class BattleControllerLib {
         Group root = stage3.getRoot();
 
         for (TextraLabel label : unitList) root.removeActor(label);
-        root.removeActor(pageList);
+        for (TextraLabel label : pageList) root.removeActor(label);
         root.removeActor(pageItemList);
         root.removeActor(pageItemRightList);
         root.removeActor(descHeader);

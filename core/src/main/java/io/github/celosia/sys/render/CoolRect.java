@@ -11,7 +11,6 @@ import static io.github.celosia.Main.drawer;
 // todo rename
 public class CoolRect {
 
-    // L/R sides are halfway between
     private int l; // Left
     private int t; // Top
     private int r; // Right
@@ -237,9 +236,7 @@ public class CoolRect {
         if (prog > 0.02f) this.drawWithoutUpdate();
     }
 
-    // Main logic without update and configurable vertices for the sake of CoolRectChain
-    // It's generally bad practice for a superclass to have logic specifically to help its subclass, but this was the
-    // easiest way to do this
+    // Main logic without update and configurable vertices for the sake of inheritors with custom draw logic
     public void drawWithoutUpdate(int l, int r, int t, int b, Color color, float prog) {
         float height = t - b;
 

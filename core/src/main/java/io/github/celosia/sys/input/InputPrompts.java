@@ -51,4 +51,12 @@ public class InputPrompts {
     public static final InputPrompt I_OTHER = new InputPrompt(lang.get("input.inspect.other"),
             toGlyph(Keybind.UP.getKey()) + "/" + toGlyph(Keybind.DOWN.getKey()), Keybind.UP.getButton().getGlyphs(),
             Keybind.DOWN.getButton().getGlyphs());
+    public static final InputPrompt I_UNIT_L = new InputPrompt("", toGlyph(Keybind.PAGE_L2.getKey()),
+            Keybind.PAGE_L2.getButton().getGlyphs());
+    public static final InputPrompt I_UNIT_R = new InputPrompt("", toGlyph(Keybind.PAGE_R2.getKey()),
+            Keybind.PAGE_R2.getButton().getGlyphs());
+    public static final InputPrompt I_PAGE_L = new InputPrompt("", toGlyph(Keybind.LEFT.getKey()),
+            Keybind.LEFT.getButton().getGlyphs());
+    public static final InputPrompt I_PAGE_R = new InputPrompt("", toGlyph(Keybind.RIGHT.getKey()),
+            Keybind.RIGHT.getButton().getGlyphs());
 }

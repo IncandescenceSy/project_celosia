@@ -13,31 +13,11 @@ import static io.github.celosia.sys.util.TextLib.formatNum;
 // Multiple Buffs that contain this effect will interfere with eachother
 public class ChangeShield implements BuffEffect {
 
-    private final long change;
+    public ChangeShield() {}
 
-    public ChangeShield(int change) {
-        this.change = change;
-    }
-
+    // Actual value is set in skill_effects/GiveShield.apply()
     @Override
-    public void onGive(Unit self, int stacks) {
-        long hpMax = self.getMaxHp();
-        // Add shield (shield + defend cannot exceed max HP)
-        long shieldOld = self.getShield();
-        long shieldNew = ((self.getDefend() + shieldOld + (change * stacks)) > hpMax) ?
-                hpMax - self.getDefend() : (change * hpMax) * stacks;
-
-        long shieldOldDisp = self.getDisplayShield();
-        self.setShield(shieldNew);
-        long shieldNewDisp = self.getDisplayShield();
-
-        long defendDisp = self.getDisplayDefend();
-
-        appendToLog(lang.format("log.change_shield", formatName(self.getUnitType().getName(), self.getPos()),
-                C_SHIELD + formatNum((defendDisp + shieldOldDisp)), C_SHIELD + formatNum((defendDisp + shieldNewDisp)),
-                C_HP + formatNum(self.getDisplayMaxHp()),
-                C_SHIELD + "+" + formatNum(((defendDisp + shieldNewDisp) - (defendDisp + shieldOldDisp)))));
-    }
+    public void onGive(Unit self, int stacks) {}
 
     @Override
     public void onRemove(Unit self, int stacks) {

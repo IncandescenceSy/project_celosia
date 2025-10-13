@@ -24,9 +24,10 @@ public class Buffs {
                     new ChangeBooleanStat(BooleanStat.EFFECT_BLOCK, 1))
             .build();
 
+    // When setting stack amount in GiveBuff, 1 converts to 1% of user's Fth
     public static final Buff SHIELD = new Buff.Builder(lang.get("buff.shield"), "todo",
             C_SHIELD + "[+vibrating-shield]", BuffType.BUFF)
-            .effects(new ChangeShield(1), new ChangeBooleanStat(BooleanStat.EFFECT_BLOCK, 1)).build();
+            .effects(new ChangeShield(), new ChangeBooleanStat(BooleanStat.EFFECT_BLOCK, 1)).build();
 
     // Decreases multDmgTaken by way more than necessary to be absolutely certain this minimizes it
     public static final Buff PROTECT = new Buff.Builder(lang.get("buff.protect"), "todo", "[azure][+shieldcomb]",

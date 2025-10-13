@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import io.github.celosia.Main;
 import io.github.celosia.sys.menu.MenuType;
 
+import static io.github.celosia.Main.coolRectBars;
 import static io.github.celosia.Main.coolRectChains;
 import static io.github.celosia.Main.coolRects;
 import static io.github.celosia.Main.paths;
@@ -19,6 +20,12 @@ public class TriLib {
         float delta = Gdx.graphics.getDeltaTime();
 
         for (CoolRect rect : coolRects) {
+            if (rect.getPrio() == prio) {
+                rect.draw(delta);
+            }
+        }
+
+        for (CoolRectBar rect : coolRectBars) {
             if (rect.getPrio() == prio) {
                 rect.draw(delta);
             }

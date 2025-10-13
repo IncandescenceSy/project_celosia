@@ -41,6 +41,7 @@ import io.github.celosia.sys.menu.MenuLib;
 import io.github.celosia.sys.menu.MenuOptType;
 import io.github.celosia.sys.menu.MenuType;
 import io.github.celosia.sys.render.CoolRect;
+import io.github.celosia.sys.render.CoolRectBar;
 import io.github.celosia.sys.render.CoolRectChain;
 import io.github.celosia.sys.render.CoolRects;
 import io.github.celosia.sys.render.Fonts;
@@ -86,6 +87,7 @@ public class Main extends ApplicationAdapter {
     // todo rename
     public static CoolRect[] coolRects;
     public static CoolRectChain[] coolRectChains;
+    public static CoolRectBar[] coolRectBars;
     public static Path[] paths;
 
     public static Stage stage0;
@@ -171,11 +173,22 @@ public class Main extends ApplicationAdapter {
 
         coolRectChains = new CoolRectChain[] {
                 // INSPECT_TARGET
-                new CoolRectChain(new CoolRect.Builder(315, World.HEIGHT - 27, -1, World.HEIGHT - 71)
+                new CoolRectChain(new CoolRect.Builder(345, World.HEIGHT - 27, -1, World.HEIGHT - 71)
                         .outlineThickness(5).speed(3).prio(3)).setSelectedOffset(10),
                 // INSPECT_PAGES
-                new CoolRectChain(new CoolRect.Builder(420, World.HEIGHT - 297, -1, World.HEIGHT - 334)
-                        .outlineThickness(5).speed(3).prio(3)).setDivisions(95, 142, 104, 98).setSelectedOffset(10)
+                new CoolRectChain(new CoolRect.Builder(425, World.HEIGHT - 297, -1, World.HEIGHT - 334)
+                        .outlineThickness(5).speed(3).prio(3)).setSelectedOffset(10)
+        };
+
+        // todo u0-7
+        coolRectBars = new CoolRectBar[] {
+                // HP_INSPECT
+                new CoolRectBar(
+                        new CoolRect.Builder(325, World.HEIGHT - 97, 605, World.HEIGHT - 117).prio(3).color(Color.RED),
+                        Color.GREEN, Color.CYAN, Color.PINK),
+                // SP_INSPECT
+                new CoolRectBar(new CoolRect.Builder(325, World.HEIGHT - 127, 605, World.HEIGHT - 147).prio(3)
+                        .color(Color.VIOLET), Color.PURPLE)
         };
 
         paths = new Path[] {
