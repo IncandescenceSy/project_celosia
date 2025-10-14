@@ -13,24 +13,19 @@ import static io.github.celosia.sys.util.TextLib.formatNum;
 import static io.github.celosia.sys.util.TextLib.getColor;
 import static io.github.celosia.sys.util.TextLib.getSign;
 
-public class ChangeHp implements BuffEffect {
-
-    // Amount to change HP by. If isPercentage, 1000 = +100%
-    private final int change;
-    private final boolean isImmediate;
-    private final boolean isPercentage;
-    private final boolean isPierce;
+/**
+ * @param change Amount to change HP by. If isPercentage, 1000 = +100%
+ */
+public record ChangeHp(int change, boolean isImmediate, boolean isPercentage, boolean isPierce) implements BuffEffect {
 
     public ChangeHp(Builder builder) {
-        change = builder.change;
-        isImmediate = builder.isImmediate;
-        isPercentage = builder.isPercentage;
-        isPierce = builder.isPierce;
+        this(builder.change, builder.isImmediate, builder.isPercentage, builder.isPierce);
     }
 
     public static class Builder {
 
         private final int change;
+
         private boolean isImmediate = false;
         private boolean isPercentage = true;
         private boolean isPierce = false;

@@ -2,14 +2,10 @@ package io.github.celosia.sys.entity;
 
 public class IconEntity extends NamedEntity {
 
-    private String icon;
+    private final String icon;
 
     public IconEntity(String name, String desc, String icon) {
         super(name, desc);
-        this.icon = icon;
-    }
-
-    public void setIcon(String icon) {
         this.icon = icon;
     }
 

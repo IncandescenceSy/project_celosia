@@ -16,26 +16,20 @@ import static io.github.celosia.sys.util.TextLib.C_POS;
 import static io.github.celosia.sys.util.TextLib.formatName;
 import static io.github.celosia.sys.util.TextLib.formatNum;
 
-public class Heal implements SkillEffect {
-
-    private final int pow;
-    // Amount to heal over max HP in 10ths of a % (1000 = 100%)
-    private final int overHeal;
-    private final boolean isInstant;
-    private final boolean giveToSelf;
-    private final boolean mainTargetOnly;
+/**
+ * @param overheal Amount to heal over max HP in 10ths of a % (1000 = 100%)
+ */
+public record Heal(int pow, int overheal, boolean isInstant, boolean giveToSelf, boolean mainTargetOnly)
+        implements SkillEffect {
 
     public Heal(Builder builder) {
-        pow = builder.pow;
-        overHeal = builder.overHeal;
-        isInstant = builder.isInstant;
-        giveToSelf = builder.giveToSelf;
-        mainTargetOnly = builder.mainTargetOnly;
+        this(builder.pow, builder.overHeal, builder.isInstant, builder.giveToSelf, builder.mainTargetOnly);
     }
 
     public static class Builder {
 
         private final int pow;
+
         private int overHeal = 0;
         private boolean isInstant = false;
         private boolean giveToSelf = false;
@@ -84,14 +78,14 @@ public class Heal implements SkillEffect {
         long heal = (long) (self.getFthWithStage() * (pow / 100d) * self.getMultWithExp(Mult.HEALING_DEALT) *
                 unit.getMultWithExp(Mult.HEALING_TAKEN));
 
-        self.onDealHeal(unit, heal, overHeal);
-        unit.onTakeHeal(self, heal, overHeal);
+        self.onDealHeal(unit, heal, overheal);
+        unit.onTakeHeal(self, heal, overheal);
 
         long hpCur = unit.getHp();
         long hpMax = unit.getMaxHp();
         // Picks the lower of (current HP + heal amount) and (maximum allowed overHeal
         // of this skill), and then the higher between that and current HP
-        long hpNew = Math.max(hpCur, Math.min(hpCur + heal, (long) (hpMax * (1 + (overHeal / 1000d)))));
+        long hpNew = Math.max(hpCur, Math.min(hpCur + heal, (long) (hpMax * (1 + (overheal / 1000d)))));
 
         if (hpNew > hpCur) {
             long hpOldDisp = unit.getDisplayHp();

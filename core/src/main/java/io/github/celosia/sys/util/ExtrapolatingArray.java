@@ -22,24 +22,13 @@ public record ExtrapolatingArray(int[] core, int offset, int stepUp, int stepDow
         int value;
 
         // In bounds
-        if (i >= 0 && i < core.length) {
-            value = core[i];
-        }
-
+        if (i >= 0 && i < core.length) value = core[i];
         // Above bounds
-        else if (i >= core.length) {
-            value = core[core.length - 1] + (stepUp * i - (core.length - 1));
-        }
-
+        else if (i >= core.length) value = core[core.length - 1] + (stepUp * i - (core.length - 1));
         // Below bounds
-        else {
-            value = core[0] + (stepDown * Math.abs(i));
-        }
+        else value = core[0] + (stepDown * Math.abs(i));
 
-        if (maxTo0) {
-            return Math.max(value, 0);
-        }
-
+        if (maxTo0) return Math.max(value, 0);
         return value;
     }
 }

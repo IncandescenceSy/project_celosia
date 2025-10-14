@@ -1,5 +1,6 @@
 package io.github.celosia.sys.battle.buff_effects;
 
+import io.github.celosia.sys.battle.BooleanStat;
 import io.github.celosia.sys.battle.BuffEffect;
 import io.github.celosia.sys.battle.Calcs;
 import io.github.celosia.sys.battle.Unit;
@@ -7,15 +8,7 @@ import io.github.celosia.sys.battle.Unit;
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 
 // Todo heavily limit %-based damage on bosses
-public class ChangeSp implements BuffEffect {
-
-    private final int change;
-    private final boolean isImmediate;
-
-    public ChangeSp(int change, boolean isImmediate) {
-        this.change = change;
-        this.isImmediate = isImmediate;
-    }
+public record ChangeSp(int change, boolean isImmediate) implements BuffEffect {
 
     public ChangeSp(int change) {
         this(change, false);
@@ -24,14 +17,20 @@ public class ChangeSp implements BuffEffect {
     @Override
     public void onGive(Unit self, int stacks) {
         if (isImmediate) {
-            appendToLog(Calcs.changeSp(self, change * stacks));
+            String changeStr = Calcs.changeSp(self, change * stacks);
+            if (!self.isBooleanStat(BooleanStat.INFINITE_SP)) {
+                appendToLog(changeStr);
+            }
         }
     }
 
     @Override
     public String[] onTurnEnd(Unit self, int stacks) {
         if (!isImmediate) {
-            return new String[] { Calcs.changeSp(self, change * stacks) };
+            String changeStr = Calcs.changeSp(self, change * stacks);
+            if (!self.isBooleanStat(BooleanStat.INFINITE_SP)) {
+                return new String[] { changeStr };
+            }
         }
 
         return new String[] { "" };

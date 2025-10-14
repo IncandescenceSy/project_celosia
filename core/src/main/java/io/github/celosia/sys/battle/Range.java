@@ -7,35 +7,45 @@ import static io.github.celosia.sys.battle.PosLib.getAcross;
 import static io.github.celosia.sys.battle.PosLib.getTeamWithout;
 import static io.github.celosia.sys.battle.PosLib.getUpDown;
 
-public class Range {
+public record Range(String name, int rangeVertical, Side side, boolean canTargetSelf, int targetCount,
+                    Target... targets) {
 
-    private final String name;
-    private final int rangeVertical;
-    private final Side side;
-    private final boolean canTargetSelf;
-    private final int targetCount;
-    private final Target[] targets;
-
-    public Range(String name, int rangeVertical, Side side, boolean canTargetSelf, int targetCount, Target... targets) {
-        this.name = name;
-        this.rangeVertical = rangeVertical;
-        this.side = side;
-        this.canTargetSelf = canTargetSelf;
-        this.targetCount = targetCount;
-        this.targets = targets;
+    public Range(Builder builder) {
+        this(builder.name, builder.rangeVertical, builder.side, builder.canTargetSelf, builder.targetCount,
+                builder.targets);
         RANGES.add(this);
     }
 
-    public Range(String name, int rangeVertical, Side side, boolean canTargetSelf, Target... targets) {
-        this(name, rangeVertical, side, canTargetSelf, 1, targets);
-    }
+    public static class Builder {
 
-    public Range(String name, int rangeVertical, Side side, int targetCount, Target... targets) {
-        this(name, rangeVertical, side, false, targetCount, targets);
-    }
+        private final String name;
+        private final int rangeVertical;
+        private final Side side;
+        private final Target[] targets;
 
-    public Range(String name, int rangeVertical, Side side, Target... targets) {
-        this(name, rangeVertical, side, false, 1, targets);
+        private boolean canTargetSelf = false;
+        private int targetCount = 1;
+
+        public Builder(String name, int rangeVertical, Side side, Target... targets) {
+            this.name = name;
+            this.rangeVertical = rangeVertical;
+            this.side = side;
+            this.targets = targets;
+        }
+
+        public Builder canTargetSelf() {
+            canTargetSelf = true;
+            return this;
+        }
+
+        public Builder targetCount(int targetCount) {
+            this.targetCount = targetCount;
+            return this;
+        }
+
+        public Range build() {
+            return new Range(this);
+        }
     }
 
     public int[] getTargetPositions(int posSelf, int posTarget) {
@@ -80,29 +90,5 @@ public class Range {
         }
 
         return pos.toArray();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getRangeVertical() {
-        return rangeVertical;
-    }
-
-    public Side getSide() {
-        return side;
-    }
-
-    public boolean canTargetSelf() {
-        return canTargetSelf;
-    }
-
-    public int getTargetCount() {
-        return targetCount;
-    }
-
-    public Target[] getTargets() {
-        return targets;
     }
 }

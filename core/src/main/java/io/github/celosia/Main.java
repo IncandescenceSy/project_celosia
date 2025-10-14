@@ -54,7 +54,6 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +71,7 @@ public class Main extends ApplicationAdapter {
     static InputHandler inputHandler;
 
     static int index = 0;
-    public static final ArrayDeque<MenuType> NAV_PATH = new ArrayDeque<>();
+    public static final List<MenuType> NAV_PATH = new ArrayList<>();
     static MenuOptType optSelected;
 
     // Rendering
@@ -185,7 +184,7 @@ public class Main extends ApplicationAdapter {
                 // HP_INSPECT
                 new CoolRectBar(
                         new CoolRect.Builder(325, World.HEIGHT - 97, 605, World.HEIGHT - 117).prio(3).color(Color.RED),
-                        Color.GREEN, Color.CYAN, Color.PINK),
+                        Color.PINK, Color.CYAN, Color.GREEN),
                 // SP_INSPECT
                 new CoolRectBar(new CoolRect.Builder(325, World.HEIGHT - 127, 605, World.HEIGHT - 147).prio(3)
                         .color(Color.VIOLET), Color.PURPLE)

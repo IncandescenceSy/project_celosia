@@ -14,16 +14,10 @@ import static io.github.celosia.sys.util.TextLib.getColor;
 import static io.github.celosia.sys.util.TextLib.getSign;
 import static io.github.celosia.sys.util.TextLib.getStatColor;
 
-public class ChangeStat implements BuffEffect {
-
-    private final Stat stat;
-    // Change in tenths of a %; 1000 = +100%
-    private final int change;
-
-    public ChangeStat(Stat stat, int change) {
-        this.stat = stat;
-        this.change = change;
-    }
+/**
+ * @param change Change in tenths of a %; 1000 = +100%
+ */
+public record ChangeStat(Stat stat, int change) implements BuffEffect {
 
     @Override
     public void onGive(Unit self, int stacks) {

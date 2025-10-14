@@ -11,6 +11,7 @@ import io.github.celosia.sys.battle.Unit;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
@@ -304,32 +305,14 @@ public class TextLib {
     }
 
     public static <T> String getNamesAsMultiline(T[] array, Function<T, String> function) {
-        StringBuilder builder = new StringBuilder();
-
-        for (int i = 0; i < array.length; i++) {
-            builder.append(function.apply(array[i]));
-
-            if (i != array.length - 1) {
-                builder.append("\n");
-            }
-        }
-
-        return builder.toString();
-    }
-
-    public static <T> String getNamesAsMultiline(List<T> list, Function<? super T, String> function,
-                                                 boolean trailingNewline) {
-        if (list.isEmpty()) return "";
-
-        String str = list.stream()
+        return Arrays.stream(array)
                 .map(function)
                 .collect(Collectors.joining("\n"));
-
-        if (trailingNewline) return str + "\n";
-        return str;
     }
 
-    public static <T> String getNamesAsMultiline(List<T> list, Function<T, String> function) {
-        return getNamesAsMultiline(list, function, false);
+    public static <T> String getNamesAsMultiline(List<T> list, Function<? super T, String> function) {
+        return list.stream()
+                .map(function)
+                .collect(Collectors.joining("\n"));
     }
 }

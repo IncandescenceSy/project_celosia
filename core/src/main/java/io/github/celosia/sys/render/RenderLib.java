@@ -11,6 +11,10 @@ public class RenderLib {
 
     public static final Color TRANS_BLACK = new Color(0, 0, 0, 0.6f);
 
+    public static final int BAR_HP = 2;
+    public static final int BAR_SHIELD = 1;
+    public static final int BAR_OVERHEAL = 0;
+
     public static void changeScale(int x, int y) {
         viewPort.update(x, y, true);
         Gdx.graphics.setWindowedMode(x, y);

@@ -20,22 +20,13 @@ import static io.github.celosia.sys.util.TextLib.getColor;
 import static io.github.celosia.sys.util.TextLib.getSign;
 import static io.github.celosia.sys.util.TextLib.getStageStatString;
 
-public class ChangeStage implements SkillEffect {
-
-    private final StageType stageType;
-    private final int turns;
-    private final int stacks;
-    private final boolean isInstant;
-    private final boolean giveToSelf;
-    private final boolean mainTargetOnly;
+public record ChangeStage(StageType stageType, int turns, int stacks, boolean isInstant, boolean giveToSelf,
+                          boolean mainTargetOnly)
+        implements SkillEffect {
 
     public ChangeStage(Builder builder) {
-        this.stageType = builder.stageType;
-        this.turns = builder.turns;
-        this.stacks = builder.stacks;
-        this.isInstant = builder.isInstant;
-        this.giveToSelf = builder.giveToSelf;
-        this.mainTargetOnly = builder.mainTargetOnly;
+        this(builder.stageType, builder.turns, builder.stacks, builder.isInstant, builder.giveToSelf,
+                builder.mainTargetOnly);
     }
 
     public static class Builder {
@@ -43,6 +34,7 @@ public class ChangeStage implements SkillEffect {
         private final StageType stageType;
         private final int turns;
         private final int stacks;
+
         private boolean isInstant = true;
         private boolean giveToSelf = false;
         private boolean mainTargetOnly = false;

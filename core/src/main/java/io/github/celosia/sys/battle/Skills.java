@@ -23,7 +23,7 @@ public class Skills {
     public static final Skill GET_EXA = new Skill.Builder("Get ExA", "todo", Elements.VIS, Ranges.OTHER_3R_OR_SELF, 1)
             .effects(new GiveBuff.Builder(Buffs.EXTRA_ACTION, 3).build()).build();
     public static final Skill OVERHEAL = new Skill.Builder("Overheal", "todo", Elements.VIS, Ranges.OTHER_3R_OR_SELF, 1)
-            .effects(new Heal.Builder(30).overHeal(500).build()).build();
+            .effects(new Heal.Builder(60).overHeal(1000).build()).build();
 
     ////////// Basic skills
     public static final Skill NOTHING = new Skill.Builder(lang.get("skill.nothing"), "todo",
@@ -127,12 +127,12 @@ public class Skills {
     // Shields
     public static final Skill SHIELD = new Skill.Builder(lang.get("skill.shield"), "todo",
             Elements.VIS,
-            Ranges.OTHER_1R_OR_SELF, 140).roles(SkillRole.SHIELD).effects(new GiveShield.Builder(5).stacks(40).build())
+            Ranges.OTHER_1R_OR_SELF, 140).roles(SkillRole.SHIELD).effects(new GiveShield.Builder(5, 40).build())
             .build();
     public static final Skill SHIELD_GROUP = new Skill.Builder(lang.get("skill.shield_group"),
             "todo",
             Elements.VIS, Ranges.COLUMN_OF_3_1R, 450).roles(SkillRole.SHIELD)
-            .effects(new GiveShield.Builder(5).stacks(40).build()).build();
+            .effects(new GiveShield.Builder(5, 40).build()).build();
 
     /// Ignis
     // Str

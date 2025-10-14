@@ -12,15 +12,7 @@ import static io.github.celosia.sys.util.TextLib.formatNum;
 import static io.github.celosia.sys.util.TextLib.getColor;
 import static io.github.celosia.sys.util.TextLib.getSign;
 
-public class ChangeAffinity implements BuffEffect {
-
-    private final Element element;
-    private final int change;
-
-    public ChangeAffinity(Element element, int change) {
-        this.element = element;
-        this.change = change;
-    }
+public record ChangeAffinity(Element element, int change) implements BuffEffect {
 
     @Override
     public void onGive(Unit self, int stacks) {

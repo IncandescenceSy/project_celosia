@@ -47,6 +47,7 @@ public class CoolRect {
         private final int t;
         private final int r;
         private final int b;
+
         private int dir = -1;
         private Color color = Color.BLACK;
         private int outlineThickness = 10;

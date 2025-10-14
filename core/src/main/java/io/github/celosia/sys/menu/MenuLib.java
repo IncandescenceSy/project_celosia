@@ -78,11 +78,11 @@ public class MenuLib {
         }
 
         // Lock cursor to valid side
-        if (range.getSide() == Side.BOTH) {
+        if (range.side() == Side.BOTH) {
             return newIndex;
         }
 
-        if (range.getSide() == getRelativeSide(selectingMove, newIndex)) {
+        if (range.side() == getRelativeSide(selectingMove, newIndex)) {
             return newIndex;
         }
 
@@ -141,6 +141,7 @@ public class MenuLib {
     // xR = right of cursor rect at top of box
     // yT = top of cursor rect at top of box
     // yOff = how much it should move down per index
+    // todo fix rendering afterimage on menu switch
     public static void handleCursor(CoolRect cursor, CoolRect afterimage, int index, int xL, int xR, int yT, int yOff,
                                     boolean changeX) {
         int tOld = cursor.getT();

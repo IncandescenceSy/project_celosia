@@ -62,6 +62,7 @@ public class Skill extends ComplexDescriptionEntity {
         private final Element element;
         private final Range range;
         private final int cost;
+
         private int cooldown = 0;
         private int prio = 0;
         private boolean isBloom = false;
@@ -164,7 +165,7 @@ public class Skill extends ComplexDescriptionEntity {
     }
 
     public boolean shouldTargetOpponent() {
-        return range.getSide() == Side.OPPONENT || this.hasRole(SkillRole.ATTACK) ||
+        return range.side() == Side.OPPONENT || this.hasRole(SkillRole.ATTACK) ||
                 this.hasRole(SkillRole.DEBUFF_DEFENSIVE) || this.hasRole(SkillRole.DEBUFF_OFFENSIVE);
     }
 
@@ -223,7 +224,7 @@ public class Skill extends ComplexDescriptionEntity {
             skillTypesStr = C_STAT + SkillType.STAT.getName() + "[WHITE]";
         }
 
-        return lang.format("skill_desc", skillTypesStr, element.getNameWithIcon(C_ELEMENT), range.getName(),
+        return lang.format("skill_desc", skillTypesStr, element.getNameWithIcon(C_ELEMENT), range.name(),
                 (pow == 0) ? "" : ", " + C_NUM + pow + " [WHITE]" + lang.get("pow"),
                 (prio == 0) ? "" : ", " + getColor(prio) + getSign(prio) + prio + " [WHITE]" + lang.get("prio"),
                 this.getPartialDesc());

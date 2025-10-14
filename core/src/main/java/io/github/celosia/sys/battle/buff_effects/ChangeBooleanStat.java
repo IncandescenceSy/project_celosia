@@ -10,15 +10,7 @@ import static io.github.celosia.sys.util.BoolLib.isBothTruthy;
 import static io.github.celosia.sys.util.TextLib.formatName;
 import static io.github.celosia.sys.util.TextLib.formatNum;
 
-public class ChangeBooleanStat implements BuffEffect {
-
-    private final BooleanStat stat;
-    private final int change;
-
-    public ChangeBooleanStat(BooleanStat stat, int change) {
-        this.stat = stat;
-        this.change = change;
-    }
+public record ChangeBooleanStat(BooleanStat stat, int change) implements BuffEffect {
 
     @Override
     public void onGive(Unit self, int stacks) {

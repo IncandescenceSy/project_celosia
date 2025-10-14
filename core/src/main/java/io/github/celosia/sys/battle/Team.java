@@ -3,21 +3,14 @@ package io.github.celosia.sys.battle;
 // A set of Units that share some attributes
 public class Team {
 
-    String name;
-
-    Unit[] units;
-
-    int bloom;
+    private final Unit[] units;
+    private int bloom;
 
     // Todo: field effects
 
     public Team(Unit[] units) {
         this.units = units;
         bloom = 0;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public int getBloom() {
@@ -30,9 +23,5 @@ public class Team {
 
     public Unit[] getUnits() {
         return units;
-    }
-
-    public void setUnits(Unit[] units) {
-        this.units = units;
     }
 }

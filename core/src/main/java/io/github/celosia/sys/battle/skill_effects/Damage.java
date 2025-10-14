@@ -14,26 +14,13 @@ import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_HIDDEN;
 import static io.github.celosia.sys.battle.BattleLib.STAT_MULT_VISIBLE;
 
-public class Damage implements SkillEffect {
-
-    private final SkillType type;
-    private final Element element;
-    private final int pow;
-    private final ResultType minResult;
-    private final boolean isPierce;
-    private final boolean isInstant;
-    private final boolean mainTargetOnly;
-    private final boolean isFollowUp;
+public record Damage(SkillType skillType, Element element, int pow, ResultType minResult, boolean isPierce,
+                     boolean isInstant, boolean mainTargetOnly, boolean isFollowUp)
+        implements SkillEffect {
 
     public Damage(Builder builder) {
-        type = builder.type;
-        element = builder.element;
-        pow = builder.pow;
-        minResult = builder.minResult;
-        isPierce = builder.isPierce;
-        isInstant = builder.isInstant;
-        mainTargetOnly = builder.mainTargetOnly;
-        isFollowUp = builder.isFollowUp;
+        this(builder.type, builder.element, builder.pow, builder.minResult, builder.isPierce, builder.isInstant,
+                builder.mainTargetOnly, builder.isFollowUp);
     }
 
     public static class Builder {
@@ -41,6 +28,7 @@ public class Damage implements SkillEffect {
         private final SkillType type;
         private final Element element;
         private final int pow;
+
         private ResultType minResult = ResultType.HIT_SHIELD;
         private boolean isPierce = false;
         private boolean isInstant = false;
@@ -95,10 +83,10 @@ public class Damage implements SkillEffect {
         long atk = 1;
         long def = 1;
 
-        if (type == SkillType.STR) {
+        if (skillType == SkillType.STR) {
             atk = self.getStrWithStage();
             def = target.getAmrWithStage();
-        } else if (type == SkillType.MAG) {
+        } else if (skillType == SkillType.MAG) {
             atk = self.getMagWithStage();
             def = target.getResWithStage();
         }
@@ -168,7 +156,7 @@ public class Damage implements SkillEffect {
 
     @Override
     public SkillType getSkillType() {
-        return type;
+        return skillType;
     }
 
     @Override

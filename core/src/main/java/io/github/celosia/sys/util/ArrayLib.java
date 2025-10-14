@@ -28,6 +28,7 @@ public class ArrayLib {
         return false;
     }
 
+    // Sorts float[] and then sorts Color[] with the same order
     public static void sortParallel(float[] floats, Color[] colors) {
         if (floats.length != colors.length) {
             throw new IllegalArgumentException("Arrays must have the same length");

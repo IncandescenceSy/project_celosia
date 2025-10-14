@@ -24,7 +24,8 @@ public abstract class ComplexDescriptionEntity extends IconEntity {
         private final String name;
         private final String desc;
         private final String icon;
-        private String[] descArgs;
+
+        private String[] descArgs = new String[] {};
         private IconEntity[] descInclusions = new IconEntity[] {};
 
         public Builder(String name, String desc, String icon) {

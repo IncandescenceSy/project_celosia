@@ -45,6 +45,9 @@ import static io.github.celosia.sys.battle.BattleController.delayS;
 import static io.github.celosia.sys.battle.PosLib.getSide;
 import static io.github.celosia.sys.battle.PosLib.getStartingIndex;
 import static io.github.celosia.sys.menu.MenuLib.checkMovement1D;
+import static io.github.celosia.sys.render.RenderLib.BAR_HP;
+import static io.github.celosia.sys.render.RenderLib.BAR_OVERHEAL;
+import static io.github.celosia.sys.render.RenderLib.BAR_SHIELD;
 import static io.github.celosia.sys.render.TriLib.createPopup;
 import static io.github.celosia.sys.save.Lang.lang;
 import static io.github.celosia.sys.util.BoolLib.bool2Int;
@@ -136,11 +139,11 @@ public class BattleControllerLib {
     static TextraLabel[] statsPageNum = new TextraLabel[3];
 
     // temp
-    static Skill[] skills1 = new Skill[] { Skills.OVERHEAL, Skills.SHIELD, Skills.RASETU_FEAST,
+    static Skill[] skills1 = new Skill[] { Skills.OVERHEAL, Skills.SHIELD, Skills.THUNDERBOLT,
             Skills.AGILITY_UP_GROUP, Skills.ICE_AGE, Skills.DEFEND };
     static Skill[] skills2 = new Skill[] { Skills.OVERHEAL, Skills.DEMON_SCYTHE, Skills.ATTACK_UP_GROUP,
-            Skills.RASETU_FEAST, Skills.ICE_AGE, Skills.DEFEND };
-    static Skill[] skills3 = new Skill[] { Skills.SHIELD, Skills.DEFENSE_DOWN, Skills.HEAT_WAVE, Skills.PROTECT,
+            Skills.ICE_BEAM, Skills.ICE_AGE, Skills.DEFEND };
+    static Skill[] skills3 = new Skill[] { Skills.SHIELD, Skills.DEFENSE_DOWN, Skills.HEAT_WAVE, Skills.FAITH_DOWN,
             Skills.ICE_AGE, Skills.DEFEND };
     static SkillInstance nothingInstanceTemp = new SkillInstance(Skills.NOTHING);
 
@@ -211,15 +214,15 @@ public class BattleControllerLib {
         UnitType julian = new UnitType("Julian", "", johnyStats, new HashMap<>(affinitiesTemp),
                 Passives.DEBUFF_DURATION_UP);
 
-        Team player = new Team(new Unit[] { new Unit(johny, 19, skills1, Accessories.FIREBORN_RING, 0),
-                new Unit(james, 19, skills2, Accessories.FIREBORN_RING, 1),
-                new Unit(julia, 19, skills3, Accessories.FIREBORN_RING, 2),
-                new Unit(josephine, 19, skills1, Accessories.FIREBORN_RING, 3) });
+        Team player = new Team(new Unit[] { new Unit(johny, 17, skills1, Accessories.FIREBORN_RING, 0),
+                new Unit(james, 24, skills2, Accessories.FIREBORN_RING, 1),
+                new Unit(julia, 15, skills3, Accessories.FIREBORN_RING, 2),
+                new Unit(josephine, 12, skills1, Accessories.FIREBORN_RING, 3) });
 
-        Team opponent = new Team(new Unit[] { new Unit(jerry, 19, skills2, Accessories.FIREBORN_RING, 4),
-                new Unit(jacob, 19, skills2, Accessories.FIREBORN_RING, 5),
-                new Unit(jude, (long) 1E15, skills2, Accessories.FIREBORN_RING, 6),
-                new Unit(julian, 19, skills2, Accessories.FIREBORN_RING, 7) });
+        Team opponent = new Team(new Unit[] { new Unit(jerry, 18, skills2, Accessories.FIREBORN_RING, 4),
+                new Unit(jacob, 21, skills2, Accessories.FIREBORN_RING, 5),
+                new Unit(jude, 20, skills2, Accessories.FIREBORN_RING, 6),
+                new Unit(julian, 17, skills2, Accessories.FIREBORN_RING, 7) });
 
         battle = new Battle(player, opponent);
 
@@ -428,14 +431,15 @@ public class BattleControllerLib {
     static void selectOpponentMove() {
         if (!Debug.selectOpponentMoves) { // todo make this actually work
             if ((selectingMove - 4) < battle.getOpponentTeam().getUnits().length) {
-                // Skill selectedSkill = skills2[MathUtils.random(skills.length - 1)];
-                SkillInstance selectedSkillInstance = nothingInstanceTemp;
+                Skill selectedSkill = skills2[MathUtils.random(skills1.length - 1)];
+                // SkillInstance selectedSkillInstance = nothingInstanceTemp;
                 Unit target = battle.getPlayerTeam().getUnits()[MathUtils
                         .random(battle.getPlayerTeam().getUnits().length - 1)];
                 // todo support ExA
                 moves[selectingMove].setText(
-                        selectedSkillInstance.getSkill().getName() + " → " + target.getUnitType().getName());
-                curMoves.add(new Move(selectedSkillInstance, battle.getOpponentTeam().getUnits()[selectingMove - 4],
+                        selectedSkill.getName() + " → " + target.getUnitType().getName());
+                curMoves.add(new Move(selectedSkill.toSkillInstance(),
+                        battle.getOpponentTeam().getUnits()[selectingMove - 4],
                         target.getPos())); // todo AI
                 selectingMove++;
             } else {
@@ -1070,20 +1074,22 @@ public class BattleControllerLib {
 
         long shield = unit.getShield() + unit.getDefend();
         // Overflow protection
-        if(shield < 0) shield = Long.MAX_VALUE;
+        if (shield < 0) shield = Long.MAX_VALUE;
 
-        String shieldStr = (shield > 0) ? "[CYAN]+" + formatNum(shield) + "[WHITE]" : "";
-        hpAmt.setText(formatNum(unit.getDisplayHp()) + shieldStr + "/" + formatNum(unit.getDisplayMaxHp()));
-        hpBar.setBarProg(0, Interpolation.smooth2.apply(hpBar.getBarProg(0), (float) hp / hpMax,
+        String shieldStr = (shield > 0) ? "[CYAN]+" + formatNum(shield) : "";
+        String overhealColor = (hp > hpMax) ? "[PINK]" : "";
+        hpAmt.setText(overhealColor + formatNum(unit.getDisplayHp()) + shieldStr + "[WHITE]/" +
+                formatNum(unit.getDisplayMaxHp()));
+        hpBar.setBarProg(BAR_HP, Interpolation.smooth2.apply(hpBar.getBarProg(BAR_HP), (float) hp / hpMax,
                 Math.min(secondsOnSameTarget * 4, 1)));
 
         // Shield
-        hpBar.setBarProg(1, Interpolation.smooth2.apply(hpBar.getBarProg(1),
+        hpBar.setBarProg(BAR_SHIELD, Interpolation.smooth2.apply(hpBar.getBarProg(BAR_SHIELD),
                 (float) (unit.getShield() + unit.getDefend()) / hpMax, Math.min(secondsOnSameTarget * 4, 1)));
 
         // Overheal
-        hpBar.setBarProg(2, Interpolation.smooth2.apply(hpBar.getBarProg(2),
-                (float) (hp - hpMax) / hpMax, Math.min(secondsOnSameTarget * 4, 1)));
+        hpBar.setBarProg(BAR_OVERHEAL, Interpolation.smooth2.apply(hpBar.getBarProg(BAR_OVERHEAL),
+                Math.max((float) (hp - hpMax) / hpMax, 0), Math.min(secondsOnSameTarget * 4, 1)));
 
         if (!unit.isBooleanStat(BooleanStat.INFINITE_SP)) {
             spAmt.setText(formatNum(unit.getSp()) + "/" + formatNum(1000));
@@ -1174,15 +1180,21 @@ public class BattleControllerLib {
 
                 handleInspectPage(false, buffCount + alteredStageCount);
 
-                pageItemList.setText(
-                        getNamesAsMultiline(alteredStages,
-                                stageType -> stageType.getNameWithIconAndSign(unit.getStage(stageType)), true) +
-                                getNamesAsMultiline(unit.getBuffInstances(),
-                                        buffInstance -> buffInstance.getBuff().getNameWithIcon()));
+                String stageNames = getNamesAsMultiline(alteredStages,
+                        stageType -> stageType.getNameWithIconAndSign(unit.getStage(stageType)));
 
-                pageItemRightList.setText(
-                        getNamesAsMultiline(alteredStages, stageType -> stageType.getTurnsStacksFormatted(unit), true) +
-                                getNamesAsMultiline(unit.getBuffInstances(), BuffInstance::getTurnsStacksFormatted));
+                String buffNames = getNamesAsMultiline(unit.getBuffInstances(),
+                        buffInstance -> buffInstance.getBuff().getNameWithIcon());
+
+                pageItemList.setText(stageNames + "\n" + buffNames);
+
+                String stageTurnsStacks = getNamesAsMultiline(alteredStages,
+                        stageType -> stageType.getTurnsStacksFormatted(unit));
+
+                String buffTurnsStacks = getNamesAsMultiline(unit.getBuffInstances(),
+                        BuffInstance::getTurnsStacksFormatted);
+
+                pageItemRightList.setText(stageTurnsStacks + "\n" + buffTurnsStacks);
 
                 if (buffCount + alteredStageCount > 0) {
                     indexPageList = checkMovement1D(indexPageList, buffCount + alteredStageCount, Keybind.UP,

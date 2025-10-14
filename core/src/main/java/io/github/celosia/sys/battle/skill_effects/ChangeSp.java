@@ -7,23 +7,17 @@ import io.github.celosia.sys.battle.Unit;
 
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 
-public class ChangeSp implements SkillEffect {
-
-    private final int change;
-    private final boolean isInstant;
-    private final boolean giveToSelf;
-    private final boolean mainTargetOnly;
+public record ChangeSp(int change, boolean isInstant, boolean giveToSelf, boolean mainTargetOnly)
+        implements SkillEffect {
 
     public ChangeSp(Builder builder) {
-        change = builder.change;
-        isInstant = builder.isInstant;
-        giveToSelf = builder.giveToSelf;
-        mainTargetOnly = builder.mainTargetOnly;
+        this(builder.change, builder.isInstant, builder.giveToSelf, builder.mainTargetOnly);
     }
 
     public static class Builder {
 
         private final int change;
+
         private boolean isInstant = true;
         private boolean giveToSelf = false;
         private boolean mainTargetOnly = false;

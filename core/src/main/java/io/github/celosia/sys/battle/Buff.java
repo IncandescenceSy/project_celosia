@@ -24,6 +24,7 @@ public class Buff extends ComplexDescriptionEntity {
     public static class Builder extends ComplexDescriptionEntity.Builder {
 
         private final BuffType buffType;
+
         private int maxStacks = 1;
         private BuffEffect[] buffEffects = new BuffEffect[] {};
 

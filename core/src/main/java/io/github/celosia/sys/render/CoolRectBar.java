@@ -40,7 +40,6 @@ public class CoolRectBar extends CoolRect {
             this.drawWithoutUpdate(l, r, t, b, this.getColor());
 
             // Draw overlay bars from longest to shortest so they're all visible
-            // todo enforce normal order for equal length
             float[] progsSorted = Arrays.copyOf(barProgs, barProgs.length);
             Color[] colorsSorted = Arrays.copyOf(barColors, barColors.length);
             ArrayLib.sortParallel(progsSorted, colorsSorted);

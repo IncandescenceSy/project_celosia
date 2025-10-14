@@ -8,13 +8,7 @@ import static io.github.celosia.sys.save.Lang.lang;
 import static io.github.celosia.sys.util.TextLib.formatName;
 import static io.github.celosia.sys.util.TextLib.getColor;
 
-public class ChangeExtraActions implements BuffEffect {
-
-    private final int change;
-
-    public ChangeExtraActions(int change) {
-        this.change = change;
-    }
+public record ChangeExtraActions(int change) implements BuffEffect {
 
     @Override
     public void onGive(Unit self, int stacks) {

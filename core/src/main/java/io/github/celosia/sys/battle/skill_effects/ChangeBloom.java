@@ -9,23 +9,17 @@ import io.github.celosia.sys.battle.Unit;
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.battle.BattleControllerLib.battle;
 
-public class ChangeBloom implements SkillEffect {
-
-    private final int change;
-    private final boolean isInstant;
-    private final boolean giveToSelf;
-    private final boolean mainTargetOnly;
+public record ChangeBloom(int change, boolean isInstant, boolean giveToSelf, boolean mainTargetOnly)
+        implements SkillEffect {
 
     public ChangeBloom(Builder builder) {
-        change = builder.change;
-        isInstant = builder.isInstant;
-        giveToSelf = builder.giveToSelf;
-        mainTargetOnly = builder.mainTargetOnly;
+        this(builder.change, builder.isInstant, builder.giveToSelf, builder.mainTargetOnly);
     }
 
     public static class Builder {
 
         private final int change;
+
         private boolean isInstant = true;
         private boolean giveToSelf = true;
         private boolean mainTargetOnly = false;

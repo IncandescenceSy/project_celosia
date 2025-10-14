@@ -24,7 +24,7 @@ public class Buffs {
                     new ChangeBooleanStat(BooleanStat.EFFECT_BLOCK, 1))
             .build();
 
-    // When setting stack amount in GiveBuff, 1 converts to 1% of user's Fth
+    // When setting stack amount in GiveShield, 1 converts to 1% of user's Fth. Final stack amount is always 1
     public static final Buff SHIELD = new Buff.Builder(lang.get("buff.shield"), "todo",
             C_SHIELD + "[+vibrating-shield]", BuffType.BUFF)
             .effects(new ChangeShield(), new ChangeBooleanStat(BooleanStat.EFFECT_BLOCK, 1)).build();

@@ -10,15 +10,11 @@ import static io.github.celosia.sys.util.TextLib.C_SHIELD;
 import static io.github.celosia.sys.util.TextLib.formatName;
 import static io.github.celosia.sys.util.TextLib.formatNum;
 
+/**
+ * @param change Defend to add in tenths of a % of max HP (1000 = +100%)
+ */
 // Multiple Buffs that contain this effect will interfere with eachother
-public class ChangeDefend implements BuffEffect {
-
-    // Defend to add in tenths of a % of max HP (1000 = +100%)
-    private final int change;
-
-    public ChangeDefend(int change) {
-        this.change = change;
-    }
+public record ChangeDefend(int change) implements BuffEffect {
 
     @Override
     public void onGive(Unit self, int stacks) {

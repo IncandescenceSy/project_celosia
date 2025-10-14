@@ -17,19 +17,11 @@ import static io.github.celosia.sys.util.TextLib.getMultWithExpChangeColor;
 import static io.github.celosia.sys.util.TextLib.getMultWithExpColor;
 import static io.github.celosia.sys.util.TextLib.getSign;
 
-public class ChangeMult implements BuffEffect {
-
-    private final Mult mult;
-    // Amount to add to mult in 10ths of a % (1000 = +100%)
-    private final int changeMult;
-    // Amount to add to exp in 100ths (100 = +1)
-    private final int changeExp;
-
-    public ChangeMult(Mult mult, int changeMult, int changeExp) {
-        this.mult = mult;
-        this.changeMult = changeMult;
-        this.changeExp = changeExp;
-    }
+/**
+ * @param changeMult Amount to add to mult in 10ths of a % (1000 = +100%)
+ * @param changeExp  Amount to add to exp in 100ths (100 = +1)
+ */
+public record ChangeMult(Mult mult, int changeMult, int changeExp) implements BuffEffect {
 
     public ChangeMult(Mult mult, int changeMult) {
         this(mult, changeMult, 0);

@@ -10,15 +10,7 @@ import static io.github.celosia.sys.util.TextLib.C_STAT;
 import static io.github.celosia.sys.util.TextLib.formatMod;
 import static io.github.celosia.sys.util.TextLib.formatName;
 
-public class ChangeMod implements BuffEffect {
-
-    private final Mod mod;
-    private final int change;
-
-    public ChangeMod(Mod mod, int change) {
-        this.mod = mod;
-        this.change = change;
-    }
+public record ChangeMod(Mod mod, int change) implements BuffEffect {
 
     @Override
     public void onGive(Unit self, int stacks) {

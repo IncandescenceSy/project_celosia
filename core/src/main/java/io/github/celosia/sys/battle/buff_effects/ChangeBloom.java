@@ -7,15 +7,7 @@ import io.github.celosia.sys.battle.Unit;
 import static io.github.celosia.sys.battle.BattleControllerLib.appendToLog;
 import static io.github.celosia.sys.battle.BattleControllerLib.battle;
 
-public class ChangeBloom implements BuffEffect {
-
-    private final int change;
-    private final boolean isImmediate;
-
-    public ChangeBloom(int change, boolean isImmediate) {
-        this.change = change;
-        this.isImmediate = isImmediate;
-    }
+public record ChangeBloom(int change, boolean isImmediate) implements BuffEffect {
 
     public ChangeBloom(int change) {
         this(change, false);
