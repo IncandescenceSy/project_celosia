@@ -559,7 +559,7 @@ public class BattleControllerLib {
         }
 
         for (int targetPos : skill.getRange().getTargetPositions(move.self().getPos(), move.targetPos())) {
-            if (targetPos != -1) {
+            if (targetPos != -1) { // uint.MaxValue
                 Unit targetCur = battle.getUnitAtPos(targetPos);
                 if (applyingEffect == 0) {
                     prevResults[targetPos] = ResultType.SUCCESS;

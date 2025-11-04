@@ -29,12 +29,12 @@ public record ChangeStat(Stat stat, int change) implements BuffEffect {
         calc(self, (change * stacks) * -1);
     }
 
-    public void calc(Unit self, int changeMod) {
+    public void calc(Unit self, int changeFull) {
         long statDefaultDisp = self.getStatsDefault().getDisplayStat(stat);
         long statOldDispWithStage = getDisplayStatWithStage(self.getStat(stat), self.getStatsDefault().getStat(stat),
                 self.getStage(stat.getMatchingStageType()));
 
-        self.getStatsMult().addToStat(stat, changeMod);
+        self.getStatsMult().addToStat(stat, changeFull);
 
         long statNewDispWithStage = getDisplayStatWithStage(self.getStat(stat), self.getStatsDefault().getStat(stat),
                 self.getStage(stat.getMatchingStageType()));
@@ -44,6 +44,6 @@ public record ChangeStat(Stat stat, int change) implements BuffEffect {
                 getStatColor(statOldDispWithStage, statDefaultDisp) + formatNum(statOldDispWithStage),
                 getStatColor(statNewDispWithStage, statDefaultDisp) + formatNum(statNewDispWithStage),
                 formatNum(self.getStatsDefault().getDisplayStat(stat)),
-                getColor(changeMod) + getSign(changeMod) + formatNum(statNewDispWithStage - statOldDispWithStage)));
+                getColor(changeFull) + getSign(changeFull) + formatNum(statNewDispWithStage - statOldDispWithStage)));
     }
 }

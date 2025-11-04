@@ -26,8 +26,7 @@ public record ChangeBooleanStat(BooleanStat stat, int change) implements BuffEff
         int statOld = self.getBooleanStat(stat);
         int statNew = statOld + changeFull;
         self.setBooleanStat(stat, statNew);
-        if (!isBothTruthy(statOld, statNew) &&
-                (stat != BooleanStat.EFFECT_BLOCK)) {
+        if (!isBothTruthy(statOld, statNew) && (stat != BooleanStat.EFFECT_BLOCK)) {
             appendToLog(lang.format(stat.getLogMsgLangId(),
                     formatName(self.getUnitType().getName(), self.getPos(), stat.isPossessiveNameInLogMsg()), statNew,
                     formatNum(self.getSp())));

@@ -7,7 +7,7 @@ public enum Mod {
     DURATION_BUFF_DEALT(lang.get("mod.duration_buff_dealt"), true),
     DURATION_BUFF_TAKEN(lang.get("mod.duration_buff_taken"), true),
     DURATION_DEBUFF_DEALT(lang.get("mod.duration_debuff_dealt"), true),
-    DURATION_DEBUFF_TAKEN(lang.get("mod.duration_buff_taken"), false),
+    DURATION_DEBUFF_TAKEN(lang.get("mod.duration_debuff_taken"), false),
     STACKS_BUFF_DEALT(lang.get("mod.stacks_buff_dealt"), true),
     STACKS_BUFF_TAKEN(lang.get("mod.stacks_buff_taken"), true),
     STACKS_DEBUFF_DEALT(lang.get("mod.stacks_debuff_dealt"), true),
