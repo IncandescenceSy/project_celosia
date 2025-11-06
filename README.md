@@ -1,4 +1,4 @@
-# Moved to [ProjectCelosia]([project_celosia](https://github.com/envoidia/ProjectCelosia))
+# Moved to [ProjectCelosia](https://github.com/envoidia/ProjectCelosia)
 
 # Project Celosia
 
